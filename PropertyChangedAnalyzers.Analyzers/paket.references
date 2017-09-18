@@ -1,0 +1,8 @@
+Microsoft.CodeAnalysis.CSharp
+
+group Analyzers
+  StyleCop.Analyzers
+  Gu.Analyzers
+  AsyncUsageAnalyzers
+
+

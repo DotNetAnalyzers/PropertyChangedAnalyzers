@@ -1,0 +1,9 @@
+group Analyzers
+  StyleCop.Analyzers
+  Gu.Analyzers
+  AsyncUsageAnalyzers
+
+group Test
+  NUnit
+  Gu.Roslyn.Asserts
+  Microsoft.CodeAnalysis.CSharp.Workspaces
