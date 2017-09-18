@@ -1,8 +1,7 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1017UseObjectEqualsForReferenceTypesTests
+﻿namespace PropertyChangedAnalyzers.Test.WPF1017UseObjectEqualsForReferenceTypesTests
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-
     using NUnit.Framework;
 
     internal class CodeFix : CodeFixVerifier<WPF1017UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>

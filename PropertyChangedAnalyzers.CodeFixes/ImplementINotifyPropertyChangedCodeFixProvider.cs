@@ -17,7 +17,7 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF1011ImplementINotifyPropertyChanged.DiagnosticId,
+            INPC003ImplementINotifyPropertyChanged.DiagnosticId,
             "CS0535",
             "CS0246");
 
@@ -78,7 +78,7 @@
 
         private static bool IsSupportedDiagnostic(Diagnostic diagnostic)
         {
-            if (diagnostic.Id == WPF1011ImplementINotifyPropertyChanged.DiagnosticId)
+            if (diagnostic.Id == INPC003ImplementINotifyPropertyChanged.DiagnosticId)
             {
                 return true;
             }

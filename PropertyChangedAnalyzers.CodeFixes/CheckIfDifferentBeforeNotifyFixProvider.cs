@@ -21,7 +21,7 @@ namespace PropertyChangedAnalyzers
     internal class CheckIfDifferentBeforeNotifyFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF1015CheckIfDifferentBeforeNotifying.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC005CheckIfDifferentBeforeNotifying.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => BacthFixer.Default;

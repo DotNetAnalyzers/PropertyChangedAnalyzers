@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC001MutablePublicPropertyShouldNotifyTetss
 {
     using System.Threading.Tasks;
     using NUnit.Framework;

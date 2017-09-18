@@ -1,7 +1,6 @@
-namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1017UseObjectEqualsForReferenceTypesTests
+namespace PropertyChangedAnalyzers.Test.WPF1017UseObjectEqualsForReferenceTypesTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
 
     internal class HappyPath : HappyPathVerifier<WPF1017UseObjectEqualsForReferenceTypes>

@@ -1,10 +1,9 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1014DontRaiseChangeForMissingPropertyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingPropertyTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF1014DontRaiseChangeForMissingProperty>
+    internal class Diagnostics : DiagnosticVerifier<INPC007DontRaiseChangeForMissingProperty>
     {
         [TestCase(@"""Missing""")]
         [TestCase(@"nameof(PropertyChanged)")]

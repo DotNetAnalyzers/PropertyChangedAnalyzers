@@ -1,9 +1,9 @@
-namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1013UseCallerMemberNameTests
+namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
     using System.Threading.Tasks;
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<WPF1013UseCallerMemberName>
+    internal class HappyPath : HappyPathVerifier<INPC004UseCallerMemberName>
     {
         [TestCase("null")]
         [TestCase("string.Empty")]

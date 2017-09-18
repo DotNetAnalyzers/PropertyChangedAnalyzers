@@ -1,10 +1,10 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1013UseCallerMemberNameTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
     using System.Threading;
     using System.Threading.Tasks;
     using NUnit.Framework;
 
-    internal class CodeFix : CodeFixVerifier<WPF1013UseCallerMemberName, UseCallerMemberNameCodeFixProvider>
+    internal class CodeFix : CodeFixVerifier<INPC004UseCallerMemberName, UseCallerMemberNameCodeFixProvider>
     {
         [Test]
         public async Task CallsOnPropertyChanged()

@@ -106,7 +106,7 @@ Roslyn analyzers for WPF.
   <td>XmlnsDefinitions does not map all namespaces with public types.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/WPF1001.md">WPF1001</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC008.md">INPC008</a></td>
   <td>Struct must not implement INotifyPropertyChanged</td>
 </tr>
 <tr>
@@ -114,23 +114,23 @@ Roslyn analyzers for WPF.
   <td>Mutable public property should notify.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/WPF1011.md">WPF1011</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC003.md">INPC003</a></td>
   <td>Implement INotifyPropertyChanged.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/WPF1012.md">WPF1012</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC002.md">INPC002</a></td>
   <td>Notify when property changes.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/WPF1013.md">WPF1013</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC004.md">INPC004</a></td>
   <td>Use [CallerMemberName]</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/WPF1014.md">WPF1014</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC007.md">INPC007</a></td>
   <td>Don't raise PropertyChanged for missing property.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/WPF1015.md">WPF1015</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC005.md">INPC005</a></td>
   <td>Check if value is different before notifying.</td>
 </tr>
 <tr>

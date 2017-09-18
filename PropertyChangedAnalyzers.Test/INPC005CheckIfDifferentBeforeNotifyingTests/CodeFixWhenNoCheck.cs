@@ -1,10 +1,9 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1015CheckIfDifferentBeforeNotifyingTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
 
-    internal class CodeFixWhenNoCheck : CodeFixVerifier<WPF1015CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
+    internal class CodeFixWhenNoCheck : CodeFixVerifier<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
     {
         [Test]
         public async Task CallsOnPropertyChanged()

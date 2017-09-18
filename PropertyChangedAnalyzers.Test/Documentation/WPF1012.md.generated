@@ -1,11 +1,11 @@
-# WPF1012
+# INPC002
 ## Notify when property changes.
 
 <!-- start generated table -->
 <table>
 <tr>
   <td>CheckId</td>
-  <td>WPF1012</td>
+  <td>INPC002</td>
 </tr>
 <tr>
   <td>Severity</td>
@@ -21,7 +21,7 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="missing">WPF1012NotifyWhenPropertyChanges</a></td>
+  <td><a href="missing">INPC002NotifyWhenPropertyChanges</a></td>
 </tr>
 </table>
 <!-- end generated table -->
@@ -47,21 +47,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable WPF1012 // Notify when property changes.
+#pragma warning disable INPC002 // Notify when property changes.
 Code violating the rule here
-#pragma warning restore WPF1012 // Notify when property changes.
+#pragma warning restore INPC002 // Notify when property changes.
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable WPF1012 // Notify when property changes.
+#pragma warning disable INPC002 // Notify when property changes.
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "WPF1012:Notify when property changes.", 
+    "INPC002:Notify when property changes.", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

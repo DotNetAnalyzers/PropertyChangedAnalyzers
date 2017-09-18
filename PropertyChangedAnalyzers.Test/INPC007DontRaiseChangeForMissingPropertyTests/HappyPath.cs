@@ -1,10 +1,9 @@
-namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1014DontRaiseChangeForMissingPropertyTests
+namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingPropertyTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<WPF1014DontRaiseChangeForMissingProperty>
+    internal class HappyPath : HappyPathVerifier<INPC007DontRaiseChangeForMissingProperty>
     {
         [TestCase("null")]
         [TestCase("string.Empty")]

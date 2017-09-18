@@ -1,15 +1,40 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1012NotifyWhenPropertyChangesTests
-{
-    using System.Threading.Tasks;
+# INPC002
+## Notify when property changes.
 
-    using NUnit.Framework;
+<!-- start generated table -->
+<table>
+<tr>
+  <td>CheckId</td>
+  <td>INPC002</td>
+</tr>
+<tr>
+  <td>Severity</td>
+  <td>Warning</td>
+</tr>
+<tr>
+  <td>Enabled</td>
+  <td>true</td>
+</tr>
+<tr>
+  <td>Category</td>
+  <td>PropertyChangedAnalyzers.PropertyChanged</td>
+</tr>
+<tr>
+  <td>TypeName</td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/PropertyChanged/INPC002NotifyWhenPropertyChanges.cs">INPC002NotifyWhenPropertyChanges</a></td>
+</tr>
+</table>
+<!-- end generated table -->
 
-    internal class CodeFixAll : CodeFixVerifier<WPF1012NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>
-    {
-        [Test]
-        public async Task WhenUsingPropertiesExpressionBody()
-        {
-            var testCode = @"
+## Description
+
+Notify when property changes.
+
+## Motivation
+
+In the following example the setter for `FirstName` and `LastName` should notify about that the calculated property `FullName` changes.
+
+```c#
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -63,70 +88,99 @@ public class ViewModel : INotifyPropertyChanged
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}";
-
-            var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
-{
-    private string firstName;
-    private string lastName;
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string FullName => $""{this.FirstName} {this.LastName}"";
-
-    public string FirstName
-    {
-        get
-        {
-            return this.firstName;
-        }
-
-        set
-        {
-            if (value == this.firstName)
-            {
-                return;
-            }
-
-            this.firstName = value;
-            this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
-        }
-    }
-
-    public string LastName
-    {
-        get
-        {
-            return this.lastName;
-        }
-
-        set
-        {
-            if (value == this.lastName)
-            {
-                return;
-            }
-
-            this.lastName = value;
-            this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
-        }
-    }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}";
-
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
-        }
     }
 }
+```
+
+## How to fix violations
+
+Use the code fix or manually change the code so that it notifies:
+
+```c#
+```c#
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class ViewModel : INotifyPropertyChanged
+{
+    private string firstName;
+    private string lastName;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public string FullName => $""{this.FirstName} {this.LastName}"";
+
+    public string FirstName
+    {
+        get
+        {
+            return this.firstName;
+        }
+
+        set
+        {
+            if (value == this.firstName)
+            {
+                return;
+            }
+
+            this.firstName = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.FullName));
+        }
+    }
+
+    public string LastName
+    {
+        get
+        {
+            return this.lastName;
+        }
+
+        set
+        {
+            if (value == this.lastName)
+            {
+                return;
+            }
+
+            this.lastName = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.FullName));
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}
+```
+
+<!-- start generated config severity -->
+## Configure severity
+
+### Via ruleset file.
+
+Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+
+### Via #pragma directive.
+```C#
+#pragma warning disable INPC002 // Notify when property changes.
+Code violating the rule here
+#pragma warning restore INPC002 // Notify when property changes.
+```
+
+Or put this at the top of the file to disable all instances.
+```C#
+#pragma warning disable INPC002 // Notify when property changes.
+```
+
+### Via attribute `[SuppressMessage]`.
+
+```C#
+[System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
+    "INPC002:Notify when property changes.", 
+    Justification = "Reason...")]
+```
+<!-- end generated config severity -->

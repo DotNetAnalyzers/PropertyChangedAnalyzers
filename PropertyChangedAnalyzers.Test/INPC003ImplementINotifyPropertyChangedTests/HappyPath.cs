@@ -1,10 +1,10 @@
-namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1011ImplementINotifyPropertyChangedTests
+namespace PropertyChangedAnalyzers.Test.INPC003ImplementINotifyPropertyChangedTests
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<WPF1011ImplementINotifyPropertyChanged>
+    internal class HappyPath : HappyPathVerifier<INPC003ImplementINotifyPropertyChanged>
     {
         [TestCase("null")]
         [TestCase("string.Empty")]

@@ -1,10 +1,9 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1015CheckIfDifferentBeforeNotifyingTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
 
-    internal class CodFixWhenError : CodeFixVerifier<WPF1015CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
+    internal class CodFixWhenError : CodeFixVerifier<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
     {
         public static readonly EqualsItem[] EqualsSource =
         {

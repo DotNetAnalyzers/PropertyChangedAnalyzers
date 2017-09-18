@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1012NotifyWhenPropertyChangesTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002NotifyWhenPropertyChangesTests
 {
     using System.Threading.Tasks;
     using NUnit.Framework;

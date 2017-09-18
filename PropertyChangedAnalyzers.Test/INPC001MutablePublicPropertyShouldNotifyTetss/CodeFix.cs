@@ -1,8 +1,7 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.INPC001MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC001MutablePublicPropertyShouldNotifyTetss
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
-
     using NUnit.Framework;
 
     internal class CodeFix : CodeFixVerifier<INPC001MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>

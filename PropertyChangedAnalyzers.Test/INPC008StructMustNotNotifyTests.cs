@@ -1,14 +1,12 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged
+﻿namespace PropertyChangedAnalyzers.Test
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-
     using Microsoft.CodeAnalysis.Diagnostics;
-
     using NUnit.Framework;
 
-    public class WPF1001StructMustNotNotifyTests : DiagnosticVerifier
+    public class INPC008StructMustNotNotifyTests : DiagnosticVerifier
     {
         [Test]
         public async Task HappyPath()
@@ -38,7 +36,7 @@ public struct Foo : ↓INotifyPropertyChanged
 
         internal override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new WPF1001StructMustNotNotify();
+            yield return new INPC008StructMustNotNotify();
         }
     }
 }

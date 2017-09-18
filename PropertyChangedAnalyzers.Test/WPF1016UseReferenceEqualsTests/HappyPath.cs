@@ -1,7 +1,6 @@
-namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1016UseReferenceEqualsTests
+namespace PropertyChangedAnalyzers.Test.WPF1016UseReferenceEqualsTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
 
     internal class HappyPath : HappyPathVerifier<WPF1016UseReferenceEquals>

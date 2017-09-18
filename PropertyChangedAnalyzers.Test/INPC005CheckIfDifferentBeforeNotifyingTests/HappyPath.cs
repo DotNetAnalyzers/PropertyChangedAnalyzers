@@ -1,10 +1,9 @@
-namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1015CheckIfDifferentBeforeNotifyingTests
+namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using System.Threading.Tasks;
-
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<WPF1015CheckIfDifferentBeforeNotifying>
+    internal class HappyPath : HappyPathVerifier<INPC005CheckIfDifferentBeforeNotifying>
     {
         public static readonly EqualsItem[] EqualsSource =
         {

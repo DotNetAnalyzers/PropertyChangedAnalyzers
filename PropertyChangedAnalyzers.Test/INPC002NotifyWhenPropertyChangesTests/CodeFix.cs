@@ -1,14 +1,13 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1012NotifyWhenPropertyChangesTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002NotifyWhenPropertyChangesTests
 {
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-
     using Microsoft.CodeAnalysis.CSharp;
-
     using NUnit.Framework;
+    using INPC002NotifyWhenPropertyChanges = PropertyChangedAnalyzers.INPC002NotifyWhenPropertyChanges;
 
-    internal partial class CodeFix : CodeFixVerifier<WPF1012NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>
+    internal partial class CodeFix : CodeFixVerifier<INPC002NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>
     {
         [TestCase("this.value = value;")]
         [TestCase("this.value += value;")]

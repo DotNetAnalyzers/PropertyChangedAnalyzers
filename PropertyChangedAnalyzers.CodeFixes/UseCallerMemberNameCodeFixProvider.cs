@@ -24,7 +24,7 @@ namespace PropertyChangedAnalyzers
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(WPF1013UseCallerMemberName.DiagnosticId);
+            ImmutableArray.Create(INPC004UseCallerMemberName.DiagnosticId);
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 

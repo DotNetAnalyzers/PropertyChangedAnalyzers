@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.WPF1011ImplementINotifyPropertyChangedTests
+﻿namespace PropertyChangedAnalyzers.Test.PropertyChanged.INPC003ImplementINotifyPropertyChangedTests
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -10,7 +10,7 @@
 
     using NUnit.Framework;
 
-    internal class CodeFix : CodeFixVerifier<WPF1011ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>
+    internal class CodeFix : CodeFixVerifier<INPC003ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>
     {
         [Test]
         public async Task WhenNotNotifyingAutoProperty()

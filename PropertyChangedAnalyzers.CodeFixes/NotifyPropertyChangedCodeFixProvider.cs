@@ -19,7 +19,7 @@
     internal class NotifyPropertyChangedCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(WPF1012NotifyWhenPropertyChanges.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC002NotifyWhenPropertyChanges.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => BacthFixer.Default;
@@ -66,7 +66,7 @@
                 return default(Fix);
             }
 
-            if (!diagnostic.Properties.TryGetValue(WPF1012NotifyWhenPropertyChanges.PropertyNameKey, out string property))
+            if (!diagnostic.Properties.TryGetValue(INPC002NotifyWhenPropertyChanges.PropertyNameKey, out string property))
             {
                 return default(Fix);
             }
