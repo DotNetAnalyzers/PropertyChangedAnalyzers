@@ -3,7 +3,7 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFix
+    internal partial class CodeFix
     {
         [Test]
         public void WhenNotNotifyingAutoProperty()

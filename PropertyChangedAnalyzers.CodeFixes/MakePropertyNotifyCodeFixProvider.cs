@@ -88,7 +88,7 @@
             string backingFieldName;
             if (Property.IsMutableAutoProperty(propertyDeclaration))
             {
-                backingFieldName = MakePropertyNotifyHelper.BackingFieldNameForAutoProperty(propertyDeclaration, true);
+                backingFieldName = MakePropertyNotifyHelper.BackingFieldNameForAutoProperty(propertyDeclaration, usesUnderscoreNames: true);
                 var backingField = (FieldDeclarationSyntax)syntaxGenerator.FieldDeclaration(
                     backingFieldName,
                     propertyDeclaration.Type,

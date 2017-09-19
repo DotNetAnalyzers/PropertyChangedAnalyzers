@@ -33,6 +33,8 @@ namespace PropertyChangedAnalyzers
         internal static readonly XmlnsPrefixAttributeType XmlnsPrefixAttribute = new XmlnsPrefixAttributeType();
         internal static readonly XmlnsDefinitionAttributeType XmlnsDefinitionAttribute = new XmlnsDefinitionAttributeType();
 
+        internal static readonly MvvmLightViewModelBase MvvmLightViewModelBase = new MvvmLightViewModelBase();
+
         private static QualifiedType Create(string qualifiedName)
         {
             return new QualifiedType(qualifiedName);

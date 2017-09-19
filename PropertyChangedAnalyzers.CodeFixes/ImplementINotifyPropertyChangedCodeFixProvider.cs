@@ -28,6 +28,10 @@
                                                                                           .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                           .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
+        private static readonly TypeSyntax MvvmLightViewModelBaseType = SyntaxFactory.ParseTypeName("GalaSoft.MvvmLight.ViewModelBase")
+                                                                                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                     .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             INPC001ImplementINotifyPropertyChanged.DiagnosticId,
@@ -48,10 +52,30 @@
                     continue;
                 }
 
-                var typeDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                if (typeDeclaration == null)
+                var classDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<ClassDeclarationSyntax>();
+                if (classDeclaration == null)
                 {
                     continue;
+                }
+
+                if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("GalaSoft.MvvmLight.dll") == true))
+                {
+                    var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
+                    if (type.BaseType == KnownSymbol.Object &&
+                        !type.Is(KnownSymbol.INotifyPropertyChanged))
+                    {
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Subclass GalaSoft.MvvmLight.ViewModelBase",
+                                cancellationToken =>
+                                    SubclassMvvmLightViewModelBaseAsync(
+                                        context,
+                                        semanticModel,
+                                        classDeclaration,
+                                        cancellationToken),
+                                this.GetType().FullName + "Subclass GalaSoft.MvvmLight.ViewModelBase"),
+                            diagnostic);
+                    }
                 }
 
                 context.RegisterCodeFix(
@@ -61,7 +85,7 @@
                             ApplyImplementINotifyPropertyChangedFixAsync(
                                 context,
                                 semanticModel,
-                                typeDeclaration,
+                                classDeclaration,
                                 cancellationToken),
                         this.GetType().FullName),
                     diagnostic);
@@ -70,7 +94,7 @@
 
         private static async Task<Document> ApplyImplementINotifyPropertyChangedFixAsync(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
         {
-            var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, cancellationToken);
+            var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
             var usesUnderscoreNames = classDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
@@ -123,6 +147,24 @@
                             usesUnderscoreNames));
                 }
 
+            }
+
+            return editor.GetChangedDocument();
+        }
+
+        private static async Task<Document> SubclassMvvmLightViewModelBaseAsync(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
+                                             .ConfigureAwait(false);
+            if (classDeclaration.BaseList != null &&
+                classDeclaration.BaseList.Types.TryGetFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out BaseTypeSyntax baseType) &&
+                context.Diagnostics.Any(IsINotifyPropertyChangedMissing))
+            {
+                editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(MvvmLightViewModelBaseType));
+            }
+            else
+            {
+                editor.AddBaseType(classDeclaration, MvvmLightViewModelBaseType);
             }
 
             return editor.GetChangedDocument();

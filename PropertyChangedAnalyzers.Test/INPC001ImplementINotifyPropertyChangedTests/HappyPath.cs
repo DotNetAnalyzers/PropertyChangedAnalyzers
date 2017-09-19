@@ -3,7 +3,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath
+    internal partial class HappyPath
     {
         [TestCase("null")]
         [TestCase("string.Empty")]

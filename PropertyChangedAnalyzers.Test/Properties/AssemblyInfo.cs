@@ -22,13 +22,14 @@ using Gu.Roslyn.Asserts;
 [assembly: MetadataReferences(
     typeof(System.Linq.Enumerable),
     typeof(System.Net.WebClient),
+    typeof(System.Drawing.Bitmap),
     typeof(System.Data.Common.DbConnection),
     typeof(System.Xml.Serialization.XmlSerializer),
+    typeof(System.Runtime.Serialization.DataContractSerializer),
     typeof(System.Windows.Media.Brush),
     typeof(System.Windows.Controls.Control),
     typeof(System.Windows.Media.Matrix),
     typeof(System.Xaml.XamlLanguage),
     typeof(Microsoft.CodeAnalysis.CSharp.CSharpCompilation),
     typeof(Microsoft.CodeAnalysis.Compilation),
-    //typeof(MvvmFramework.ViewModelBase),
     typeof(NUnit.Framework.Assert))]
