@@ -10,7 +10,6 @@ namespace PropertyChangedAnalyzers
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Text;
 
     internal static partial class EnumerableExt
     {
@@ -148,7 +147,7 @@ internal class Data
         this.ItemType = itemType;
         this.Constraint = string.IsNullOrEmpty(constraint)
             ? string.Empty
-            : "\r\n            where T: " + constraint;
+            : "\r\n            where T : " + constraint;
     }
 }
 #>
