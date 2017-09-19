@@ -110,7 +110,7 @@ Roslyn analyzers for WPF.
   <td>Struct must not implement INotifyPropertyChanged</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC001.md">INPC001</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC002.md">INPC002</a></td>
   <td>Mutable public property should notify.</td>
 </tr>
 <tr>
@@ -118,7 +118,7 @@ Roslyn analyzers for WPF.
   <td>Implement INotifyPropertyChanged.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC002.md">INPC002</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC003.md">INPC003</a></td>
   <td>Notify when property changes.</td>
 </tr>
 <tr>
@@ -134,11 +134,11 @@ Roslyn analyzers for WPF.
   <td>Check if value is different before notifying.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/WPF1016.md">WPF1016</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006.md">INPC006</a></td>
   <td>Check if value is different using ReferenceEquals before notifying.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/WPF1017.md">WPF1017</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006.md">INPC006</a></td>
   <td>Check if value is different using object.Equals before notifying.</td>
 </tr>
 <table>

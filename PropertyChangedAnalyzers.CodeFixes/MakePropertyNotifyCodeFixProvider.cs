@@ -19,7 +19,7 @@
     internal class MakePropertyNotifyCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC001MutablePublicPropertyShouldNotify.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC002MutablePublicPropertyShouldNotify.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => BatchFixer.Default;
@@ -88,7 +88,7 @@
             string backingFieldName;
             if (Property.IsMutableAutoProperty(propertyDeclaration))
             {
-                backingFieldName = MakePropertyNotifyHelper.BackingFieldNameForAutoProperty(propertyDeclaration);
+                backingFieldName = MakePropertyNotifyHelper.BackingFieldNameForAutoProperty(propertyDeclaration, true);
                 var backingField = (FieldDeclarationSyntax)syntaxGenerator.FieldDeclaration(
                     backingFieldName,
                     propertyDeclaration.Type,
@@ -206,7 +206,7 @@
                 var fixes = new List<Fix>();
                 foreach (var diagnostic in diagnostics)
                 {
-                    if (diagnostic.Id != INPC001MutablePublicPropertyShouldNotify.DiagnosticId)
+                    if (diagnostic.Id != INPC002MutablePublicPropertyShouldNotify.DiagnosticId)
                     {
                         continue;
                     }

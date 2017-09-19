@@ -42,7 +42,17 @@
             return type.TryGetSingleMember(name, out field);
         }
 
+        internal static bool TryGetEvent(this ITypeSymbol type, string name, out IEventSymbol @event)
+        {
+            return type.TryGetSingleMember(name, out @event);
+        }
+
         internal static bool TryGetProperty(this ITypeSymbol type, string name, out IPropertySymbol property)
+        {
+            return type.TryGetSingleMember(name, out property);
+        }
+
+        internal static bool TryGetMethod(this ITypeSymbol type, string name, out IMethodSymbol property)
         {
             return type.TryGetSingleMember(name, out property);
         }

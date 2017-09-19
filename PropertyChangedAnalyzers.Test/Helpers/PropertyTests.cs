@@ -1,6 +1,7 @@
 ﻿namespace PropertyChangedAnalyzers.Test
 {
     using System.Threading;
+    using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
@@ -93,7 +94,7 @@ namespace RoslynSandBox
         }
     }
 }");
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.All);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var property = syntaxTree.PropertyDeclarationSyntax(code);
             Assert.AreEqual(expected, Property.IsLazy(property, semanticModel, CancellationToken.None));

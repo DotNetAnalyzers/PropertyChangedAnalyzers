@@ -11,6 +11,7 @@ namespace PropertyChangedAnalyzers.Test
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -175,16 +176,7 @@ namespace PropertyChangedAnalyzers.Test
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .WithProjectCompilationOptions(projectId, compilationOptions)
-                .AddMetadataReference(projectId, MetadataReferences.Corlib)
-                .AddMetadataReference(projectId, MetadataReferences.System)
-                .AddMetadataReference(projectId, MetadataReferences.SystemCore)
-                .AddMetadataReference(projectId, MetadataReferences.PresentationCore)
-                .AddMetadataReference(projectId, MetadataReferences.PresentationFramework)
-                .AddMetadataReference(projectId, MetadataReferences.WindowsBase)
-                .AddMetadataReference(projectId, MetadataReferences.SystemXaml)
-                .AddMetadataReference(projectId, MetadataReferences.CSharpSymbols)
-                //.AddMetadataReference(projectId, MetadataReferences.MvvmFramework)
-                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysis);
+                .AddMetadataReferences(projectId, MetadataReferences.FromAttributes());
 
             solution.Workspace.Options =
                 solution.Workspace.Options

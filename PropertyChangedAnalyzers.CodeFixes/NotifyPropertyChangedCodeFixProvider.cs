@@ -19,7 +19,7 @@
     internal class NotifyPropertyChangedCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC002NotifyWhenPropertyChanges.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC003NotifyWhenPropertyChanges.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider() => BacthFixer.Default;
@@ -33,7 +33,7 @@
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
             var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
-            var usesUnderscoreNames = syntaxRoot.UsesUnderscoreNames();
+            var usesUnderscoreNames = syntaxRoot.UsesUnderscoreNames(semanticModel, context.CancellationToken);
 
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -66,7 +66,7 @@
                 return default(Fix);
             }
 
-            if (!diagnostic.Properties.TryGetValue(INPC002NotifyWhenPropertyChanges.PropertyNameKey, out string property))
+            if (!diagnostic.Properties.TryGetValue(INPC003NotifyWhenPropertyChanges.PropertyNameKey, out string property))
             {
                 return default(Fix);
             }
@@ -209,7 +209,7 @@
                 var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                                  .ConfigureAwait(false);
                 var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
-                var usesUnderscoreNames = syntaxRoot.UsesUnderscoreNames();
+                var usesUnderscoreNames = syntaxRoot.UsesUnderscoreNames(semanticModel, context.CancellationToken);
 
                 var diagnostics = await context.GetDocumentDiagnosticsAsync(context.Document).ConfigureAwait(false);
                 var fixes = new List<Fix>();

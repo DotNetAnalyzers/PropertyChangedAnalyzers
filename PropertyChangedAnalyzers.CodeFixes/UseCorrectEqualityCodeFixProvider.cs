@@ -18,8 +18,8 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            WPF1016UseReferenceEquals.DiagnosticId,
-            WPF1017UseObjectEqualsForReferenceTypes.DiagnosticId);
+            INPC006UseReferenceEquals.DiagnosticId,
+            INPC006UseObjectEqualsForReferenceTypes.DiagnosticId);
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 

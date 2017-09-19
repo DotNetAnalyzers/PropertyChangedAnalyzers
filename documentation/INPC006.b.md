@@ -21,7 +21,7 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="missing">INPC006UseObjectEqualsForReferenceTypes</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/PropertyChanged/INPC006UseObjectEqualsForReferenceTypes.cs">INPC006UseObjectEqualsForReferenceTypes</a></td>
 </tr>
 </table>
 <!-- end generated table -->
@@ -32,11 +32,47 @@ Check if value is different using object.Equals before notifying.
 
 ## Motivation
 
-ADD MOTIVATION HERE
+This is a convenience analyzer if you want to make sure to use Equals before notifying for reference types.
+Note that INPC006 must be disabled for when this rule is used.
+This rule is disabled by default.
+
+```c#
+public Foo Bar
+{
+    get { return this.bar; }
+    set
+    {
+        if (ReferenceEquals(value, this.bar))
+        {
+            return;
+        }
+
+        this.bar = value;
+        this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+    }
+}
+```
 
 ## How to fix violations
 
-ADD HOW TO FIX VIOLATIONS HERE
+Use the code fix or manually change to using Equals
+
+```c#
+public Foo Bar
+{
+    get { return this.bar; }
+    set
+    {
+        if (Equals(value, this.bar))
+        {
+            return;
+        }
+
+        this.bar = value;
+        this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+    }
+}
+```
 
 <!-- start generated config severity -->
 ## Configure severity

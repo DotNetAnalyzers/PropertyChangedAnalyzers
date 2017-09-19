@@ -1,6 +1,7 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -100,7 +101,7 @@
                 accessibility: type.IsSealed ? Accessibility.Private : Accessibility.Protected,
                 modifiers: type.IsSealed ? DeclarationModifiers.None : DeclarationModifiers.Virtual,
                 parameters: InvokerParameters,
-                statements: typeDeclaration.UsesUnderscoreNames() ? PropertyChangedInvokeStatements : ThisPropertyChangedInvokeStatements);
+                statements: typeDeclaration.UsesUnderscoreNames(null, CancellationToken.None) ? PropertyChangedInvokeStatements : ThisPropertyChangedInvokeStatements);
 
             if (typeDeclaration.Members.TryGetFirst(
                        x =>

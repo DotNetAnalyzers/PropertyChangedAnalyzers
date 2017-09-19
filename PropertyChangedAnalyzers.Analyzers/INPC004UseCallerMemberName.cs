@@ -7,9 +7,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF1013UseCallerMemberName : DiagnosticAnalyzer
+    internal class INPC004UseCallerMemberName : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF1013";
+        public const string DiagnosticId = "INPC004";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

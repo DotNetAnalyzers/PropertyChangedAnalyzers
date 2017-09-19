@@ -8,9 +8,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF1015CheckIfDifferentBeforeNotifying : DiagnosticAnalyzer
+    internal class INPC005CheckIfDifferentBeforeNotifying : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF1015";
+        public const string DiagnosticId = "INPC005";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

@@ -1,5 +1,5 @@
 # INPC002
-## Notify when property changes.
+## Mutable public property should notify.
 
 <!-- start generated table -->
 <table>
@@ -21,68 +21,36 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/PropertyChanged/INPC002NotifyWhenPropertyChanges.cs">INPC002NotifyWhenPropertyChanges</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/PropertyChanged/INPC002MutablePublicPropertyShouldNotify.cs">INPC002MutablePublicPropertyShouldNotify</a></td>
 </tr>
 </table>
 <!-- end generated table -->
 
 ## Description
 
-Notify when property changes.
+All mutable public properties should notify when their value changes.
 
 ## Motivation
 
-In the following example the setter for `FirstName` and `LastName` should notify about that the calculated property `FullName` changes.
+Properties not notifying when their value changes is a common source of bugs in WPF.
+It results in bindings not working.
+*actually bindings can work any way but it is fragile to rely on it. Also always nice to be explicit about what the code is meant to do.
 
-```c#
+In the following example the Value property is updated but does not notify. This would mean that if there is a view binding to Value it will not update as it should.
+
+```C#
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-public class ViewModel : INotifyPropertyChanged
+public class MyViewModel : INotifyPropertyChanged
 {
-    private string firstName;
-    private string lastName;
-
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public string FullName => $""{this.FirstName} {this.LastName}"";
+    public int Value { get; private set; }
 
-    public string FirstName
+    public void Update()
     {
-        get
-        {
-            return this.firstName;
-        }
-
-        set
-        {
-            if (value == this.firstName)
-            {
-                return;
-            }
-
-            this.firstName = value;
-            this.OnPropertyChanged();
-        }
-    }
-
-    public string LastName
-    {
-        get
-        {
-            return this.lastName;
-        }
-
-        set
-        {
-            if (value == this.lastName)
-            {
-                return;
-            }
-
-            this.lastName = value;
-            this.OnPropertyChanged();
-        }
+        this.Value++;
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -94,60 +62,50 @@ public class ViewModel : INotifyPropertyChanged
 
 ## How to fix violations
 
-Use the code fix or manually change the code so that it notifies:
+Fix the warning by either
 
-```c#
-```c#
+a) Make the property get-only:
+
+```C#
+public class MyViewModel
+{
+    public int Value { get; } = 5;
+}
+```
+
+b) Raise property changed when the property changes:
+
+```C#
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-public class ViewModel : INotifyPropertyChanged
+public class MyViewModel : INotifyPropertyChanged
 {
-    private string firstName;
-    private string lastName;
+    private int value;
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public string FullName => $""{this.FirstName} {this.LastName}"";
-
-    public string FirstName
+    public int Value
     {
         get
         {
-            return this.firstName;
+            return this.value;
         }
-
-        set
+        private set
         {
-            if (value == this.firstName)
+            if (value == this.value)
             {
                 return;
             }
 
-            this.firstName = value;
+            this.value = value;
             this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
         }
     }
 
-    public string LastName
+    public void Update()
     {
-        get
-        {
-            return this.lastName;
-        }
-
-        set
-        {
-            if (value == this.lastName)
-            {
-                return;
-            }
-
-            this.lastName = value;
-            this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
-        }
+        this.Value++;
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -166,21 +124,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC002 // Notify when property changes.
+#pragma warning disable INPC002 // Mutable public property should notify.
 Code violating the rule here
-#pragma warning restore INPC002 // Notify when property changes.
+#pragma warning restore INPC002 // Mutable public property should notify.
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC002 // Notify when property changes.
+#pragma warning disable INPC002 // Mutable public property should notify.
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC002:Notify when property changes.", 
+    "INPC002:Mutable public property should notify.", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->
