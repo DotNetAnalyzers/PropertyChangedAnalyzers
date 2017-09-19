@@ -99,5 +99,83 @@ namespace RoslynSandBox
             var property = syntaxTree.PropertyDeclarationSyntax(code);
             Assert.AreEqual(expected, Property.IsLazy(property, semanticModel, CancellationToken.None));
         }
+
+        [TestCase("Value1", false, null)]
+        [TestCase("Value2", false, null)]
+        [TestCase("Value3", false, null)]
+        [TestCase("Value4", false, null)]
+        [TestCase("Value5", true, "value5")]
+        [TestCase("Value6", true, "value6")]
+        public void TryGetBackingField(string propertyName, bool expected, string field)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandBox
+{
+    using System;
+
+    public class Foo
+    {
+        private readonly int value3;
+        private readonly int value4;
+        private int value5;
+        private int value6;
+
+        public int Value1 { get; }
+
+        public int Value2 { get; set; }
+
+        public int Value3 => this.value3;
+
+        public int Value4
+        {
+            get
+            {
+                return this.value4;
+            }
+        }
+
+        public int Value5
+        {
+            get { return this.value5; }
+            set { this.value5 = value; }
+        }
+
+        public int Value6
+        {
+            get => this.value6;
+            set => this.value6 = value;
+        }
+    }
+}");
+            var property = syntaxTree.PropertyDeclarationSyntax(propertyName);
+            Assert.AreEqual(expected, Property.TryGetBackingField(property, out var identifier, out var declaration));
+            Assert.AreEqual(field, identifier?.Identifier.Text);
+            Assert.AreEqual(field, declaration?.Name());
+        }
+
+        [Test]
+        public void TryGetBackingFieldExpressionBodyAccessor()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandBox
+{
+    using System;
+
+    public class Foo
+    {
+        private int value;
+
+        public int Value
+        {
+            get => this.value;
+            set => this.value = value;
+        }
+    }
+}");
+            var property = syntaxTree.PropertyDeclarationSyntax("Value");
+            Assert.AreEqual(true, Property.TryGetBackingField(property, out var identifier, out var declaration));
+            Assert.AreEqual("value", identifier?.Identifier.Text);
+            Assert.AreEqual("value", declaration?.Name());
+        }
     }
 }

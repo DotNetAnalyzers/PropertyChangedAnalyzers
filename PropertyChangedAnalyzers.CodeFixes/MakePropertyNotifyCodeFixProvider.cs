@@ -76,37 +76,14 @@
                 return context.Document;
             }
 
-            var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
             var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
             var fieldAccess = "missing";
             if (Property.IsMutableAutoProperty(propertyDeclaration))
             {
-                var declaredSymbol = (INamedTypeSymbol)editor.SemanticModel.GetDeclaredSymbolSafe(classDeclaration, cancellationToken);
-                var name = usesUnderscoreNames
-                    ? $"_{property.Name.ToFirstCharLower()}"
-                    : property.Name.ToFirstCharLower();
-                while (declaredSymbol.MemberNames.Contains(name))
-                {
-                    name += "_";
-                }
-
+                var backingField = editor.AddBackingField(propertyDeclaration, usesUnderscoreNames, cancellationToken);
                 fieldAccess = usesUnderscoreNames
-                    ? name
-                    : "this." + name;
-
-                var backingField = (FieldDeclarationSyntax) editor.Generator.FieldDeclaration(
-                    name,
-                    accessibility: Accessibility.Private,
-                    modifiers: DeclarationModifiers.None,
-                    type: propertyDeclaration.Type,
-                    initializer: propertyDeclaration.Initializer?.Value);
-                var index = classDeclaration.Members.IndexOf(propertyDeclaration);
-                for (int i = index; i < classDeclaration.Members.Count; i++)
-                {
-                    if(classDeclaration.Members[i] is PropertyDeclarationSyntax 
-                }
-
-                editor.AddField(classDeclaration, backingField);
+                    ? backingField.Name()
+                    : $"this.{backingField.Name()}";
             }
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var field))

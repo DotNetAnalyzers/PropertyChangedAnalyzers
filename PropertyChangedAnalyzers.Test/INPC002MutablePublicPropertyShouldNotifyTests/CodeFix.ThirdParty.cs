@@ -1,6 +1,5 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
-    using System.Threading.Tasks;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
@@ -9,7 +8,7 @@
         internal class ThirdParty
         {
             [Test]
-            public async Task AutoPropertyMvvmFramework()
+            public void AutoPropertyMvvmFramework()
             {
                 var testCode = @"
 namespace RoslynSandbox

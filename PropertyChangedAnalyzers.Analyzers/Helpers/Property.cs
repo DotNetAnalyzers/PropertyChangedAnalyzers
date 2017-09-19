@@ -187,8 +187,7 @@ property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter)))
                 return false;
             }
 
-            if (property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter) &&
-    setter.Body != null)
+            if (property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter))
             {
                 using (var pooled = AssignmentWalker.Create(setter))
                 {

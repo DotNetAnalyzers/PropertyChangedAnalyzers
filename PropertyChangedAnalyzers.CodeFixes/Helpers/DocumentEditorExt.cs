@@ -10,73 +10,60 @@ namespace PropertyChangedAnalyzers
 
     internal static class DocumentEditorExt
     {
-        internal static FieldDeclarationSyntax AddField(
-            this DocumentEditor editor,
-            TypeDeclarationSyntax containingType,
-            string name,
-            Accessibility accessibility,
-            DeclarationModifiers modifiers,
-            ITypeSymbol type,
-            CancellationToken cancellationToken)
+        internal static FieldDeclarationSyntax AddBackingField(this DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
-            return AddField(
-                editor,
-                containingType,
-                name,
-                accessibility,
-                modifiers,
-                SyntaxFactory.ParseTypeName(type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)),
-                cancellationToken);
-        }
-
-        internal static FieldDeclarationSyntax AddField(
-            this DocumentEditor editor,
-            TypeDeclarationSyntax containingType,
-            string name,
-            Accessibility accessibility,
-            DeclarationModifiers modifiers,
-            TypeSyntax type,
-            CancellationToken cancellationToken)
-        {
-            var declaredSymbol = (INamedTypeSymbol)editor.SemanticModel.GetDeclaredSymbolSafe(containingType, cancellationToken);
-            while (declaredSymbol.MemberNames.Contains(name))
+            var property = editor.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+            var name = usesUnderscoreNames
+                ? $"_{property.Name.ToFirstCharLower()}"
+                : property.Name.ToFirstCharLower();
+            while (property.ContainingType.MemberNames.Any(x => x == name))
             {
                 name += "_";
             }
 
-            var newField = (FieldDeclarationSyntax)editor.Generator.FieldDeclaration(
+            var backingField = (FieldDeclarationSyntax)editor.Generator.FieldDeclaration(
                 name,
-                accessibility: accessibility,
-                modifiers: modifiers,
-                type: type);
-            editor.AddField(containingType, newField);
-            return newField;
-        }
+                accessibility: Accessibility.Private,
+                modifiers: DeclarationModifiers.None,
+                type: propertyDeclaration.Type,
+                initializer: propertyDeclaration.Initializer?.Value);
+            var type = propertyDeclaration.FirstAncestorOrSelf<TypeDeclarationSyntax>();
 
-        internal static FieldDeclarationSyntax AddField(
-            this DocumentEditor editor,
-            TypeDeclarationSyntax containingType,
-            string name,
-            Accessibility accessibility,
-            DeclarationModifiers modifiers,
-            TypeSyntax type,
-            ExpressionSyntax initializedValue,
-            CancellationToken cancellationToken)
-        {
-            var declaredSymbol = (INamedTypeSymbol)editor.SemanticModel.GetDeclaredSymbolSafe(containingType, cancellationToken);
-            while (declaredSymbol.MemberNames.Contains(name))
+            var index = type.Members.IndexOf(propertyDeclaration);
+            for (var i = index + 1; i < type.Members.Count; i++)
             {
-                name += "_";
+                if (type.Members[i] is PropertyDeclarationSyntax other)
+                {
+                    if (Property.TryGetBackingField(other, out _, out var field))
+                    {
+                        editor.InsertBefore(field, backingField);
+                        return backingField;
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
 
-            var newField = (FieldDeclarationSyntax)editor.Generator.FieldDeclaration(
-                name,
-                accessibility: accessibility,
-                modifiers: modifiers,
-                type: type,
-                initializer: initializedValue);
-            editor.AddField(containingType, newField);
-            return newField;
+            for (int i = index - 1; i >= 0; i--)
+            {
+                if (type.Members[i] is PropertyDeclarationSyntax other)
+                {
+                    if (Property.TryGetBackingField(other, out _, out var field))
+                    {
+                        editor.InsertBefore(field, backingField);
+                        return backingField;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            editor.AddField(type, backingField);
+            return backingField;
         }
 
         internal static DocumentEditor AddField(this DocumentEditor editor, TypeDeclarationSyntax containingType, FieldDeclarationSyntax field)

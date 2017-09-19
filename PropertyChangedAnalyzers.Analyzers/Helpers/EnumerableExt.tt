@@ -1,0 +1,136 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension="generated.txt" #>
+namespace PropertyChangedAnalyzers
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Text;
+
+    internal static partial class EnumerableExt
+    {
+<#
+    var typeNames = new Dictionary<string, string>
+    {
+        { "IReadOnlyList<T>", "T" },
+        { "ImmutableArray<T>", "T" },
+        { "ChildSyntaxList", "SyntaxNodeOrToken" },
+        { "SeparatedSyntaxList<T>", "T" },
+        { "SyntaxList<T>", "T" },
+        { "SyntaxNodeOrTokenList", "SyntaxNodeOrToken" },
+        { "SyntaxTokenList", "SyntaxToken" },
+        { "SyntaxTriviaList", "SyntaxTrivia" },
+    };
+
+    foreach(var kvp in typeNames)
+    {
+        var colName = kvp.Key;
+        var itemName = kvp.Value;
+#>
+
+        internal static bool TryGetAtIndex<<#= itemName #>>(this <#= colName #> source, int index, out <#= itemName #> result)
+        {
+            result = default(<#= itemName #>);
+            if (source == null)
+            {
+                return false;
+            }
+
+            if (source.Count <= index)
+            {
+                return false;
+            }
+
+            result = source[index];
+            return true;
+        }
+
+        internal static bool TryGetSingle<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)
+        {
+            if (source.Count == 1)
+            {
+                result = source[0];
+                return true;
+            }
+
+            result = default(<#= itemName #>);
+            return false;
+        }
+
+        internal static bool TryGetSingle<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)
+        {
+            foreach (var item in source)
+            {
+                if (selector(item))
+                {
+                    result = item;
+                    return true;
+                }
+            }
+
+            result = default(<#= itemName #>);
+            return false;
+        }
+
+        internal static bool TryGetFirst<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)
+        {
+            if (source.Count == 0)
+            {
+                result = default(<#= itemName #>);
+                return false;
+            }
+
+            result = source[0];
+            return true;
+        }
+
+        internal static bool TryGetFirst<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)
+        {
+            foreach (var item in source)
+            {
+                if (selector(item))
+                {
+                    result = item;
+                    return true;
+                }
+            }
+
+            result = default(<#= itemName #>);
+            return false;
+        }
+
+        internal static bool TryGetLast<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)
+        {
+            if (source.Count == 0)
+            {
+                result = default(<#= itemName #>);
+                return false;
+            }
+
+            result = source[source.Count - 1];
+            return true;
+        }
+
+        internal static bool TryGetLast<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)
+        {
+            for (var i = source.Count - 1; i >= 0; i--)
+            {
+                var item = source[i];
+                if (selector(item))
+                {
+                    result = item;
+                    return true;
+                }
+            }
+
+            result = default(<#= itemName #>);
+            return false;
+        }
+<#  }    #>
+    }
+}

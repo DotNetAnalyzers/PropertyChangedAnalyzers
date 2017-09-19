@@ -70,7 +70,6 @@
                                 cancellationToken =>
                                     SubclassMvvmLightViewModelBaseAsync(
                                         context,
-                                        semanticModel,
                                         classDeclaration,
                                         cancellationToken),
                                 this.GetType().FullName + "Subclass GalaSoft.MvvmLight.ViewModelBase"),
@@ -152,7 +151,7 @@
             return editor.GetChangedDocument();
         }
 
-        private static async Task<Document> SubclassMvvmLightViewModelBaseAsync(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
+        private static async Task<Document> SubclassMvvmLightViewModelBaseAsync(CodeFixContext context, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);

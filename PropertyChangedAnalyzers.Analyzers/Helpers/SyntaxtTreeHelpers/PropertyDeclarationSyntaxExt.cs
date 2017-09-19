@@ -1,5 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers
 {
+    using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -32,6 +33,22 @@
                     result = accessor;
                     return true;
                 }
+            }
+
+            if (accessors.Value.Count == 1 &&
+                ((CSharpParseOptions)property.SyntaxTree.Options).LanguageVersion >= LanguageVersion.CSharp6)
+            {
+                var node = accessors.Value[0];
+                throw new NotImplementedException();
+               //if( node.DescendantNodes(x=> x.IsKind(SyntaxKind.GetKeyword)).TryGetFirst(out var get)
+               // {
+                    
+               // }
+               // if (node.ChildNodes().TryGetSingle(out SyntaxNode c1) &&
+               //     c1.ChildNodes().TryGetAtIndex(1, out setter))
+               // {
+                    
+               // }
             }
 
             return false;

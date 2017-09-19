@@ -8,7 +8,6 @@ namespace PropertyChangedAnalyzers
     /// </summary>
     internal static class AnalyzerCategory
     {
-        internal const string DependencyProperties = "PropertyChangedAnalyzers.DependencyProperties";
         internal const string PropertyChanged = "PropertyChangedAnalyzers.PropertyChanged";
     }
 }
