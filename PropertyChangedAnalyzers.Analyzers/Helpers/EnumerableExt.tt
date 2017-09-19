@@ -15,25 +15,26 @@ namespace PropertyChangedAnalyzers
     internal static partial class EnumerableExt
     {
 <#
-    var typeNames = new Dictionary<string, string>
+    var typeNames = new Data[]
     {
-        { "IReadOnlyList<T>", "T" },
-        { "ImmutableArray<T>", "T" },
-        { "ChildSyntaxList", "SyntaxNodeOrToken" },
-        { "SeparatedSyntaxList<T>", "T" },
-        { "SyntaxList<T>", "T" },
-        { "SyntaxNodeOrTokenList", "SyntaxNodeOrToken" },
-        { "SyntaxTokenList", "SyntaxToken" },
-        { "SyntaxTriviaList", "SyntaxTrivia" },
+        new Data("IReadOnlyList<T>", "T", null),
+        new Data("ImmutableArray<T>", "T", null),
+        new Data("ChildSyntaxList", "SyntaxNodeOrToken", null),
+        new Data("SeparatedSyntaxList<T>", "T", "SyntaxNode"),
+        new Data("SyntaxList<T>", "T", "SyntaxNode"),
+        new Data("SyntaxNodeOrTokenList", "SyntaxNodeOrToken", null),
+        new Data("SyntaxTokenList", "SyntaxToken", null),
+        new Data("SyntaxTriviaList", "SyntaxTrivia", null),
     };
 
-    foreach(var kvp in typeNames)
+    foreach(var types in typeNames)
     {
-        var colName = kvp.Key;
-        var itemName = kvp.Value;
+        var colName = types.CollectionType;
+        var itemName = types.ItemType;
+        var constraint = types.Constraint;
 #>
 
-        internal static bool TryGetAtIndex<<#= itemName #>>(this <#= colName #> source, int index, out <#= itemName #> result)
+        internal static bool TryGetAtIndex<<#= itemName #>>(this <#= colName #> source, int index, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
             if (source == null)
@@ -50,7 +51,7 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool TryGetSingle<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)
+        internal static bool TryGetSingle<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             if (source.Count == 1)
             {
@@ -62,7 +63,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetSingle<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)
+        internal static bool TryGetSingle<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             foreach (var item in source)
             {
@@ -77,7 +78,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetFirst<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)
+        internal static bool TryGetFirst<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             if (source.Count == 0)
             {
@@ -89,7 +90,7 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool TryGetFirst<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)
+        internal static bool TryGetFirst<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             foreach (var item in source)
             {
@@ -104,7 +105,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetLast<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)
+        internal static bool TryGetLast<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             if (source.Count == 0)
             {
@@ -116,7 +117,7 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool TryGetLast<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)
+        internal static bool TryGetLast<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             for (var i = source.Count - 1; i >= 0; i--)
             {
@@ -134,3 +135,20 @@ namespace PropertyChangedAnalyzers
 <#  }    #>
     }
 }
+<#+
+internal class Data
+{
+    public readonly string CollectionType;
+    public readonly string ItemType;
+    public readonly string Constraint;
+
+    public Data(string collectionType, string itemType, string constraint)
+    {
+        this.CollectionType = collectionType;
+        this.ItemType = itemType;
+        this.Constraint = string.IsNullOrEmpty(constraint)
+            ? string.Empty
+            : "\r\n            where T: " + constraint;
+    }
+}
+#>

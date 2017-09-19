@@ -95,7 +95,7 @@
         }
 
         internal static bool TryGetLast<TCollection, TItem>(this TCollection source, Func<TItem, bool> selector, out TItem result)
-     where TCollection : IReadOnlyList<TItem>
+            where TCollection : IReadOnlyList<TItem>
         {
             for (var i = source.Count - 1; i >= 0; i--)
             {

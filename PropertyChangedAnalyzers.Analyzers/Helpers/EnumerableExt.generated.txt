@@ -307,6 +307,7 @@
         }
 
         internal static bool TryGetAtIndex<T>(this SeparatedSyntaxList<T> source, int index, out T result)
+            where T: SyntaxNode
         {
             result = default(T);
             if (source == null)
@@ -324,6 +325,7 @@
         }
 
         internal static bool TryGetSingle<T>(this SeparatedSyntaxList<T> source, out T result)
+            where T: SyntaxNode
         {
             if (source.Count == 1)
             {
@@ -336,6 +338,7 @@
         }
 
         internal static bool TryGetSingle<T>(this SeparatedSyntaxList<T> source, Func<T, bool> selector, out T result)
+            where T: SyntaxNode
         {
             foreach (var item in source)
             {
@@ -351,6 +354,7 @@
         }
 
         internal static bool TryGetFirst<T>(this SeparatedSyntaxList<T> source, out T result)
+            where T: SyntaxNode
         {
             if (source.Count == 0)
             {
@@ -363,6 +367,7 @@
         }
 
         internal static bool TryGetFirst<T>(this SeparatedSyntaxList<T> source, Func<T, bool> selector, out T result)
+            where T: SyntaxNode
         {
             foreach (var item in source)
             {
@@ -378,6 +383,7 @@
         }
 
         internal static bool TryGetLast<T>(this SeparatedSyntaxList<T> source, out T result)
+            where T: SyntaxNode
         {
             if (source.Count == 0)
             {
@@ -390,6 +396,7 @@
         }
 
         internal static bool TryGetLast<T>(this SeparatedSyntaxList<T> source, Func<T, bool> selector, out T result)
+            where T: SyntaxNode
         {
             for (var i = source.Count - 1; i >= 0; i--)
             {
@@ -406,6 +413,7 @@
         }
 
         internal static bool TryGetAtIndex<T>(this SyntaxList<T> source, int index, out T result)
+            where T: SyntaxNode
         {
             result = default(T);
             if (source == null)
@@ -423,6 +431,7 @@
         }
 
         internal static bool TryGetSingle<T>(this SyntaxList<T> source, out T result)
+            where T: SyntaxNode
         {
             if (source.Count == 1)
             {
@@ -435,6 +444,7 @@
         }
 
         internal static bool TryGetSingle<T>(this SyntaxList<T> source, Func<T, bool> selector, out T result)
+            where T: SyntaxNode
         {
             foreach (var item in source)
             {
@@ -450,6 +460,7 @@
         }
 
         internal static bool TryGetFirst<T>(this SyntaxList<T> source, out T result)
+            where T: SyntaxNode
         {
             if (source.Count == 0)
             {
@@ -462,6 +473,7 @@
         }
 
         internal static bool TryGetFirst<T>(this SyntaxList<T> source, Func<T, bool> selector, out T result)
+            where T: SyntaxNode
         {
             foreach (var item in source)
             {
@@ -477,6 +489,7 @@
         }
 
         internal static bool TryGetLast<T>(this SyntaxList<T> source, out T result)
+            where T: SyntaxNode
         {
             if (source.Count == 0)
             {
@@ -489,6 +502,7 @@
         }
 
         internal static bool TryGetLast<T>(this SyntaxList<T> source, Func<T, bool> selector, out T result)
+            where T: SyntaxNode
         {
             for (var i = source.Count - 1; i >= 0; i--)
             {
