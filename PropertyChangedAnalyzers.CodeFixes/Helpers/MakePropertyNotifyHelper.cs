@@ -230,38 +230,51 @@ namespace PropertyChangedAnalyzers
                 diagnosticOptions);
         }
 
-        internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, ExpressionSyntax fieldAccess, IPropertySymbol property, ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
+        internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(
+            this SyntaxGenerator syntaxGenerator, ExpressionSyntax fieldAccess, IPropertySymbol property,
+            ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
-            if (!property.Type.IsReferenceType || property.Type == KnownSymbol.String)
+            if (!property.Type.IsReferenceType ||
+                property.Type == KnownSymbol.String)
             {
-                if (HasEqualityOperator(property.Type))
+                if (Equality.HasEqualityOperator(property.Type))
                 {
                     var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
                         SyntaxFactory.ParseName("value"),
                         fieldAccess);
-                    return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+                    return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                        valueEqualsExpression,
+                        new[] {SyntaxFactory.ReturnStatement()});
                 }
 
                 foreach (var equals in property.Type.GetMembers("Equals"))
                 {
                     var method = equals as IMethodSymbol;
-                    if (method?.Parameters.Length == 1 && ReferenceEquals(method.Parameters[0].Type, property.Type))
+                    if (method?.Parameters.Length == 1 &&
+                        ReferenceEquals(
+                            method.Parameters[0]
+                                  .Type,
+                            property.Type))
                     {
                         var equalsExpression = syntaxGenerator.InvocationExpression(
-                                SyntaxFactory.ParseExpression("value.Equals"),
+                            SyntaxFactory.ParseExpression("value.Equals"),
                             fieldAccess);
-                        return (IfStatementSyntax)syntaxGenerator.IfStatement(equalsExpression, new[] { SyntaxFactory.ReturnStatement() });
+                        return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                            equalsExpression,
+                            new[] {SyntaxFactory.ReturnStatement()});
                     }
                 }
 
                 if (property.Type.Name == "Nullable")
                 {
-                    if (HasEqualityOperator(((INamedTypeSymbol)property.Type).TypeArguments[0]))
+                    if (Equality.HasEqualityOperator(((INamedTypeSymbol) property.Type).TypeArguments[0]))
                     {
                         var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
                             SyntaxFactory.ParseName("value"),
                             fieldAccess);
-                        return (IfStatementSyntax)syntaxGenerator.IfStatement(valueEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+                        return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                            valueEqualsExpression,
+                            new[] {SyntaxFactory.ReturnStatement()});
                     }
 
                     var nullableEquals = syntaxGenerator.InvocationExpression(
@@ -269,7 +282,9 @@ namespace PropertyChangedAnalyzers
                                      .WithAdditionalAnnotations(Simplifier.Annotation),
                         SyntaxFactory.ParseName("value"),
                         fieldAccess);
-                    return (IfStatementSyntax)syntaxGenerator.IfStatement(nullableEquals, new[] { SyntaxFactory.ReturnStatement() });
+                    return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                        nullableEquals,
+                        new[] {SyntaxFactory.ReturnStatement()});
                 }
 
                 var comparerEquals = syntaxGenerator.InvocationExpression(
@@ -278,14 +293,18 @@ namespace PropertyChangedAnalyzers
                                  .WithAdditionalAnnotations(Simplifier.Annotation),
                     SyntaxFactory.ParseName("value"),
                     fieldAccess);
-                return (IfStatementSyntax)syntaxGenerator.IfStatement(comparerEquals, new[] { SyntaxFactory.ReturnStatement() });
+                return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                    comparerEquals,
+                    new[] {SyntaxFactory.ReturnStatement()});
             }
 
             var referenceEqualsExpression = syntaxGenerator.InvocationExpression(
                 ReferenceTypeEquality(diagnosticOptions),
                 SyntaxFactory.ParseName("value"),
                 fieldAccess);
-            return (IfStatementSyntax)syntaxGenerator.IfStatement(referenceEqualsExpression, new[] { SyntaxFactory.ReturnStatement() });
+            return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                referenceEqualsExpression,
+                new[] {SyntaxFactory.ReturnStatement()});
         }
 
         internal static ExpressionSyntax ReferenceTypeEquality(ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
@@ -296,52 +315,8 @@ namespace PropertyChangedAnalyzers
             }
 
             return setting == ReportDiagnostic.Suppress
-                       ? SyntaxFactory.ParseExpression(nameof(Equals))
-                       : SyntaxFactory.ParseExpression(nameof(ReferenceEquals));
-        }
-
-        private static bool HasEqualityOperator(ITypeSymbol type)
-        {
-            switch (type.SpecialType)
-            {
-                case SpecialType.System_Enum:
-                case SpecialType.System_Boolean:
-                case SpecialType.System_Char:
-                case SpecialType.System_SByte:
-                case SpecialType.System_Byte:
-                case SpecialType.System_Int16:
-                case SpecialType.System_UInt16:
-                case SpecialType.System_Int32:
-                case SpecialType.System_UInt32:
-                case SpecialType.System_Int64:
-                case SpecialType.System_UInt64:
-                case SpecialType.System_Decimal:
-                case SpecialType.System_Single:
-                case SpecialType.System_Double:
-                case SpecialType.System_String:
-                case SpecialType.System_IntPtr:
-                case SpecialType.System_UIntPtr:
-                case SpecialType.System_DateTime:
-                    return true;
-            }
-
-            if (type.TypeKind == TypeKind.Enum)
-            {
-                return true;
-            }
-
-            foreach (var op in type.GetMembers("op_Equality"))
-            {
-                var opMethod = op as IMethodSymbol;
-                if (opMethod?.Parameters.Length == 2 &&
-                    type.Equals(opMethod.Parameters[0].Type) &&
-                    type.Equals(opMethod.Parameters[1].Type))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+                ? SyntaxFactory.ParseExpression(nameof(Equals))
+                : SyntaxFactory.ParseExpression(nameof(ReferenceEquals));
         }
 
         private static ExpressionStatementSyntax AssignValueToBackingField(this SyntaxGenerator syntaxGenerator, string fieldName)
@@ -381,16 +356,6 @@ namespace PropertyChangedAnalyzers
             }
 
             return false;
-        }
-
-        private static string ToFirstCharLower(this string text)
-        {
-            if (char.IsLower(text[0]))
-            {
-                return text;
-            }
-
-            return new string(char.ToLower(text[0]), 1) + text.Substring(1);
         }
     }
 }

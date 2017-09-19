@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -22,7 +22,13 @@ namespace RoslynSandbox
 {
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
-        public int Bar { get; set; }
+        private int value;
+
+        public int Value
+        {
+            get => value;
+            set => this.Set(ref this.value, value);
+        }
     }
 }";
 

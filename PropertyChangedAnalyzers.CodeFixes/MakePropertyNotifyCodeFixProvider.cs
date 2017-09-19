@@ -6,6 +6,7 @@
     using System.Composition;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
@@ -46,36 +47,74 @@
                     continue;
                 }
 
-                var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
                 var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
 
-                if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out IMethodSymbol invoker) &&
-                    invoker.Parameters[0].Type == KnownSymbol.String)
+                if (Property.IsMutableAutoProperty(propertyDeclaration) ||
+                    IsSimpleAssignmentOnly(propertyDeclaration, out _, out _))
                 {
-                    var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
-                    var fix = CreateFix(
-                        syntaxGenerator,
-                        propertyDeclaration,
-                        property,
-                        invoker,
-                        context.Document.Project.CompilationOptions.SpecificDiagnosticOptions);
-
-                    if (fix.NotifyingProperty == propertyDeclaration)
+                    if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out IMethodSymbol invoker) &&
+                        invoker.Parameters[0].Type == KnownSymbol.String)
                     {
-                        continue;
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Convert to notifying property.",
+                                cancellationToken => MakeNotifyAsync(context, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                this.GetType().FullName),
+                            diagnostic);
                     }
-
-                    var updatedTypeDeclaration = typeDeclaration.ReplaceNode(propertyDeclaration, fix.NotifyingProperty)
-                                                                .WithBackingField(syntaxGenerator, fix.BackingField, fix.NotifyingProperty);
-
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "Convert to notifying property.",
-                            _ => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(typeDeclaration, new[] { updatedTypeDeclaration }))),
-                            this.GetType().FullName),
-                        diagnostic);
                 }
             }
+        }
+
+        private static async Task<Document> MakeNotifyAsync(CodeFixContext context, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
+                                             .ConfigureAwait(false);
+            var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            if (classDeclaration == null)
+            {
+                return context.Document;
+            }
+
+            var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+            var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+            var fieldAccess = "missing";
+            if (Property.IsMutableAutoProperty(propertyDeclaration))
+            {
+                var declaredSymbol = (INamedTypeSymbol)editor.SemanticModel.GetDeclaredSymbolSafe(classDeclaration, cancellationToken);
+                var name = usesUnderscoreNames
+                    ? $"_{property.Name.ToFirstCharLower()}"
+                    : property.Name.ToFirstCharLower();
+                while (declaredSymbol.MemberNames.Contains(name))
+                {
+                    name += "_";
+                }
+
+                fieldAccess = usesUnderscoreNames
+                    ? name
+                    : "this." + name;
+
+                var backingField = (FieldDeclarationSyntax) editor.Generator.FieldDeclaration(
+                    name,
+                    accessibility: Accessibility.Private,
+                    modifiers: DeclarationModifiers.None,
+                    type: propertyDeclaration.Type,
+                    initializer: propertyDeclaration.Initializer?.Value);
+                var index = classDeclaration.Members.IndexOf(propertyDeclaration);
+                for (int i = index; i < classDeclaration.Members.Count; i++)
+                {
+                    if(classDeclaration.Members[i] is PropertyDeclarationSyntax 
+                }
+
+                editor.AddField(classDeclaration, backingField);
+            }
+
+            if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var field))
+            {
+                fieldAccess = field.ToFullString();
+            }
+
+            return context.Document;
         }
 
         private static Fix CreateFix(

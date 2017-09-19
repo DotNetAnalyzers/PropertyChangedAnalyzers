@@ -33,6 +33,7 @@ namespace RoslynSandbox
     }
 }";
             AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -87,6 +88,7 @@ namespace RoslynSandbox
     }
 }";
             AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -141,6 +143,7 @@ namespace RoslynSandbox
     }
 }";
             AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
@@ -195,6 +198,7 @@ namespace RoslynSandbox
     }
 }";
             AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0246", testCode, fixedCode);
+
         }
 
         [Test]

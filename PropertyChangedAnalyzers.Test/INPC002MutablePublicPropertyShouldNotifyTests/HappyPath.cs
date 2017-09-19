@@ -3,7 +3,7 @@
     using System.Threading.Tasks;
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<INPC002MutablePublicPropertyShouldNotify>
+    internal partial class HappyPath : HappyPathVerifier<INPC002MutablePublicPropertyShouldNotify>
     {
         [TestCase("null")]
         [TestCase("string.Empty")]

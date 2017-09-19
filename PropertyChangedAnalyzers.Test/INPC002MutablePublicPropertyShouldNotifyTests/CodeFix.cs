@@ -1,131 +1,136 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
-    using System.Diagnostics.CodeAnalysis;
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFix : CodeFixVerifier<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>
+    internal partial class CodeFix
     {
         [Test]
-        public async Task AutoPropertyExplicitName()
+        public void AutoPropertyExplicitName()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
 
-    ↓public int Bar { get; set; }
-
-    protected virtual void OnPropertyChanged(string propertyName)
+    public class Foo : INotifyPropertyChanged
     {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Bar { get; set; }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int bar;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.bar;
-        }
+        private int bar;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
         {
-            if (value == this.bar)
+            get
             {
-                return;
+                return this.bar;
             }
 
-            this.bar = value;
-            this.OnPropertyChanged(nameof(this.Bar));
+            set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(nameof(this.Bar));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyCallerMemberNameName()
+        public void AutoPropertyCallerMemberName()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    ↓public int Bar { get; set; }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public class Foo : INotifyPropertyChanged
     {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Bar { get; set; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int bar;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.bar;
-        }
+        private int bar;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
         {
-            if (value == this.bar)
+            get
             {
-                return;
+                return this.bar;
             }
 
-            this.bar = value;
-            this.OnPropertyChanged();
+            set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task CallsOnPropertyChangedCopyLocalNullcheckInvoke()
+        public void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -146,9 +151,6 @@ namespace RoslynSandbox
         }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -188,138 +190,93 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyMvvmFramework()
+        public void AutoPropertyCallerMemberNameUnderscoreNames()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using MvvmFramework;
-
-public class Foo : ViewModelBase
+namespace RoslynSandbox
 {
-    ↓public int Bar { get; set; }
-}";
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+    public class Foo : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Bar { get; set; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
 
             var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using MvvmFramework;
-
-public class Foo : ViewModelBase
+namespace RoslynSandbox
 {
-    private int bar;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public int Bar
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.bar;
-        }
+        private int _bar;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
         {
-            if (value == this.bar)
+            get
             {
-                return;
+                return _bar;
             }
 
-            this.bar = value;
-            this.OnPropertyChanged();
+            set
+            {
+                if (value == _bar)
+                {
+                    return;
+                }
+
+                _bar = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyCallerMemberNameNameUnderscoreNames()
+        public void AutoPropertyPropertyChangedEventArgs()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
 
-    ↓public int Bar { get; set; }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public class Foo : INotifyPropertyChanged
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}";
+        public event PropertyChangedEventHandler PropertyChanged;
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+        ↓public int Bar { get; set; }
 
-            var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
-{
-    private int _bar;
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar
-    {
-        get
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            return _bar;
-        }
-
-        set
-        {
-            if (value == _bar)
-            {
-                return;
-            }
-
-            _bar = value;
-            OnPropertyChanged();
+            this.PropertyChanged?.Invoke(this, e);
         }
     }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task AutoPropertyPropertyChangedEventArgs()
-        {
-            var testCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
-{
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    ↓public int Bar { get; set; }
-
-    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        this.PropertyChanged?.Invoke(this, e);
-    }
-}";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             ////            var fixedCode = @"
             ////using System.ComponentModel;
@@ -356,36 +313,35 @@ public class Foo : INotifyPropertyChanged
             ////}";
 
             // Not sure how we want this, asserting no fix for now
-            await this.VerifyCSharpFixAsync(testCode, testCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.NoFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode);
         }
 
         [Test]
-        public async Task AutoPropertyPropertyChangedEventArgsAndCallerMemberName()
+        public void AutoPropertyPropertyChangedEventArgsAndCallerMemberName()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    ↓public int Bar { get; set; }
-
-    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    public class Foo : INotifyPropertyChanged
     {
-        this.PropertyChanged?.Invoke(this, e);
-    }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        ↓public int Bar { get; set; }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             ////            var fixedCode = @"
             ////using System.ComponentModel;
@@ -427,70 +383,72 @@ public class Foo : INotifyPropertyChanged
             ////}";
 
             // Not sure how we want this, asserting no fix for now
-            await this.VerifyCSharpFixAsync(testCode, testCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.NoFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode);
         }
 
         [Test]
-        public async Task AutoPropertyPrivateSet()
+        public void AutoPropertyPrivateSet()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-     public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
 
-    ↓public int Bar { get; private set; }
-
-    protected virtual void OnPropertyChanged(string propertyName)
+    public class Foo : INotifyPropertyChanged
     {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+         public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Bar { get; private set; }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int bar;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.bar;
-        }
+        private int bar;
 
-        private set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
         {
-            if (value == this.bar)
+            get
             {
-                return;
+                return this.bar;
             }
 
-            this.bar = value;
-            this.OnPropertyChanged(nameof(this.Bar));
+            private set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(nameof(this.Bar));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyInitialized()
+        public void AutoPropertyInitialized()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -510,9 +468,6 @@ namespace RoslynSandbox
         }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("IsTrue");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -551,508 +506,538 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyGeneric()
+        public void AutoPropertyGeneric()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class ViewModel<T> : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
 
-    ↓public T Bar { get; set; }
+    public class ViewModel<T> : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        ↓public T Bar { get; set; }
+
+        protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Property 'Bar' must notify when value changes.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-
-public class ViewModel<T> : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private T bar;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public T Bar
+    public class ViewModel<T> : INotifyPropertyChanged
     {
-        get
-        {
-            return this.bar;
-        }
+        private T bar;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public T Bar
         {
-            if (System.Collections.Generic.EqualityComparer<T>.Default.Equals(value, this.bar))
+            get
             {
-                return;
+                return this.bar;
             }
 
-            this.bar = value;
-            this.OnPropertyChanged(nameof(this.Bar));
-        }
-    }
+            set
+            {
+                if (System.Collections.Generic.EqualityComparer<T>.Default.Equals(value, this.bar))
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                this.bar = value;
+                this.OnPropertyChanged(nameof(this.Bar));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyConstrainedGenericReferenceType()
+        public void AutoPropertyConstrainedGenericReferenceType()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class ViewModel<T> : INotifyPropertyChanged
-    where T : class
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
 
-    ↓public T Bar { get; set; }
+    public class ViewModel<T> : INotifyPropertyChanged
+        where T : class
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        ↓public T Bar { get; set; }
+
+        protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Property 'Bar' must notify when value changes.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-
-public class ViewModel<T> : INotifyPropertyChanged
-    where T : class
+namespace RoslynSandbox
 {
-    private T bar;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public T Bar
+    public class ViewModel<T> : INotifyPropertyChanged
+        where T : class
     {
-        get
-        {
-            return this.bar;
-        }
+        private T bar;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public T Bar
         {
-            if (ReferenceEquals(value, this.bar))
+            get
             {
-                return;
+                return this.bar;
             }
 
-            this.bar = value;
-            this.OnPropertyChanged(nameof(this.Bar));
-        }
-    }
+            set
+            {
+                if (ReferenceEquals(value, this.bar))
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                this.bar = value;
+                this.OnPropertyChanged(nameof(this.Bar));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyConstrainedGenericValueType()
+        public void AutoPropertyConstrainedGenericValueType()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class ViewModel<T> : INotifyPropertyChanged
-    where T : struct
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
 
-    ↓public T Bar { get; set; }
+    public class ViewModel<T> : INotifyPropertyChanged
+        where T : struct
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        ↓public T Bar { get; set; }
+
+        protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }";
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Property 'Bar' must notify when value changes.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-
-public class ViewModel<T> : INotifyPropertyChanged
-    where T : struct
+namespace RoslynSandbox
 {
-    private T bar;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public T Bar
+    public class ViewModel<T> : INotifyPropertyChanged
+        where T : struct
     {
-        get
-        {
-            return this.bar;
-        }
+        private T bar;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public T Bar
         {
-            if (System.Collections.Generic.EqualityComparer<T>.Default.Equals(value, this.bar))
+            get
             {
-                return;
+                return this.bar;
             }
 
-            this.bar = value;
-            this.OnPropertyChanged(nameof(this.Bar));
-        }
-    }
+            set
+            {
+                if (System.Collections.Generic.EqualityComparer<T>.Default.Equals(value, this.bar))
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                this.bar = value;
+                this.OnPropertyChanged(nameof(this.Bar));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyInsertCreatedFieldSorted()
+        public void AutoPropertyInsertCreatedFieldSorted()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int a;
-    private int c;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int A
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.a;
-        }
+        private int a;
+        private int c;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int A
         {
-            if (value == this.a)
+            get
             {
-                return;
+                return this.a;
             }
 
-            this.a = value;
-            this.OnPropertyChanged(nameof(this.A));
-        }
-    }
-
-    ↓public int B { get; set; }
-
-    public int C
-    {
-        get
-        {
-            return this.c;
-        }
-
-        set
-        {
-            if (value == this.c)
+            set
             {
-                return;
+                if (value == this.a)
+                {
+                    return;
+                }
+
+                this.a = value;
+                this.OnPropertyChanged(nameof(this.A));
+            }
+        }
+
+        ↓public int B { get; set; }
+
+        public int C
+        {
+            get
+            {
+                return this.c;
             }
 
-            this.c = value;
-            this.OnPropertyChanged(nameof(this.C));
-        }
-    }
+            set
+            {
+                if (value == this.c)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                this.c = value;
+                this.OnPropertyChanged(nameof(this.C));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("B");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int a;
-    private int b;
-    private int c;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int A
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.a;
-        }
+        private int a;
+        private int b;
+        private int c;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int A
         {
-            if (value == this.a)
+            get
             {
-                return;
+                return this.a;
             }
 
-            this.a = value;
-            this.OnPropertyChanged(nameof(this.A));
-        }
-    }
-
-    public int B
-    {
-        get
-        {
-            return this.b;
-        }
-
-        set
-        {
-            if (value == this.b)
+            set
             {
-                return;
+                if (value == this.a)
+                {
+                    return;
+                }
+
+                this.a = value;
+                this.OnPropertyChanged(nameof(this.A));
+            }
+        }
+
+        public int B
+        {
+            get
+            {
+                return this.b;
             }
 
-            this.b = value;
-            this.OnPropertyChanged(nameof(this.B));
-        }
-    }
-
-    public int C
-    {
-        get
-        {
-            return this.c;
-        }
-
-        set
-        {
-            if (value == this.c)
+            set
             {
-                return;
+                if (value == this.b)
+                {
+                    return;
+                }
+
+                this.b = value;
+                this.OnPropertyChanged(nameof(this.B));
+            }
+        }
+
+        public int C
+        {
+            get
+            {
+                return this.c;
             }
 
-            this.c = value;
-            this.OnPropertyChanged(nameof(this.C));
-        }
-    }
+            set
+            {
+                if (value == this.c)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                this.c = value;
+                this.OnPropertyChanged(nameof(this.C));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyWhenFieldExists()
+        public void AutoPropertyWhenFieldExists()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int bar;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    ↓public int Bar { get; set; }
-
-    protected virtual void OnPropertyChanged(string propertyName)
+    public class Foo : INotifyPropertyChanged
     {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Bar { get; set; }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int bar;
-    private int bar_;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.bar_;
-        }
+        private int bar;
+        private int bar_;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
         {
-            if (value == this.bar_)
+            get
             {
-                return;
+                return this.bar_;
             }
 
-            this.bar_ = value;
-            this.OnPropertyChanged(nameof(this.Bar));
+            set
+            {
+                if (value == this.bar_)
+                {
+                    return;
+                }
+
+                this.bar_ = value;
+                this.OnPropertyChanged(nameof(this.Bar));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task WithBackingFieldExplicitName()
+        public void WithBackingFieldExplicitName()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int value;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    ↓public int Value
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.value;
-        }
-        private set
-        {
-            this.value = value;
-        }
-    }
+        private int value;
 
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+            private set
+            {
+                this.value = value;
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int value;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Value
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.value;
-        }
+        private int value;
 
-        private set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
         {
-            if (value == this.value)
+            get
             {
-                return;
+                return this.value;
             }
 
-            this.value = value;
-            this.OnPropertyChanged(nameof(this.Value));
+            private set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(nameof(this.Value));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task WithBackingFieldCallerMemberName()
+        public void WithBackingFieldCallerMemberName()
         {
-            var testCode = @"using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+            var testCode = @"
+namespace RoslynSandbox
 {
-    private int value;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    ↓public int Value
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.value;
-        }
-        private set
-        {
-            this.value = value;
-        }
-    }
+        private int value;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+            private set
+            {
+                this.value = value;
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
-            var fixedCode = @"using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+            var fixedCode = @"
+namespace RoslynSandbox
 {
-    private int value;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Value
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.value;
-        }
+        private int value;
 
-        private set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
         {
-            if (value == this.value)
+            get
             {
-                return;
+                return this.value;
             }
 
-            this.value = value;
-            this.OnPropertyChanged();
+            private set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task WithNestedBackingField()
+        public void WithNestedBackingField()
         {
-            var barCode = @"namespace RoslynSandbox
+            var barCode = @"
+namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1089,7 +1074,8 @@ public class Foo : INotifyPropertyChanged
     }
 }";
 
-            var testCode = @"namespace RoslynSandbox
+            var testCode = @"
+namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1113,10 +1099,8 @@ public class Foo : INotifyPropertyChanged
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
-            await this.VerifyCSharpDiagnosticAsync(new[] { barCode, testCode }, expected).ConfigureAwait(false);
-
-            var fixedCode = @"namespace RoslynSandbox
+            var fixedCode = @"
+namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1152,14 +1136,15 @@ public class Foo : INotifyPropertyChanged
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(new[] { barCode, testCode }, new[] { barCode, fixedCode }, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
         }
 
         [Test]
-        public async Task WithNestedBackingFieldUnderScore()
+        public void WithNestedBackingFieldUnderScore()
         {
-            var barCode = @"namespace RoslynSandbox
+            var barCode = @"
+namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1196,7 +1181,8 @@ public class Foo : INotifyPropertyChanged
     }
 }";
 
-            var testCode = @"namespace RoslynSandbox
+            var testCode = @"
+namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1220,10 +1206,8 @@ public class Foo : INotifyPropertyChanged
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
-            await this.VerifyCSharpDiagnosticAsync(new[] { barCode, testCode }, expected).ConfigureAwait(false);
-
-            var fixedCode = @"namespace RoslynSandbox
+            var fixedCode = @"
+namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1259,111 +1243,111 @@ public class Foo : INotifyPropertyChanged
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(new[] { barCode, testCode }, new[] { barCode, fixedCode }, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
         }
 
         [Test]
-        public async Task WithBackingFieldCallerMemberNameAccessorsOnOneLine()
+        public void WithBackingFieldCallerMemberNameAccessorsOnOneLine()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int value;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    ↓public int Value
+    public class Foo : INotifyPropertyChanged
     {
-        get { return this.value; }
-        private set { this.value = value; }
-    }
+        private int value;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Value
+        {
+            get { return this.value; }
+            private set { this.value = value; }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Value");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int value;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Value
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return this.value;
-        }
+        private int value;
 
-        private set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
         {
-            if (value == this.value)
+            get
             {
-                return;
+                return this.value;
             }
 
-            this.value = value;
-            this.OnPropertyChanged();
+            private set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertyExplicitNameHandlesRecursion()
+        public void AutoPropertyExplicitNameHandlesRecursion()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
 
-    ↓public int Bar { get; set; }
-
-    protected virtual void OnPropertyChanged(string propertyName)
+    public class Foo : INotifyPropertyChanged
     {
-        this.OnPropertyChanged(propertyName);
-    }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        this.PropertyChanged?.Invoke(this, e);
+        ↓public int Bar { get; set; }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.OnPropertyChanged(propertyName);
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Bar");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
-            await this.VerifyCSharpFixAsync(testCode, testCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.NoFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode);
         }
 
         [Test]
-        [SuppressMessage("ReSharper", "HeuristicUnreachableCode")]
-        public async Task IgnoresWhenBaseHasPropertyChangedEventButNoInterface()
+        public void IgnoresWhenBaseHasPropertyChangedEventButNoInterface()
         {
-            Assert.Inconclusive("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D");
             var testCode = @"
 namespace RoslynSandBox
 {
@@ -1375,11 +1359,8 @@ namespace RoslynSandBox
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Foo");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-
-            await this.VerifyCSharpFixAsync(testCode, testCode, allowNewCompilerDiagnostics: true)
-                    .ConfigureAwait(false);
+            AnalyzerAssert.NoFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode);
+            Assert.Inconclusive("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D");
         }
     }
 }

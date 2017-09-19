@@ -53,6 +53,32 @@ namespace PropertyChangedAnalyzers
             return newField;
         }
 
+        internal static FieldDeclarationSyntax AddField(
+            this DocumentEditor editor,
+            TypeDeclarationSyntax containingType,
+            string name,
+            Accessibility accessibility,
+            DeclarationModifiers modifiers,
+            TypeSyntax type,
+            ExpressionSyntax initializedValue,
+            CancellationToken cancellationToken)
+        {
+            var declaredSymbol = (INamedTypeSymbol)editor.SemanticModel.GetDeclaredSymbolSafe(containingType, cancellationToken);
+            while (declaredSymbol.MemberNames.Contains(name))
+            {
+                name += "_";
+            }
+
+            var newField = (FieldDeclarationSyntax)editor.Generator.FieldDeclaration(
+                name,
+                accessibility: accessibility,
+                modifiers: modifiers,
+                type: type,
+                initializer: initializedValue);
+            editor.AddField(containingType, newField);
+            return newField;
+        }
+
         internal static DocumentEditor AddField(this DocumentEditor editor, TypeDeclarationSyntax containingType, FieldDeclarationSyntax field)
         {
             editor.ReplaceNode(containingType, (node, generator) => AddSorted(generator, (TypeDeclarationSyntax)node, field));

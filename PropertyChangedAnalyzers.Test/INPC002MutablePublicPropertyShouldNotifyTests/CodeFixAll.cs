@@ -1,657 +1,682 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class CodeFixAll : CodeFixVerifier<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>
     {
         [Test]
-        public async Task AutoPropertiesCallerMemberNameNameUnderscoreNames()
+        public void AutoPropertiesCallerMemberNameNameUnderscoreNames()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public int Bar1 { get; set; }
-
-    public int Bar2 { get; set; }
-
-    public int Bar3 { get; set; }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public class Foo : INotifyPropertyChanged
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1 { get; set; }
+
+        public int Bar2 { get; set; }
+
+        public int Bar3 { get; set; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
             var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int _bar1;
-    private int _bar2;
-    private int _bar3;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return _bar1;
-        }
+        private int _bar1;
+        private int _bar2;
+        private int _bar3;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1
         {
-            if (value == _bar1)
+            get
             {
-                return;
+                return _bar1;
             }
 
-            _bar1 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar2
-    {
-        get
-        {
-            return _bar2;
-        }
-
-        set
-        {
-            if (value == _bar2)
+            set
             {
-                return;
+                if (value == _bar1)
+                {
+                    return;
+                }
+
+                _bar1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar2
+        {
+            get
+            {
+                return _bar2;
             }
 
-            _bar2 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar3
-    {
-        get
-        {
-            return _bar3;
-        }
-
-        set
-        {
-            if (value == _bar3)
+            set
             {
-                return;
+                if (value == _bar2)
+                {
+                    return;
+                }
+
+                _bar2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar3
+        {
+            get
+            {
+                return _bar3;
             }
 
-            _bar3 = value;
-            OnPropertyChanged();
-        }
-    }
+            set
+            {
+                if (value == _bar3)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                _bar3 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertiesCallerMemberNameNameUnderscoreNamesWithExistingNotifying1()
+        public void AutoPropertiesCallerMemberNameNameUnderscoreNamesWithExistingNotifying1()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int _bar1;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return _bar1;
-        }
+        private int _bar1;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1
         {
-            if (value == _bar1)
+            get
             {
-                return;
+                return _bar1;
             }
 
-            _bar1 = value;
-            OnPropertyChanged();
+            set
+            {
+                if (value == _bar1)
+                {
+                    return;
+                }
+
+                _bar1 = value;
+                OnPropertyChanged();
+            }
         }
-    }
 
-    public int Bar2 { get; set; }
+        public int Bar2 { get; set; }
 
-    public int Bar3 { get; set; }
+        public int Bar3 { get; set; }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
             var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int _bar1;
-    private int _bar2;
-    private int _bar3;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return _bar1;
-        }
+        private int _bar1;
+        private int _bar2;
+        private int _bar3;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1
         {
-            if (value == _bar1)
+            get
             {
-                return;
+                return _bar1;
             }
 
-            _bar1 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar2
-    {
-        get
-        {
-            return _bar2;
-        }
-
-        set
-        {
-            if (value == _bar2)
+            set
             {
-                return;
+                if (value == _bar1)
+                {
+                    return;
+                }
+
+                _bar1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar2
+        {
+            get
+            {
+                return _bar2;
             }
 
-            _bar2 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar3
-    {
-        get
-        {
-            return _bar3;
-        }
-
-        set
-        {
-            if (value == _bar3)
+            set
             {
-                return;
+                if (value == _bar2)
+                {
+                    return;
+                }
+
+                _bar2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar3
+        {
+            get
+            {
+                return _bar3;
             }
 
-            _bar3 = value;
-            OnPropertyChanged();
-        }
-    }
+            set
+            {
+                if (value == _bar3)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                _bar3 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertiesCallerMemberNameNameUnderscoreNamesWithExistingNotifying2()
+        public void AutoPropertiesCallerMemberNameNameUnderscoreNamesWithExistingNotifying2()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int _bar2;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1 { get; set; }
-
-    public int Bar2
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return _bar2;
-        }
+        private int _bar2;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1 { get; set; }
+
+        public int Bar2
         {
-            if (value == _bar2)
+            get
             {
-                return;
+                return _bar2;
             }
 
-            _bar2 = value;
-            OnPropertyChanged();
+            set
+            {
+                if (value == _bar2)
+                {
+                    return;
+                }
+
+                _bar2 = value;
+                OnPropertyChanged();
+            }
         }
-    }
 
-    public int Bar3 { get; set; }
+        public int Bar3 { get; set; }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
             var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int _bar1;
-    private int _bar2;
-    private int _bar3;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return _bar1;
-        }
+        private int _bar1;
+        private int _bar2;
+        private int _bar3;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1
         {
-            if (value == _bar1)
+            get
             {
-                return;
+                return _bar1;
             }
 
-            _bar1 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar2
-    {
-        get
-        {
-            return _bar2;
-        }
-
-        set
-        {
-            if (value == _bar2)
+            set
             {
-                return;
+                if (value == _bar1)
+                {
+                    return;
+                }
+
+                _bar1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar2
+        {
+            get
+            {
+                return _bar2;
             }
 
-            _bar2 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar3
-    {
-        get
-        {
-            return _bar3;
-        }
-
-        set
-        {
-            if (value == _bar3)
+            set
             {
-                return;
+                if (value == _bar2)
+                {
+                    return;
+                }
+
+                _bar2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar3
+        {
+            get
+            {
+                return _bar3;
             }
 
-            _bar3 = value;
-            OnPropertyChanged();
-        }
-    }
+            set
+            {
+                if (value == _bar3)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                _bar3 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertiesCallerMemberNameNameUnderscoreNamesWithExistingNotifying3()
+        public void AutoPropertiesCallerMemberNameNameUnderscoreNamesWithExistingNotifying3()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int _bar3;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1 { get; set; }
-
-    public int Bar2 { get; set; }
-
-    public int Bar3
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return _bar3;
-        }
+        private int _bar3;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1 { get; set; }
+
+        public int Bar2 { get; set; }
+
+        public int Bar3
         {
-            if (value == _bar3)
+            get
             {
-                return;
+                return _bar3;
             }
 
-            _bar3 = value;
-            OnPropertyChanged();
-        }
-    }
+            set
+            {
+                if (value == _bar3)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                _bar3 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
             var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int _bar1;
-    private int _bar2;
-    private int _bar3;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1
+    public class Foo : INotifyPropertyChanged
     {
-        get
-        {
-            return _bar1;
-        }
+        private int _bar1;
+        private int _bar2;
+        private int _bar3;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1
         {
-            if (value == _bar1)
+            get
             {
-                return;
+                return _bar1;
             }
 
-            _bar1 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar2
-    {
-        get
-        {
-            return _bar2;
-        }
-
-        set
-        {
-            if (value == _bar2)
+            set
             {
-                return;
+                if (value == _bar1)
+                {
+                    return;
+                }
+
+                _bar1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar2
+        {
+            get
+            {
+                return _bar2;
             }
 
-            _bar2 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar3
-    {
-        get
-        {
-            return _bar3;
-        }
-
-        set
-        {
-            if (value == _bar3)
+            set
             {
-                return;
+                if (value == _bar2)
+                {
+                    return;
+                }
+
+                _bar2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar3
+        {
+            get
+            {
+                return _bar3;
             }
 
-            _bar3 = value;
-            OnPropertyChanged();
-        }
-    }
+            set
+            {
+                if (value == _bar3)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                _bar3 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
         [Test]
-        public async Task AutoPropertiesCallerMemberNameNameUnderscoreNamesTwoClassesInDocument()
+        public void AutoPropertiesCallerMemberNameNameUnderscoreNamesTwoClassesInDocument()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo1 : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public int Bar1 { get; set; }
-
-    public int Bar2 { get; set; }
-
-    public int Bar3 { get; set; }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public class Foo1 : INotifyPropertyChanged
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1 { get; set; }
+
+        public int Bar2 { get; set; }
+
+        public int Bar3 { get; set; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
-}
 
-public class Foo2 : INotifyPropertyChanged
-{
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1 { get; set; }
-
-    public int Bar2 { get; set; }
-
-    public int Bar3 { get; set; }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public class Foo2 : INotifyPropertyChanged
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1 { get; set; }
+
+        public int Bar2 { get; set; }
+
+        public int Bar3 { get; set; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
             var fixedCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo1 : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int _bar1;
-    private int _bar2;
-    private int _bar3;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1
+    public class Foo1 : INotifyPropertyChanged
     {
-        get
-        {
-            return _bar1;
-        }
+        private int _bar1;
+        private int _bar2;
+        private int _bar3;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1
         {
-            if (value == _bar1)
+            get
             {
-                return;
+                return _bar1;
             }
 
-            _bar1 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar2
-    {
-        get
-        {
-            return _bar2;
-        }
-
-        set
-        {
-            if (value == _bar2)
+            set
             {
-                return;
+                if (value == _bar1)
+                {
+                    return;
+                }
+
+                _bar1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar2
+        {
+            get
+            {
+                return _bar2;
             }
 
-            _bar2 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar3
-    {
-        get
-        {
-            return _bar3;
-        }
-
-        set
-        {
-            if (value == _bar3)
+            set
             {
-                return;
+                if (value == _bar2)
+                {
+                    return;
+                }
+
+                _bar2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar3
+        {
+            get
+            {
+                return _bar3;
             }
 
-            _bar3 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}
-
-public class Foo2 : INotifyPropertyChanged
-{
-    private int _bar1;
-    private int _bar2;
-    private int _bar3;
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Bar1
-    {
-        get
-        {
-            return _bar1;
-        }
-
-        set
-        {
-            if (value == _bar1)
+            set
             {
-                return;
+                if (value == _bar3)
+                {
+                    return;
+                }
+
+                _bar3 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class Foo2 : INotifyPropertyChanged
+    {
+        private int _bar1;
+        private int _bar2;
+        private int _bar3;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1
+        {
+            get
+            {
+                return _bar1;
             }
 
-            _bar1 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar2
-    {
-        get
-        {
-            return _bar2;
-        }
-
-        set
-        {
-            if (value == _bar2)
+            set
             {
-                return;
+                if (value == _bar1)
+                {
+                    return;
+                }
+
+                _bar1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar2
+        {
+            get
+            {
+                return _bar2;
             }
 
-            _bar2 = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public int Bar3
-    {
-        get
-        {
-            return _bar3;
-        }
-
-        set
-        {
-            if (value == _bar3)
+            set
             {
-                return;
+                if (value == _bar2)
+                {
+                    return;
+                }
+
+                _bar2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Bar3
+        {
+            get
+            {
+                return _bar3;
             }
 
-            _bar3 = value;
-            OnPropertyChanged();
-        }
-    }
+            set
+            {
+                if (value == _bar3)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                _bar3 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
     }
 }

@@ -8,7 +8,8 @@
 
     internal static class Names
     {
-        internal static bool UsesUnderscoreNames(this SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool UsesUnderscoreNames(this SyntaxNode node, SemanticModel semanticModel,
+                                                 CancellationToken cancellationToken)
         {
             using (var pooled = Walker.Create(node, semanticModel, cancellationToken))
             {
@@ -65,7 +66,8 @@
 
             public Result UsesUnderScore { get; private set; }
 
-            public static Pool<Walker>.Pooled Create(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public static Pool<Walker>.Pooled Create(SyntaxNode node, SemanticModel semanticModel,
+                                                     CancellationToken cancellationToken)
             {
                 var pooled = Cache.GetOrCreate();
                 while (node.Parent != null)
@@ -209,7 +211,9 @@
 
                 if (expression is IdentifierNameSyntax)
                 {
-                    if (this.semanticModel.GetSymbolSafe(expression, this.cancellationToken)?.IsStatic == false)
+                    if (this.semanticModel.GetSymbolSafe(expression, this.cancellationToken)
+                            ?.IsStatic ==
+                        false)
                     {
                         switch (this.UsesThis)
                         {
@@ -229,6 +233,21 @@
                     }
                 }
             }
+        }
+    }
+
+    internal static class StringExt
+    {
+        internal static string ToFirstCharLower(this string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            var chars = text.ToCharArray();
+            chars[0] = char.ToLowerInvariant(chars[0]);
+            return new string(chars);
         }
     }
 }
