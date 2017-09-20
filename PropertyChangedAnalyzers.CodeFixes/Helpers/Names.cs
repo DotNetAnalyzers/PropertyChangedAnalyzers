@@ -12,12 +12,14 @@
         {
             using (var pooled = Walker.Create(node, semanticModel, cancellationToken))
             {
-                if (pooled.Item.UsesThis == Result.Yes)
+                if (pooled.Item.UsesThis == Result.Yes||
+                    pooled.Item.UsesUnderScore == Result.No)
                 {
                     return false;
                 }
 
-                if (pooled.Item.UsesUnderScore == Result.Yes)
+                if (pooled.Item.UsesUnderScore == Result.Yes ||
+                    pooled.Item.UsesThis == Result.No)
                 {
                     return true;
                 }
@@ -27,12 +29,14 @@
             {
                 using (var pooled = Walker.Create(tree.GetRoot(cancellationToken), semanticModel, cancellationToken))
                 {
-                    if (pooled.Item.UsesThis == Result.Yes)
+                    if (pooled.Item.UsesThis == Result.Yes ||
+                        pooled.Item.UsesUnderScore == Result.No)
                     {
                         return false;
                     }
 
-                    if (pooled.Item.UsesUnderScore == Result.Yes)
+                    if (pooled.Item.UsesUnderScore == Result.Yes ||
+                        pooled.Item.UsesThis == Result.No)
                     {
                         return true;
                     }
@@ -231,21 +235,6 @@
                     }
                 }
             }
-        }
-    }
-
-    internal static class StringExt
-    {
-        internal static string ToFirstCharLower(this string text)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return text;
-            }
-
-            var chars = text.ToCharArray();
-            chars[0] = char.ToLowerInvariant(chars[0]);
-            return new string(chars);
         }
     }
 }
