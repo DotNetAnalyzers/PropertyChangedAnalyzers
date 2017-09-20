@@ -3,111 +3,134 @@
     using System;
     using System.Collections.Generic;
 
-    internal static class EnumerableExt
+    internal static partial class EnumerableExt
     {
-        internal static bool TryGetAtIndex<TCollection, TItem>(this TCollection source, int index, out TItem result)
-            where TCollection : IReadOnlyList<TItem>
+        internal static bool TryGetAtIndex<T>(this IEnumerable<T> source, int index, out T result)
         {
-            result = default(TItem);
+            result = default(T);
             if (source == null)
             {
                 return false;
             }
 
-            if (source.Count <= index)
+            var current = 0;
+            using (var e = source.GetEnumerator())
+            {
+                while (e.MoveNext())
+                {
+                    if (current == index)
+                    {
+                        result = e.Current;
+                        return true;
+                    }
+
+                    current++;
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool TryGetSingle<T>(this IEnumerable<T> source, out T result)
+        {
+            result = default(T);
+            if (source == null)
             {
                 return false;
             }
 
-            result = source[index];
-            return true;
-        }
-
-        internal static bool TryGetSingle<TCollection, TItem>(this TCollection source, out TItem result)
-            where TCollection : IReadOnlyList<TItem>
-        {
-            if (source.Count == 1)
+            using (var e = source.GetEnumerator())
             {
-                result = source[0];
-                return true;
-            }
-
-            result = default(TItem);
-            return false;
-        }
-
-        internal static bool TryGetSingle<TCollection, TItem>(this TCollection source, Func<TItem, bool> selector, out TItem result)
-            where TCollection : IReadOnlyList<TItem>
-        {
-            foreach (var item in source)
-            {
-                if (selector(item))
+                if (e.MoveNext())
                 {
-                    result = item;
-                    return true;
-                }
-            }
+                    if (!e.MoveNext())
+                    {
+                        result = e.Current;
+                        return true;
+                    }
 
-            result = default(TItem);
-            return false;
+                    return false;
+                }
+
+                result = default(T);
+                return false;
+            }
         }
 
-        internal static bool TryGetFirst<TCollection, TItem>(this TCollection source, out TItem result)
-            where TCollection : IReadOnlyList<TItem>
+        internal static bool TryGetSingle<T>(this IEnumerable<T> source, Func<T, bool> selector, out T result)
         {
-            if (source.Count == 0)
+            result = default(T);
+            if (source == null)
             {
-                result = default(TItem);
                 return false;
             }
 
-            result = source[0];
-            return true;
-        }
-
-        internal static bool TryGetFirst<TCollection, TItem>(this TCollection source, Func<TItem, bool> selector, out TItem result)
-            where TCollection : IReadOnlyList<TItem>
-        {
-            foreach (var item in source)
+            using (var e = source.GetEnumerator())
             {
-                if (selector(item))
+                while (e.MoveNext())
                 {
-                    result = item;
-                    return true;
+                    result = e.Current;
+                    if (selector(result))
+                    {
+                        while (e.MoveNext())
+                        {
+                            if (selector(e.Current))
+                            {
+                                result = default(T);
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }
                 }
             }
 
-            result = default(TItem);
+            result = default(T);
             return false;
         }
 
-        internal static bool TryGetLast<TCollection, TItem>(this TCollection source, out TItem result)
-            where TCollection : IReadOnlyList<TItem>
+        internal static bool TryGetFirst<T>(this IEnumerable<T> source, out T result)
         {
-            if (source.Count == 0)
+            result = default(T);
+            if (source == null)
             {
-                result = default(TItem);
                 return false;
             }
 
-            result = source[source.Count - 1];
-            return true;
+            using (var e = source.GetEnumerator())
+            {
+                if (e.MoveNext())
+                {
+                    result = e.Current;
+                    return true;
+                }
+
+                return false;
+            }
         }
 
-        internal static bool TryGetLast<TCollection, TItem>(this TCollection source, Func<TItem, bool> selector, out TItem result)
-            where TCollection : IReadOnlyList<TItem>
+        internal static bool TryGetFirst<T>(this IEnumerable<T> source, Func<T, bool> selector, out T result)
         {
-            for (var i = source.Count - 1; i >= 0; i--)
+            if (source == null)
             {
-                var item = source[i];
-                if (selector(item))
+                result = default(T);
+                return false;
+            }
+
+            using (var e = source.GetEnumerator())
+            {
+                while (e.MoveNext())
                 {
-                    result = item;
-                    return true;
+                    result = e.Current;
+                    if (selector(result))
+                    {
+                       return true;
+                    }
                 }
             }
 
-            result = default(TItem);
+            result = default(T);
             return false;
         }
     }

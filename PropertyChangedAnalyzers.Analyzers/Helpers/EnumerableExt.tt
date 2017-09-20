@@ -3,7 +3,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ output extension="generated.txt" #>
+<#@ output extension="generated.cs" #>
 namespace PropertyChangedAnalyzers
 {
     using System;
@@ -16,14 +16,14 @@ namespace PropertyChangedAnalyzers
 <#
     var typeNames = new Data[]
     {
-        new Data("IReadOnlyList<T>", "T", null),
-        new Data("ImmutableArray<T>", "T", null),
-        new Data("ChildSyntaxList", "SyntaxNodeOrToken", null),
+        new Data("IReadOnlyList<T>", "T"),
+        new Data("ImmutableArray<T>", "T", count: "Length"),
+        new Data("ChildSyntaxList", "SyntaxNodeOrToken"),
         new Data("SeparatedSyntaxList<T>", "T", "SyntaxNode"),
         new Data("SyntaxList<T>", "T", "SyntaxNode"),
-        new Data("SyntaxNodeOrTokenList", "SyntaxNodeOrToken", null),
-        new Data("SyntaxTokenList", "SyntaxToken", null),
-        new Data("SyntaxTriviaList", "SyntaxTrivia", null),
+        new Data("SyntaxNodeOrTokenList", "SyntaxNodeOrToken"),
+        new Data("SyntaxTokenList", "SyntaxToken"),
+        new Data("SyntaxTriviaList", "SyntaxTrivia"),
     };
 
     foreach(var types in typeNames)
@@ -31,9 +31,11 @@ namespace PropertyChangedAnalyzers
         var colName = types.CollectionType;
         var itemName = types.ItemType;
         var constraint = types.Constraint;
+        var count = types.Count;
+        var genericArg = types.GenericArg;
+        WriteLineIfNotFirst(types, typeNames);
 #>
-
-        internal static bool TryGetAtIndex<<#= itemName #>>(this <#= colName #> source, int index, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryGetAtIndex<#= genericArg #>(this <#= colName #> source, int index, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
             if (source == null)
@@ -41,7 +43,7 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            if (source.Count <= index)
+            if (source.<#= count #> <= index)
             {
                 return false;
             }
@@ -50,9 +52,15 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool TryGetSingle<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryGetSingle<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
-            if (source.Count == 1)
+            result = default(<#= itemName #>);
+            if (source == null)
+            {
+                return false;
+            }
+
+            if (source.<#= count #> == 1)
             {
                 result = source[0];
                 return true;
@@ -62,8 +70,14 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetSingle<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryGetSingle<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
+            result = default(<#= itemName #>);
+            if (source == null)
+            {
+                return false;
+            }
+
             foreach (var item in source)
             {
                 if (selector(item))
@@ -77,9 +91,15 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetFirst<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryGetFirst<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
-            if (source.Count == 0)
+            result = default(<#= itemName #>);
+            if (source == null)
+            {
+                return false;
+            }
+
+            if (source.<#= count #> == 0)
             {
                 result = default(<#= itemName #>);
                 return false;
@@ -89,8 +109,14 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool TryGetFirst<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryGetFirst<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
+            result = default(<#= itemName #>);
+            if (source == null)
+            {
+                return false;
+            }
+
             foreach (var item in source)
             {
                 if (selector(item))
@@ -104,21 +130,33 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetLast<<#= itemName #>>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryGetLast<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
-            if (source.Count == 0)
+            result = default(<#= itemName #>);
+            if (source == null)
+            {
+                return false;
+            }
+
+            if (source.<#= count #> == 0)
             {
                 result = default(<#= itemName #>);
                 return false;
             }
 
-            result = source[source.Count - 1];
+            result = source[source.<#= count #> - 1];
             return true;
         }
 
-        internal static bool TryGetLast<<#= itemName #>>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryGetLast<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
-            for (var i = source.Count - 1; i >= 0; i--)
+            result = default(<#= itemName #>);
+            if (source == null)
+            {
+                return false;
+            }
+
+            for (var i = source.<#= count #> - 1; i >= 0; i--)
             {
                 var item = source[i];
                 if (selector(item))
@@ -135,19 +173,32 @@ namespace PropertyChangedAnalyzers
     }
 }
 <#+
+private void WriteLineIfNotFirst<T>(T item, T[] items)
+    where T : class 
+{
+    if (!ReferenceEquals(items[0], item))
+    {
+        this.WriteLine("");
+    }
+}
+
 internal class Data
 {
     public readonly string CollectionType;
     public readonly string ItemType;
     public readonly string Constraint;
+    public readonly string Count;
+    public readonly string GenericArg;
 
-    public Data(string collectionType, string itemType, string constraint)
+    public Data(string collectionType, string itemType, string constraint = null, string count = null)
     {
         this.CollectionType = collectionType;
         this.ItemType = itemType;
         this.Constraint = string.IsNullOrEmpty(constraint)
             ? string.Empty
             : "\r\n            where T : " + constraint;
+        this.Count = count ?? "Count";
+        this.GenericArg = itemType == "T" ? "<T>" : string.Empty;
     }
 }
 #>
