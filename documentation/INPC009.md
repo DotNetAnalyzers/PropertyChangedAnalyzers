@@ -1,15 +1,15 @@
-# INPC006
-## Check if value is different using ReferenceEquals before notifying.
+# WPF1014
+## Don't raise PropertyChanged for missing property.
 
 <!-- start generated table -->
 <table>
 <tr>
   <td>CheckId</td>
-  <td>INPC006</td>
+  <td>WPF1014</td>
 </tr>
 <tr>
   <td>Severity</td>
-  <td>Hidden</td>
+  <td>Warning</td>
 </tr>
 <tr>
   <td>Enabled</td>
@@ -21,14 +21,14 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="missing">INPC006UseReferenceEquals</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/WPF1014DontRaiseChangeForMissingProperty.cs">WPF1014DontRaiseChangeForMissingProperty</a></td>
 </tr>
 </table>
 <!-- end generated table -->
 
 ## Description
 
-Check if value is different using ReferenceEquals before notifying.
+Don't raise PropertyChanged for missing property.
 
 ## Motivation
 
@@ -47,21 +47,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC006 // Check if value is different using ReferenceEquals before notifying.
+#pragma warning disable WPF1014 // Don't raise PropertyChanged for missing property.
 Code violating the rule here
-#pragma warning restore INPC006 // Check if value is different using ReferenceEquals before notifying.
+#pragma warning restore WPF1014 // Don't raise PropertyChanged for missing property.
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC006 // Check if value is different using ReferenceEquals before notifying.
+#pragma warning disable WPF1014 // Don't raise PropertyChanged for missing property.
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC006:Check if value is different using ReferenceEquals before notifying.", 
+    "WPF1014:Don't raise PropertyChanged for missing property.", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

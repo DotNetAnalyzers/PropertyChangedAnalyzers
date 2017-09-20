@@ -6,7 +6,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
-
+    using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
@@ -22,7 +22,7 @@
 
         private static IReadOnlyList<DescriptorInfo> DescriptorsWithDocs => Descriptors.Where(d => d.DocExists).ToArray();
 
-        private static string SolutionDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\");
+        private static string SolutionDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\");
 
         private static string DocumentsDirectory => Path.Combine(SolutionDirectory, "documentation");
 
@@ -70,10 +70,10 @@
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void Table(DescriptorInfo descriptorInfo)
         {
-            var expected = GetTable(CreateStub(descriptorInfo)).NormalizeNewLine();
+            var expected = GetTable(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
-            var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName)).NormalizeNewLine();
-            Assert.AreEqual(expected, actual);
+            var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName));
+            CodeAssert.AreEqual(expected, actual);
         }
 
         [TestCaseSource(nameof(DescriptorsWithDocs))]
