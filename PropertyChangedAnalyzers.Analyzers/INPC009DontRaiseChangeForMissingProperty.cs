@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -7,9 +7,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class WPF1014DontRaiseChangeForMissingProperty : DiagnosticAnalyzer
+    internal class INPC009DontRaiseChangeForMissingProperty : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "WPF1014";
+        public const string DiagnosticId = "INPC009";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
