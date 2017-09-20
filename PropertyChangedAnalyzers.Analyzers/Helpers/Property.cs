@@ -101,21 +101,22 @@
 
         internal static bool IsMutableAutoProperty(PropertyDeclarationSyntax property)
         {
-            var accessors = property?.AccessorList?.Accessors;
-            if (accessors?.Count != 2)
+            return IsMutableAutoProperty(property, out _, out _);
+        }
+
+        internal static bool IsMutableAutoProperty(PropertyDeclarationSyntax property, out AccessorDeclarationSyntax getter, out AccessorDeclarationSyntax setter)
+        {
+            if (property.TryGetGetAccessorDeclaration(out getter) &&
+                getter.Body == null &&
+                property.TryGetSetAccessorDeclaration(out setter) &&
+                setter.Body == null)
             {
-                return false;
+                return true;
             }
 
-            foreach (var accessor in accessors.Value)
-            {
-                if (accessor.Body != null)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            getter = null;
+            setter = null;
+            return false;
         }
 
         internal static bool IsSimplePropertyWithBackingField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)

@@ -3,7 +3,7 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFixAll : CodeFixVerifier<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>
+    internal class CodeFixAll
     {
         [Test]
         public void AutoPropertiesCallerMemberNameUnderscoreNames()
