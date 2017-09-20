@@ -118,7 +118,7 @@
             [TestCase(5)]
             public void TryGetFirstFailsWhenOtOfBounds(int index)
             {
-                Assert.AreEqual(true, Enumerable.Range(1, 3).TryGetAtIndex(index, out var result));
+                Assert.AreEqual(false, Enumerable.Range(1, 3).TryGetAtIndex(index, out var result));
                 Assert.AreEqual(0, result);
             }
 

@@ -153,29 +153,35 @@ namespace RoslynSandBox
             Assert.AreEqual(field, declaration?.Name());
         }
 
-        [Test]
-        public void TryGetBackingFieldExpressionBodyAccessor()
+        [TestCase("Value1","value1")]
+        [TestCase("Value2","value2")]
+        public void TryGetBackingFieldExpressionBodyAccessor(string propertyName, string field)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandBox
 {
-    using System;
-
     public class Foo
     {
-        private int value;
+        private int value1;
+        private int value2;
 
-        public int Value
+        public int Value1
         {
-            get => this.value;
-            set => this.value = value;
+            get => this.value1;
+            set => this.value1 = value;
+        }
+
+        public int Value2
+        {
+            get => value2;
+            private set => value2 = value;
         }
     }
 }");
-            var property = syntaxTree.PropertyDeclarationSyntax("Value");
+            var property = syntaxTree.PropertyDeclarationSyntax(propertyName);
             Assert.AreEqual(true, Property.TryGetBackingField(property, out var identifier, out var declaration));
-            Assert.AreEqual("value", identifier?.Identifier.Text);
-            Assert.AreEqual("value", declaration?.Name());
+            Assert.AreEqual(field, identifier?.Identifier.Text);
+            Assert.AreEqual(field, declaration?.Name());
         }
     }
 }
