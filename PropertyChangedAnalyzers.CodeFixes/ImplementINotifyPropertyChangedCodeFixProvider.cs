@@ -145,7 +145,6 @@
                               }",
                             usesUnderscoreNames));
                 }
-
             }
 
             return editor.GetChangedDocument();

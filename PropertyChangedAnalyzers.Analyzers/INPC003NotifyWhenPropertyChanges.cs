@@ -237,7 +237,7 @@
                 return property.ExpressionBody.Expression;
             }
 
-            if (property.TryGetGetAccessorDeclaration(out AccessorDeclarationSyntax getter))
+            if (property.TryGetGetAccessorDeclaration(out var getter))
             {
                 return getter.Body;
             }
@@ -298,7 +298,7 @@
                 {
                     foreach (var declaration in property.Declarations(this.cancellationToken))
                     {
-                        if (((PropertyDeclarationSyntax)declaration).TryGetGetAccessorDeclaration(out AccessorDeclarationSyntax getter))
+                        if (((PropertyDeclarationSyntax)declaration).TryGetGetAccessorDeclaration(out var getter))
                         {
                             this.Visit(getter);
                         }

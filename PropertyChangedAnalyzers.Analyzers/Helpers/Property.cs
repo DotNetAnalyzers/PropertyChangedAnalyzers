@@ -9,13 +9,13 @@
     {
         internal static bool IsLazy(this PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (propertyDeclaration.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax _))
+            if (propertyDeclaration.TryGetSetAccessorDeclaration(out _))
             {
                 return false;
             }
 
             IFieldSymbol returnedField = null;
-            if (propertyDeclaration.TryGetGetAccessorDeclaration(out AccessorDeclarationSyntax getter))
+            if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter))
             {
                 if (getter.Body == null)
                 {
@@ -81,7 +81,7 @@
                 return true;
             }
 
-            if (declaration.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter))
+            if (declaration.TryGetSetAccessorDeclaration(out var setter))
             {
                 if (!AssignsValueToBackingField(setter, out AssignmentExpressionSyntax assignment))
                 {
@@ -120,8 +120,8 @@
 
         internal static bool IsSimplePropertyWithBackingField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (!(property.TryGetGetAccessorDeclaration(out AccessorDeclarationSyntax getter) &&
-property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter)))
+            if (!(property.TryGetGetAccessorDeclaration(out var getter) &&
+                property.TryGetSetAccessorDeclaration(out var setter)))
             {
                 return false;
             }
@@ -187,7 +187,7 @@ property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter)))
                 return false;
             }
 
-            if (property.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter))
+            if (property.TryGetSetAccessorDeclaration(out var setter))
             {
                 using (var pooled = AssignmentWalker.Create(setter))
                 {

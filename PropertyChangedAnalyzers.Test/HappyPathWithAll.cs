@@ -15,7 +15,7 @@
             .Assembly
             .GetTypes()
             .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
-            .Select(t => (DiagnosticAnalyzer) Activator.CreateInstance(t));
+            .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t));
 
         [Test]
         public void NotEmpty()

@@ -8,8 +8,7 @@
 
     internal static class Names
     {
-        internal static bool UsesUnderscoreNames(this SyntaxNode node, SemanticModel semanticModel,
-                                                 CancellationToken cancellationToken)
+        internal static bool UsesUnderscoreNames(this SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             using (var pooled = Walker.Create(node, semanticModel, cancellationToken))
             {
@@ -66,8 +65,7 @@
 
             public Result UsesUnderScore { get; private set; }
 
-            public static Pool<Walker>.Pooled Create(SyntaxNode node, SemanticModel semanticModel,
-                                                     CancellationToken cancellationToken)
+            public static Pool<Walker>.Pooled Create(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
                 var pooled = Cache.GetOrCreate();
                 while (node.Parent != null)

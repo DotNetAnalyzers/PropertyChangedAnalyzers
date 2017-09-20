@@ -230,9 +230,7 @@ namespace PropertyChangedAnalyzers
                 diagnosticOptions);
         }
 
-        internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(
-            this SyntaxGenerator syntaxGenerator, ExpressionSyntax fieldAccess, IPropertySymbol property,
-            ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
+        internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, ExpressionSyntax fieldAccess, IPropertySymbol property, ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             if (!property.Type.IsReferenceType ||
                 property.Type == KnownSymbol.String)
@@ -242,9 +240,9 @@ namespace PropertyChangedAnalyzers
                     var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
                         SyntaxFactory.ParseName("value"),
                         fieldAccess);
-                    return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                    return (IfStatementSyntax)syntaxGenerator.IfStatement(
                         valueEqualsExpression,
-                        new[] {SyntaxFactory.ReturnStatement()});
+                        new[] { SyntaxFactory.ReturnStatement() });
                 }
 
                 foreach (var equals in property.Type.GetMembers("Equals"))
@@ -259,22 +257,22 @@ namespace PropertyChangedAnalyzers
                         var equalsExpression = syntaxGenerator.InvocationExpression(
                             SyntaxFactory.ParseExpression("value.Equals"),
                             fieldAccess);
-                        return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                        return (IfStatementSyntax)syntaxGenerator.IfStatement(
                             equalsExpression,
-                            new[] {SyntaxFactory.ReturnStatement()});
+                            new[] { SyntaxFactory.ReturnStatement() });
                     }
                 }
 
                 if (property.Type.Name == "Nullable")
                 {
-                    if (Equality.HasEqualityOperator(((INamedTypeSymbol) property.Type).TypeArguments[0]))
+                    if (Equality.HasEqualityOperator(((INamedTypeSymbol)property.Type).TypeArguments[0]))
                     {
                         var valueEqualsExpression = syntaxGenerator.ValueEqualsExpression(
                             SyntaxFactory.ParseName("value"),
                             fieldAccess);
-                        return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                        return (IfStatementSyntax)syntaxGenerator.IfStatement(
                             valueEqualsExpression,
-                            new[] {SyntaxFactory.ReturnStatement()});
+                            new[] { SyntaxFactory.ReturnStatement() });
                     }
 
                     var nullableEquals = syntaxGenerator.InvocationExpression(
@@ -282,9 +280,9 @@ namespace PropertyChangedAnalyzers
                                      .WithAdditionalAnnotations(Simplifier.Annotation),
                         SyntaxFactory.ParseName("value"),
                         fieldAccess);
-                    return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                    return (IfStatementSyntax)syntaxGenerator.IfStatement(
                         nullableEquals,
-                        new[] {SyntaxFactory.ReturnStatement()});
+                        new[] { SyntaxFactory.ReturnStatement() });
                 }
 
                 var comparerEquals = syntaxGenerator.InvocationExpression(
@@ -293,18 +291,18 @@ namespace PropertyChangedAnalyzers
                                  .WithAdditionalAnnotations(Simplifier.Annotation),
                     SyntaxFactory.ParseName("value"),
                     fieldAccess);
-                return (IfStatementSyntax) syntaxGenerator.IfStatement(
+                return (IfStatementSyntax)syntaxGenerator.IfStatement(
                     comparerEquals,
-                    new[] {SyntaxFactory.ReturnStatement()});
+                    new[] { SyntaxFactory.ReturnStatement() });
             }
 
             var referenceEqualsExpression = syntaxGenerator.InvocationExpression(
                 ReferenceTypeEquality(diagnosticOptions),
                 SyntaxFactory.ParseName("value"),
                 fieldAccess);
-            return (IfStatementSyntax) syntaxGenerator.IfStatement(
+            return (IfStatementSyntax)syntaxGenerator.IfStatement(
                 referenceEqualsExpression,
-                new[] {SyntaxFactory.ReturnStatement()});
+                new[] { SyntaxFactory.ReturnStatement() });
         }
 
         internal static ExpressionSyntax ReferenceTypeEquality(ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)

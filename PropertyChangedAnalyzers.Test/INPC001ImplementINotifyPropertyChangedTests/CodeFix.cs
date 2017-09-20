@@ -198,7 +198,6 @@ namespace RoslynSandbox
     }
 }";
             AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0246", testCode, fixedCode);
-
         }
 
         [Test]

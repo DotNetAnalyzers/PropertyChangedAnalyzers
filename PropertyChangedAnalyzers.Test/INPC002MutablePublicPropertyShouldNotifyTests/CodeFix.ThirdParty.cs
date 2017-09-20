@@ -7,6 +7,12 @@
     {
         internal class ThirdParty
         {
+            [TearDown]
+            public void TearDown()
+            {
+                AnalyzerAssert.ResetMetadataReferences();
+            }
+
             [Test]
             public void AutoPropertyMvvmFramework()
             {

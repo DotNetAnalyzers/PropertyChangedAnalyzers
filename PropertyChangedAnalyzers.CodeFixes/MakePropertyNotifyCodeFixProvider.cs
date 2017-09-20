@@ -12,8 +12,10 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
+    using Microsoft.CodeAnalysis.Formatting;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakePropertyNotifyCodeFixProvider))]
     [Shared]
@@ -91,7 +93,158 @@
                 fieldAccess = field.ToFullString();
             }
 
+            var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+            using (var pooled = StringBuilderPool.Borrow())
+            {
+                var code = pooled.Item.AppendLine($"public {property.Type.ToDisplayString()} {property.Name}")
+                                 .AppendLine("{")
+                                 .AppendLine("    get")
+                                 .AppendLine("    {")
+                                 .AppendLine($"        return {fieldAccess};")
+                                 .AppendLine("    }")
+                                 .AppendLine()
+                                 .AppendLine("    set")
+                                 .AppendLine("    {")
+                                 .AppendLine("        if (value == this.value)")
+                                 .AppendLine("        {")
+                                 .AppendLine($"           return;")
+                                 .AppendLine("        }")
+                                 .AppendLine($"        {fieldAccess} = value;")
+                                 .AppendLine($"        this.RaisePropertyChanged();")
+                                 .AppendLine("    }")
+                                 .ToString();
+            }
+
+            if (!property.Type.IsReferenceType ||
+                property.Type == KnownSymbol.String)
+            {
+                if (Equality.HasEqualityOperator(property.Type))
+                {
+                    editor.ReplaceNode(
+                        propertyDeclaration,
+                        ParseProperty(
+                            @"public int PropertyName
+                            {
+                                get
+                                {
+                                    return this.fieldName;
+                                }
+                            
+                                set
+                                {
+                                    if (value == this.fieldName)
+                                    {
+                                        return;
+                                    }
+                            
+                                    this.fieldName = value;
+                                    this.OnPropertyChanged();
+                                }
+                            }",
+                            usesUnderscoreNames,
+                            property,
+                            fieldAccess));
+                    return editor.GetChangedDocument();
+                }
+
+                if (property.Type.Name == "Nullable")
+                {
+                    editor.ReplaceNode(
+                        propertyDeclaration,
+                        ParseProperty(
+                            @"public int PropertyName
+                            {
+                                get
+                                {
+                                    return this.fieldName;
+                                }
+                            
+                                set
+                                {
+                                    if (System.Nullable.Equals(value, this.fieldName))
+                                    {
+                                        return;
+                                    }
+                            
+                                    this.fieldName = value;
+                                    this.OnPropertyChanged();
+                                }
+                            }",
+                            usesUnderscoreNames,
+                            property,
+                            fieldAccess));
+                    return editor.GetChangedDocument();
+                }
+
+                if (property.Type.GetMembers("Equals")
+                                 .OfType<IMethodSymbol>()
+                                 .TryGetSingle<IMethodSymbol>(x => x.Parameters.Length == 1 && ReferenceEquals(property.Type, x.Parameters[0].Type), out _))
+                {
+                    editor.ReplaceNode(
+                        propertyDeclaration,
+                        ParseProperty(
+                            @"public int PropertyName
+                            {
+                                get
+                                {
+                                    return this.fieldName;
+                                }
+                            
+                                set
+                                {
+                                    if (value.Equals(this.fieldName))
+                                    {
+                                        return;
+                                    }
+                            
+                                    this.fieldName = value;
+                                    this.OnPropertyChanged();
+                                }
+                            }",
+                            usesUnderscoreNames,
+                            property,
+                            fieldAccess));
+                    return editor.GetChangedDocument();
+                }
+
+                editor.ReplaceNode(
+                    propertyDeclaration,
+                    ParseProperty(
+                        @"public int PropertyName
+                            {
+                                get
+                                {
+                                    return this.fieldName;
+                                }
+                            
+                                set
+                                {
+                                    if (System.Collections.Generic.EqualityComparer<property.Type.ToDisplayString()>.Equals(value, this.fieldName))
+                                    {
+                                        return;
+                                    }
+                            
+                                    this.fieldName = value;
+                                    this.OnPropertyChanged();
+                                }
+                            }",
+                        usesUnderscoreNames,
+                        property,
+                        fieldAccess));
+                return editor.GetChangedDocument();
+            }
             return context.Document;
+        }
+
+        private static PropertyDeclarationSyntax ParseProperty(string code)
+        {
+            return (PropertyDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code)
+                                                           .Members
+                                                           .Single()
+                                                           .WithSimplifiedNames()
+                                                           .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                                                           .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                           .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         private static Fix CreateFix(
@@ -150,7 +303,7 @@
         {
             fieldAccess = null;
             assignStatement = null;
-            if (!propertyDeclaration.TryGetSetAccessorDeclaration(out AccessorDeclarationSyntax setter) ||
+            if (!propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) ||
                 setter.Body == null ||
                 setter.Body.Statements.Count != 1)
             {

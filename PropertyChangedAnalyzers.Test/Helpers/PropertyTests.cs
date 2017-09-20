@@ -143,43 +143,12 @@ namespace RoslynSandBox
         public int Value6
         {
             get => this.value6;
-            set => this.value6 = value;
+            private set => this.value6 = value;
         }
     }
 }");
             var property = syntaxTree.PropertyDeclarationSyntax(propertyName);
             Assert.AreEqual(expected, Property.TryGetBackingField(property, out var identifier, out var declaration));
-            Assert.AreEqual(field, identifier?.Identifier.Text);
-            Assert.AreEqual(field, declaration?.Name());
-        }
-
-        [TestCase("Value1","value1")]
-        [TestCase("Value2","value2")]
-        public void TryGetBackingFieldExpressionBodyAccessor(string propertyName, string field)
-        {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandBox
-{
-    public class Foo
-    {
-        private int value1;
-        private int value2;
-
-        public int Value1
-        {
-            get => this.value1;
-            set => this.value1 = value;
-        }
-
-        public int Value2
-        {
-            get => value2;
-            private set => value2 = value;
-        }
-    }
-}");
-            var property = syntaxTree.PropertyDeclarationSyntax(propertyName);
-            Assert.AreEqual(true, Property.TryGetBackingField(property, out var identifier, out var declaration));
             Assert.AreEqual(field, identifier?.Identifier.Text);
             Assert.AreEqual(field, declaration?.Name());
         }

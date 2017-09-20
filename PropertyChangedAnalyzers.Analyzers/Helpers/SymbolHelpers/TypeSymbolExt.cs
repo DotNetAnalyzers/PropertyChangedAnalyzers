@@ -1,5 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
@@ -57,6 +58,11 @@
             return type.TryGetSingleMember(name, out property);
         }
 
+        internal static bool TryGetMethod(this ITypeSymbol type, Func<IMethodSymbol, bool> predicate, out IMethodSymbol property)
+        {
+            return type.TryGetSingleMember(predicate, out property);
+        }
+
         internal static bool TryGetSingleMember<TMember>(this ITypeSymbol type, string name, out TMember member)
             where TMember : class, ISymbol
         {
@@ -76,6 +82,34 @@
                 }
 
                 member = symbol as TMember;
+            }
+
+            return member != null;
+        }
+
+        internal static bool TryGetSingleMember<TMember>(this ITypeSymbol type, Func<TMember, bool> predicate, out TMember member)
+            where TMember : class, ISymbol
+        {
+            member = null;
+            if (type == null ||
+                predicate == null)
+            {
+                return false;
+            }
+
+            foreach (var symbol in type.RecursiveMembers())
+            {
+                if (symbol is TMember candidate &&
+                    predicate(candidate))
+                {
+                    if (member != null)
+                    {
+                        member = null;
+                        return false;
+                    }
+
+                    member = candidate;
+                }
             }
 
             return member != null;

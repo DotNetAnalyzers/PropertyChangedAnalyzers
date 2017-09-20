@@ -3,7 +3,7 @@
     using System.Threading.Tasks;
     using NUnit.Framework;
 
-    internal class Diagnostics : DiagnosticVerifier<WPF1014DontRaiseChangeForMissingProperty>
+    internal class Diagnostics : DiagnosticVerifier<INPC009DontRaiseChangeForMissingProperty>
     {
         [TestCase(@"""Missing""")]
         [TestCase(@"nameof(PropertyChanged)")]
