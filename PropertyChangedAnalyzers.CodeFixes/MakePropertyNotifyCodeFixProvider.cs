@@ -49,7 +49,7 @@
 
                 var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
                 if (Property.IsMutableAutoProperty(propertyDeclaration) ||
-                    IsSimpleAssignmentOnly(propertyDeclaration, out _, out _))
+                    IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _))
                 {
                     if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out var invoker) &&
                         invoker.Parameters.Length == 1)
@@ -80,12 +80,11 @@
             }
 
             var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
-            var fieldAccess = "missing";
             var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
             if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
             {
                 var backingField = editor.AddBackingField(propertyDeclaration, usesUnderscoreNames, cancellationToken);
-                fieldAccess = usesUnderscoreNames
+                var fieldAccess = usesUnderscoreNames
                     ? backingField.Name()
                     : $"this.{backingField.Name()}";
                 using (var pooled = StringBuilderPool.Borrow())
@@ -110,7 +109,6 @@
                                      .AppendLine("}")
                                      .ToString();
                     var template = ParseProperty(code);
-
                     editor.ReplaceNode(
                         propertyDeclaration.AccessorList,
                         propertyDeclaration.AccessorList
@@ -136,35 +134,54 @@
                 }
             }
 
-            else if (IsSimpleAssignmentOnly(propertyDeclaration, out var assignStatement, out var field))
+            if (propertyDeclaration.TryGetGetAccessorDeclaration(out getter) &&
+                propertyDeclaration.TryGetSetAccessorDeclaration(out setter))
             {
-                fieldAccess = field.ToFullString();
+                if (IsSimpleAssignmentOnly(propertyDeclaration, out var statement, out var assignment, out _))
+                {
+                    using (var pooled = StringBuilderPool.Borrow())
+                    {
+                        var code = pooled.Item.AppendLine($"public {property.Type.ToDisplayString()} {property.Name}")
+                                         .AppendLine("{")
+                                         .AppendLine("    get")
+                                         .AppendLine("    {")
+                                         .AppendLine($"        return {assignment.Left};")
+                                         .AppendLine("    }")
+                                         .AppendLine()
+                                         .AppendLine("    set")
+                                         .AppendLine("    {")
+                                         .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString())})")
+                                         .AppendLine("        {")
+                                         .AppendLine($"           return;")
+                                         .AppendLine("        }")
+                                         .AppendLine()
+                                         .AppendLine(statement.ToFullString())
+                                         .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
+                                         .AppendLine("    }")
+                                         .AppendLine("}")
+                                         .ToString();
+                        var template = ParseProperty(code);
+                        editor.ReplaceNode(
+                            propertyDeclaration.AccessorList,
+                            propertyDeclaration.AccessorList
+                                               .ReplaceNodes(
+                                                   new[] { getter, setter },
+                                                   (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
+                                                       ? getter.WithBody(template.Getter().Body)
+                                                               .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                               .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                               .WithAdditionalAnnotations(Formatter.Annotation)
+                                                       : setter.WithBody(template.Setter().Body)
+                                                               .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                               .WithAdditionalAnnotations(Formatter.Annotation))
+                                               .WithAdditionalAnnotations(Formatter.Annotation));
+                        return editor.GetChangedDocument();
+                    }
+                }
+
             }
 
-            using (var pooled = StringBuilderPool.Borrow())
-            {
-                var code = pooled.Item.AppendLine($"public {property.Type.ToDisplayString()} {property.Name}")
-                                 .AppendLine("{")
-                                 .AppendLine("    get")
-                                 .AppendLine("    {")
-                                 .AppendLine($"        return {fieldAccess};")
-                                 .AppendLine("    }")
-                                 .AppendLine()
-                                 .AppendLine("    set")
-                                 .AppendLine("    {")
-                                 .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", fieldAccess)})")
-                                 .AppendLine("        {")
-                                 .AppendLine($"           return;")
-                                 .AppendLine("        }")
-                                 .AppendLine()
-                                 .AppendLine($"        {fieldAccess} = value;")
-                                 .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
-                                 .AppendLine("    }")
-                                 .AppendLine("}")
-                                 .ToString();
-                editor.ReplaceNode(propertyDeclaration, ParseProperty(code).WithLeadingTrivia(propertyDeclaration.GetLeadingTrivia()));
-                return editor.GetChangedDocument();
-            }
+            return document;
         }
 
         private static PropertyDeclarationSyntax ParseProperty(string code)
@@ -178,24 +195,28 @@
                                                            .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out ExpressionStatementSyntax assignStatement, out ExpressionSyntax fieldAccess)
+        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)
         {
-            fieldAccess = null;
-            assignStatement = null;
             if (!propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) ||
                 setter.Body == null ||
                 setter.Body.Statements.Count != 1)
             {
+                fieldAccess = null;
+                statement = null;
+                assignment = null;
                 return false;
             }
 
-            if (Property.AssignsValueToBackingField(setter, out var assignment))
+            if (Property.AssignsValueToBackingField(setter, out assignment))
             {
-                assignStatement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
+                statement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
                 fieldAccess = assignment.Left;
-                return assignStatement != null;
+                return statement != null;
             }
 
+            fieldAccess = null;
+            statement = null;
+            assignment = null;
             return false;
         }
     }
