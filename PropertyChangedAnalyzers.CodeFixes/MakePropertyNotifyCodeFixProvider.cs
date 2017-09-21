@@ -13,12 +13,15 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Simplification;
     using PropertyChangedAnalyzers.Helpers;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakePropertyNotifyCodeFixProvider))]
     [Shared]
     internal class MakePropertyNotifyCodeFixProvider : CodeFixProvider
     {
+        private const string NotifyWhenValueChanges = "Notify when value changes.";
+
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC002MutablePublicPropertyShouldNotify.DiagnosticId);
 
@@ -48,20 +51,35 @@
                 }
 
                 var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
-                if (Property.IsMutableAutoProperty(propertyDeclaration) ||
-                    IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _))
+                if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out var invoker) &&
+                    invoker.Parameters.Length == 1)
                 {
-                    if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out var invoker) &&
-                        invoker.Parameters.Length == 1)
+                    if (invoker.Parameters[0].Type == KnownSymbol.String ||
+                        invoker.Parameters[0].Type == KnownSymbol.PropertyChangedEventArgs)
                     {
-                        if (invoker.Parameters[0].Type == KnownSymbol.String ||
-                            invoker.Parameters[0].Type == KnownSymbol.PropertyChangedEventArgs)
+                        if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                         {
                             context.RegisterCodeFix(
                                 CodeAction.Create(
-                                    "Convert to notifying property.",
-                                    cancellationToken => MakeNotifyAsync(context.Document, propertyDeclaration, invoker, semanticModel, cancellationToken),
-                                    this.GetType().FullName + invoker.Name + invoker.Parameters[0].Type.Name),
+                                    NotifyWhenValueChanges,
+                                    cancellationToken => MakeAutoPropertyNotifyAsync(context.Document, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                    NotifyWhenValueChanges),
+                                diagnostic);
+                        }
+                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _))
+                        {
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    NotifyWhenValueChanges,
+                                    cancellationToken => MakeWithBackingFieldNotifyWhenValueChangesAsync(context.Document, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                    NotifyWhenValueChanges),
+                                diagnostic);
+
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    "Notify.",
+                                    cancellationToken => MakeWithBackingFieldNotifyAsync(context.Document, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                    "Notify."),
                                 diagnostic);
                         }
                     }
@@ -69,7 +87,7 @@
             }
         }
 
-        private static async Task<Document> MakeNotifyAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static async Task<Document> MakeAutoPropertyNotifyAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
@@ -79,10 +97,18 @@
                 return document;
             }
 
-            var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
-            var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
             if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
             {
+                if (getter.Body != null ||
+                    getter.ContainsSkippedText ||
+                    setter.Body != null ||
+                    setter.ContainsSkippedText)
+                {
+                    return document;
+                }
+
+                var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var backingField = editor.AddBackingField(propertyDeclaration, usesUnderscoreNames, cancellationToken);
                 var fieldAccess = usesUnderscoreNames
                     ? backingField.Name()
@@ -134,11 +160,32 @@
                 }
             }
 
-            if (propertyDeclaration.TryGetGetAccessorDeclaration(out getter) &&
-                propertyDeclaration.TryGetSetAccessorDeclaration(out setter))
+            return document;
+        }
+
+        private static async Task<Document> MakeWithBackingFieldNotifyWhenValueChangesAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
+                                             .ConfigureAwait(false);
+            var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            if (classDeclaration == null)
             {
+                return document;
+            }
+
+            if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter) &&
+                propertyDeclaration.TryGetSetAccessorDeclaration(out var setter))
+            {
+                if (getter.Body?.Statements.Count != 1 ||
+                    setter.Body?.Statements.Count != 1)
+                {
+                    return document;
+                }
+
                 if (IsSimpleAssignmentOnly(propertyDeclaration, out var statement, out var assignment, out _))
                 {
+                    var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                    var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                     using (var pooled = StringBuilderPool.Borrow())
                     {
                         var code = pooled.Item.AppendLine($"public {property.Type.ToDisplayString()} {property.Name}")
@@ -178,7 +225,31 @@
                         return editor.GetChangedDocument();
                     }
                 }
+            }
 
+            return document;
+        }
+
+        private static async Task<Document> MakeWithBackingFieldNotifyAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
+                                             .ConfigureAwait(false);
+            var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            if (classDeclaration == null)
+            {
+                return document;
+            }
+
+            if (IsSimpleAssignmentOnly(propertyDeclaration, out var statement, out _, out _))
+            {
+                var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                var notifyStatement = SyntaxFactory
+                    .ParseStatement($"                {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
+                    .WithSimplifiedNames()
+                    .WithAdditionalAnnotations(Formatter.Annotation);
+                editor.InsertAfter(statement, notifyStatement);
+                return editor.GetChangedDocument();
             }
 
             return document;

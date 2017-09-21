@@ -2,7 +2,6 @@ namespace PropertyChangedAnalyzers.Test
 {
     using System;
     using System.Collections;
-    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using NUnit.Framework;
@@ -27,17 +26,17 @@ namespace PropertyChangedAnalyzers.Test
                 }
             }
 
-            var typeNames = new Dictionary<string, string>
-            {
-                { "IReadOnlyList<T>", "T" },
-                { "ImmutableArray<T>", "T" },
-                { "ChildSyntaxList", "SyntaxNodeOrToken" },
-                { "SeparatedSyntaxList<T>", "T" },
-                { "SyntaxList<T>", "T" },
-                { "SyntaxNodeOrTokenList", "SyntaxNodeOrToken" },
-                { "SyntaxTokenList", "SyntaxToken" },
-                { "SyntaxTriviaList", "SyntaxTrivia" },
-            };
+            ////        var typeNames = new Dictionary<string, string>
+            ////        {
+            ////            { "IReadOnlyList<T>", "T" },
+            ////            { "ImmutableArray<T>", "T" },
+            ////            { "ChildSyntaxList", "SyntaxNodeOrToken" },
+            ////            { "SeparatedSyntaxList<T>", "T" },
+            ////            { "SyntaxList<T>", "T" },
+            ////            { "SyntaxNodeOrTokenList", "SyntaxNodeOrToken" },
+            ////            { "SyntaxTokenList", "SyntaxToken" },
+            ////            { "SyntaxTriviaList", "SyntaxTrivia" },
+            ////        };
         }
     }
 }

@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public class PropertyTests
+    internal class PropertyTests
     {
         [TestCase("Value1", false)]
         [TestCase("Value2", false)]

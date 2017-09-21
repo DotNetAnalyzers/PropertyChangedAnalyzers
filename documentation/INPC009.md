@@ -1,11 +1,11 @@
-# WPF1014
+# INPC009
 ## Don't raise PropertyChanged for missing property.
 
 <!-- start generated table -->
 <table>
 <tr>
   <td>CheckId</td>
-  <td>WPF1014</td>
+  <td>INPC009</td>
 </tr>
 <tr>
   <td>Severity</td>
@@ -21,7 +21,7 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/WPF1014DontRaiseChangeForMissingProperty.cs">WPF1014DontRaiseChangeForMissingProperty</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC009DontRaiseChangeForMissingProperty.cs">INPC009DontRaiseChangeForMissingProperty</a></td>
 </tr>
 </table>
 <!-- end generated table -->
@@ -47,21 +47,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable WPF1014 // Don't raise PropertyChanged for missing property.
+#pragma warning disable INPC009 // Don't raise PropertyChanged for missing property.
 Code violating the rule here
-#pragma warning restore WPF1014 // Don't raise PropertyChanged for missing property.
+#pragma warning restore INPC009 // Don't raise PropertyChanged for missing property.
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable WPF1014 // Don't raise PropertyChanged for missing property.
+#pragma warning disable INPC009 // Don't raise PropertyChanged for missing property.
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "WPF1014:Don't raise PropertyChanged for missing property.", 
+    "INPC009:Don't raise PropertyChanged for missing property.", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

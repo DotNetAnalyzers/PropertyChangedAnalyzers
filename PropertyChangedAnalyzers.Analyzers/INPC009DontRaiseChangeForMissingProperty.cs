@@ -42,9 +42,9 @@
             var invocation = (InvocationExpressionSyntax)context.Node;
             var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
-                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != PropertyChangedAnalyzers.AnalysisResult.No)
+                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
             {
-                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax nameArg, out string propertyName) == PropertyChangedAnalyzers.AnalysisResult.Yes)
+                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out ArgumentSyntax nameArg, out string propertyName) == AnalysisResult.Yes)
                 {
                     var type = invocation.Expression is IdentifierNameSyntax ||
                                (invocation.Expression as MemberAccessExpressionSyntax)?.Expression is ThisExpressionSyntax ||

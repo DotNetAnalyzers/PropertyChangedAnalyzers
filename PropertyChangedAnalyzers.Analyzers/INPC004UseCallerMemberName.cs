@@ -48,7 +48,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == PropertyChangedAnalyzers.AnalysisResult.Yes)
+            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
             {
                 var methodDeclaration = (MethodDeclarationSyntax)context.Node;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.ParameterList.Parameters[0].GetLocation()));
@@ -75,7 +75,7 @@ namespace PropertyChangedAnalyzers
             }
 
             var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != PropertyChangedAnalyzers.AnalysisResult.Yes)
+            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.Yes)
             {
                 return;
             }

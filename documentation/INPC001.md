@@ -5,7 +5,7 @@
 <table>
 <tr>
   <td>CheckId</td>
-  <td>INPC003</td>
+  <td>INPC001</td>
 </tr>
 <tr>
   <td>Severity</td>
@@ -21,7 +21,7 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/PropertyChanged/INPC003ImplementINotifyPropertyChanged.cs">INPC003ImplementINotifyPropertyChanged</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/PropertyChanged/INPC001ImplementINotifyPropertyChanged.cs">INPC001ImplementINotifyPropertyChanged</a></td>
 </tr>
 </table>
 <!-- end generated table -->
@@ -47,21 +47,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC003 // Implement INotifyPropertyChanged.
+#pragma warning disable INPC001 // Implement INotifyPropertyChanged.
 Code violating the rule here
-#pragma warning restore INPC003 // Implement INotifyPropertyChanged.
+#pragma warning restore INPC001 // Implement INotifyPropertyChanged.
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC003 // Implement INotifyPropertyChanged.
+#pragma warning disable INPC001 // Implement INotifyPropertyChanged.
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC003:Implement INotifyPropertyChanged.", 
+    "INPC001:Implement INotifyPropertyChanged.", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->
