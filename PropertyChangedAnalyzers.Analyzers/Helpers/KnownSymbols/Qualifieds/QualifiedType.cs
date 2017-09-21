@@ -35,7 +35,7 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            return left.Name == right.Type &&
+            return left.MetadataName == right.Type &&
                    left.ContainingNamespace == right.Namespace;
         }
 

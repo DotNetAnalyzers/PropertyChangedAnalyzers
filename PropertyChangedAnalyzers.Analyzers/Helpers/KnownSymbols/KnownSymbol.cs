@@ -6,6 +6,7 @@ namespace PropertyChangedAnalyzers
         internal static readonly ObjectType Object = new ObjectType();
         internal static readonly QualifiedType String = Create("System.String");
         internal static readonly NullableType Nullable = new NullableType();
+        internal static readonly NullableOfTType NullableOfT = new NullableOfTType();
 
         internal static readonly QualifiedType CallerMemberNameAttribute = new QualifiedType("System.Runtime.CompilerServices.CallerMemberNameAttribute");
         internal static readonly INotifyPropertyChangedType INotifyPropertyChanged = new INotifyPropertyChangedType();

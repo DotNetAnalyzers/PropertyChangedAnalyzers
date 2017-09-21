@@ -81,19 +81,66 @@
 
             var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
             var fieldAccess = "missing";
-            if (Property.IsMutableAutoProperty(propertyDeclaration))
+            var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+            if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
             {
                 var backingField = editor.AddBackingField(propertyDeclaration, usesUnderscoreNames, cancellationToken);
                 fieldAccess = usesUnderscoreNames
                     ? backingField.Name()
                     : $"this.{backingField.Name()}";
+                using (var pooled = StringBuilderPool.Borrow())
+                {
+                    var code = pooled.Item.AppendLine($"public Type PropertyName")
+                                     .AppendLine("{")
+                                     .AppendLine("    get")
+                                     .AppendLine("    {")
+                                     .AppendLine($"        return {fieldAccess};")
+                                     .AppendLine("    }")
+                                     .AppendLine()
+                                     .AppendLine("    set")
+                                     .AppendLine("    {")
+                                     .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", fieldAccess)})")
+                                     .AppendLine("        {")
+                                     .AppendLine($"           return;")
+                                     .AppendLine("        }")
+                                     .AppendLine()
+                                     .AppendLine($"        {fieldAccess} = value;")
+                                     .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
+                                     .AppendLine("    }")
+                                     .AppendLine("}")
+                                     .ToString();
+                    var template = ParseProperty(code);
+
+                    editor.ReplaceNode(
+                        propertyDeclaration.AccessorList,
+                        propertyDeclaration.AccessorList
+                                           .ReplaceNodes(
+                                               new[] { getter, setter },
+                                               (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
+                                                   ? getter.WithBody(template.Getter().Body)
+                                                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                           .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                           .WithAdditionalAnnotations(Formatter.Annotation)
+                                                   : setter.WithBody(template.Setter().Body)
+                                                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                           .WithAdditionalAnnotations(Formatter.Annotation))
+                                           .WithAdditionalAnnotations(Formatter.Annotation));
+                    if (propertyDeclaration.Initializer != null)
+                    {
+                        editor.ReplaceNode(
+                            propertyDeclaration,
+                            (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
+                    }
+
+                    return editor.GetChangedDocument();
+                }
             }
+
             else if (IsSimpleAssignmentOnly(propertyDeclaration, out var assignStatement, out var field))
             {
                 fieldAccess = field.ToFullString();
             }
 
-            var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
             using (var pooled = StringBuilderPool.Borrow())
             {
                 var code = pooled.Item.AppendLine($"public {property.Type.ToDisplayString()} {property.Name}")
@@ -105,13 +152,13 @@
                                  .AppendLine()
                                  .AppendLine("    set")
                                  .AppendLine("    {")
-                                 .AppendLine($"        if ({Code.EqualityCheck(property.Type, "value", fieldAccess)})")
+                                 .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", fieldAccess)})")
                                  .AppendLine("        {")
                                  .AppendLine($"           return;")
                                  .AppendLine("        }")
                                  .AppendLine()
                                  .AppendLine($"        {fieldAccess} = value;")
-                                 .AppendLine($"        {Code.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
+                                 .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
                                  .AppendLine("    }")
                                  .AppendLine("}")
                                  .ToString();

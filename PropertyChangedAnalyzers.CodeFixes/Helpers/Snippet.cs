@@ -2,7 +2,7 @@
 {
     using Microsoft.CodeAnalysis;
 
-    internal static class Code
+    internal static class Snippet
     {
         internal static string EqualityCheck(ITypeSymbol type, string x, string y)
         {
@@ -18,9 +18,11 @@
                     return $"{x} == {y}";
                 }
 
-                if (type.Name == "Nullable")
+                if (type == KnownSymbol.NullableOfT)
                 {
-                    return $"System.Nullable.Equals({x}, {y})";
+                    return Equality.HasEqualityOperator(((INamedTypeSymbol)type).TypeArguments[0])
+                        ? $"{x} == {y}"
+                        : $"System.Nullable.Equals({x}, {y})";
                 }
 
                 if (type.GetMembers("Equals")
