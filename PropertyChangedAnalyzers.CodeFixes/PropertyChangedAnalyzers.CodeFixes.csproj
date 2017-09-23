@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
-    <NoWarn>NU1202;NU1605</NoWarn>
     <NeutralLanguage>en-US</NeutralLanguage>
     <CodeAnalysisRuleSet>PropertyChangedAnalyzers.CodeFixes.ruleset</CodeAnalysisRuleSet>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
