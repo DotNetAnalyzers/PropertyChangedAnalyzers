@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+    <NoWarn>NU1202;NU1605</NoWarn>
     <NeutralLanguage>en-US</NeutralLanguage>
     <CodeAnalysisRuleSet>PropertyChangedAnalyzers.Analyzers.ruleset</CodeAnalysisRuleSet>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>PropertyChangedAnalyzers</RootNamespace>
   </PropertyGroup>
-  <Import Project="..\.paket\Paket.Restore.targets" />
   <ItemGroup>
     <None Update="Helpers\EnumerableExt.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -20,4 +20,5 @@
       <DependentUpon>EnumerableExt.tt</DependentUpon>
     </Compile>
   </ItemGroup>
+  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

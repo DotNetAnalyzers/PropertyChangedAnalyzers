@@ -12,7 +12,7 @@
         {
             using (var pooled = Walker.Create(node, semanticModel, cancellationToken))
             {
-                if (pooled.Item.UsesThis == Result.Yes||
+                if (pooled.Item.UsesThis == Result.Yes ||
                     pooled.Item.UsesUnderScore == Result.No)
                 {
                     return false;

@@ -1,10 +1,8 @@
 storage: none
-strategy: min
 lowest_matching: true
 source http://www.nuget.org/api/v2/
 
 nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1
-nuget System.Collections.Immutable 1.2.0
 
 group Analyzers
   storage: none
