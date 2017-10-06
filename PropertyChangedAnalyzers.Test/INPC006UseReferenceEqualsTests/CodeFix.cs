@@ -6,7 +6,7 @@
 
     internal class CodeFix
     {
-        public static readonly IReadOnlyList<TestCase> TestCases = new[]
+        private static readonly IReadOnlyList<TestCase> TestCases = new[]
             {
                 new TestCase("Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
                 new TestCase("Equals(this.bar, value)", "ReferenceEquals(value, this.bar)"),
@@ -29,6 +29,18 @@ namespace RoslynSandbox
     {
     }
 }";
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            AnalyzerAssert.SuppressedDiagnostics.Add(INPC006UseObjectEqualsForReferenceTypes.DiagnosticId);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            AnalyzerAssert.ResetMetadataSuppressedDiagnostics();
+        }
 
         [Test]
         public void ConstrainedGeneric()

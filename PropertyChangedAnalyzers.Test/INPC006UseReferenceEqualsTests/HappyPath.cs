@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
 
     internal class HappyPath
     {
-        public static readonly IReadOnlyList<TestCase> TestCases = new[]
+        private static readonly IReadOnlyList<TestCase> TestCases = new[]
         {
             new TestCase("string", "Equals(value, this.bar)"),
             new TestCase("string", "Equals(this.bar, value)"),
@@ -31,6 +31,18 @@ namespace RoslynSandbox
     {
     }
 }";
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            AnalyzerAssert.SuppressedDiagnostics.Add(INPC006UseObjectEqualsForReferenceTypes.DiagnosticId);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            AnalyzerAssert.ResetMetadataSuppressedDiagnostics();
+        }
 
         [Test]
         public void SimpleProperty()

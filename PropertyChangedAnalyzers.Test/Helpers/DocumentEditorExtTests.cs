@@ -39,7 +39,8 @@ namespace RoslynSandbox
     {
         public int Meh1 = 1;
         private int meh2;
-privateint value;
+        private int value;
+
         public int Value { get; set; }
     }
 }";
@@ -70,7 +71,8 @@ namespace RoslynSandbox
     public class Foo
     {
         private int value;
-privateint value_;
+        private int value_;
+
         public int Value { get; set; }
     }
 }";
@@ -92,7 +94,7 @@ namespace RoslynSandbox
         {
         }
 
-        private Foo( int i)
+        private Foo(int i)
         {
         }
 
@@ -141,7 +143,7 @@ namespace RoslynSandbox
         {
         }
 
-        private Foo( int i)
+        private Foo(int i)
         {
         }
 
@@ -189,7 +191,7 @@ namespace RoslynSandbox
         {
         }
 
-        private Foo( int i)
+        private Foo(int i)
         {
         }
 
@@ -238,7 +240,7 @@ namespace RoslynSandbox
         {
         }
 
-        private Foo( int i)
+        private Foo(int i)
         {
         }
 
