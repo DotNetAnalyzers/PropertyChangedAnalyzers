@@ -1,9 +1,9 @@
-namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingPropertyTests
+namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingPropertyTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<INPC009DontRaiseChangeForMissingProperty>
+    internal class HappyPath
     {
         [TestCase("null")]
         [TestCase("string.Empty")]
@@ -11,9 +11,11 @@ namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingProperty
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public async Task OnPropertyChangedWithEventArgs(string propertyName)
+        public void OnPropertyChangedWithEventArgs(string propertyName)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -38,16 +40,19 @@ namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingProperty
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
         }
 
         [Test]
-        public async Task OnPropertyChangedCallerMemberName()
+        public void OnPropertyChangedCallerMemberName()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -72,15 +77,18 @@ namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingProperty
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }";
+    }
+}";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
         }
 
         [Test]
-        public async Task OnPropertyChangedCallerMemberNameCopyLocalNullCheckInvoke()
+        public void OnPropertyChangedCallerMemberNameCopyLocalNullCheckInvoke()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -109,15 +117,18 @@ namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingProperty
                 handler.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-    }";
+    }
+}";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
         }
 
         [Test]
-        public async Task OnPropertyChangedCallerMemberNameCopyLocalNullCheckImplicitInvoke()
+        public void OnPropertyChangedCallerMemberNameCopyLocalNullCheckImplicitInvoke()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -146,9 +157,10 @@ namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingProperty
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-    }";
+    }
+}";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
         }
 
         [TestCase("null")]
@@ -157,9 +169,11 @@ namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingProperty
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public async Task Invokes(string propertyName)
+        public void Invokes(string propertyName)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
 
     public class ViewModel : INotifyPropertyChanged
@@ -181,15 +195,18 @@ namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingProperty
                 this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar))));
             }
         }
-    }";
+    }
+}";
             testCode = testCode.AssertReplace(@"nameof(this.Bar))", propertyName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
         }
 
         [Test]
-        public async Task InvokesCached()
+        public void InvokesCached()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
 
     public class ViewModel : INotifyPropertyChanged
@@ -212,12 +229,13 @@ namespace PropertyChangedAnalyzers.Test.INPC007DontRaiseChangeForMissingProperty
                 this.PropertyChanged?.Invoke(this, BarPropertyChangedArgs);
             }
         }
-    }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
         }
 
         [Test]
-        public async Task OnPropertyChangedInBaseClass()
+        public void OnPropertyChangedInBaseClass()
         {
             var vmCode = @"
 namespace RoslynSandBox
@@ -259,13 +277,15 @@ namespace RoslynSandBox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(vmCode, testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(vmCode, testCode);
         }
 
         [Test]
-        public async Task RaisesForIndexer()
+        public void RaisesForIndexer()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -284,78 +304,88 @@ namespace RoslynSandBox
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }";
+    }
+}";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
         }
 
         [Test]
-        public async Task IgnoresWhenNotInvokingReproIssue122()
+        public void IgnoresWhenNotInvokingReproIssue122()
         {
             var extCode = @"
-using System.ComponentModel;
-public static class PropertyChangedEventArgsExt
+namespace RoslynSandbox
 {
-    public static bool HasPropertyChanged(this PropertyChangedEventArgs e, string propertyName)
+    using System.ComponentModel;
+
+    public static class PropertyChangedEventArgsExt
     {
-        return string.Equals(e.PropertyName, propertyName);
+        public static bool HasPropertyChanged(this PropertyChangedEventArgs e, string propertyName)
+        {
+            return string.Equals(e.PropertyName, propertyName);
+        }
     }
 }";
 
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int value;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public ViewModel()
+    public class ViewModel : INotifyPropertyChanged
     {
-        this.PropertyChanged += OnPropertyChanged;
-    }
+        private int value;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Value
-    {
-        get
+        public ViewModel()
         {
-            return this.value;
+            this.PropertyChanged += OnPropertyChanged;
         }
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
         {
-            if (value == this.value)
+            get
             {
-                return;
+                return this.value;
             }
 
-            this.value = value;
-            this.OnPropertyChanged();
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
         }
-    }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-    {
-        if (e.HasPropertyChanged(""SomeProperty""))
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            // do something
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.HasPropertyChanged(""SomeProperty""))
+            {
+                // do something
+            }
         }
     }
 }";
-            await this.VerifyHappyPathAsync(extCode, testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(extCode, testCode);
         }
 
         [Test]
-        public async Task RaiseForOtherInstance()
+        public void RaiseForOtherInstance()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -394,12 +424,13 @@ public class ViewModel : INotifyPropertyChanged
             var vm = new ViewModel();
             vm.OnPropertyChanged(propertyName);
         }
-    }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
         }
 
         [Test]
-        public async Task RaiseForOtherInstanceOfOtherType()
+        public void RaiseForOtherInstanceOfOtherType()
         {
             var vmCode = @"
 namespace RoslynSandBox
@@ -447,11 +478,11 @@ namespace RoslynSandBox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(vmCode, testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(vmCode, testCode);
         }
 
         [Test]
-        public async Task RaiseForOtherInstanceOfOtherTypeWithBaseClass()
+        public void RaiseForOtherInstanceOfOtherTypeWithBaseClass()
         {
             var vmBaseCode = @"
 namespace RoslynSandBox
@@ -506,7 +537,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(new[] { vmBaseCode, vmCode, testCode }).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(vmBaseCode, vmCode, testCode);
         }
     }
 }
