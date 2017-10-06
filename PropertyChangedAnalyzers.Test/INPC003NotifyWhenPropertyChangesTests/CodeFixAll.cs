@@ -1,13 +1,12 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using INPC003NotifyWhenPropertyChanges = PropertyChangedAnalyzers.INPC003NotifyWhenPropertyChanges;
 
-    internal class CodeFixAll : CodeFixVerifier<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>
+    internal class CodeFixAll
     {
         [Test]
-        public async Task WhenUsingPropertiesExpressionBody()
+        public void WhenUsingPropertiesExpressionBody()
         {
             var testCode = @"
 using System.ComponentModel;
@@ -125,8 +124,7 @@ public class ViewModel : INotifyPropertyChanged
     }
 }";
 
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
     }
 }

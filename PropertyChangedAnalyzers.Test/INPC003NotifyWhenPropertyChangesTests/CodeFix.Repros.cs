@@ -1,14 +1,15 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal partial class CodeFix
     {
         [Test]
-        public async Task Vanguard_MVVM_ViewModels_MainWindowViewModel()
+        public void Vanguard_MVVM_ViewModels_MainWindowViewModel()
         {
-            var childDataContext = @"namespace Vanguard_MVVM.Infrastructure
+            var childDataContext = @"
+namespace Vanguard_MVVM.Infrastructure
 {
     public interface IChildDataContext
     {
@@ -57,9 +58,6 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Title");
-            await this.VerifyCSharpDiagnosticAsync(new[] { childDataContext, testCode }, expected).ConfigureAwait(false);
-
             var fixedCode = @"
 namespace Vanguard_MVVM.ViewModels
 {
@@ -103,12 +101,12 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            await this.VerifyCSharpFixAsync(new[] { childDataContext, testCode }, new[] { childDataContext, fixedCode }, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { childDataContext, testCode }, fixedCode);
+            AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { childDataContext, testCode }, fixedCode);
         }
 
         [Test]
-        public async Task Vanguard_MVVM_ViewModels_MainWindowViewModelCommentedOut()
+        public void Vanguard_MVVM_ViewModels_MainWindowViewModelCommentedOut()
         {
             var childDataContext = @"namespace Vanguard_MVVM.Infrastructure
 {
@@ -160,9 +158,6 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithArguments("Title");
-            await this.VerifyCSharpDiagnosticAsync(new[] { childDataContext, testCode }, expected).ConfigureAwait(false);
-
             var fixedCode = @"
 namespace Vanguard_MVVM.ViewModels
 {
@@ -207,8 +202,8 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            await this.VerifyCSharpFixAsync(new[] { childDataContext, testCode }, new[] { childDataContext, fixedCode }, allowNewCompilerDiagnostics: true)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { childDataContext, testCode }, fixedCode);
+            AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { childDataContext, testCode }, fixedCode);
         }
     }
 }
