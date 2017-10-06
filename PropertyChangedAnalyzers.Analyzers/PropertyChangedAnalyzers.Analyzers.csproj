@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
+    <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <CodeAnalysisRuleSet>PropertyChangedAnalyzers.Analyzers.ruleset</CodeAnalysisRuleSet>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <RootNamespace>PropertyChangedAnalyzers</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="Helpers\EnumerableExt.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EnumerableExt.generated.cs</LastGenOutput>
+    </None>
+    <Compile Update="Helpers\EnumerableExt.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EnumerableExt.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <Import Project="..\.paket\Paket.Restore.targets" />
+</Project>
