@@ -1,9 +1,9 @@
 namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<INPC004UseCallerMemberName>
+    internal class HappyPath
     {
         [TestCase("null")]
         [TestCase("string.Empty")]
@@ -11,9 +11,11 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public async Task CallsRaisePropertyChangedWithEventArgs(string propertyName)
+        public void CallsRaisePropertyChangedWithEventArgs(string propertyName)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -38,16 +40,19 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
         }
 
         [Test]
-        public async Task CallsRaisePropertyChangedCallerMemberName()
+        public void CallsRaisePropertyChangedCallerMemberName()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -72,9 +77,10 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }";
+    }
+}";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
         }
 
         [TestCase("null")]
@@ -83,9 +89,11 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public async Task Invokes(string propertyName)
+        public void Invokes(string propertyName)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
 
     public class ViewModel : INotifyPropertyChanged
@@ -107,15 +115,18 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
                 this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar))));
             }
         }
-    }";
+    }
+}";
             testCode = testCode.AssertReplace(@"nameof(this.Bar))", propertyName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
         }
 
         [Test]
-        public async Task InvokesCached()
+        public void InvokesCached()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
 
     public class ViewModel : INotifyPropertyChanged
@@ -138,12 +149,13 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
                 this.PropertyChanged?.Invoke(this, BarPropertyChangedArgs);
             }
         }
-    }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
         }
 
         [Test]
-        public async Task UpdateMethod()
+        public void UpdateMethod()
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -188,13 +200,15 @@ namespace RoslynSandBox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
         }
 
         [Test]
-        public async Task IgnoreWhenRaiseForOtherInstance()
+        public void IgnoreWhenRaiseForOtherInstance()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -233,14 +247,17 @@ namespace RoslynSandBox
             var vm = new ViewModel();
             vm.OnPropertyChanged(propertyName);
         }
-    }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
         }
 
         [Test]
-        public async Task IgnoreWhenRaiseForOtherInstanceOfOtherType()
+        public void IgnoreWhenRaiseForOtherInstanceOfOtherType()
         {
             var viewModelCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -273,9 +290,12 @@ namespace RoslynSandBox
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }";
+    }
+}";
 
             var testCode = @"
+namespace RoslynSandbox
+{
     public class Foo
     {
         public void RaiseForChild(string propertyName)
@@ -283,12 +303,13 @@ namespace RoslynSandBox
             var vm = new ViewModel();
             vm.OnPropertyChanged(propertyName);
         }
-    }";
-            await this.VerifyHappyPathAsync(viewModelCode, testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(viewModelCode, testCode);
         }
 
         [Test]
-        public async Task IgnoreWhenCallingFrameworkBaseClass()
+        public void IgnoreWhenCallingFrameworkBaseClass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -386,7 +407,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
         }
     }
 }
