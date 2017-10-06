@@ -35,7 +35,7 @@ public class ViewModel : INotifyPropertyChanged
                 return;
             }
 
-            this.firstName = value;
+            ↓this.firstName = value;
             this.OnPropertyChanged();
         }
     }
@@ -54,7 +54,7 @@ public class ViewModel : INotifyPropertyChanged
                 return;
             }
 
-            this.lastName = value;
+            ↓this.lastName = value;
             this.OnPropertyChanged();
         }
     }

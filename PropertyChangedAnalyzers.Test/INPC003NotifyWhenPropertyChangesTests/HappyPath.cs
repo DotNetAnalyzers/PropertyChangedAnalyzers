@@ -1,19 +1,20 @@
 namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using INPC003NotifyWhenPropertyChanges = PropertyChangedAnalyzers.INPC003NotifyWhenPropertyChanges;
 
-    internal partial class HappyPath : HappyPathVerifier<INPC003NotifyWhenPropertyChanges>
+    internal partial class HappyPath
     {
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public async Task NoCalculated(string propertyName)
+        public void NoCalculated(string propertyName)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -38,79 +39,82 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }";
-
+    }
+}";
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
         }
 
         [Test]
-        public async Task WhenNotifyingCallerMemberName()
+        public void WhenNotifyingCallerMemberName()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private string firstName;
-    private string lastName;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string FullName => $""{this.FirstName} {this.LastName}"";
-
-    public string FirstName
+    public class ViewModel : INotifyPropertyChanged
     {
-        get
-        {
-            return this.firstName;
-        }
+        private string firstName;
+        private string lastName;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string FullName => $""{this.FirstName} {this.LastName}"";
+
+        public string FirstName
         {
-            if (value == this.firstName)
+            get
             {
-                return;
+                return this.firstName;
             }
 
-            this.firstName = value;
-            this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
-        }
-    }
-
-    public string LastName
-    {
-        get
-        {
-            return this.lastName;
-        }
-
-        set
-        {
-            if (value == this.lastName)
+            set
             {
-                return;
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                this.firstName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
             }
 
-            this.lastName = value;
-            this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
-        }
-    }
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
         }
 
         [Test]
-        public async Task CallsOnPropertyChangedCopyLocalNullcheckInvoke()
+        public void CallsOnPropertyChangedCopyLocalNullcheckInvoke()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -175,341 +179,362 @@ namespace RoslynSandbox
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
         }
 
         [Test]
-        public async Task WhenNotifyingCallerMemberNameExpressionBody()
+        public void WhenNotifyingCallerMemberNameExpressionBody()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private string firstName;
-    private string lastName;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string FullName => $""{this.FirstName} {this.LastName}"";
-
-    public string FirstName
+    public class ViewModel : INotifyPropertyChanged
     {
-        get
-        {
-            return this.firstName;
-        }
+        private string firstName;
+        private string lastName;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string FullName => $""{this.FirstName} {this.LastName}"";
+
+        public string FirstName
         {
-            if (value == this.firstName)
+            get
             {
-                return;
+                return this.firstName;
             }
 
-            this.firstName = value;
-            this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
-        }
-    }
-
-    public string LastName
-    {
-        get
-        {
-            return this.lastName;
-        }
-
-        set
-        {
-            if (value == this.lastName)
+            set
             {
-                return;
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                this.firstName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
             }
 
-            this.lastName = value;
-            this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
-        }
-    }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-}";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task WhenNotifyingMvvmFramework()
-        {
-            var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using MvvmFramework;
-
-public class ViewModel : ViewModelBase
-{
-    private string firstName;
-    private string lastName;
-
-    public string FullName => $""{this.FirstName} {this.LastName}"";
-
-    public string FirstName
-    {
-        get
-        {
-            return this.firstName;
-        }
-
-        set
-        {
-            if (value == this.firstName)
+            set
             {
-                return;
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
             }
-
-            this.firstName = value;
-            this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
-        }
-    }
-
-    public string LastName
-    {
-        get
-        {
-            return this.lastName;
         }
 
-        set
-        {
-            if (value == this.lastName)
-            {
-                return;
-            }
-
-            this.lastName = value;
-            this.OnPropertyChanged();
-            this.OnPropertyChanged(nameof(this.FullName));
-        }
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
         }
 
         [Test]
-        public async Task CallsOnPropertyChangedWithCachedEventArgs()
+        public void WhenNotifyingMvvmFramework()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private static readonly PropertyChangedEventArgs FirstNameArgs = new PropertyChangedEventArgs(nameof(FirstName));
-    private static readonly PropertyChangedEventArgs LastNameArgs = new PropertyChangedEventArgs(nameof(LastName));
-    private static readonly PropertyChangedEventArgs FullNameArgs = new PropertyChangedEventArgs(nameof(FullName));
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+    using MvvmFramework;
 
-    private string firstName;
-    private string lastName;
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string FullName => $""{this.FirstName} {this.LastName}"";
-
-    public string FirstName
+    public class ViewModel : ViewModelBase
     {
-        get
-        {
-            return this.firstName;
-        }
+        private string firstName;
+        private string lastName;
 
-        set
+        public string FullName => $""{this.FirstName} {this.LastName}"";
+
+        public string FirstName
         {
-            if (value == this.firstName)
+            get
             {
-                return;
+                return this.firstName;
             }
 
-            this.firstName = value;
-            this.OnPropertyChanged(FirstNameArgs);
-            this.OnPropertyChanged(FullNameArgs);
-        }
-    }
-
-    public string LastName
-    {
-        get
-        {
-            return this.lastName;
-        }
-
-        set
-        {
-            if (value == this.lastName)
+            set
             {
-                return;
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                this.firstName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
             }
 
-            this.lastName = value;
-            this.OnPropertyChanged(LastNameArgs);
-            this.OnPropertyChanged(FullNameArgs);
-        }
-    }
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
 
-    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        this.PropertyChanged?.Invoke(this, e);
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
         }
 
         [Test]
-        public async Task CallsChainedOnPropertyChanged()
+        public void CallsOnPropertyChangedWithCachedEventArgs()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class Foo : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private string meh;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Meh
+    public class ViewModel : INotifyPropertyChanged
     {
-        get
-        {
-            return this.meh;
-        }
+        private static readonly PropertyChangedEventArgs FirstNameArgs = new PropertyChangedEventArgs(nameof(FirstName));
+        private static readonly PropertyChangedEventArgs LastNameArgs = new PropertyChangedEventArgs(nameof(LastName));
+        private static readonly PropertyChangedEventArgs FullNameArgs = new PropertyChangedEventArgs(nameof(FullName));
 
-        set
+        private string firstName;
+        private string lastName;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string FullName => $""{this.FirstName} {this.LastName}"";
+
+        public string FirstName
         {
-            if (value == this.meh)
+            get
             {
-                return;
+                return this.firstName;
             }
 
-            this.meh = value;
-            this.OnPropertyChanged();
+            set
+            {
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                this.firstName = value;
+                this.OnPropertyChanged(FirstNameArgs);
+                this.OnPropertyChanged(FullNameArgs);
+            }
         }
-    }
 
-    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        this.PropertyChanged?.Invoke(this, e);
-    }
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
+            }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged(LastNameArgs);
+                this.OnPropertyChanged(FullNameArgs);
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
         }
 
         [Test]
-        public async Task WhenNotifyingSettingFieldInMethod()
+        public void CallsChainedOnPropertyChanged()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private string name;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Name => this.name;
-
-    protected virtual void UpdateName(string name)
+    public class Foo : INotifyPropertyChanged
     {
-        this.name = name;
-        this.OnPropertyChanged(nameof(Name));
-    }
+        private string meh;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Meh
+        {
+            get
+            {
+                return this.meh;
+            }
+
+            set
+            {
+                if (value == this.meh)
+                {
+                    return;
+                }
+
+                this.meh = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
         }
 
         [Test]
-        public async Task WhenNotifyingSettingFieldInMethodOutsideLock()
+        public void WhenNotifyingSettingFieldInMethod()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private readonly object gate = new object();
-    private string name;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Name => this.name;
-
-    protected virtual void UpdateName(string name)
+    public class ViewModel : INotifyPropertyChanged
     {
-        lock (this.gate)
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name;
+
+        protected virtual void UpdateName(string name)
         {
             this.name = name;
+            this.OnPropertyChanged(nameof(Name));
         }
 
-        this.OnPropertyChanged(nameof(Name));
-    }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
         }
 
         [Test]
-        public async Task NotifyingInLambda()
+        public void WhenNotifyingSettingFieldInMethodOutsideLock()
         {
             var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private string name;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public ViewModel()
+    public class ViewModel : INotifyPropertyChanged
     {
-        this.PropertyChanged += (o, e) =>
+        private readonly object gate = new object();
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name;
+
+        protected virtual void UpdateName(string name)
+        {
+            lock (this.gate)
             {
-                this.name = this.name + ""meh"";
-                this.OnPropertyChanged(nameof(this.Name));
-            };
-    }
+                this.name = name;
+            }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+            this.OnPropertyChanged(nameof(Name));
+        }
 
-    public string Name => this.name;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+        }
+
+        [Test]
+        public void NotifyingInLambda()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public ViewModel()
+        {
+            this.PropertyChanged += (o, e) =>
+                {
+                    this.name = this.name + ""meh"";
+                    this.OnPropertyChanged(nameof(this.Name));
+                };
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
         }
     }
 }

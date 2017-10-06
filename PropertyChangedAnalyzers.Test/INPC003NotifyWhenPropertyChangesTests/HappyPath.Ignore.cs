@@ -1,14 +1,14 @@
 namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal partial class HappyPath
     {
-        internal class Ignore : NestedHappyPathVerifier<HappyPath>
+        internal class Ignore
         {
             [Test]
-            public async Task IgnoringLazy1()
+            public void IgnoringLazy1()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -84,12 +84,11 @@ namespace RoslynSandBox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
-
-                await this.VerifyHappyPathAsync(commandCode, testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(commandCode, testCode);
             }
 
             [Test]
-            public async Task IgnoringLazy2()
+            public void IgnoringLazy2()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -165,11 +164,11 @@ namespace RoslynSandBox
     }
 }";
 
-                await this.VerifyHappyPathAsync(commandCode, testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(commandCode, testCode);
             }
 
             [Test]
-            public async Task IgnoringLazyNullCoalesce()
+            public void IgnoringLazyNullCoalesce()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -240,11 +239,11 @@ namespace RoslynSandBox
     }
 }";
 
-                await this.VerifyHappyPathAsync(commandCode, testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(commandCode, testCode);
             }
 
             [Test]
-            public async Task IgnoringLazyNullCoalesceExpressionBody()
+            public void IgnoringLazyNullCoalesceExpressionBody()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -309,235 +308,256 @@ namespace RoslynSandBox
     }
 }";
 
-                await this.VerifyHappyPathAsync(commandCode, testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(commandCode, testCode);
             }
 
             [Test]
-            public async Task IgnoreInCtor()
+            public void IgnoreInCtor()
             {
                 var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandBox
 {
-    private string name;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public ViewModel(string name)
+    public class ViewModel : INotifyPropertyChanged
     {
-        this.name = name;
-    }
+        private string name;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+        public ViewModel(string name)
+        {
+            this.name = name;
+        }
 
-    public string Name => this.name;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public string Name => this.name;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-                await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
             }
 
             [Test]
-            public async Task IgnoreInInitializer()
+            public void IgnoreInInitializer()
             {
                 var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandBox
 {
-    private string name;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Name => this.name;
-
-    public ViewModel Create(string name)
+    public class ViewModel : INotifyPropertyChanged
     {
-        return new ViewModel { name = name };
-    }
+        private string name;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name;
+
+        public ViewModel Create(string name)
+        {
+            return new ViewModel { name = name };
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-                await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
             }
 
             [Test(Description = "We let INPC002 nag about this.")]
-            public async Task IgnoreSimplePropertyWithBackingField()
+            public void IgnoreSimplePropertyWithBackingField()
             {
                 var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandBox
 {
-    private int value;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Value
+    public class ViewModel : INotifyPropertyChanged
     {
-        get { return this.value; }
-        set { this.value = value; }
-    }
+        private int value;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get { return this.value; }
+            set { this.value = value; }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-                await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
             }
 
             [Test]
-            public async Task AssigningFieldsInGetter()
+            public void AssigningFieldsInGetter()
             {
                 var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandBox
 {
-    private string name;
-    private int getCount;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Name
+    public class ViewModel : INotifyPropertyChanged
     {
-        get
+        private string name;
+        private int getCount;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
         {
-            this.getCount++;
-            return this.name;
+            get
+            {
+                this.getCount++;
+                return this.name;
+            }
         }
-    }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-                await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
             }
 
             [Test]
-            public async Task LazyGetter()
+            public void LazyGetter()
             {
                 var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandBox
 {
-    private string name;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Name
+    public class ViewModel : INotifyPropertyChanged
     {
-        get
-        {
-            if (this.name == null)
-            {
-                this.name = string.Empty;
-            }
+        private string name;
 
-            return this.name;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get
+            {
+                if (this.name == null)
+                {
+                    this.name = string.Empty;
+                }
+
+                return this.name;
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }";
 
-                await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
-            }
-
-            [Test]
-            public async Task LazyGetterExpressionBody()
-            {
-                var testCode = @"
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public class ViewModel : INotifyPropertyChanged
-{
-    private string name;
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Name => this.name ?? (this.name = string.Empty);
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}";
-
-                await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
             }
 
             [Test]
-            public async Task IgnoreDisposeMethod()
+            public void LazyGetterExpressionBody()
             {
                 var testCode = @"
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-public sealed class ViewModel : INotifyPropertyChanged, IDisposable
+namespace RoslynSandBox
 {
-    private string name;
-    private bool disposed;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public string Name
+    public class ViewModel : INotifyPropertyChanged
     {
-        get
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name ?? (this.name = string.Empty);
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.ThrowIfDisposed();
-            return this.name ?? (this.name = string.Empty);
-        }
-    }
-
-    public void Dispose()
-    {
-        if (this.disposed)
-        {
-            return;
-        }
-
-        this.disposed = true;
-    }
-
-    private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private void ThrowIfDisposed()
-    {
-        if (this.disposed)
-        {
-            throw new ObjectDisposedException(GetType().FullName);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
 
-                await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            }
+
+            [Test]
+            public void IgnoreDisposeMethod()
+            {
+                var testCode = @"
+namespace RoslynSandBox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public sealed class ViewModel : INotifyPropertyChanged, IDisposable
+    {
+        private string name;
+        private bool disposed;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get
+            {
+                this.ThrowIfDisposed();
+                return this.name ?? (this.name = string.Empty);
+            }
+        }
+
+        public void Dispose()
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            this.disposed = true;
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (this.disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+        }
+    }
+}";
+
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
             }
         }
     }
