@@ -4,7 +4,7 @@
 
     internal static class Snippet
     {
-        internal static string EqualityCheck(ITypeSymbol type, string x, string y)
+        internal static string EqualityCheck(ITypeSymbol type, string x, string y, SemanticModel semanticModel)
         {
             if (type == KnownSymbol.String)
             {
@@ -37,7 +37,14 @@
                 return $"System.Collections.Generic.EqualityComparer<{type.ToDisplayString()}>.Default.Equals({x}, {y})";
             }
 
-            return $"ReferenceEquals({x}, {y})";
+            if (!semanticModel.Compilation.Options.SpecificDiagnosticOptions.TryGetValue(INPC006UseReferenceEquals.DiagnosticId, out ReportDiagnostic setting))
+            {
+                return $"ReferenceEquals({x}, {y})";
+            }
+
+            return setting == ReportDiagnostic.Suppress
+                ? $"Equals({x}, {y})"
+                : $"ReferenceEquals({x}, {y})";
         }
 
         internal static string OnPropertyChanged(IMethodSymbol invoker, IPropertySymbol property, bool usesUnderscoreNames)

@@ -1,5 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using System.Threading;
     using Microsoft.CodeAnalysis;
@@ -305,6 +306,7 @@ namespace PropertyChangedAnalyzers
                 new[] { SyntaxFactory.ReturnStatement() });
         }
 
+        [Obsolete("Use snippet")]
         internal static ExpressionSyntax ReferenceTypeEquality(ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             if (!diagnosticOptions.TryGetValue(INPC006UseReferenceEquals.DiagnosticId, out ReportDiagnostic setting))

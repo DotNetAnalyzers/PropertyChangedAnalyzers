@@ -61,13 +61,13 @@ namespace PropertyChangedAnalyzers
                     continue;
                 }
 
-                if (!Property.TryGetBackingField(property, semanticModel, context.CancellationToken, out IFieldSymbol backingField))
+                if (!Property.TryGetBackingField(property, semanticModel, context.CancellationToken, out var backingField))
                 {
                     continue;
                 }
 
-                if (Property.TryFindValue(setter, semanticModel, context.CancellationToken, out IParameterSymbol value) &&
-    CanFix(ifStatement, semanticModel, context.CancellationToken, value, backingField, property))
+                if (Property.TryFindValue(setter, semanticModel, context.CancellationToken, out var value) &&
+                    CanFix(ifStatement, semanticModel, context.CancellationToken, value, backingField, property))
                 {
                     var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
                     var fieldAccess = backingField.Name.StartsWith("_")

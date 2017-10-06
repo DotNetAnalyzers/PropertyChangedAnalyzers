@@ -140,7 +140,6 @@ namespace RoslynSandbox
         }
     }
 }";
-
             AnalyzerAssert.NoFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
         }
 
@@ -164,7 +163,7 @@ namespace RoslynSandbox
             get { return this.bar; }
             set
             {
-                ↓if (Equals(value, this.bar))
+                ↓if (ReferenceEquals(value, this.bar))
                 {
                     return;
                 }
@@ -214,6 +213,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            testCode = testCode.AssertReplace("ReferenceEquals(value, this.bar)", check.Call);
             fixedCode = check.FixedCall == null
                             ? fixedCode.AssertReplace("Equals(value, this.bar)", check.Call)
                             : fixedCode.AssertReplace("Equals(value, this.bar)", check.FixedCall);
