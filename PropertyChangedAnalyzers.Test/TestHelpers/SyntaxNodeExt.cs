@@ -7,21 +7,6 @@ namespace PropertyChangedAnalyzers.Test
 
     internal static class SyntaxNodeExt
     {
-        internal static EqualsValueClauseSyntax EqualsValueClause(this SyntaxTree tree, string code)
-        {
-            return tree.BestMatch<EqualsValueClauseSyntax>(code);
-        }
-
-        internal static AssignmentExpressionSyntax AssignmentExpression(this SyntaxTree tree, string code)
-        {
-            return tree.BestMatch<AssignmentExpressionSyntax>(code);
-        }
-
-        internal static StatementSyntax Statement(this SyntaxTree tree, string code)
-        {
-            return tree.BestMatch<StatementSyntax>(code);
-        }
-
         internal static PropertyDeclarationSyntax PropertyDeclarationSyntax(this SyntaxTree tree, string code)
         {
             return tree.BestMatch<PropertyDeclarationSyntax>(code);

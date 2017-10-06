@@ -79,10 +79,10 @@
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void ConfigSeverity(DescriptorInfo descriptorInfo)
         {
-            var expected = GetConfigSeverity(CreateStub(descriptorInfo)).NormalizeNewLine();
+            var expected = GetConfigSeverity(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
-            var actual = GetConfigSeverity(File.ReadAllText(descriptorInfo.DocFileName)).NormalizeNewLine();
-            Assert.AreEqual(expected, actual);
+            var actual = GetConfigSeverity(File.ReadAllText(descriptorInfo.DocFileName));
+            CodeAssert.AreEqual(expected, actual);
         }
 
         [Test]
@@ -109,10 +109,10 @@
 
             builder.AppendLine("<table>")
                    .Append("<!-- end generated table -->");
-            var expected = builder.ToString().NormalizeNewLine();
+            var expected = builder.ToString();
             DumpIfDebug(expected);
-            var actual = GetTable(File.ReadAllText(Path.Combine(SolutionDirectory, "Readme.md"))).NormalizeNewLine();
-            Assert.AreEqual(expected, actual);
+            var actual = GetTable(File.ReadAllText(Path.Combine(SolutionDirectory, "Readme.md")));
+            CodeAssert.AreEqual(expected, actual);
         }
 
         private static string CreateStub(DescriptorInfo descriptorInfo)
