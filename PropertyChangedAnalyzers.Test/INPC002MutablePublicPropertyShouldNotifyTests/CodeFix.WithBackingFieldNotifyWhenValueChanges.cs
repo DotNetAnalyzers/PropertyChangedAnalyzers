@@ -5,7 +5,7 @@
 
     internal partial class CodeFix
     {
-        internal class WithBackingField
+        internal class WithBackingFieldNotifyWhenValueChanges
         {
             [Test]
             public void ExplicitName()

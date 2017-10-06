@@ -65,7 +65,7 @@
                                     NotifyWhenValueChanges),
                                 diagnostic);
                         }
-                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _))
+                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                         {
                             context.RegisterCodeFix(
                                 CodeAction.Create(
@@ -181,7 +181,7 @@
                     return document;
                 }
 
-                if (IsSimpleAssignmentOnly(propertyDeclaration, out var statement, out var assignment, out _))
+                if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out var assignment, out _))
                 {
                     var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
                     var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
@@ -239,15 +239,18 @@
                 return document;
             }
 
-            if (IsSimpleAssignmentOnly(propertyDeclaration, out var statement, out _, out _))
+            if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out _, out _))
             {
                 var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var notifyStatement = SyntaxFactory
                     .ParseStatement($"                {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
+                    .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                    .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                     .WithSimplifiedNames()
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 editor.InsertAfter(statement, notifyStatement);
+
                 return editor.GetChangedDocument();
             }
 
@@ -265,12 +268,13 @@
                                                            .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)
+        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)
         {
-            if (!propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) ||
+            if (!propertyDeclaration.TryGetSetAccessorDeclaration(out setter) ||
                 setter.Body == null ||
                 setter.Body.Statements.Count != 1)
             {
+                setter = null;
                 fieldAccess = null;
                 statement = null;
                 assignment = null;
@@ -284,6 +288,7 @@
                 return statement != null;
             }
 
+            setter = null;
             fieldAccess = null;
             statement = null;
             assignment = null;

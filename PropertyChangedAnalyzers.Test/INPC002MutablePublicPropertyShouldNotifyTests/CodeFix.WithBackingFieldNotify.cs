@@ -95,6 +95,7 @@ namespace RoslynSandbox
             {
                 return this.value;
             }
+
             private set
             {
                 this.value = value;
@@ -673,10 +674,8 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get 
-            {
-                return this.value;
-            }
+            get { return this.value; }
+
             private set
             {
                 this.value = value;
