@@ -3,7 +3,7 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFix : CodeFixVerifier<INPC004UseCallerMemberName, UseCallerMemberNameCodeFixProvider>
+    internal class CodeFix
     {
         [TestCase(@"""Value""")]
         [TestCase(@"nameof(Value)")]

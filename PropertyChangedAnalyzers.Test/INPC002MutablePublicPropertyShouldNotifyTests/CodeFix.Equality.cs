@@ -5,7 +5,7 @@
 
     internal partial class CodeFix
     {
-        internal class CodeFixEquality : CodeFixVerifier<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>
+        internal class CodeFixEquality
         {
             [TestCase("int")]
             [TestCase("int?")]
