@@ -1,11 +1,12 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
-    using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodFixWhenError : CodeFixVerifier<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>
+    internal class CodFixWhenError
     {
-        public static readonly EqualsItem[] EqualsSource =
+        public static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
         {
             new EqualsItem("string", "Equals(value, this.bar)"),
             new EqualsItem("string", "Equals(this.bar, value)"),
@@ -23,9 +24,11 @@
         };
 
         [Test]
-        public async Task OperatorNotEquals()
+        public void OperatorNotEquals()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -54,17 +57,18 @@
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+            AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
         }
 
         [Test]
-        public async Task OperatorEquals()
+        public void OperatorEquals()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -91,17 +95,18 @@
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+            AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
         }
 
         [TestCaseSource(nameof(EqualsSource))]
-        public async Task Check(EqualsItem check)
+        public void Check(EqualsItem check)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -129,17 +134,18 @@
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+            AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
         }
 
         [TestCaseSource(nameof(EqualsSource))]
-        public async Task NegatedCheck(EqualsItem check)
+        public void NegatedCheck(EqualsItem check)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -169,25 +175,23 @@
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different before notifying.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+            AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
         }
 
         public class EqualsItem
         {
-#pragma warning disable SA1401 // Fields must be private
-            internal readonly string Type;
-            internal readonly string Call;
-#pragma warning restore SA1401 // Fields must be private
-
             public EqualsItem(string type, string call)
             {
                 this.Type = type;
                 this.Call = call;
             }
+
+            internal string Type { get; }
+
+            internal string Call { get; }
 
             public override string ToString()
             {

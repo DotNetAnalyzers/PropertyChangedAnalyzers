@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
-    using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath : HappyPathVerifier<INPC005CheckIfDifferentBeforeNotifying>
+    internal class HappyPath
     {
-        public static readonly EqualsItem[] EqualsSource =
+        public static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
         {
             new EqualsItem("string", "Equals(value, this.bar)"),
             new EqualsItem("string", "Equals(this.bar, value)"),
@@ -24,9 +25,11 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         };
 
         [Test]
-        public async Task SimpleProperty()
+        public void SimpleProperty()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -46,15 +49,17 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
         [Test]
-        public async Task CallsRaisePropertyChangedWithEventArgsIfReturn()
+        public void CallsRaisePropertyChangedWithEventArgsIfReturn()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -79,15 +84,18 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
 
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
         [Test]
-        public async Task CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
+        public void CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -112,15 +120,17 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
         [Test]
-        public async Task CallsRaisePropertyChangedWithEventArgsIfBody()
+        public void CallsRaisePropertyChangedWithEventArgsIfBody()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -147,15 +157,17 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
         [Test]
-        public async Task CallsRaisePropertyChangedCallerMemberName()
+        public void CallsRaisePropertyChangedCallerMemberName()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -180,15 +192,17 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }";
-
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
         [Test]
-        public async Task Invokes()
+        public void Invokes()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
 
     public class ViewModel : INotifyPropertyChanged
@@ -210,14 +224,17 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
                 this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar)));
             }
         }
-    }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
         [Test]
-        public async Task InvokesCached()
+        public void InvokesCached()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
 
     public class ViewModel : INotifyPropertyChanged
@@ -240,14 +257,17 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
                 this.PropertyChanged?.Invoke(this, BarPropertyChangedArgs);
             }
         }
-    }";
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
         [TestCaseSource(nameof(EqualsSource))]
-        public async Task Check(EqualsItem check)
+        public void Check(EqualsItem check)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -277,15 +297,18 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
         [TestCaseSource(nameof(EqualsSource))]
-        public async Task NegatedCheck(EqualsItem check)
+        public void NegatedCheck(EqualsItem check)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -313,23 +336,23 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            await this.VerifyHappyPathAsync(testCode).ConfigureAwait(false);
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
         public class EqualsItem
         {
-#pragma warning disable SA1401 // Fields must be private
-            internal readonly string Type;
-            internal readonly string Call;
-#pragma warning restore SA1401 // Fields must be private
-
             public EqualsItem(string type, string call)
             {
                 this.Type = type;
                 this.Call = call;
             }
+
+            internal string Type { get; }
+
+            internal string Call { get; }
 
             public override string ToString()
             {

@@ -1,6 +1,5 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
-    using System.Threading.Tasks;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
@@ -9,7 +8,7 @@
         [TestCase(@"""Value""")]
         [TestCase(@"nameof(Value)")]
         [TestCase(@"nameof(this.Value)")]
-        public async Task CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
+        public void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandbox
