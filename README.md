@@ -30,11 +30,11 @@ Roslyn analyzers for WPF.
   <td>Check if value is different before notifying.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006.a.md">INPC006.a</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006_a.md">INPC006_a</a></td>
   <td>Check if value is different using ReferenceEquals before notifying.</td>
 </tr>
 <tr>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006.b.md">INPC006.b</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006_b.md">INPC006_b</a></td>
   <td>Check if value is different using object.Equals before notifying.</td>
 </tr>
 <tr>

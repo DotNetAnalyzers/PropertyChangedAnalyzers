@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class INPC006UseObjectEqualsForReferenceTypes : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "INPC006.b";
+        public const string DiagnosticId = "INPC006_b";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,

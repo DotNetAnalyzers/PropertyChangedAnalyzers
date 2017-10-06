@@ -1,11 +1,11 @@
-# INPC006.a
+# INPC006_a
 ## Check if value is different using ReferenceEquals before notifying.
 
 <!-- start generated table -->
 <table>
 <tr>
   <td>CheckId</td>
-  <td>INPC006.a</td>
+  <td>INPC006_a</td>
 </tr>
 <tr>
   <td>Severity</td>
@@ -33,7 +33,7 @@ Check if value is different using ReferenceEquals before notifying.
 ## Motivation
 
 This is a convenience analyzer if you want to make sure to use ReferenceEquals before notifying for reference types.
-Note that INPC006.a must be disabled for when this rule is used.
+Note that INPC006_a must be disabled for when this rule is used.
 This rule is enabled by default.
 
 ```c#
@@ -83,21 +83,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC006.a // Check if value is different using ReferenceEquals before notifying.
+#pragma warning disable INPC006_a // Check if value is different using ReferenceEquals before notifying.
 Code violating the rule here
-#pragma warning restore INPC006.a // Check if value is different using ReferenceEquals before notifying.
+#pragma warning restore INPC006_a // Check if value is different using ReferenceEquals before notifying.
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC006.a // Check if value is different using ReferenceEquals before notifying.
+#pragma warning disable INPC006_a // Check if value is different using ReferenceEquals before notifying.
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC006.a:Check if value is different using ReferenceEquals before notifying.", 
+    "INPC006_a:Check if value is different using ReferenceEquals before notifying.", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->
