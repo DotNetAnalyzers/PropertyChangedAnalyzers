@@ -1,12 +1,12 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesTests
 {
     using System.Collections.Generic;
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFix : CodeFixVerifier<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>
+    internal class CodeFix
     {
-        public static readonly EqualsItem[] EqualsSource =
+        public static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
             {
                 new EqualsItem("object.ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
                 new EqualsItem("Object.ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
@@ -25,14 +25,19 @@
             };
 
         private static readonly string FooCode = @"
-public class Foo
+namespace RoslynSandbox
 {
+    public class Foo
+    {
+    }
 }";
 
         [Test]
-        public async Task OperatorEquals()
+        public void OperatorEquals()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -61,12 +66,12 @@ public class Foo
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
-
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different using object.Equals before notifying.");
-            await this.VerifyCSharpDiagnosticAsync(new[] { FooCode, testCode }, expected).ConfigureAwait(false);
+    }
+}";
 
             var fixedCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -95,14 +100,18 @@ public class Foo
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
-            await this.VerifyCSharpFixAsync(new[] { FooCode, testCode }, new[] { FooCode, fixedCode }).ConfigureAwait(false);
+    }
+}";
+            AnalyzerAssert.CodeFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
         }
 
         [Test]
-        public async Task OperatorNotEquals()
+        public void OperatorNotEquals()
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -129,90 +138,95 @@ public class Foo
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
 
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different using object.Equals before notifying.");
-            await this.VerifyCSharpDiagnosticAsync(new[] { FooCode, testCode }, expected).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { FooCode, testCode }, new[] { FooCode, testCode }).ConfigureAwait(false);
+            AnalyzerAssert.NoFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
         }
 
         [TestCaseSource(nameof(EqualsSource))]
-        public async Task Check(EqualsItem check)
+        public void Check(EqualsItem check)
         {
             var testCode = @"
-using System;
-using System.ComponentModel;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private Foo bar;
+    using System;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public Foo Bar
+    public class ViewModel : INotifyPropertyChanged
     {
-        get { return this.bar; }
-        set
+        private Foo bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Foo Bar
         {
-            ↓if (Equals(value, this.bar))
+            get { return this.bar; }
+            set
             {
-                return;
+                ↓if (Equals(value, this.bar))
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
             }
-
-            this.bar = value;
-            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
         }
-    }
 
-    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        this.PropertyChanged?.Invoke(this, e);
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
     }
 }";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different using object.Equals before notifying.");
-            await this.VerifyCSharpDiagnosticAsync(new[] { FooCode, testCode }, expected).ConfigureAwait(false);
 
             var fixedCode = @"
-using System;
-using System.ComponentModel;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private Foo bar;
+    using System;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public Foo Bar
+    public class ViewModel : INotifyPropertyChanged
     {
-        get { return this.bar; }
-        set
+        private Foo bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Foo Bar
         {
-            if (Equals(value, this.bar))
+            get { return this.bar; }
+            set
             {
-                return;
+                if (Equals(value, this.bar))
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
             }
-
-            this.bar = value;
-            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
         }
-    }
 
-    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        this.PropertyChanged?.Invoke(this, e);
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
     }
 }";
             fixedCode = check.FixedCall == null
                             ? fixedCode.AssertReplace("Equals(value, this.bar)", check.Call)
                             : fixedCode.AssertReplace("Equals(value, this.bar)", check.FixedCall);
-            await this.VerifyCSharpFixAsync(new[] { FooCode, testCode }, new[] { FooCode, fixedCode }, allowNewCompilerDiagnostics: true).ConfigureAwait(false);
+            AnalyzerAssert.CodeFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
         }
 
         [TestCaseSource(nameof(EqualsSource))]
-        public async Task NegatedCheck(EqualsItem check)
+        public void NegatedCheck(EqualsItem check)
         {
             var testCode = @"
+namespace RoslynSandbox
+{
     using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -240,16 +254,10 @@ public class ViewModel : INotifyPropertyChanged
         {
             this.PropertyChanged?.Invoke(this, e);
         }
-    }";
+    }
+}";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call);
-            var expected = this.CSharpDiagnostic().WithLocationIndicated(ref testCode).WithMessage("Check if value is different using object.Equals before notifying.");
-            await this.VerifyCSharpDiagnosticAsync(new[] { FooCode, testCode }, expected).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { FooCode, testCode }, new[] { FooCode, testCode }).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<string> GetDisabledDiagnostics()
-        {
-            return new[] { INPC006UseReferenceEquals.DiagnosticId };
+            AnalyzerAssert.NoFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
         }
 
         public class EqualsItem
