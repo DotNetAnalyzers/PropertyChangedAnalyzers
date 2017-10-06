@@ -127,6 +127,7 @@ namespace RoslynSandbox
             {
                 return this.value;
             }
+
             private set
             {
                 this.value = value;
@@ -195,24 +196,25 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Some text
+        /// </summary>
         public int Value
         {
+            /*1*/
             get
             {
-                return this.value;
-            }
-
-            private set
+                /*2*/
+                return this.value; /*3*/
+            } /*4*/
+            /*5*/
+            set /*6*/
             {
-                if (value == this.value)
-                {
-                    return;
-                }
-
-                this.value = value;
+                /*7*/
+                this.value = value; /*8*/
                 this.OnPropertyChanged();
-            }
-        }
+            } /*9*/
+        } /*10*/
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -260,24 +262,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
-        {
-            get
-            {
-                return this.value;
-            }
-
-            private set
-            {
-                if (value == this.value)
-                {
-                    return;
-                }
-
-                this.value = value;
-                this.OnPropertyChanged();
-            }
-        }
+        public int Value { get { return this.value; } private set { this.value = value; this.OnPropertyChanged(); } }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -391,18 +376,9 @@ namespace RoslynSandbox
 
         public virtual int Value
         {
-            get
+            get { return this.value; }
+            set
             {
-                return this.value;
-            }
-
-            private set
-            {
-                if (value == this.value)
-                {
-                    return;
-                }
-
                 this.value = value;
                 this.OnPropertyChanged();
             }
@@ -498,18 +474,9 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get
-            {
-                return this.bar.Value;
-            }
-
+            get { return this.bar.Value; }
             private set
             {
-                if (value == this.bar.Value)
-                {
-                    return;
-                }
-
                 this.bar.Value = value;
                 this.OnPropertyChanged();
             }
@@ -521,8 +488,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode, "Notify.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode, "Notify.");
             }
 
             [Test]
@@ -605,18 +572,9 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get
-            {
-                return _bar.Value;
-            }
-
+            get { return _bar.Value; }
             private set
             {
-                if (value == _bar.Value)
-                {
-                    return;
-                }
-
                 _bar.Value = value;
                 OnPropertyChanged();
             }
@@ -628,8 +586,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode, "Notify.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { barCode, testCode }, fixedCode, "Notify.");
             }
 
             [Test]
@@ -675,7 +633,6 @@ namespace RoslynSandbox
         public int Value
         {
             get { return this.value; }
-
             private set
             {
                 this.value = value;
