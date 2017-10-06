@@ -41,9 +41,12 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC008.md">INPC008</a></td>
   <td>Struct must not implement INotifyPropertyChanged</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC009.md">INPC009</a></td>
+  <td>Don't raise PropertyChanged for missing property.</td>
+</tr>
 <table>
 <!-- end generated table -->
-
 
 ## Using PropertyChangedAnalyzers
 
