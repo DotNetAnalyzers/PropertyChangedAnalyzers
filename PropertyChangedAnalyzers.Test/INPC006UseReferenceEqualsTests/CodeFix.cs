@@ -1,24 +1,25 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
 {
+    using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class CodeFix
     {
-        public static readonly EqualsItem[] EqualsSource =
+        public static readonly IReadOnlyList<TestCase> TestCases = new[]
             {
-                new EqualsItem("Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("Equals(this.bar, value)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("Equals(value, bar)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("Equals(value, Bar)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("Equals(Bar, value)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("Nullable.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("Nullable.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("value.Equals(this.bar)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("value.Equals(bar)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("this.bar.Equals(value)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("bar.Equals(value)", "ReferenceEquals(value, this.bar)"),
-                new EqualsItem("System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.bar)", null),
+                new TestCase("Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("Equals(this.bar, value)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("Equals(value, bar)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("Equals(value, Bar)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("Equals(Bar, value)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("Nullable.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("Nullable.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("value.Equals(this.bar)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("value.Equals(bar)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("this.bar.Equals(value)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("bar.Equals(value)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
             };
 
         private static readonly string FooCode = @"
@@ -203,8 +204,8 @@ namespace RoslynSandbox
             AnalyzerAssert.NoFix<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
         }
 
-        [TestCaseSource(nameof(EqualsSource))]
-        public void Check(EqualsItem check)
+        [TestCaseSource(nameof(TestCases))]
+        public void Check(TestCase check)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -281,8 +282,8 @@ namespace RoslynSandbox
             AnalyzerAssert.FixAll<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
         }
 
-        [TestCaseSource(nameof(EqualsSource))]
-        public void NegatedCheck(EqualsItem check)
+        [TestCaseSource(nameof(TestCases))]
+        public void NegatedCheck(TestCase check)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -320,9 +321,9 @@ namespace RoslynSandbox
             AnalyzerAssert.NoFix<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
         }
 
-        public class EqualsItem
+        public class TestCase
         {
-            public EqualsItem(string call, string fixedCall)
+            public TestCase(string call, string fixedCall)
             {
                 this.Call = call;
                 this.FixedCall = fixedCall;

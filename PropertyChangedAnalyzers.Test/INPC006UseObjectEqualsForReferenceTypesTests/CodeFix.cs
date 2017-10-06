@@ -6,22 +6,22 @@
 
     internal class CodeFix
     {
-        public static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
+        public static readonly IReadOnlyList<TestCase> TestCases = new[]
             {
-                new EqualsItem("object.ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
-                new EqualsItem("Object.ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
-                new EqualsItem("ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
-                new EqualsItem("ReferenceEquals(this.bar, value)", "Equals(value, this.bar)"),
-                new EqualsItem("ReferenceEquals(value, bar)", "Equals(value, this.bar)"),
-                new EqualsItem("ReferenceEquals(value, Bar)", "Equals(value, this.bar)"),
-                new EqualsItem("ReferenceEquals(Bar, value)", "Equals(value, this.bar)"),
-                new EqualsItem("Nullable.Equals(value, this.bar)", "Equals(value, this.bar)"),
-                new EqualsItem("Nullable.Equals(value, this.bar)", "Equals(value, this.bar)"),
-                new EqualsItem("value.Equals(this.bar)", "Equals(value, this.bar)"),
-                new EqualsItem("value.Equals(bar)", "Equals(value, this.bar)"),
-                new EqualsItem("this.bar.Equals(value)", "Equals(value, this.bar)"),
-                new EqualsItem("bar.Equals(value)", "Equals(value, this.bar)"),
-                new EqualsItem("System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.bar)", null),
+                new TestCase("object.ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
+                new TestCase("Object.ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
+                new TestCase("ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
+                new TestCase("ReferenceEquals(this.bar, value)", "Equals(value, this.bar)"),
+                new TestCase("ReferenceEquals(value, bar)", "Equals(value, this.bar)"),
+                new TestCase("ReferenceEquals(value, Bar)", "Equals(value, this.bar)"),
+                new TestCase("ReferenceEquals(Bar, value)", "Equals(value, this.bar)"),
+                new TestCase("Nullable.Equals(value, this.bar)", "Equals(value, this.bar)"),
+                new TestCase("Nullable.Equals(value, this.bar)", "Equals(value, this.bar)"),
+                new TestCase("value.Equals(this.bar)", "Equals(value, this.bar)"),
+                new TestCase("value.Equals(bar)", "Equals(value, this.bar)"),
+                new TestCase("this.bar.Equals(value)", "Equals(value, this.bar)"),
+                new TestCase("bar.Equals(value)", "Equals(value, this.bar)"),
+                new TestCase("System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.bar)", null),
             };
 
         private static readonly string FooCode = @"
@@ -143,8 +143,8 @@ namespace RoslynSandbox
             AnalyzerAssert.NoFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
         }
 
-        [TestCaseSource(nameof(EqualsSource))]
-        public void Check(EqualsItem check)
+        [TestCaseSource(nameof(TestCases))]
+        public void Check(TestCase check)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -221,8 +221,8 @@ namespace RoslynSandbox
             AnalyzerAssert.FixAll<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
         }
 
-        [TestCaseSource(nameof(EqualsSource))]
-        public void NegatedCheck(EqualsItem check)
+        [TestCaseSource(nameof(TestCases))]
+        public void NegatedCheck(TestCase check)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -260,9 +260,9 @@ namespace RoslynSandbox
             AnalyzerAssert.NoFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
         }
 
-        public class EqualsItem
+        public class TestCase
         {
-            public EqualsItem(string call, string fixedCall)
+            public TestCase(string call, string fixedCall)
             {
                 this.Call = call;
                 this.FixedCall = fixedCall;

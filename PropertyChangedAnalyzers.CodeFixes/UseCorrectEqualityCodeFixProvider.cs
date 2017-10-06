@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
+    using PropertyChangedAnalyzers.Helpers;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCorrectEqualityCodeFixProvider))]
     [Shared]
@@ -69,20 +69,21 @@ namespace PropertyChangedAnalyzers
                 if (Property.TryFindValue(setter, semanticModel, context.CancellationToken, out var value) &&
                     CanFix(ifStatement, semanticModel, context.CancellationToken, value, backingField, property))
                 {
-                    var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
                     var fieldAccess = backingField.Name.StartsWith("_")
                                           ? backingField.Name
                                           : $"this.{backingField.Name}";
 
-                    var referenceTypeEquality = MakePropertyNotifyHelper.ReferenceTypeEquality(context.Document.Project.CompilationOptions.SpecificDiagnosticOptions);
-                    var equalsExpression = (ExpressionSyntax)syntaxGenerator.InvocationExpression(
-                            referenceTypeEquality,
-                            SyntaxFactory.ParseName("value"),
-                            SyntaxFactory.ParseExpression(fieldAccess));
+                    var equalsExpression = SyntaxFactory.ParseExpression(
+                                                            Snippet.EqualityCheck(
+                                                                property.Type,
+                                                                "value",
+                                                                fieldAccess,
+                                                                semanticModel))
+                                                        .WithSimplifiedNames();
 
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            $"Use {referenceTypeEquality}",
+                            $"Use {equalsExpression}",
                             cancellationToken => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(ifStatement.Condition, equalsExpression))),
                             this.GetType().FullName),
                         diagnostic);
@@ -112,6 +113,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (Equality.IsOperatorEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
                     Equality.IsObjectEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
+                    Equality.IsEqualityComparerEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
                     Equality.IsReferenceEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
                     Equality.IsInstanceEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
                     Equality.IsInstanceEquals(ifStatement.Condition, semanticModel, cancellationToken, member, value))

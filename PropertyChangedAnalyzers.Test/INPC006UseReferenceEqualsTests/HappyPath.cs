@@ -6,22 +6,22 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
 
     internal class HappyPath
     {
-        public static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
+        public static readonly IReadOnlyList<TestCase> TestCases = new[]
         {
-            new EqualsItem("string", "Equals(value, this.bar)"),
-            new EqualsItem("string", "Equals(this.bar, value)"),
-            new EqualsItem("string", "Equals(value, bar)"),
-            new EqualsItem("string", "Equals(value, Bar)"),
-            new EqualsItem("string", "Equals(Bar, value)"),
-            new EqualsItem("string", "Nullable.Equals(value, this.bar)"),
-            new EqualsItem("int?", "Nullable.Equals(value, this.bar)"),
-            new EqualsItem("string", "value.Equals(this.bar)"),
-            new EqualsItem("string", "value.Equals(bar)"),
-            new EqualsItem("string", "this.bar.Equals(value)"),
-            new EqualsItem("string", "bar.Equals(value)"),
-            new EqualsItem("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
-            new EqualsItem("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
-            new EqualsItem("string", "ReferenceEquals(value, this.bar)"),
+            new TestCase("string", "Equals(value, this.bar)"),
+            new TestCase("string", "Equals(this.bar, value)"),
+            new TestCase("string", "Equals(value, bar)"),
+            new TestCase("string", "Equals(value, Bar)"),
+            new TestCase("string", "Equals(Bar, value)"),
+            new TestCase("string", "Nullable.Equals(value, this.bar)"),
+            new TestCase("int?", "Nullable.Equals(value, this.bar)"),
+            new TestCase("string", "value.Equals(this.bar)"),
+            new TestCase("string", "value.Equals(bar)"),
+            new TestCase("string", "this.bar.Equals(value)"),
+            new TestCase("string", "bar.Equals(value)"),
+            new TestCase("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
+            new TestCase("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
+            new TestCase("string", "ReferenceEquals(value, this.bar)"),
         };
 
         private static readonly string FooCode = @"
@@ -272,8 +272,8 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
         }
 
-        [TestCaseSource(nameof(EqualsSource))]
-        public void Check(EqualsItem check)
+        [TestCaseSource(nameof(TestCases))]
+        public void Check(TestCase check)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -313,8 +313,8 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
         }
 
-        [TestCaseSource(nameof(EqualsSource))]
-        public void NegatedCheck(EqualsItem check)
+        [TestCaseSource(nameof(TestCases))]
+        public void NegatedCheck(TestCase check)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -384,9 +384,9 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
         }
 
-        public class EqualsItem
+        public class TestCase
         {
-            public EqualsItem(string type, string call)
+            public TestCase(string type, string call)
             {
                 this.Type = type;
                 this.Call = call;
