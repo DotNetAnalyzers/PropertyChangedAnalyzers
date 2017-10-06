@@ -1,122 +1,206 @@
-namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
-    using System.Threading.Tasks;
+    using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFixAll : CodeFixVerifier<INPC004UseCallerMemberName, UseCallerMemberNameCodeFixProvider>
+    internal class CodeFixAll
     {
         [Test]
-        public async Task CallsOnPropertyChanged()
+        public void CallsOnPropertyChanged()
         {
             var testCode = @"
-using System.ComponentModel;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int value1;
-    private int value2;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Value1
+    public class ViewModel : INotifyPropertyChanged
     {
-        get
-        {
-            return this.value1;
-        }
+        private int value;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
         {
-            if (value == this.value1)
+            get
             {
-                return;
+                return this.value;
             }
 
-            this.value1 = value;
-            this.OnPropertyChanged(nameof(Value1));
-        }
-    }
-
-    public int Value2
-    {
-        get
-        {
-            return this.value2;
-        }
-
-        set
-        {
-            if (value == this.value2)
+            set
             {
-                return;
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(↓nameof(Value));
             }
-
-            this.value2 = value;
-            this.OnPropertyChanged(nameof(Value2));
         }
-    }
 
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged(↓string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
             var fixedCode = @"
-using System.ComponentModel;
-
-public class ViewModel : INotifyPropertyChanged
+namespace RoslynSandbox
 {
-    private int value1;
-    private int value2;
+    using System.ComponentModel;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Value1
+    public class ViewModel : INotifyPropertyChanged
     {
-        get
-        {
-            return this.value1;
-        }
+        private int value;
 
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
         {
-            if (value == this.value1)
+            get
             {
-                return;
+                return this.value;
             }
 
-            this.value1 = value;
-            this.OnPropertyChanged();
-        }
-    }
-
-    public int Value2
-    {
-        get
-        {
-            return this.value2;
-        }
-
-        set
-        {
-            if (value == this.value2)
+            set
             {
-                return;
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
             }
-
-            this.value2 = value;
-            this.OnPropertyChanged();
         }
-    }
 
-    protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode)
-                      .ConfigureAwait(false);
+            AnalyzerAssert.FixAll<INPC004UseCallerMemberName, UseCallerMemberNameCodeFixProvider>(testCode, fixedCode);
+        }
+
+        [Test]
+        public void CalculatedProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value1;
+        private int value2;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value1
+        {
+            get
+            {
+                return this.value1;
+            }
+
+            set
+            {
+                if (value == this.value1)
+                {
+                    return;
+                }
+
+                this.value1 = value;
+                this.OnPropertyChanged(↓nameof(Value1));
+            }
+        }
+
+        public int Value2
+        {
+            get
+            {
+                return this.value2;
+            }
+
+            set
+            {
+                if (value == this.value2)
+                {
+                    return;
+                }
+
+                this.value2 = value;
+                this.OnPropertyChanged(↓nameof(Value2));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(↓string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value1;
+        private int value2;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value1
+        {
+            get
+            {
+                return this.value1;
+            }
+
+            set
+            {
+                if (value == this.value1)
+                {
+                    return;
+                }
+
+                this.value1 = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public int Value2
+        {
+            get
+            {
+                return this.value2;
+            }
+
+            set
+            {
+                if (value == this.value2)
+                {
+                    return;
+                }
+
+                this.value2 = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.FixAll<INPC004UseCallerMemberName, UseCallerMemberNameCodeFixProvider>(testCode, fixedCode);
         }
     }
 }
