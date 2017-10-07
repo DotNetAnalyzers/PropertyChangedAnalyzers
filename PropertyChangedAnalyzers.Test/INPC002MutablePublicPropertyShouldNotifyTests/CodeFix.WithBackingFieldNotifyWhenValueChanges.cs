@@ -277,10 +277,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get
-            {
-                return this.value;
-            }
+            get { return this.value; }
 
             private set
             {
@@ -346,10 +343,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get
-            {
-                return this.value;
-            }
+            get { return this.value; }
 
             private set
             {
@@ -415,10 +409,7 @@ namespace RoslynSandbox
 
         public virtual int Value
         {
-            get
-            {
-                return this.value;
-            }
+            get { return this.value; }
 
             private set
             {
@@ -522,10 +513,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get
-            {
-                return this.bar.Value;
-            }
+            get { return this.bar.Value; }
 
             private set
             {
@@ -629,10 +617,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get
-            {
-                return _bar.Value;
-            }
+            get { return _bar.Value; }
 
             private set
             {
@@ -698,10 +683,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get
-            {
-                return this.value;
-            }
+            get { return this.value; }
 
             private set
             {

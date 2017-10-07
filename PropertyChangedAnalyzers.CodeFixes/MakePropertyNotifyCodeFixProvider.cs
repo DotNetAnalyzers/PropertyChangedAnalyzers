@@ -279,19 +279,11 @@
                                          .ToString();
                         var template = ParseProperty(code);
                         editor.ReplaceNode(
-                            propertyDeclaration.AccessorList,
-                            propertyDeclaration.AccessorList
-                                               .ReplaceNodes(
-                                                   new[] { getter, setter },
-                                                   (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
-                                                       ? getter.WithBody(template.Getter().Body)
-                                                               .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                               .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                               .WithAdditionalAnnotations(Formatter.Annotation)
-                                                       : setter.WithBody(template.Setter().Body)
-                                                               .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                               .WithAdditionalAnnotations(Formatter.Annotation))
-                                               .WithAdditionalAnnotations(Formatter.Annotation));
+                            setter,
+                            (x, _) => ((AccessorDeclarationSyntax)x).WithBody(template.Setter().Body)
+                                                                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                                     .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                                                                     .WithAdditionalAnnotations(Formatter.Annotation));
                         return editor.GetChangedDocument();
                     }
                 }
