@@ -29,8 +29,17 @@
                 return true;
             }
 
-            if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression) ||
-                argument.Expression.IsNameOf())
+            if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
+            {
+                var cv = semanticModel.GetConstantValueSafe(argument.Expression, cancellationToken);
+                if (cv.HasValue && cv.Value is string)
+                {
+                    result = (string)cv.Value;
+                    return true;
+                }
+            }
+
+            if (argument.Expression.IsNameOf())
             {
                 var cv = semanticModel.GetConstantValueSafe(argument.Expression, cancellationToken);
                 if (cv.HasValue && cv.Value is string)
