@@ -20,7 +20,7 @@
             }
 
             [Test]
-            public void WhenAutoProperty()
+            public void AutoPropertyToNotifyWhenValueChanges()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -64,9 +64,90 @@ namespace RoslynSandbox
         }
     }
 }";
-                Assert.Fail("Should be two alternatives here, Raise & Set");
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify when value changes.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify when value changes.");
+            }
+
+            [Test]
+            public void AutoPropertyToSet()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        ↓public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int bar;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set { this.Set(ref this.bar, value); }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
+            }
+
+            [Test]
+            public void AutoPropertyToSetUnderscoreNames()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        public Foo(int bar)
+        {
+            Bar = bar;
+        }
+
+        ↓public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int _bar;
+
+        public Foo(int bar)
+        {
+            Bar = bar;
+        }
+
+        public int Bar
+        {
+            get { return _bar; }
+            set { Set(ref _bar, value); }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
             }
         }
     }

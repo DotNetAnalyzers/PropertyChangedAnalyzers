@@ -50,6 +50,16 @@
                 }
 
                 var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
+                if (type.Is(KnownSymbol.MvvmLightViewModelBase))
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            "Set.",
+                            cancellationToken => MakeAutoPropertySetAsync(context.Document, propertyDeclaration, semanticModel, cancellationToken),
+                            "Set."),
+                        diagnostic);
+                }
+
                 if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out var invoker) &&
                     invoker.Parameters.Length == 1)
                 {
@@ -84,6 +94,67 @@
                     }
                 }
             }
+        }
+
+        private static async Task<Document> MakeAutoPropertySetAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
+                                             .ConfigureAwait(false);
+            var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            if (classDeclaration == null)
+            {
+                return document;
+            }
+
+            if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
+            {
+                if (getter.Body != null ||
+                    getter.ContainsSkippedText ||
+                    setter.Body != null ||
+                    setter.ContainsSkippedText)
+                {
+                    return document;
+                }
+
+                var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                var backingField = editor.AddBackingField(propertyDeclaration, usesUnderscoreNames, cancellationToken);
+                var fieldAccess = usesUnderscoreNames
+                    ? backingField.Name()
+                    : $"this.{backingField.Name()}";
+                using (var pooled = StringBuilderPool.Borrow())
+                {
+                    var code = pooled.Item.AppendLine($"public Type PropertyName")
+                                     .AppendLine("{")
+                                     .AppendLine($"    get {{ return {fieldAccess}; }}")
+                                     .AppendLine($"    set {{ {(usesUnderscoreNames ? string.Empty : "this.")}Set(ref {fieldAccess}, value); }}")
+                                     .AppendLine("}")
+                                     .ToString();
+                    var template = ParseProperty(code);
+                    editor.ReplaceNode(
+                        propertyDeclaration.AccessorList,
+                        propertyDeclaration.AccessorList
+                                           .ReplaceNodes(
+                                               new[] { getter, setter },
+                                               (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
+                                                   ? getter.WithBody(template.Getter().Body)
+                                                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                           .WithAdditionalAnnotations(Formatter.Annotation)
+                                                   : setter.WithBody(template.Setter().Body)
+                                                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                           .WithAdditionalAnnotations(Formatter.Annotation))
+                                           .WithAdditionalAnnotations(Formatter.Annotation));
+                    if (propertyDeclaration.Initializer != null)
+                    {
+                        editor.ReplaceNode(
+                            propertyDeclaration,
+                            (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
+                    }
+
+                    return editor.GetChangedDocument();
+                }
+            }
+
+            return document;
         }
 
         private static async Task<Document> MakeAutoPropertyNotifyAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
