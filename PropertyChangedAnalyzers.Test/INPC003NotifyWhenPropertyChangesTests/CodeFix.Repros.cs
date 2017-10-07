@@ -9,7 +9,7 @@
         public void Vanguard_MVVM_ViewModels_MainWindowViewModel()
         {
             var childDataContext = @"
-namespace Vanguard_MVVM.Infrastructure
+namespace Vanguard_MVVM.ViewModels
 {
     public interface IChildDataContext
     {
@@ -22,8 +22,6 @@ namespace Vanguard_MVVM.ViewModels
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using Infrastructure;
-
 
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
@@ -64,8 +62,6 @@ namespace Vanguard_MVVM.ViewModels
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using Infrastructure;
-
 
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
@@ -108,7 +104,7 @@ namespace Vanguard_MVVM.ViewModels
         [Test]
         public void Vanguard_MVVM_ViewModels_MainWindowViewModelCommentedOut()
         {
-            var childDataContext = @"namespace Vanguard_MVVM.Infrastructure
+            var childDataContext = @"namespace Vanguard_MVVM.ViewModels
 {
     public interface IChildDataContext
     {
@@ -121,8 +117,6 @@ namespace Vanguard_MVVM.ViewModels
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using Infrastructure;
-
 
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
@@ -164,8 +158,6 @@ namespace Vanguard_MVVM.ViewModels
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using Infrastructure;
-
 
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {

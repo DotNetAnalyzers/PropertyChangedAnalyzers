@@ -1955,7 +1955,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string[] Names => new []{ this.firstName, this.lastName };
+        public string[] Names => new[] { this.firstName, this.lastName };
 
         public string FirstName
         {
