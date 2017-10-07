@@ -67,7 +67,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void RaisePropertyChangedWhenUsingPropertiesExpressionBody()
+            public void RaisePropertyChangedAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
