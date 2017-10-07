@@ -42,7 +42,7 @@ namespace RoslynSandbox
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            AnalyzerAssert.ResetMetadataSuppressedDiagnostics();
+            AnalyzerAssert.ResetAll();
         }
 
         [TestCaseSource(nameof(TestCases))]

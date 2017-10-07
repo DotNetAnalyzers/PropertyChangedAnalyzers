@@ -5,16 +5,22 @@
 
     internal partial class CodeFix
     {
-        internal class ThirdParty
+        internal class MvvmLight
         {
-            [TearDown]
+            [OneTimeSetUp]
+            public void OneTimeSetUp()
+            {
+                AnalyzerAssert.AddTransitiveMetadataReferences(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly);
+            }
+
+            [OneTimeTearDown]
             public void TearDown()
             {
-                AnalyzerAssert.ResetMetadataReferences();
+                AnalyzerAssert.ResetAll();
             }
 
             [Test]
-            public void MvvmLightAutoProperty()
+            public void WhenAutoProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
