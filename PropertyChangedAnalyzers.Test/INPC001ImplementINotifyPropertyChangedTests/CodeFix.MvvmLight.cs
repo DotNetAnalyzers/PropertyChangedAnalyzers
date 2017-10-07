@@ -6,16 +6,22 @@
 
     internal partial class CodeFix
     {
-        internal class ThirdParty
+        internal class MvvmLight
         {
-            [TearDown]
+            [OneTimeSetUp]
+            public void OneTimeSetUp()
+            {
+                AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly.Location));
+            }
+
+            [OneTimeTearDown]
             public void TearDown()
             {
                 AnalyzerAssert.ResetMetadataReferences();
             }
 
             [Test]
-            public void MvvmLightSubclassViewModelBase()
+            public void SubclassViewModelBase()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -34,36 +40,11 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly.Location));
                 AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass GalaSoft.MvvmLight.ViewModelBase", AllowCompilationErrors.Yes);
             }
 
             [Test]
-            public void MvvmLightSubclassViewModelBaseWhenINPC()
-            {
-                var testCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : INotifyPropertyChanged
-    {
-        ↓public int Bar { get; set; }
-    }
-}";
-
-                var fixedCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : GalaSoft.MvvmLight.ViewModelBase
-    {
-        public int Bar { get; set; }
-    }
-}";
-                AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly.Location));
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass GalaSoft.MvvmLight.ViewModelBase", AllowCompilationErrors.Yes);
-            }
-
-            [Test]
-            public void MvvmLightImplementINotifyPropertyChanged()
+            public void ImplementINotifyPropertyChanged()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +70,6 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly.Location));
                 AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Implement INotifyPropertyChanged.", AllowCompilationErrors.Yes);
             }
         }

@@ -14,16 +14,15 @@
             }
 
             [Test]
-            public void AutoPropertyMvvmFramework()
+            public void MvvmLightAutoProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
-    using MvvmFramework;
 
-    public class Foo : ViewModelBase
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
         ↓public int Bar { get; set; }
     }
@@ -34,9 +33,8 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
-    using MvvmFramework;
 
-    public class Foo : ViewModelBase
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
         private int bar;
 
@@ -55,11 +53,12 @@ namespace RoslynSandbox
                 }
 
                 this.bar = value;
-                this.OnPropertyChanged();
+                this.RaisePropertyChanged();
             }
         }
     }
 }";
+                Assert.Fail("Should be two alternatives here, Raise & Set");
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
                 AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
             }
