@@ -83,7 +83,7 @@
 
             if (declaration.TryGetSetAccessorDeclaration(out var setter))
             {
-                if (!AssignsValueToBackingField(setter, out AssignmentExpressionSyntax assignment))
+                if (!AssignsValueToBackingField(setter, out var assignment))
                 {
                     return false;
                 }
@@ -169,7 +169,7 @@
                     continue;
                 }
 
-                if (TryGetBackingField(propertyDeclaration, out IdentifierNameSyntax fieldIdentifier, out FieldDeclarationSyntax _))
+                if (TryGetBackingField(propertyDeclaration, out var fieldIdentifier, out FieldDeclarationSyntax _))
                 {
                     field = semanticModel.GetSymbolSafe(fieldIdentifier, cancellationToken) as IFieldSymbol;
                     return field != null;

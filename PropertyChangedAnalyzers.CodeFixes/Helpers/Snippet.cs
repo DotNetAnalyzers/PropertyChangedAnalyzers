@@ -37,14 +37,12 @@
                 return $"System.Collections.Generic.EqualityComparer<{type.ToDisplayString()}>.Default.Equals({x}, {y})";
             }
 
-            if (!semanticModel.Compilation.Options.SpecificDiagnosticOptions.TryGetValue(INPC006UseReferenceEquals.DiagnosticId, out ReportDiagnostic setting))
+            if (semanticModel.IsUseReferenceEqualsSuppressed())
             {
-                return $"ReferenceEquals({x}, {y})";
+                return $"Equals({x}, {y})";
             }
 
-            return setting == ReportDiagnostic.Suppress
-                ? $"Equals({x}, {y})"
-                : $"ReferenceEquals({x}, {y})";
+            return $"ReferenceEquals({x}, {y})";
         }
 
         internal static string OnPropertyChanged(IMethodSymbol invoker, IPropertySymbol property, bool usesUnderscoreNames)

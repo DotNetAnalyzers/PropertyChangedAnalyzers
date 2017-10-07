@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers
         internal INotifyPropertyChangedType()
             : base("System.ComponentModel.INotifyPropertyChanged")
         {
-            this.PropertyChanged = new QualifiedEvent(this, "PropertyChanged");
+            this.PropertyChanged = new QualifiedEvent(this, nameof(this.PropertyChanged));
         }
     }
 }

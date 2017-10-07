@@ -15,13 +15,14 @@
                 new TestCase("ReferenceEquals(value, bar)", "Equals(value, this.bar)"),
                 new TestCase("ReferenceEquals(value, Bar)", "Equals(value, this.bar)"),
                 new TestCase("ReferenceEquals(Bar, value)", "Equals(value, this.bar)"),
+                new TestCase("ReferenceEquals(value, this.Bar)", "Equals(value, this.bar)"),
+                new TestCase("ReferenceEquals(this.Bar, value)", "Equals(value, this.bar)"),
                 new TestCase("Nullable.Equals(value, this.bar)", "Equals(value, this.bar)"),
                 new TestCase("Nullable.Equals(value, this.bar)", "Equals(value, this.bar)"),
                 new TestCase("value.Equals(this.bar)", "Equals(value, this.bar)"),
                 new TestCase("value.Equals(bar)", "Equals(value, this.bar)"),
                 new TestCase("this.bar.Equals(value)", "Equals(value, this.bar)"),
                 new TestCase("bar.Equals(value)", "Equals(value, this.bar)"),
-                new TestCase("System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.bar)", null),
             };
 
         private static readonly string FooCode = @"
@@ -42,117 +43,6 @@ namespace RoslynSandbox
         public void OneTimeTearDown()
         {
             AnalyzerAssert.ResetMetadataSuppressedDiagnostics();
-        }
-
-        [Test]
-        public void OperatorEquals()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private Foo bar;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Foo Bar
-        {
-            get { return this.bar; }
-            set
-            {
-                ↓if (value == this.bar)
-                {
-                    return;
-                }
-
-                this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-            }
-        }
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private Foo bar;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Foo Bar
-        {
-            get { return this.bar; }
-            set
-            {
-                if (Equals(value, this.bar))
-                {
-                    return;
-                }
-
-                this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-            }
-        }
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
-            AnalyzerAssert.FixAll<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
-        }
-
-        [Test]
-        public void OperatorNotEquals()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private Foo bar;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Foo Bar
-        {
-            get { return this.bar; }
-            set
-            {
-                ↓if (value != this.bar)
-                {
-                    this.bar = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-                }
-            }
-        }
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
-    }
-}";
-            AnalyzerAssert.NoFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -269,6 +159,117 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call);
+            AnalyzerAssert.NoFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
+        }
+
+        [Test]
+        public void OperatorEquals()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private Foo bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Foo Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                ↓if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private Foo bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Foo Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (Equals(value, this.bar))
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+        }
+
+        [Test]
+        public void OperatorNotEquals()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private Foo bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Foo Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                ↓if (value != this.bar)
+                {
+                    this.bar = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
             AnalyzerAssert.NoFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
         }
 

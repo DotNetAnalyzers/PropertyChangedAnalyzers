@@ -29,7 +29,7 @@
                         continue;
                     }
 
-                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out ArgumentSyntax _, out string propertyName))
+                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out ArgumentSyntax _, out var propertyName))
                     {
                         case AnalysisResult.No:
                             continue;
@@ -65,7 +65,7 @@
 
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke)
             {
-                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out ArgumentSyntax propertyChangedArg))
+                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out var propertyChangedArg))
                 {
                     if (TryGetCreatePropertyChangedEventArgsFor(propertyChangedArg.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
                     {
@@ -106,7 +106,7 @@
                 }
             }
 
-            if (invocation.ArgumentList.Arguments.TryGetSingle(out ArgumentSyntax argument))
+            if (invocation.ArgumentList.Arguments.TryGetSingle(out var argument))
             {
                 if (TryGetCreatePropertyChangedEventArgsFor(argument.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
                 {
@@ -219,7 +219,7 @@
                         {
                             if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
                             {
-                                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out ArgumentSyntax argument))
+                                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out var argument))
                                 {
                                     var identifier = argument.Expression as IdentifierNameSyntax;
                                     if (identifier?.Identifier.ValueText == parameter.Name)
@@ -243,7 +243,7 @@
 
                         if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
                         {
-                            if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out ArgumentSyntax argument))
+                            if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out var argument))
                             {
                                 var identifier = argument.Expression as IdentifierNameSyntax;
                                 if (identifier?.Identifier.ValueText == parameter.Name)

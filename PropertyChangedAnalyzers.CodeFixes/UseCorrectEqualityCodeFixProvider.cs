@@ -66,27 +66,30 @@ namespace PropertyChangedAnalyzers
                     continue;
                 }
 
-                if (Property.TryFindValue(setter, semanticModel, context.CancellationToken, out var value) &&
-                    CanFix(ifStatement, semanticModel, context.CancellationToken, value, backingField, property))
+                if (Property.TryFindValue(setter, semanticModel, context.CancellationToken, out var value))
                 {
-                    var fieldAccess = backingField.Name.StartsWith("_")
-                                          ? backingField.Name
-                                          : $"this.{backingField.Name}";
+                    if (CanFix(ifStatement, semanticModel, context.CancellationToken, value, backingField) ||
+                        CanFix(ifStatement, semanticModel, context.CancellationToken, value, property))
+                    {
+                        var fieldAccess = backingField.Name.StartsWith("_")
+                            ? backingField.Name
+                            : $"this.{backingField.Name}";
 
-                    var equalsExpression = SyntaxFactory.ParseExpression(
-                                                            Snippet.EqualityCheck(
-                                                                property.Type,
-                                                                "value",
-                                                                fieldAccess,
-                                                                semanticModel))
-                                                        .WithSimplifiedNames();
+                        var equalsExpression = SyntaxFactory.ParseExpression(
+                                                                Snippet.EqualityCheck(
+                                                                    property.Type,
+                                                                    "value",
+                                                                    fieldAccess,
+                                                                    semanticModel))
+                                                            .WithSimplifiedNames();
 
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            $"Use {equalsExpression}",
-                            cancellationToken => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(ifStatement.Condition, equalsExpression))),
-                            this.GetType().FullName),
-                        diagnostic);
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                $"Use {equalsExpression}",
+                                cancellationToken => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(ifStatement.Condition, equalsExpression))),
+                                this.GetType().FullName),
+                            diagnostic);
+                    }
                 }
             }
         }
@@ -107,22 +110,20 @@ namespace PropertyChangedAnalyzers
             return blockSyntax?.Statements.Count == 1 && blockSyntax.Statements[0] is ReturnStatementSyntax;
         }
 
-        private static bool CanFix(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, IFieldSymbol backingField, IPropertySymbol property)
+        private static bool CanFix(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
-            foreach (var member in new ISymbol[] { backingField, property })
+            if (!semanticModel.IsUseReferenceEqualsSuppressed() &&
+                Equality.IsEqualityComparerEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member))
             {
-                if (Equality.IsOperatorEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
-                    Equality.IsObjectEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
-                    Equality.IsEqualityComparerEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
-                    Equality.IsReferenceEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
-                    Equality.IsInstanceEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
-                    Equality.IsInstanceEquals(ifStatement.Condition, semanticModel, cancellationToken, member, value))
-                {
-                    return true;
-                }
+                return true;
             }
 
-            return false;
+            return Equality.IsOperatorEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
+                   Equality.IsObjectEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
+                   Equality.IsEqualityComparerEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
+                   Equality.IsReferenceEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
+                   Equality.IsInstanceEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member) ||
+                   Equality.IsInstanceEquals(ifStatement.Condition, semanticModel, cancellationToken, member, value);
         }
     }
 }

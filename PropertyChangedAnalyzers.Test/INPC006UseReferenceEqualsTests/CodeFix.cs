@@ -13,6 +13,8 @@
                 new TestCase("Equals(value, bar)", "ReferenceEquals(value, this.bar)"),
                 new TestCase("Equals(value, Bar)", "ReferenceEquals(value, this.bar)"),
                 new TestCase("Equals(Bar, value)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("Equals(value, this.Bar)", "ReferenceEquals(value, this.bar)"),
+                new TestCase("Equals(this.Bar, value)", "ReferenceEquals(value, this.bar)"),
                 new TestCase("Nullable.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
                 new TestCase("Nullable.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
                 new TestCase("value.Equals(this.bar)", "ReferenceEquals(value, this.bar)"),

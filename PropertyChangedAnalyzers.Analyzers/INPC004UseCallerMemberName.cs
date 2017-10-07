@@ -81,7 +81,7 @@ namespace PropertyChangedAnalyzers
             }
 
             var argument = invocation.ArgumentList.Arguments[0];
-            if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out string text) &&
+            if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var text) &&
                 text == property.Name)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));

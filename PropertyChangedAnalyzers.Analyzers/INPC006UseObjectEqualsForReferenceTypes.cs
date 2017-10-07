@@ -67,27 +67,23 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (!Property.TryGetBackingField(property, context.SemanticModel, context.CancellationToken, out IFieldSymbol backingField))
+            if (!Property.TryGetBackingField(property, context.SemanticModel, context.CancellationToken, out var backingField))
             {
                 return;
             }
 
-            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out IParameterSymbol value))
+            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
             {
-                foreach (var member in new ISymbol[] { backingField, property })
+                if (IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) ||
+                    IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property) ||
+                    IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) ||
+                    IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property))
                 {
-                    if (Equality.IsObjectEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
-                        IsNegatedObjectEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
-                    {
-                        if (Equality.UsesObjectOrNone(ifStatement.Condition))
-                        {
-                            return;
-                        }
-                    }
+                    return;
                 }
-            }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, ifStatement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, ifStatement.GetLocation()));
+            }
         }
 
         private static bool Notifies(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -106,12 +102,34 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        private static bool IsNegatedObjectEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
+        private static bool IsObjectEqualsOrNegated(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
-            var unaryExpression = expression as PrefixUnaryExpressionSyntax;
-            if (unaryExpression?.IsKind(SyntaxKind.LogicalNotExpression) == true)
+            if (Equality.IsObjectEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member))
             {
-                return Equality.IsObjectEquals(unaryExpression.Operand, semanticModel, cancellationToken, value, member);
+                return Equality.UsesObjectOrNone(ifStatement.Condition);
+            }
+
+            if (ifStatement.Condition is PrefixUnaryExpressionSyntax unary &&
+                unary.IsKind(SyntaxKind.LogicalNotExpression))
+            {
+                return Equality.IsObjectEquals(unary.Operand, semanticModel, cancellationToken, value, member) &&
+                       Equality.UsesObjectOrNone(ifStatement.Condition);
+            }
+
+            return false;
+        }
+
+        private static bool IsEqualityComparerEqualsOrNegated(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
+        {
+            if (Equality.IsEqualityComparerEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member))
+            {
+                return true;
+            }
+
+            if (ifStatement.Condition is PrefixUnaryExpressionSyntax unary &&
+                unary.IsKind(SyntaxKind.LogicalNotExpression))
+            {
+                return Equality.IsEqualityComparerEquals(unary.Operand, semanticModel, cancellationToken, value, member);
             }
 
             return false;

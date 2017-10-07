@@ -18,7 +18,7 @@
 
         internal Pooled GetOrCreate()
         {
-            if (!this.cache.TryDequeue(out T item))
+            if (!this.cache.TryDequeue(out var item))
             {
                 item = this.create();
             }

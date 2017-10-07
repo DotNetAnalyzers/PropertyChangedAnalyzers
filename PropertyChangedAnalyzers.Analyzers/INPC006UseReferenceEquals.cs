@@ -67,12 +67,12 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (!Property.TryGetBackingField(property, context.SemanticModel, context.CancellationToken, out IFieldSymbol backingField))
+            if (!Property.TryGetBackingField(property, context.SemanticModel, context.CancellationToken, out var backingField))
             {
                 return;
             }
 
-            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out IParameterSymbol value))
+            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
             {
                 foreach (var member in new ISymbol[] { backingField, property })
                 {

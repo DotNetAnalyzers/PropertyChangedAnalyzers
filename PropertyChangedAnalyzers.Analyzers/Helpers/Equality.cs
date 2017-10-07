@@ -8,6 +8,12 @@
 
     internal static class Equality
     {
+        internal static bool IsUseReferenceEqualsSuppressed(this SemanticModel semanticModel)
+        {
+            return semanticModel.Compilation.Options.SpecificDiagnosticOptions.TryGetValue(INPC006UseReferenceEquals.DiagnosticId, out var report) &&
+                   report == ReportDiagnostic.Suppress;
+        }
+
         internal static bool HasEqualityOperator(ITypeSymbol type)
         {
             switch (type.SpecialType)
@@ -89,20 +95,14 @@
 
         internal static bool IsEqualityComparerEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
-            var equals = condition as InvocationExpressionSyntax;
-            var memberAccess = equals?.Expression as MemberAccessExpressionSyntax;
-            if (memberAccess == null)
+            if (condition is InvocationExpressionSyntax invocation)
             {
-                return false;
-            }
-
-            var method = semanticModel.GetSymbolSafe(equals, cancellationToken) as IMethodSymbol;
-            if (method?.Parameters.Length == 2 &&
-                method.Name == "Equals")
-            {
-                var type = semanticModel.GetTypeInfoSafe(memberAccess.Expression, cancellationToken).Type;
-                return type?.MetadataName == "EqualityComparer`1" &&
-                       IsArguments(equals, semanticModel, cancellationToken, first, other);
+                var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                if (method?.Parameters.Length == 2 &&
+                    method == KnownSymbol.EqualityComparerOfT.EqualsMethod)
+                {
+                    return IsArguments(invocation, semanticModel, cancellationToken, first, other);
+                }
             }
 
             return false;
@@ -163,7 +163,7 @@
 
             var memberAccess = (condition as InvocationExpressionSyntax)?.Expression as MemberAccessExpressionSyntax;
             if (memberAccess?.Expression is IdentifierNameSyntax identifierName &&
-    !string.Equals(identifierName.Identifier.ValueText, "object", StringComparison.OrdinalIgnoreCase))
+                !string.Equals(identifierName.Identifier.ValueText, "object", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }

@@ -60,7 +60,7 @@
             }
 
             var expression = (PostfixUnaryExpressionSyntax)context.Node;
-            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out IFieldSymbol field))
+            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out var field))
             {
                 Handle(context, field);
             }
@@ -74,7 +74,7 @@
             }
 
             var expression = (PrefixUnaryExpressionSyntax)context.Node;
-            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out IFieldSymbol field))
+            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out var field))
             {
                 Handle(context, field);
             }
@@ -88,7 +88,7 @@
             }
 
             var expression = (AssignmentExpressionSyntax)context.Node;
-            if (TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out IFieldSymbol field))
+            if (TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out var field))
             {
                 Handle(context, field);
             }
