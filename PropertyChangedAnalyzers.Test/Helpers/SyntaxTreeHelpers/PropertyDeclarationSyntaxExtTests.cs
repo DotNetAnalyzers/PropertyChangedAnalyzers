@@ -1,5 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers.Test.SyntaxTreeHelpers
 {
+    using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
@@ -30,7 +31,7 @@ namespace RoslynSandBox
         }
     }
 }");
-            var property = syntaxTree.PropertyDeclarationSyntax(propertyName);
+            var property = syntaxTree.FindPropertyDeclaration(propertyName);
             Assert.AreEqual(true, property.TryGetGetAccessorDeclaration(out var result));
             Assert.AreEqual(getter, result.ToString());
         }
@@ -60,7 +61,7 @@ namespace RoslynSandBox
         }
     }
 }");
-            var property = syntaxTree.PropertyDeclarationSyntax(propertyName);
+            var property = syntaxTree.FindPropertyDeclaration(propertyName);
             Assert.AreEqual(true, property.TryGetSetAccessorDeclaration(out var result));
             Assert.AreEqual(setter, result.ToString());
         }

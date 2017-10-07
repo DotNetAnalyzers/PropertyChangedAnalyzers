@@ -96,7 +96,7 @@ namespace RoslynSandBox
 }");
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var property = syntaxTree.PropertyDeclarationSyntax(code);
+            var property = syntaxTree.FindPropertyDeclaration(code);
             Assert.AreEqual(expected, Property.IsLazy(property, semanticModel, CancellationToken.None));
         }
 
@@ -147,7 +147,7 @@ namespace RoslynSandBox
         }
     }
 }");
-            var property = syntaxTree.PropertyDeclarationSyntax(propertyName);
+            var property = syntaxTree.FindPropertyDeclaration(propertyName);
             Assert.AreEqual(expected, Property.TryGetBackingField(property, out var identifier, out var declaration));
             Assert.AreEqual(field, identifier?.Identifier.Text);
             Assert.AreEqual(field, declaration?.Name());
