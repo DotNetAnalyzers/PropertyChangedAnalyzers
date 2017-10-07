@@ -154,7 +154,12 @@
                         continue;
                     case AnalysisResult.Yes:
                         invoker = method;
-                        return true;
+                        if (invoker.IsCallerMemberName())
+                        {
+                            return true;
+                        }
+
+                        break;
                     case AnalysisResult.Maybe:
                         invoker = method;
                         break;

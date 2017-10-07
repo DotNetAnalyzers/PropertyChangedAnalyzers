@@ -41,7 +41,7 @@ namespace RoslynSandbox
             var type = semanticModel.GetDeclaredSymbol(classDeclaration);
             Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
             Assert.AreEqual("OnPropertyChanged", invoker.Name);
-            Assert.AreEqual("System.String", invoker.Parameters.Single().Type.MetadataName);
+            Assert.AreEqual("String", invoker.Parameters.Single().Type.MetadataName);
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace RoslynSandbox
             var type = semanticModel.GetDeclaredSymbol(classDeclaration);
             Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
             Assert.AreEqual("OnPropertyChanged", invoker.Name);
-            Assert.AreEqual("System.String", invoker.Parameters.Single().Type.MetadataName);
+            Assert.AreEqual("String", invoker.Parameters.Single().Type.MetadataName);
         }
     }
 }
