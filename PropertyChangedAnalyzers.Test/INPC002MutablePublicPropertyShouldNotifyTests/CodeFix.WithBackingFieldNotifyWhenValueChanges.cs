@@ -391,7 +391,7 @@ namespace RoslynSandbox
         ↓public virtual int Value
         {
             get { return this.value; }
-            set { this.value = value; }
+            private set { this.value = value; }
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

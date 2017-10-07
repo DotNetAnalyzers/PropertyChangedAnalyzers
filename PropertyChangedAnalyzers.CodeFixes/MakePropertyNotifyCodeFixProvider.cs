@@ -71,7 +71,7 @@
                             context.RegisterCodeFix(
                                 CodeAction.Create(
                                     NotifyWhenValueChanges,
-                                    cancellationToken => MakeAutoPropertyNotifyAsync(context.Document, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                    cancellationToken => MakeAutoPropertyNotifyWhenValueChangesAsync(context.Document, propertyDeclaration, invoker, semanticModel, cancellationToken),
                                     NotifyWhenValueChanges),
                                 diagnostic);
                         }
@@ -157,7 +157,7 @@
             return document;
         }
 
-        private static async Task<Document> MakeAutoPropertyNotifyAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static async Task<Document> MakeAutoPropertyNotifyWhenValueChangesAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
@@ -272,7 +272,7 @@
                                          .AppendLine($"           return;")
                                          .AppendLine("        }")
                                          .AppendLine()
-                                         .AppendLine(statement.ToFullString())
+                                         .AppendLine(statement.ToFullString().TrimEnd('\r', '\n'))
                                          .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
                                          .AppendLine("    }")
                                          .AppendLine("}")
