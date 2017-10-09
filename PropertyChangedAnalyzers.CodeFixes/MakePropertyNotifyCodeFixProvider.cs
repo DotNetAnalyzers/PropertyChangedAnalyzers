@@ -56,22 +56,22 @@
                     {
                         context.RegisterCodeFix(
                             CodeAction.Create(
-                                "Set.",
+                                "GalaSoft.MvvmLight.ViewModelBase.Set.",
                                 cancellationToken => MakeAutoPropertySetAsync(
                                     context.Document,
                                     propertyDeclaration,
                                     semanticModel,
                                     cancellationToken),
-                                "Set."),
+                                "GalaSoft.MvvmLight.ViewModelBase.Set."),
                             diagnostic);
                     }
                     else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                     {
                         context.RegisterCodeFix(
                             CodeAction.Create(
-                                "Set.",
+                                "GalaSoft.MvvmLight.ViewModelBase.Set.",
                                 cancellationToken => MakeWithBackingFieldSetAsync(context.Document, propertyDeclaration, semanticModel, cancellationToken),
-                                "Set."),
+                                "GalaSoft.MvvmLight.ViewModelBase.Set."),
                             diagnostic);
                     }
                 }
