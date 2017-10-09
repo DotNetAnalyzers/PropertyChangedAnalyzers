@@ -31,29 +31,6 @@ namespace PropertyChangedAnalyzers
                                                .TrailingTrivia)));
         }
 
-        internal static StatementSyntax OnPropertyChanged(this SyntaxGenerator syntaxGenerator, string propertyName, bool useCallerMemberName, bool usedUnderscoreNames, IMethodSymbol invoker)
-        {
-            var prefix = usedUnderscoreNames
-                             ? string.Empty
-                             : "this.";
-            if (invoker == null)
-            {
-                var eventAccess = SyntaxFactory.ParseExpression($"{prefix}PropertyChanged?.Invoke(new PropertyChangedEventArgs(nameof({propertyName}))");
-                return (StatementSyntax)syntaxGenerator.ExpressionStatement(eventAccess.WithAdditionalAnnotations(Formatter.Annotation))
-                                                       .WithAdditionalAnnotations(Formatter.Annotation);
-            }
-
-            var memberAccess = SyntaxFactory.ParseExpression($"{prefix}{invoker.Name}");
-            if (useCallerMemberName && invoker.Parameters[0].IsCallerMemberName())
-            {
-                return (StatementSyntax)syntaxGenerator.ExpressionStatement(syntaxGenerator.InvocationExpression(memberAccess));
-            }
-
-            var arg = SyntaxFactory.ParseExpression($"nameof({prefix}{propertyName})").WithAdditionalAnnotations(Formatter.Annotation);
-            return (StatementSyntax)syntaxGenerator.ExpressionStatement(syntaxGenerator.InvocationExpression(memberAccess, arg))
-                                                   .WithAdditionalAnnotations(Formatter.Annotation);
-        }
-
         internal static IfStatementSyntax IfValueEqualsBackingFieldReturn(this SyntaxGenerator syntaxGenerator, string fieldName, IPropertySymbol property, ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
             var fieldAccess = fieldName.StartsWith("_")

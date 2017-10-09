@@ -11,8 +11,10 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
+    using Microsoft.CodeAnalysis.Formatting;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NotifyPropertyChangedCodeFixProvider))]
     [Shared]
@@ -74,9 +76,13 @@
             var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, cancellationToken);
 
             if (PropertyChanged.TryGetInvoker(type, semanticModel, cancellationToken, out var invoker) &&
-    invoker.Parameters[0].Type == KnownSymbol.String)
+                invoker.Parameters[0].Type == KnownSymbol.String)
             {
-                var onPropertyChanged = syntaxGenerator.OnPropertyChanged(property, useCallerMemberName: false, usedUnderscoreNames: usesUnderscoreNames, invoker: invoker);
+                var onPropertyChanged = SyntaxFactory.ParseStatement(OnPropertyChanged(invoker, property, usesUnderscoreNames))
+                                                     .WithSimplifiedNames()
+                                                     .WithLeadingElasticLineFeed()
+                                                     .WithTrailingElasticLineFeed()
+                                                     .WithAdditionalAnnotations(Formatter.Annotation);
                 return new Fix(assignment, onPropertyChanged, invoker);
             }
 
@@ -115,6 +121,35 @@
                 var previousStatement = InsertAfter(block, assignStatement, fix.Invoker);
                 return syntaxRoot.InsertNodesAfter(previousStatement, new[] { fix.OnPropertyChanged });
             }
+        }
+
+        private static string OnPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
+        {
+            if (invoker == null)
+            {
+                return usesUnderscoreNames
+                    ? $"PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs({propertyName}));"
+                    : $"this.PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})));";
+            }
+
+            if (invoker.Parameters.TryGetSingle(out var parameter))
+            {
+                if (parameter.Type == KnownSymbol.String)
+                {
+                    return usesUnderscoreNames
+                        ? $"{invoker.Name}(nameof({propertyName}));"
+                        : $"this.{invoker.Name}(nameof(this.{propertyName}));";
+                }
+
+                if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
+                {
+                    return usesUnderscoreNames
+                        ? $"{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs({propertyName}));"
+                        : $"this.{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})));";
+                }
+            }
+
+            return "GeneratedSyntaxErrorBugInPropertyChangedAnalyzersCodeFixes";
         }
 
         private static StatementSyntax InsertAfter(BlockSyntax block, ExpressionStatementSyntax assignStatement, IMethodSymbol invoker)
