@@ -149,6 +149,78 @@ namespace RoslynSandbox
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
                 AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
             }
+
+            [Test]
+            public void WithBackingFieldToSet()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        ↓public string Name
+        {
+            get { return this.name; }
+            set { this.name = value; }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get { return this.name; }
+            set { this.Set(ref this.name, value); }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
+            }
+
+            [Test]
+            public void WithBackingFieldToSetUnderscoreNames()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string _name;
+
+        ↓public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string _name;
+
+        public string Name
+        {
+            get { return _name; }
+            set { Set(ref _name, value); }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Set.");
+            }
         }
     }
 }

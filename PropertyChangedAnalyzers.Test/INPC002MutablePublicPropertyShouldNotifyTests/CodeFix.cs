@@ -71,7 +71,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AutoPropertyExplicitNameHandlesRecursion()
+        public void AutoPropertyExplicitNameHandlesRecursionInInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -88,11 +88,6 @@ namespace RoslynSandbox
         {
             this.OnPropertyChanged(propertyName);
         }
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
     }
 }";
 
@@ -100,7 +95,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenBaseHasPropertyChangedEventButNoInterface()
+        public void IgnoresWhenBaseHasInternalOnPropertyChanged()
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -114,7 +109,6 @@ namespace RoslynSandBox
 }";
 
             AnalyzerAssert.NoFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode);
-            Assert.Inconclusive("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D");
         }
     }
 }

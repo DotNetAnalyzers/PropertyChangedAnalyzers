@@ -403,5 +403,22 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
+
+        [Test]
+        public void IgnoresWhenBaseHasInternalPropertyChangedEventButNoInterface()
+        {
+            var testCode = @"
+namespace RoslynSandBox
+{
+    using System.Windows.Input;
+
+    public class CustomGesture : MouseGesture
+    {
+        ↓public int Foo { get; set; }
+    }
+}";
+
+            AnalyzerAssert.NoFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode);
+        }
     }
 }
