@@ -270,7 +270,6 @@
 
                 if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out var assignment, out _))
                 {
-                    var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
                     var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                     using (var pooled = StringBuilderPool.Borrow())
                     {
@@ -288,7 +287,7 @@
                         editor.InsertBefore(
                             statement,
                             ifStatement);
-
+                        var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
                         var notifyStatement = SyntaxFactory.ParseStatement(Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames) + ";")
                                                                      .WithSimplifiedNames()
                                                                      .WithLeadingElasticLineFeed()
