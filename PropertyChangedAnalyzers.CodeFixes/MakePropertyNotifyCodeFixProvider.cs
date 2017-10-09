@@ -155,7 +155,7 @@
                                      .AppendLine("        }")
                                      .AppendLine()
                                      .AppendLine($"        {fieldAccess} = value;")
-                                     .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
+                                     .AppendLine($"        {OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
                                      .AppendLine("    }")
                                      .AppendLine("}")
                                      .ToString();
@@ -288,7 +288,7 @@
                             statement,
                             ifStatement);
                         var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
-                        var notifyStatement = SyntaxFactory.ParseStatement(Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames) + ";")
+                        var notifyStatement = SyntaxFactory.ParseStatement(OnPropertyChanged(invoker, property, usesUnderscoreNames) + ";")
                                                                      .WithSimplifiedNames()
                                                                      .WithLeadingElasticLineFeed()
                                                                      .WithTrailingElasticLineFeed()
@@ -319,7 +319,7 @@
                 var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var notifyStatement = SyntaxFactory
-                    .ParseStatement($"                {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
+                    .ParseStatement($"                {OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
                     .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                     .WithSimplifiedNames()
@@ -364,6 +364,35 @@
                                                            .WithLeadingElasticLineFeed()
                                                            .WithTrailingElasticLineFeed()
                                                            .WithAdditionalAnnotations(Formatter.Annotation);
+        }
+
+        private static string OnPropertyChanged(IMethodSymbol invoker, IPropertySymbol property, bool usesUnderscoreNames)
+        {
+            if (invoker.IsCallerMemberName())
+            {
+                return usesUnderscoreNames
+                    ? $"{invoker.Name}()"
+                    : $"this.{invoker.Name}()";
+            }
+
+            if (invoker.Parameters.TryGetSingle(out var parameter))
+            {
+                if (parameter.Type == KnownSymbol.String)
+                {
+                    return usesUnderscoreNames
+                        ? $"{invoker.Name}(nameof({property.Name}))"
+                        : $"this.{invoker.Name}(nameof(this.{property.Name}))";
+                }
+
+                if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
+                {
+                    return usesUnderscoreNames
+                        ? $"{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs({property.Name}))"
+                        : $"this.{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{property.Name})))";
+                }
+            }
+
+            return "GeneratedSyntaxErrorBugInPropertyChangedAnalyzersCodeFixes";
         }
 
         private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)

@@ -44,39 +44,5 @@
 
             return $"ReferenceEquals({x}, {y})";
         }
-
-        internal static string OnPropertyChanged(IMethodSymbol invoker, IPropertySymbol property, bool usesUnderscoreNames)
-        {
-            return OnPropertyChanged(invoker, property.Name, usesUnderscoreNames);
-        }
-
-        internal static string OnPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
-        {
-            if (invoker.IsCallerMemberName())
-            {
-                return usesUnderscoreNames
-                    ? $"{invoker.Name}()"
-                    : $"this.{invoker.Name}()";
-            }
-
-            if (invoker.Parameters.TryGetSingle(out var parameter))
-            {
-                if (parameter.Type == KnownSymbol.String)
-                {
-                    return usesUnderscoreNames
-                        ? $"{invoker.Name}(nameof({propertyName}))"
-                        : $"this.{invoker.Name}(nameof(this.{propertyName}))";
-                }
-
-                if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
-                {
-                    return usesUnderscoreNames
-                        ? $"{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs({propertyName}))"
-                        : $"this.{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})))";
-                }
-            }
-
-            return "GeneratedSyntaxErrorBugInPropertyChangedAnalyzersCodeFixes";
-        }
     }
 }
