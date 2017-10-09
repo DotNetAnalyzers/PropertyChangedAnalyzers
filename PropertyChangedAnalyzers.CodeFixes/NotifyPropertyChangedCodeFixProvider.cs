@@ -66,14 +66,14 @@
                 return default(Fix);
             }
 
-            if (!diagnostic.Properties.TryGetValue(INPC003NotifyWhenPropertyChanges.PropertyNameKey, out string property))
+            if (!diagnostic.Properties.TryGetValue(INPC003NotifyWhenPropertyChanges.PropertyNameKey, out var property))
             {
                 return default(Fix);
             }
 
             var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, cancellationToken);
 
-            if (PropertyChanged.TryGetInvoker(type, semanticModel, cancellationToken, out IMethodSymbol invoker) &&
+            if (PropertyChanged.TryGetInvoker(type, semanticModel, cancellationToken, out var invoker) &&
     invoker.Parameters[0].Type == KnownSymbol.String)
             {
                 var onPropertyChanged = syntaxGenerator.OnPropertyChanged(property, useCallerMemberName: false, usedUnderscoreNames: usesUnderscoreNames, invoker: invoker);

@@ -46,13 +46,13 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            for (int i = index - 1; i >= 0; i--)
+            for (var i = index - 1; i >= 0; i--)
             {
                 if (type.Members[i] is PropertyDeclarationSyntax other)
                 {
                     if (Property.TryGetBackingField(other, out _, out var field))
                     {
-                        editor.InsertBefore(field, backingField);
+                        editor.InsertAfter(field, backingField);
                         return backingField;
                     }
                 }

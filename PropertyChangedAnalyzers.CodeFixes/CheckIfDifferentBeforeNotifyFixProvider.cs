@@ -112,7 +112,7 @@ namespace PropertyChangedAnalyzers
     property,
     semanticModel,
     cancellationToken,
-    out IFieldSymbol backingField))
+    out var backingField))
             {
                 var ifReturn = syntaxGenerator.IfValueEqualsBackingFieldReturn(backingField.Name, property, diagnosticOptions);
                 return new Fix(assignment, ifReturn);

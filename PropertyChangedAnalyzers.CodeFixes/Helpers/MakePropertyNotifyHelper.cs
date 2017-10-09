@@ -37,7 +37,7 @@ namespace PropertyChangedAnalyzers
                 return typeDeclaration;
             }
 
-            if (typeDeclaration.Members.TryGetLast(x => x.IsKind(SyntaxKind.FieldDeclaration), out MemberDeclarationSyntax existsingMember))
+            if (typeDeclaration.Members.TryGetLast(x => x.IsKind(SyntaxKind.FieldDeclaration), out var existsingMember))
             {
                 FieldDeclarationSyntax before = null;
                 FieldDeclarationSyntax after = null;
@@ -56,7 +56,7 @@ namespace PropertyChangedAnalyzers
                         continue;
                     }
 
-                    if (Property.TryGetBackingField(otherProperty, out IdentifierNameSyntax _, out FieldDeclarationSyntax fieldDeclaration))
+                    if (Property.TryGetBackingField(otherProperty, out IdentifierNameSyntax _, out var fieldDeclaration))
                     {
                         if (property == null)
                         {
@@ -309,7 +309,7 @@ namespace PropertyChangedAnalyzers
         [Obsolete("Use snippet")]
         internal static ExpressionSyntax ReferenceTypeEquality(ImmutableDictionary<string, ReportDiagnostic> diagnosticOptions)
         {
-            if (!diagnosticOptions.TryGetValue(INPC006UseReferenceEquals.DiagnosticId, out ReportDiagnostic setting))
+            if (!diagnosticOptions.TryGetValue(INPC006UseReferenceEquals.DiagnosticId, out var setting))
             {
                 return SyntaxFactory.ParseExpression(nameof(ReferenceEquals));
             }

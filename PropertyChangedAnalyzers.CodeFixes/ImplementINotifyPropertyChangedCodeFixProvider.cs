@@ -100,7 +100,7 @@
             if (!type.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 if (classDeclaration.BaseList != null &&
-                    classDeclaration.BaseList.Types.TryGetFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out BaseTypeSyntax baseType) &&
+                    classDeclaration.BaseList.Types.TryGetFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out var baseType) &&
                     context.Diagnostics.Any(IsINotifyPropertyChangedMissing))
                 {
                     editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(INotifyPropertyChangedType));
@@ -155,7 +155,7 @@
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
             if (classDeclaration.BaseList != null &&
-                classDeclaration.BaseList.Types.TryGetFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out BaseTypeSyntax baseType) &&
+                classDeclaration.BaseList.Types.TryGetFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out var baseType) &&
                 context.Diagnostics.Any(IsINotifyPropertyChangedMissing))
             {
                 editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(MvvmLightViewModelBaseType));
