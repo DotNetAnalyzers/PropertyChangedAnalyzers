@@ -57,7 +57,6 @@ namespace RoslynSandbox
             {
                 return this.value;
             }
-
             private set
             {
                 if (value == this.value)
@@ -132,7 +131,6 @@ namespace RoslynSandbox
             {
                 return this.value;
             }
-
             private set
             {
                 if (value == this.value)
@@ -214,7 +212,8 @@ namespace RoslynSandbox
             /*1*/
             get
             {
-                /*2*/ return this.value; /*3*/
+                /*2*/
+                return this.value; /*3*/
             } /*4*/
             /*5*/
             set /*6*/
@@ -223,8 +222,8 @@ namespace RoslynSandbox
                 {
                     return;
                 }
-
-                /*7*/ this.value = value; /*8*/
+                /*7*/
+                this.value = value; /*8*/
                 this.OnPropertyChanged();
             } /*9*/
         } /*10*/
@@ -278,7 +277,6 @@ namespace RoslynSandbox
         public int Value
         {
             get { return this.value; }
-
             private set
             {
                 if (value == this.value)
@@ -344,7 +342,6 @@ namespace RoslynSandbox
         public int Value
         {
             get { return this.value; }
-
             private set
             {
                 if (value == this.value)
@@ -410,7 +407,6 @@ namespace RoslynSandbox
         public virtual int Value
         {
             get { return this.value; }
-
             private set
             {
                 if (value == this.value)
@@ -514,7 +510,6 @@ namespace RoslynSandbox
         public int Value
         {
             get { return this.bar.Value; }
-
             private set
             {
                 if (value == this.bar.Value)
@@ -618,7 +613,6 @@ namespace RoslynSandbox
         public int Value
         {
             get { return _bar.Value; }
-
             private set
             {
                 if (value == _bar.Value)
@@ -684,7 +678,6 @@ namespace RoslynSandbox
         public int Value
         {
             get { return this.value; }
-
             private set
             {
                 if (value == this.value)

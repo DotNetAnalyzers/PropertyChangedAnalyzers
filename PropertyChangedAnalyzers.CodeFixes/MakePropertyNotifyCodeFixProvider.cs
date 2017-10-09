@@ -188,65 +188,6 @@
             return document;
         }
 
-        private static async Task<Document> MakeWithBackingFieldNotifyWhenValueChangesAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
-            var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-            if (classDeclaration == null)
-            {
-                return document;
-            }
-
-            if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter) &&
-                propertyDeclaration.TryGetSetAccessorDeclaration(out var setter))
-            {
-                if (getter.Body?.Statements.Count != 1 ||
-                    setter.Body?.Statements.Count != 1)
-                {
-                    return document;
-                }
-
-                if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out var assignment, out _))
-                {
-                    var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
-                    var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                    using (var pooled = StringBuilderPool.Borrow())
-                    {
-                        var code = pooled.Item.AppendLine($"public {property.Type.ToDisplayString()} {property.Name}")
-                                         .AppendLine("{")
-                                         .AppendLine("    get")
-                                         .AppendLine("    {")
-                                         .AppendLine($"        return {assignment.Left};")
-                                         .AppendLine("    }")
-                                         .AppendLine()
-                                         .AppendLine("    set")
-                                         .AppendLine("    {")
-                                         .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
-                                         .AppendLine("        {")
-                                         .AppendLine($"           return;")
-                                         .AppendLine("        }")
-                                         .AppendLine()
-                                         .AppendLine(statement.ToFullString().TrimEnd('\r', '\n'))
-                                         .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)};")
-                                         .AppendLine("    }")
-                                         .AppendLine("}")
-                                         .ToString();
-                        var template = ParseProperty(code);
-                        editor.ReplaceNode(
-                            setter,
-                            (x, _) => ((AccessorDeclarationSyntax)x).WithBody(template.Setter().Body)
-                                                                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                                    .WithLeadingElasticLineFeed()
-                                                                    .WithAdditionalAnnotations(Formatter.Annotation));
-                        return editor.GetChangedDocument();
-                    }
-                }
-            }
-
-            return document;
-        }
-
         private static async Task<Document> MakeAutoPropertySetAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
@@ -308,6 +249,62 @@
             return document;
         }
 
+        private static async Task<Document> MakeWithBackingFieldNotifyWhenValueChangesAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
+                                             .ConfigureAwait(false);
+            var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            if (classDeclaration == null)
+            {
+                return document;
+            }
+
+            if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter) &&
+                propertyDeclaration.TryGetSetAccessorDeclaration(out var setter))
+            {
+                if (getter.Body?.Statements.Count != 1 ||
+                    setter.Body?.Statements.Count != 1)
+                {
+                    return document;
+                }
+
+                if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out var assignment, out _))
+                {
+                    var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                    var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                    using (var pooled = StringBuilderPool.Borrow())
+                    {
+                        var code = pooled.Item.AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
+                                         .AppendLine("        {")
+                                         .AppendLine($"           return;")
+                                         .AppendLine("        }")
+                                         .AppendLine()
+                                         .ToString();
+                        var ifStatement = SyntaxFactory.ParseStatement(code)
+                                                       .WithSimplifiedNames()
+                                                       .WithLeadingElasticLineFeed()
+                                                       .WithTrailingElasticLineFeed()
+                                                       .WithAdditionalAnnotations(Formatter.Annotation);
+                        editor.InsertBefore(
+                            statement,
+                            ifStatement);
+
+                        var notifyStatement = SyntaxFactory.ParseStatement(Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames) + ";")
+                                                                     .WithSimplifiedNames()
+                                                                     .WithLeadingElasticLineFeed()
+                                                                     .WithTrailingElasticLineFeed()
+                                                                     .WithAdditionalAnnotations(Formatter.Annotation);
+                        editor.InsertAfter(
+                            statement,
+                            notifyStatement);
+                        return editor.GetChangedDocument();
+                    }
+                }
+            }
+
+            return document;
+        }
+
         private static async Task<Document> MakeWithBackingFieldNotifyAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
@@ -345,7 +342,7 @@
                 return document;
             }
 
-            if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment , out var fieldAccess))
+            if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
             {
                 var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
                 var setExpression = SyntaxFactory.ParseExpression($"{(usesUnderscoreNames ? string.Empty : "this.")}Set(ref {fieldAccess}, value);")
