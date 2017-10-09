@@ -1,11 +1,7 @@
 ﻿namespace PropertyChangedAnalyzers
 {
-    using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -15,6 +11,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
+    using PropertyChangedAnalyzers.Helpers;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NotifyPropertyChangedCodeFixProvider))]
     [Shared]
@@ -24,7 +21,7 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC003NotifyWhenPropertyChanges.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => BacthFixer.Default;
+        public override FixAllProvider GetFixAllProvider() => DocumentOnlyFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -34,93 +31,74 @@
 
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
-            var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
             var usesUnderscoreNames = syntaxRoot.UsesUnderscoreNames(semanticModel, context.CancellationToken);
-
             foreach (var diagnostic in context.Diagnostics)
             {
-                var fix = CreateFix(diagnostic, syntaxRoot, semanticModel, context.CancellationToken, syntaxGenerator, usesUnderscoreNames);
-                if (fix.OnPropertyChanged != null)
+                if (diagnostic.Properties.TryGetValue(INPC003NotifyWhenPropertyChanges.PropertyNameKey, out var property))
                 {
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "Notify property change.",
-                            _ => Task.FromResult(context.Document.WithSyntaxRoot(ApplyFix(syntaxRoot, fix, syntaxGenerator))),
-                            this.GetType().Name),
-                        diagnostic);
+                    var expression = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
+                                               .FirstAncestorOrSelf<ExpressionSyntax>();
+                    var typeDeclaration = expression.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+                    var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
+                    if (PropertyChanged.TryGetInvoker(
+                            type,
+                            semanticModel,
+                            context.CancellationToken,
+                            out var invoker) &&
+                        invoker.Parameters[0]
+                               .Type ==
+                        KnownSymbol.String)
+                    {
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Notify property change.",
+                                cancellationToken => MakeNotifyAsync(
+                                    context.Document,
+                                    expression,
+                                    property,
+                                    invoker,
+                                    usesUnderscoreNames,
+                                    cancellationToken),
+                                this.GetType()
+                                    .Name),
+                            diagnostic);
+                    }
                 }
             }
         }
 
-        private static Fix CreateFix(Diagnostic diagnostic, SyntaxNode syntaxRoot, SemanticModel semanticModel, CancellationToken cancellationToken, SyntaxGenerator syntaxGenerator, bool usesUnderscoreNames)
+        private static async Task<Document> MakeNotifyAsync(Document document, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
-            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            if (string.IsNullOrEmpty(token.ValueText))
-            {
-                return default(Fix);
-            }
-
-            var assignment = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                       .FirstAncestorOrSelf<ExpressionSyntax>();
-            var typeDeclaration = assignment?.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-            if (typeDeclaration == null)
-            {
-                return default(Fix);
-            }
-
-            if (!diagnostic.Properties.TryGetValue(INPC003NotifyWhenPropertyChanges.PropertyNameKey, out var property))
-            {
-                return default(Fix);
-            }
-
-            var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, cancellationToken);
-
-            if (PropertyChanged.TryGetInvoker(type, semanticModel, cancellationToken, out var invoker) &&
-                invoker.Parameters[0].Type == KnownSymbol.String)
-            {
-                var onPropertyChanged = SyntaxFactory.ParseStatement(OnPropertyChanged(invoker, property, usesUnderscoreNames))
-                                                     .WithSimplifiedNames()
-                                                     .WithLeadingElasticLineFeed()
-                                                     .WithTrailingElasticLineFeed()
-                                                     .WithAdditionalAnnotations(Formatter.Annotation);
-                return new Fix(assignment, onPropertyChanged, invoker);
-            }
-
-            return default(Fix);
-        }
-
-        private static SyntaxNode ApplyFix(SyntaxNode syntaxRoot, Fix fix, SyntaxGenerator syntaxGenerator)
-        {
-            var assignment = syntaxRoot.GetCurrentNode(fix.Assignment);
-            if (assignment == null)
-            {
-                assignment = fix.Assignment;
-            }
-
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
+                                             .ConfigureAwait(false);
+            var onPropertyChanged = SyntaxFactory.ParseStatement(OnPropertyChanged(invoker, propertyName, usesUnderscoreNames))
+                                                 .WithSimplifiedNames()
+                                                 .WithLeadingElasticLineFeed()
+                                                 .WithTrailingElasticLineFeed()
+                                                 .WithAdditionalAnnotations(Formatter.Annotation);
             var assignStatement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
             if (assignment.Parent is AnonymousFunctionExpressionSyntax anonymousFunction)
             {
                 if (anonymousFunction.Body is BlockSyntax block)
                 {
-                    var previousStatement = InsertAfter(block, assignStatement, fix.Invoker);
-                    return syntaxRoot.InsertNodesAfter(previousStatement, new[] { fix.OnPropertyChanged });
+                    var previousStatement = InsertAfter(block, assignStatement, invoker);
+                    editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
+                    return editor.GetChangedDocument();
                 }
 
-                var expressionStatement = (ExpressionStatementSyntax)syntaxGenerator.ExpressionStatement(anonymousFunction.Body);
-                var withStatements = syntaxGenerator.WithStatements(anonymousFunction, new[] { expressionStatement, fix.OnPropertyChanged });
-                return syntaxRoot.ReplaceNode(anonymousFunction, withStatements);
+                var expressionStatement = (ExpressionStatementSyntax)editor.Generator.ExpressionStatement(anonymousFunction.Body);
+                var withStatements = editor.Generator.WithStatements(anonymousFunction, new[] { expressionStatement, onPropertyChanged });
+                editor.ReplaceNode(anonymousFunction, withStatements);
+                return editor.GetChangedDocument();
             }
-            else
+            else if (assignStatement?.Parent is BlockSyntax block)
             {
-                var block = assignStatement?.Parent as BlockSyntax;
-                if (block == null)
-                {
-                    return syntaxRoot;
-                }
-
-                var previousStatement = InsertAfter(block, assignStatement, fix.Invoker);
-                return syntaxRoot.InsertNodesAfter(previousStatement, new[] { fix.OnPropertyChanged });
+                var previousStatement = InsertAfter(block, assignStatement, invoker);
+                editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
+                return editor.GetChangedDocument();
             }
+
+            return document;
         }
 
         private static string OnPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
@@ -189,92 +167,6 @@
             }
 
             return previousStatement;
-        }
-
-        private struct Fix
-        {
-            internal readonly ExpressionSyntax Assignment;
-            internal readonly StatementSyntax OnPropertyChanged;
-            internal readonly IMethodSymbol Invoker;
-
-            public Fix(ExpressionSyntax assignment, StatementSyntax onPropertyChanged, IMethodSymbol invoker)
-            {
-                this.Assignment = assignment;
-                this.OnPropertyChanged = onPropertyChanged;
-                this.Invoker = invoker;
-            }
-        }
-
-        private class BacthFixer : FixAllProvider
-        {
-            public static readonly BacthFixer Default = new BacthFixer();
-            private static readonly ImmutableArray<FixAllScope> SupportedFixAllScopes = ImmutableArray.Create(FixAllScope.Document);
-
-            private BacthFixer()
-            {
-            }
-
-            public override IEnumerable<FixAllScope> GetSupportedFixAllScopes()
-            {
-                return SupportedFixAllScopes;
-            }
-
-            [SuppressMessage("ReSharper", "RedundantCaseLabel", Justification = "Mute R#")]
-            public override Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
-            {
-                switch (fixAllContext.Scope)
-                {
-                    case FixAllScope.Document:
-                        return Task.FromResult(CodeAction.Create(
-                            "Notify property change.",
-                            _ => FixDocumentAsync(fixAllContext),
-                            this.GetType().Name));
-                    case FixAllScope.Project:
-                    case FixAllScope.Solution:
-                    case FixAllScope.Custom:
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            private static async Task<Document> FixDocumentAsync(FixAllContext context)
-            {
-                var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                              .ConfigureAwait(false);
-                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
-                                                 .ConfigureAwait(false);
-                var syntaxGenerator = SyntaxGenerator.GetGenerator(context.Document);
-                var usesUnderscoreNames = syntaxRoot.UsesUnderscoreNames(semanticModel, context.CancellationToken);
-
-                var diagnostics = await context.GetDocumentDiagnosticsAsync(context.Document).ConfigureAwait(false);
-                var fixes = new List<Fix>();
-                foreach (var diagnostic in diagnostics)
-                {
-                    var fix = CreateFix(diagnostic, syntaxRoot, semanticModel, context.CancellationToken, syntaxGenerator, usesUnderscoreNames);
-                    if (fix.OnPropertyChanged != null)
-                    {
-                        fixes.Add(fix);
-                    }
-                }
-
-                if (fixes.Count == 0)
-                {
-                    return context.Document;
-                }
-
-                if (fixes.Count == 1)
-                {
-                    return context.Document.WithSyntaxRoot(ApplyFix(syntaxRoot, fixes[0], syntaxGenerator));
-                }
-
-                var tracking = syntaxRoot.TrackNodes(fixes.Select(x => x.Assignment));
-                foreach (var fix in fixes)
-                {
-                    tracking = ApplyFix(tracking, fix, syntaxGenerator);
-                }
-
-                return context.Document.WithSyntaxRoot(tracking);
-            }
         }
     }
 }
