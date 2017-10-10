@@ -5,6 +5,7 @@ namespace PropertyChangedAnalyzers
     {
         internal static readonly ObjectType Object = new ObjectType();
         internal static readonly QualifiedType String = Create("System.String");
+        internal static readonly QualifiedType Boolean = Create("System.Boolean");
         internal static readonly NullableType Nullable = new NullableType();
         internal static readonly NullableOfTType NullableOfT = new NullableOfTType();
         internal static readonly EqualityComparerOfTType EqualityComparerOfT = new EqualityComparerOfTType();
@@ -36,6 +37,7 @@ namespace PropertyChangedAnalyzers
         internal static readonly XmlnsDefinitionAttributeType XmlnsDefinitionAttribute = new XmlnsDefinitionAttributeType();
 
         internal static readonly MvvmLightViewModelBase MvvmLightViewModelBase = new MvvmLightViewModelBase();
+        internal static readonly QualifiedType MvvmLightObservableObject = new QualifiedType("GalaSoft.MvvmLight.ObservableObject");
 
         private static QualifiedType Create(string qualifiedName)
         {

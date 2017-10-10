@@ -44,44 +44,43 @@
                         invoker.Parameters[0].Type == KnownSymbol.String)
                     {
                         var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-                        if (invocation != null)
+                        var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
+                        if (PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, context.CancellationToken))
                         {
-                            var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                            if (method == KnownSymbol.MvvmLightViewModelBase.Set)
+                            if (invocation.Parent is ExpressionStatementSyntax)
                             {
-                                if (invocation.Parent is ExpressionStatementSyntax)
-                                {
-                                    context.RegisterCodeFix(
-                                        CodeAction.Create(
-                                            "Notify property change.",
-                                            cancellationToken => MakeNotifyCreateIfAsync(
-                                                context.Document,
-                                                invocation,
-                                                property,
-                                                invoker,
-                                                usesUnderscoreNames,
-                                                cancellationToken),
-                                            this.GetType().Name),
-                                        diagnostic);
-                                    continue;
-                                }
+                                context.RegisterCodeFix(
+                                    CodeAction.Create(
+                                        "Notify property change.",
+                                        cancellationToken => MakeNotifyCreateIfAsync(
+                                            context.Document,
+                                            invocation,
+                                            property,
+                                            invoker,
+                                            usesUnderscoreNames,
+                                            cancellationToken),
+                                        this.GetType()
+                                            .Name),
+                                    diagnostic);
+                                continue;
+                            }
 
-                                if (invocation.Parent is IfStatementSyntax ifStatement)
-                                {
-                                    context.RegisterCodeFix(
-                                        CodeAction.Create(
-                                            "Notify property change.",
-                                            cancellationToken => MakeNotifyInIfAsync(
-                                                context.Document,
-                                                ifStatement,
-                                                property,
-                                                invoker,
-                                                usesUnderscoreNames,
-                                                cancellationToken),
-                                            this.GetType().Name),
-                                        diagnostic);
-                                    continue;
-                                }
+                            if (invocation.Parent is IfStatementSyntax ifStatement)
+                            {
+                                context.RegisterCodeFix(
+                                    CodeAction.Create(
+                                        "Notify property change.",
+                                        cancellationToken => MakeNotifyInIfAsync(
+                                            context.Document,
+                                            ifStatement,
+                                            property,
+                                            invoker,
+                                            usesUnderscoreNames,
+                                            cancellationToken),
+                                        this.GetType()
+                                            .Name),
+                                    diagnostic);
+                                continue;
                             }
                         }
 

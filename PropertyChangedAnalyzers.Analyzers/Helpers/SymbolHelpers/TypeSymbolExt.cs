@@ -148,6 +148,29 @@
             return member != null;
         }
 
+        internal static bool TryGetFirstMember<TMember>(this ITypeSymbol type, string name, Func<TMember, bool> predicate, out TMember member)
+            where TMember : class, ISymbol
+        {
+            member = null;
+            if (type == null ||
+                predicate == null)
+            {
+                return false;
+            }
+
+            foreach (var symbol in type.RecursiveMembers(name))
+            {
+                if (symbol is TMember candidate &&
+                    predicate(candidate))
+                {
+                    member = candidate;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         internal static bool IsSameType(this ITypeSymbol first, ITypeSymbol other)
         {
             if (ReferenceEquals(first, other) ||
