@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class HappyPath
+    internal partial class HappyPath
     {
         public static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
         {

@@ -4,29 +4,31 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodFixWhenError
+    internal class CodFix
     {
-        public static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
+        internal class WhenError
         {
-            new EqualsItem("string", "Equals(value, this.bar)"),
-            new EqualsItem("string", "Equals(this.bar, value)"),
-            new EqualsItem("string", "Equals(value, bar)"),
-            new EqualsItem("string", "Equals(value, Bar)"),
-            new EqualsItem("string", "Equals(Bar, value)"),
-            new EqualsItem("string", "Nullable.Equals(value, this.bar)"),
-            new EqualsItem("int?", "Nullable.Equals(value, this.bar)"),
-            new EqualsItem("string", "value.Equals(this.bar)"),
-            new EqualsItem("string", "value.Equals(bar)"),
-            new EqualsItem("string", "this.bar.Equals(value)"),
-            new EqualsItem("string", "bar.Equals(value)"),
-            new EqualsItem("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
-            new EqualsItem("string", "ReferenceEquals(value, this.bar)"),
-        };
+            public static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
+            {
+                new EqualsItem("string", "Equals(value, this.bar)"),
+                new EqualsItem("string", "Equals(this.bar, value)"),
+                new EqualsItem("string", "Equals(value, bar)"),
+                new EqualsItem("string", "Equals(value, Bar)"),
+                new EqualsItem("string", "Equals(Bar, value)"),
+                new EqualsItem("string", "Nullable.Equals(value, this.bar)"),
+                new EqualsItem("int?", "Nullable.Equals(value, this.bar)"),
+                new EqualsItem("string", "value.Equals(this.bar)"),
+                new EqualsItem("string", "value.Equals(bar)"),
+                new EqualsItem("string", "this.bar.Equals(value)"),
+                new EqualsItem("string", "bar.Equals(value)"),
+                new EqualsItem("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
+                new EqualsItem("string", "ReferenceEquals(value, this.bar)"),
+            };
 
-        [Test]
-        public void OperatorNotEquals()
-        {
-            var testCode = @"
+            [Test]
+            public void OperatorNotEquals()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -60,13 +62,14 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
-        }
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode);
+            }
 
-        [Test]
-        public void OperatorEquals()
-        {
-            var testCode = @"
+            [Test]
+            public void OperatorEquals()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -98,13 +101,14 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
-        }
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode);
+            }
 
-        [TestCaseSource(nameof(EqualsSource))]
-        public void Check(EqualsItem check)
-        {
-            var testCode = @"
+            [TestCaseSource(nameof(EqualsSource))]
+            public void Check(EqualsItem check)
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System;
@@ -136,14 +140,16 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
-        }
+                testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
+                                   .AssertReplace("string", check.Type);
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode);
+            }
 
-        [TestCaseSource(nameof(EqualsSource))]
-        public void NegatedCheck(EqualsItem check)
-        {
-            var testCode = @"
+            [TestCaseSource(nameof(EqualsSource))]
+            public void NegatedCheck(EqualsItem check)
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System;
@@ -177,25 +183,28 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
-        }
-
-        public class EqualsItem
-        {
-            public EqualsItem(string type, string call)
-            {
-                this.Type = type;
-                this.Call = call;
+                testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
+                                   .AssertReplace("string", check.Type);
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode);
             }
 
-            internal string Type { get; }
-
-            internal string Call { get; }
-
-            public override string ToString()
+            public class EqualsItem
             {
-                return $"{nameof(this.Type)}: {this.Type}, {nameof(this.Call)}: {this.Call}";
+                public EqualsItem(string type, string call)
+                {
+                    this.Type = type;
+                    this.Call = call;
+                }
+
+                internal string Type { get; }
+
+                internal string Call { get; }
+
+                public override string ToString()
+                {
+                    return $"{nameof(this.Type)}: {this.Type}, {nameof(this.Call)}: {this.Call}";
+                }
             }
         }
     }

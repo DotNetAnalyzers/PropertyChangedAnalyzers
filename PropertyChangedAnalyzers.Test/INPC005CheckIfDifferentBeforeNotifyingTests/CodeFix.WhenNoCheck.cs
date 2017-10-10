@@ -3,12 +3,14 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFixWhenNoCheck
+    internal partial class CodeFix
     {
-        [Test]
-        public void CallsOnPropertyChanged()
+        internal class WhenNoCheck
         {
-            var testCode = @"
+            [Test]
+            public void CallsOnPropertyChanged()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -41,7 +43,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -78,14 +80,18 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-            AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-        }
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode,
+                    fixedCode);
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode,
+                    fixedCode);
+            }
 
-        [Test]
-        public void CallsRaisePropertyChangedWithEventArgs()
-        {
-            var testCode = @"
+            [Test]
+            public void CallsRaisePropertyChangedWithEventArgs()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -113,7 +119,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -145,14 +151,18 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-            AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-        }
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode,
+                    fixedCode);
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode,
+                    fixedCode);
+            }
 
-        [Test]
-        public void Invokes()
-        {
-            var testCode = @"
+            [Test]
+            public void Invokes()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -185,7 +195,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -222,14 +232,18 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-            AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-        }
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode,
+                    fixedCode);
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode,
+                    fixedCode);
+            }
 
-        [Test]
-        public void WarnOnlyOnFirst()
-        {
-            var testCode = @"
+            [Test]
+            public void WarnOnlyOnFirst()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -265,7 +279,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+                var fixedCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -305,8 +319,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-            AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode,
+                    fixedCode);
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
+                    testCode,
+                    fixedCode);
+            }
         }
     }
 }
