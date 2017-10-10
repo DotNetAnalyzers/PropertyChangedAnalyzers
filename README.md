@@ -49,6 +49,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC009.md">INPC009</a></td>
   <td>Don't raise PropertyChanged for missing property.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC010.md">INPC010</a></td>
+  <td>The property sets a different field than it returns.</td>
+</tr>
 <table>
 <!-- end generated table -->
 
