@@ -148,7 +148,7 @@
                     {
                         using (var pooled = StringBuilderPool.Borrow())
                         {
-                            var code = pooled.Item.AppendLine($"if ({invocation.ToFullString()})")
+                            var code = pooled.Item.AppendLine($"if ({invocation.ToFullString().TrimEnd('\r', '\n')})")
                                              .AppendLine("{")
                                              .AppendLine($"    {OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
                                              .AppendLine("}")

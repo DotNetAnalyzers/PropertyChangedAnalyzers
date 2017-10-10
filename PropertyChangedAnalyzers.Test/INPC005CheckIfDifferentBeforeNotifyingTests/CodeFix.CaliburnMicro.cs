@@ -36,8 +36,8 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                this.Set(ref this.name, value)
-                ↓this.RaisePropertyChanged(nameof(this.Greeting));
+                this.Set(↓ref this.name, value)
+                this.NotifyOfPropertyChange(nameof(this.Greeting));
             }
         }
     }
@@ -59,7 +59,7 @@ namespace RoslynSandbox
             {
                 if (this.Set(ref this.name, value))
                 {
-                    this.RaisePropertyChanged(nameof(this.Greeting));
+                    this.NotifyOfPropertyChange(nameof(this.Greeting));
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace RoslynSandbox
                 {
                 }
 
-                ↓this.RaisePropertyChanged(nameof(this.Greeting));
+                ↓this.NotifyOfPropertyChange(nameof(this.Greeting));
             }
         }
     }
@@ -112,7 +112,7 @@ namespace RoslynSandbox
             {
                 if (this.Set(ref this.name, value))
                 {
-                    this.RaisePropertyChanged(nameof(this.Greeting));
+                    this.NotifyOfPropertyChange(nameof(this.Greeting));
                 }
             }
         }
@@ -143,10 +143,10 @@ namespace RoslynSandbox
             {
                 if (this.Set(↓ref this.name, value))
                 {
-                    this.RaisePropertyChanged(nameof(this.Greeting1));
+                    this.NotifyOfPropertyChange(nameof(this.Greeting1));
                 }
 
-                ↓this.RaisePropertyChanged(nameof(this.Greeting2));
+                ↓this.NotifyOfPropertyChange(nameof(this.Greeting2));
             }
         }
     }
@@ -170,8 +170,8 @@ namespace RoslynSandbox
             {
                 if (this.Set(ref this.name, value))
                 {
-                    this.RaisePropertyChanged(nameof(this.Greeting1));
-                    this.RaisePropertyChanged(nameof(this.Greeting2));
+                    this.NotifyOfPropertyChange(nameof(this.Greeting1));
+                    this.NotifyOfPropertyChange(nameof(this.Greeting2));
                 }
             }
         }
@@ -201,8 +201,8 @@ namespace RoslynSandbox
             set
             {
                 if (this.Set(ref this.name, value))
-                    this.RaisePropertyChanged(nameof(this.Greeting1));
-                ↓this.RaisePropertyChanged(nameof(this.Greeting2));
+                    this.NotifyOfPropertyChange(nameof(this.Greeting1));
+                ↓this.NotifyOfPropertyChange(nameof(this.Greeting2));
             }
         }
     }
@@ -226,8 +226,8 @@ namespace RoslynSandbox
             {
                 if (this.Set(ref this.name, value))
                 {
-                    this.RaisePropertyChanged(nameof(this.Greeting1));
-                    this.RaisePropertyChanged(nameof(this.Greeting2));
+                    this.NotifyOfPropertyChange(nameof(this.Greeting1));
+                    this.NotifyOfPropertyChange(nameof(this.Greeting2));
                 }
             }
         }
