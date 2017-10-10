@@ -82,6 +82,5 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid<INPC011DontShadow>(viewModelBaseCode, testCode);
         }
-
     }
 }

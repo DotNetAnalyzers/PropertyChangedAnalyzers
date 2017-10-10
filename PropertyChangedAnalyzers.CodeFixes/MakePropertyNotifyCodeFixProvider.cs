@@ -50,7 +50,7 @@
                 }
 
                 var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
-                if (PropertyChanged.TryGetSetAndRaiseMethod(type, out var setAndRaiseMethod))
+                if (PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
                 {
                     var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
                     if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))

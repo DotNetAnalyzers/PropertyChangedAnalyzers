@@ -420,6 +420,67 @@
                    IsInvoker(method, semanticModel, cancellationToken) != AnalysisResult.No;
         }
 
+        internal static bool TryGetSetAndRaiseMethod(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            bool IsSetAndRaiseMethod(IMethodSymbol candidate, SemanticModel sm, CancellationToken ct)
+            {
+                if (!candidate.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) ||
+                    !candidate.IsGenericMethod ||
+                    candidate.Parameters.Length != 3)
+                {
+                    return false;
+                }
+
+                var parameter = candidate.Parameters[0];
+                if (parameter.RefKind != RefKind.Ref ||
+                    !(parameter.Type is ITypeParameterSymbol))
+                {
+                    return false;
+                }
+
+                if (!(candidate.Parameters[1].Type is ITypeParameterSymbol))
+                {
+                    return false;
+                }
+
+                if (candidate.DeclaringSyntaxReferences.TryGetSingle(out var reference))
+                {
+                    var syntaxNode = (MethodDeclarationSyntax)reference.GetSyntax();
+                    using (var pooled = InvocationWalker.Create(syntaxNode))
+                    {
+                        if (!pooled.Item.Invocations.TryGetSingle(
+                            x => IsNotifyPropertyChanged(x, sm, ct),
+                            out _))
+                        {
+                            return false;
+                        }
+                    }
+
+                    using (var pooled = AssignmentWalker.Create(syntaxNode))
+                    {
+                        if (!pooled.Item.Assignments.TryGetSingle(
+                            x => ReferenceEquals(sm.GetSymbolSafe(x.Left, ct), candidate.Parameters[0]),
+                            out _))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return candidate.Parameters[2].IsCallerMemberName();
+            }
+
+            if (type.Is(KnownSymbol.MvvmLightViewModelBase))
+            {
+                return type.TryGetMethod(
+                    "Set",
+                    x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken),
+                    out method);
+            }
+
+            return type.TryGetMethod(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method);
+        }
+
         private static bool TryGetCachedArgs(
             ArgumentSyntax propertyChangedArg,
             SemanticModel semanticModel,
@@ -529,42 +590,6 @@
 
                 return false;
             }
-        }
-
-        internal static bool TryGetSetAndRaiseMethod(ITypeSymbol type, out IMethodSymbol method)
-        {
-            bool IsSetAndRaiseMethod(IMethodSymbol candidate)
-            {
-                if (!candidate.IsGenericMethod ||
-                    candidate.Parameters.Length != 3)
-                {
-                    return false;
-                }
-
-                var parameter = candidate.Parameters[0];
-                if (parameter.RefKind != RefKind.Ref ||
-                    !(parameter.Type is ITypeParameterSymbol))
-                {
-                    return false;
-                }
-
-                if (!(candidate.Parameters[1].Type is ITypeParameterSymbol))
-                {
-                    return false;
-                }
-
-                return candidate.Parameters[2].IsCallerMemberName();
-            }
-
-            if (type.Is(KnownSymbol.MvvmLightViewModelBase))
-            {
-                return type.TryGetMethod(
-                    "Set",
-                    IsSetAndRaiseMethod,
-                    out method);
-            }
-
-            return type.TryGetMethod(IsSetAndRaiseMethod, out method);
         }
     }
 }
