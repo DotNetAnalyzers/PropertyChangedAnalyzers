@@ -20,7 +20,7 @@
             }
 
             [Test]
-            public void SubclassViewModelBase()
+            public void SubclassPropertyChangedBase()
             {
                 var testCode = @"
 namespace RoslynSandbox

@@ -32,6 +32,10 @@
                                                                                      .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                      .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
+        private static readonly TypeSyntax CaliburnMicroPropertyChangedBase = SyntaxFactory.ParseTypeName("Caliburn.Micro.PropertyChangedBase")
+                                                                                           .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                           .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             INPC001ImplementINotifyPropertyChanged.DiagnosticId,
@@ -73,11 +77,31 @@
                             CodeAction.Create(
                                 "Subclass GalaSoft.MvvmLight.ViewModelBase",
                                 cancellationToken =>
-                                    SubclassMvvmLightViewModelBaseAsync(
+                                    SubclassViewModelBaseAsync(
                                         context,
                                         classDeclaration,
+                                        MvvmLightViewModelBaseType,
                                         cancellationToken),
                                 this.GetType().FullName + "Subclass GalaSoft.MvvmLight.ViewModelBase"),
+                            diagnostic);
+                    }
+                }
+
+                if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Caliburn.Micro.dll") == true))
+                {
+                    if (type.BaseType == KnownSymbol.Object &&
+                        !type.Is(KnownSymbol.INotifyPropertyChanged))
+                    {
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Subclass Caliburn.Micro.PropertyChangedBase",
+                                cancellationToken =>
+                                    SubclassViewModelBaseAsync(
+                                        context,
+                                        classDeclaration,
+                                        CaliburnMicroPropertyChangedBase,
+                                        cancellationToken),
+                                this.GetType().FullName + "Subclass Caliburn.Micro.PropertyChangedBase"),
                             diagnostic);
                     }
                 }
@@ -155,7 +179,7 @@
             return editor.GetChangedDocument();
         }
 
-        private static async Task<Document> SubclassMvvmLightViewModelBaseAsync(CodeFixContext context, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
+        private static async Task<Document> SubclassViewModelBaseAsync(CodeFixContext context, ClassDeclarationSyntax classDeclaration, TypeSyntax viewModelBaseType, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
@@ -163,11 +187,11 @@
                 classDeclaration.BaseList.Types.TryGetFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out var baseType) &&
                 context.Diagnostics.Any(IsINotifyPropertyChangedMissing))
             {
-                editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(MvvmLightViewModelBaseType));
+                editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(viewModelBaseType));
             }
             else
             {
-                editor.AddBaseType(classDeclaration, MvvmLightViewModelBaseType);
+                editor.AddBaseType(classDeclaration, viewModelBaseType);
             }
 
             return editor.GetChangedDocument();

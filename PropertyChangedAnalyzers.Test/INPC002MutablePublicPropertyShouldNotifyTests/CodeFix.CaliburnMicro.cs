@@ -59,7 +59,7 @@ namespace RoslynSandbox
                 }
 
                 this.bar = value;
-                this.RaisePropertyChanged();
+                this.NotifyOfPropertyChange();
             }
         }
     }

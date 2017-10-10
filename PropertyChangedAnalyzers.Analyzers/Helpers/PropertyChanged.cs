@@ -210,7 +210,8 @@
             foreach (var member in @event.ContainingType.RecursiveMembers())
             {
                 if (member is IMethodSymbol method &&
-                    !method.IsStatic)
+                    !method.IsStatic &&
+                    method.MethodKind == MethodKind.Ordinary)
                 {
                     if (method.DeclaredAccessibility == Accessibility.Private &&
                         method.ContainingType != @event.ContainingType)
@@ -261,12 +262,20 @@
             var parameter = method.Parameters[0];
             if (method.DeclaringSyntaxReferences.Length == 0)
             {
-                if (parameter.Type == KnownSymbol.String &&
-                    method.Name.Contains("PropertyChanged"))
+                if (parameter.Type == KnownSymbol.String)
                 {
-                    // A bit speculative here
-                    // for handling the case when inheriting a ViewModelBase class from a binary reference.
-                    return AnalysisResult.Maybe;
+                    if (method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChanged ||
+                        method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange)
+                    {
+                        return AnalysisResult.Yes;
+                    }
+
+                    if (method.Name.Contains("PropertyChanged"))
+                    {
+                        // A bit speculative here
+                        // for handling the case when inheriting a ViewModelBase class from a binary reference.
+                        return AnalysisResult.Maybe;
+                    }
                 }
 
                 return AnalysisResult.No;
