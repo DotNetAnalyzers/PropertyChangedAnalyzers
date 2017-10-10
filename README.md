@@ -53,6 +53,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC010.md">INPC010</a></td>
   <td>The property sets a different field than it returns.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC011.md">INPC011</a></td>
+  <td>Don't shadow PropertyChanged event.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

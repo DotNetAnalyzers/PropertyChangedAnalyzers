@@ -27,8 +27,9 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            return left.Name == right.Name &&
-                   left.ContainingType == right.ContainingType;
+            return left.MetadataName == right.Name &&
+                   (left.ContainingType == right.ContainingType ||
+                    left.ContainingType.Is(right.ContainingType));
         }
 
         public static bool operator !=(T left, QualifiedMember<T> right) => !(left == right);

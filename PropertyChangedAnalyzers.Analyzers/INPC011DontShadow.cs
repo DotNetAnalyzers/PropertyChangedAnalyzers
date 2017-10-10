@@ -6,18 +6,18 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class INPC010SetAndReturnSameField : DiagnosticAnalyzer
+    internal class INPC011DontShadow : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "INPC010";
+        public const string DiagnosticId = "INPC011";
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
-            title: "The property sets a different field than it returns.",
-            messageFormat: "The property sets a different field than it returns.",
+            title: "Don't shadow PropertyChanged event.",
+            messageFormat: "Don't shadow PropertyChanged event.",
             category: AnalyzerCategory.PropertyChanged,
-            defaultSeverity: DiagnosticSeverity.Warning,
+            defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
-            description: "The property sets a different field than it returns.",
+            description: "Don't shadow PropertyChanged event.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>
@@ -28,7 +28,8 @@ namespace PropertyChangedAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.EventDeclaration);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)
@@ -38,12 +39,21 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var property = (IPropertySymbol)context.ContainingSymbol;
-            if (Property.TryGetBackingFieldReturnedInGetter(property, context.SemanticModel, context.CancellationToken, out var returned) &&
-                Property.TryGetBackingFieldAssignedInSetter(property, context.SemanticModel, context.CancellationToken, out var assigned) &&
-                !ReferenceEquals(returned, assigned))
+            var @event = (IEventSymbol)context.ContainingSymbol;
+            if (@event == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
+               !@event.IsOverride)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+                var baseType = @event.ContainingType.BaseType;
+                while (baseType != null &&
+                      baseType != KnownSymbol.Object)
+                {
+                    if (baseType.TryGetEvent("PropertyChanged", out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+                    }
+
+                    baseType = baseType.BaseType;
+                }
             }
         }
     }
