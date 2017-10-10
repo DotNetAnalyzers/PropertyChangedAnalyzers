@@ -101,8 +101,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
-                    testCode);
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
             }
 
             [TestCaseSource(nameof(EqualsSource))]
@@ -142,8 +141,7 @@ namespace RoslynSandbox
 }";
                 testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
                                    .AssertReplace("string", check.Type);
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
-                    testCode);
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
             }
 
             [TestCaseSource(nameof(EqualsSource))]

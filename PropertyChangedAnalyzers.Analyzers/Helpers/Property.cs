@@ -279,6 +279,39 @@
             return false;
         }
 
+        internal static bool TryGetSingleAssignmentInSetter(PropertyDeclarationSyntax property, out AssignmentExpressionSyntax assignment)
+        {
+            assignment = null;
+            if (property == null)
+            {
+                return false;
+            }
+
+            return property.TryGetSetAccessorDeclaration(out var setter) &&
+                   TryGetSingleAssignmentInSetter(setter, out assignment);
+        }
+
+        internal static bool TryGetSingleAssignmentInSetter(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
+        {
+            assignment = null;
+            if (setter == null)
+            {
+                return false;
+            }
+            using (var pooled = AssignmentWalker.Create(setter))
+            {
+                if (pooled.Item.Assignments.TryGetSingle(out assignment) &&
+                    assignment.Right is IdentifierNameSyntax identifierName &&
+                    identifierName.Identifier.ValueText == "value")
+                {
+                    return true;
+                }
+            }
+
+            assignment = null;
+            return false;
+        }
+
         internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
         {
             using (var pooled = AssignmentWalker.Create(setter))
