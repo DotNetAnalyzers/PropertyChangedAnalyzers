@@ -94,6 +94,40 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void OverridingEvent()
+        {
+            var viewModelBaseCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModelBase : INotifyPropertyChanged
+    {
+        public virtual event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : ViewModelBase
+    {
+        public override event PropertyChangedEventHandler PropertyChanged;
+    }
+}";
+
+            AnalyzerAssert.Valid<INPC007MissingInvoker>(viewModelBaseCode, testCode);
+        }
+
+        [Test]
         [Explicit("Not sure how we want this.")]
         public void Set()
         {

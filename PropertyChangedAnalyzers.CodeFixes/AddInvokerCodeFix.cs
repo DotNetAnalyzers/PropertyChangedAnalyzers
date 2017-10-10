@@ -69,6 +69,18 @@ private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName
 }",
                         usesUnderscoreNames));
             }
+            else if (type.IsStatic)
+            {
+                editor.AddMethod(
+                    classDeclaration,
+                    ParseMethod(
+                        @"
+private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+{
+    PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+}",
+                        usesUnderscoreNames));
+            }
             else
             {
                 editor.AddMethod(

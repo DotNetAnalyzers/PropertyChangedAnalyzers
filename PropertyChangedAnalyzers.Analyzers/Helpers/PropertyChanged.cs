@@ -144,27 +144,81 @@
 
         internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
-            invoker = null;
-            foreach (var member in type.RecursiveMembers())
+            if (type.TryGetEvent("PropertyChanged", out var @event))
             {
-                var method = member as IMethodSymbol;
-                switch (IsInvoker(method, semanticModel, cancellationToken))
-                {
-                    case AnalysisResult.No:
-                        continue;
-                    case AnalysisResult.Yes:
-                        invoker = method;
-                        if (invoker.IsCallerMemberName())
-                        {
-                            return true;
-                        }
+                return TryGetInvoker(@event, semanticModel, cancellationToken, out invoker);
+            }
 
-                        break;
-                    case AnalysisResult.Maybe:
-                        invoker = method;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+            invoker = null;
+            return false;
+        }
+
+        internal static bool TryGetInvoker(IEventSymbol @event, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
+        {
+            if (@event == null)
+            {
+                invoker = null;
+                return false;
+            }
+
+            invoker = null;
+            if (@event.IsStatic)
+            {
+                foreach (var member in @event.ContainingType.GetMembers())
+                {
+                    var method = member as IMethodSymbol;
+                    switch (IsInvoker(method, semanticModel, cancellationToken))
+                    {
+                        case AnalysisResult.No:
+                            continue;
+                        case AnalysisResult.Yes:
+                            invoker = method;
+                            if (invoker.IsCallerMemberName())
+                            {
+                                return true;
+                            }
+
+                            break;
+                        case AnalysisResult.Maybe:
+                            invoker = method;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+
+                return invoker != null;
+            }
+
+            foreach (var member in @event.ContainingType.RecursiveMembers())
+            {
+                if (member is IMethodSymbol method &&
+                    !method.IsStatic)
+                {
+                    if (method.DeclaredAccessibility == Accessibility.Private &&
+                        method.ContainingType != @event.ContainingType)
+                    {
+                        continue;
+                    }
+
+                    switch (IsInvoker(method, semanticModel, cancellationToken))
+                    {
+                        case AnalysisResult.No:
+                            continue;
+                        case AnalysisResult.Yes:
+                            invoker = method;
+                            if (invoker.IsCallerMemberName())
+                            {
+                                return true;
+                            }
+
+                            break;
+                        case AnalysisResult.Maybe:
+                            invoker = method;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
 

@@ -40,8 +40,7 @@ namespace PropertyChangedAnalyzers
             }
 
             var eventFieldDeclaration = (EventFieldDeclarationSyntax)context.Node;
-            var type = (ITypeSymbol)context.ContainingSymbol.ContainingType;
-            if (!PropertyChanged.TryGetInvoker(type, context.SemanticModel, context.CancellationToken, out _))
+            if (!PropertyChanged.TryGetInvoker(context.ContainingSymbol as IEventSymbol, context.SemanticModel, context.CancellationToken, out _))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
             }
