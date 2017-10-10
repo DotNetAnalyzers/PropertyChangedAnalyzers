@@ -25,7 +25,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int Bar { get; set; }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -49,10 +49,7 @@ namespace RoslynSandbox
                     true,
                     PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
                 Assert.AreEqual("OnPropertyChanged", invoker.Name);
-                Assert.AreEqual(
-                    "String",
-                    invoker.Parameters.Single()
-                           .Type.MetadataName);
+                Assert.AreEqual("String", invoker.Parameters.Single().Type.MetadataName);
             }
 
             [Test]
@@ -69,7 +66,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int Bar { get; set; }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {

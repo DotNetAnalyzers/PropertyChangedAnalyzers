@@ -254,7 +254,8 @@
                 method.IsStatic ||
                 method.Parameters.Length != 1 ||
                 method.AssociatedSymbol != null ||
-               (method.Parameters[0].Type != KnownSymbol.String && method.Parameters[0].Type != KnownSymbol.PropertyChangedEventArgs))
+               (method.Parameters[0].Type != KnownSymbol.String &&
+                method.Parameters[0].Type != KnownSymbol.PropertyChangedEventArgs))
             {
                 return AnalysisResult.No;
             }
