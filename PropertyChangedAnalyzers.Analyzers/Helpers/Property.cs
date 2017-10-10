@@ -153,7 +153,7 @@
             return assignedField.Equals(returnedField) && assignedField.ContainingType == propertySymbol?.ContainingType;
         }
 
-        internal static bool TryGetBackingField(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        internal static bool TryGetBackingFieldAssignedInSetter(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
             field = null;
             if (property == null)
@@ -169,7 +169,7 @@
                     continue;
                 }
 
-                if (TryGetBackingField(propertyDeclaration, out var fieldIdentifier, out FieldDeclarationSyntax _))
+                if (TryGetBackingFieldAssignedInSetter(propertyDeclaration, out var fieldIdentifier, out FieldDeclarationSyntax _))
                 {
                     field = semanticModel.GetSymbolSafe(fieldIdentifier, cancellationToken) as IFieldSymbol;
                     return field != null;
@@ -179,7 +179,51 @@
             return false;
         }
 
-        internal static bool TryGetBackingField(PropertyDeclarationSyntax property, out IdentifierNameSyntax field, out FieldDeclarationSyntax fieldDeclaration)
+        internal static bool TryGetBackingFieldReturnedInGetter(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        {
+            field = null;
+            if (property == null)
+            {
+                return false;
+            }
+
+            foreach (var declaration in property.Declarations(cancellationToken))
+            {
+                var propertyDeclaration = declaration as PropertyDeclarationSyntax;
+                if (propertyDeclaration == null)
+                {
+                    continue;
+                }
+
+                if (propertyDeclaration.ExpressionBody != null)
+                {
+                    using (var pooled = ReturnExpressionsWalker.Create(propertyDeclaration.ExpressionBody))
+                    {
+                        if (pooled.Item.ReturnValues.TryGetSingle(out var expression))
+                        {
+                            field = semanticModel.GetSymbolSafe(expression, cancellationToken) as IFieldSymbol;
+                            return field != null;
+                        }
+                    }
+                }
+
+                if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter))
+                {
+                    using (var pooled = ReturnExpressionsWalker.Create(getter))
+                    {
+                        if (pooled.Item.ReturnValues.TryGetSingle(out var expression))
+                        {
+                            field = semanticModel.GetSymbolSafe(expression, cancellationToken) as IFieldSymbol;
+                            return field != null;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool TryGetBackingFieldAssignedInSetter(PropertyDeclarationSyntax property, out IdentifierNameSyntax field, out FieldDeclarationSyntax fieldDeclaration)
         {
             field = null;
             fieldDeclaration = null;

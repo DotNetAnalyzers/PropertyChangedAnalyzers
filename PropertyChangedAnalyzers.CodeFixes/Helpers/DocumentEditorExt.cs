@@ -34,7 +34,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (type.Members[i] is PropertyDeclarationSyntax other)
                 {
-                    if (Property.TryGetBackingField(other, out _, out var field))
+                    if (Property.TryGetBackingFieldAssignedInSetter(other, out _, out var field))
                     {
                         editor.InsertBefore(field, backingField);
                         return backingField;
@@ -50,7 +50,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (type.Members[i] is PropertyDeclarationSyntax other)
                 {
-                    if (Property.TryGetBackingField(other, out _, out var field))
+                    if (Property.TryGetBackingFieldAssignedInSetter(other, out _, out var field))
                     {
                         editor.InsertAfter(field, backingField);
                         return backingField;

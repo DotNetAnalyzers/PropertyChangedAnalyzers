@@ -148,7 +148,7 @@ namespace RoslynSandBox
     }
 }");
             var property = syntaxTree.FindPropertyDeclaration(propertyName);
-            Assert.AreEqual(expected, Property.TryGetBackingField(property, out var identifier, out var declaration));
+            Assert.AreEqual(expected, Property.TryGetBackingFieldAssignedInSetter(property, out var identifier, out var declaration));
             Assert.AreEqual(field, identifier?.Identifier.Text);
             Assert.AreEqual(field, declaration?.Name());
         }
