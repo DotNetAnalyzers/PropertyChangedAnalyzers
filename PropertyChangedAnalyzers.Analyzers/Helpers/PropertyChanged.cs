@@ -531,20 +531,40 @@
             }
         }
 
-        public static bool TryGetSetAndRaiseMethod(ITypeSymbol type, out IMethodSymbol method)
+        internal static bool TryGetSetAndRaiseMethod(ITypeSymbol type, out IMethodSymbol method)
         {
+            bool IsSetAndRaiseMethod(IMethodSymbol candidate)
+            {
+                if (!candidate.IsGenericMethod ||
+                    candidate.Parameters.Length != 3)
+                {
+                    return false;
+                }
+
+                var parameter = candidate.Parameters[0];
+                if (parameter.RefKind != RefKind.Ref ||
+                    !(parameter.Type is ITypeParameterSymbol))
+                {
+                    return false;
+                }
+
+                if (!(candidate.Parameters[1].Type is ITypeParameterSymbol))
+                {
+                    return false;
+                }
+
+                return candidate.Parameters[2].IsCallerMemberName();
+            }
+
             if (type.Is(KnownSymbol.MvvmLightViewModelBase))
             {
                 return type.TryGetMethod(
                     "Set",
-                    x => x.IsGenericMethod &&
-                         x.Parameters.Length == 3 &&
-                         x.Parameters[0].RefKind == RefKind.Ref,
+                    IsSetAndRaiseMethod,
                     out method);
             }
 
-            method = null;
-            return false;
+            return type.TryGetMethod(IsSetAndRaiseMethod, out method);
         }
     }
 }
