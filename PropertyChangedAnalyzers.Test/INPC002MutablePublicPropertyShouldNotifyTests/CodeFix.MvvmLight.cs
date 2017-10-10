@@ -100,8 +100,68 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "GalaSoft.MvvmLight.ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "GalaSoft.MvvmLight.ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
+            }
+
+            [Test]
+            public void AutoPropertyVirtualToSet()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        ↓public virtual int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int bar;
+
+        public virtual int Bar
+        {
+            get { return this.bar; }
+            set { this.Set(ref this.bar, value); }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
+            }
+
+            [Test]
+            public void AutoPropertyPrivateSetToSet()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        ↓public int Bar { get; private set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int bar;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            private set { this.Set(ref this.bar, value); }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
             }
 
             [Test]
@@ -110,9 +170,6 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
         public Foo(int bar)
@@ -127,9 +184,6 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
         private int _bar;
@@ -146,8 +200,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "GalaSoft.MvvmLight.ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "GalaSoft.MvvmLight.ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
             }
 
             [Test]
@@ -182,8 +236,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "GalaSoft.MvvmLight.ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "GalaSoft.MvvmLight.ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
             }
 
             [Test]
@@ -218,8 +272,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "GalaSoft.MvvmLight.ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "GalaSoft.MvvmLight.ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ObservableObject.Set.");
             }
         }
     }

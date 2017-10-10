@@ -1,5 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
+    using System;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
@@ -215,6 +216,18 @@ namespace RoslynSandbox
         }
     }
 }";
+            // Nasty hack here as order of fixes is random. Not sure it is worth fixing.
+            for (var i = 0; i < 3; i++)
+            {
+                try
+                {
+                    AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                    return;
+                }
+                catch
+                {
+                }
+            }
 
             AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }

@@ -63,6 +63,11 @@
             return type.TryGetSingleMember(predicate, out property);
         }
 
+        internal static bool TryGetMethod(this ITypeSymbol type, string name, Func<IMethodSymbol, bool> predicate, out IMethodSymbol property)
+        {
+            return type.TryGetSingleMember(name, predicate, out property);
+        }
+
         internal static bool TryGetSingleMember<TMember>(this ITypeSymbol type, string name, out TMember member)
             where TMember : class, ISymbol
         {
@@ -98,6 +103,34 @@
             }
 
             foreach (var symbol in type.RecursiveMembers())
+            {
+                if (symbol is TMember candidate &&
+                    predicate(candidate))
+                {
+                    if (member != null)
+                    {
+                        member = null;
+                        return false;
+                    }
+
+                    member = candidate;
+                }
+            }
+
+            return member != null;
+        }
+
+        internal static bool TryGetSingleMember<TMember>(this ITypeSymbol type, string name, Func<TMember, bool> predicate, out TMember member)
+            where TMember : class, ISymbol
+        {
+            member = null;
+            if (type == null ||
+                predicate == null)
+            {
+                return false;
+            }
+
+            foreach (var symbol in type.RecursiveMembers(name))
             {
                 if (symbol is TMember candidate &&
                     predicate(candidate))

@@ -530,5 +530,21 @@
                 return false;
             }
         }
+
+        public static bool TryGetSetAndRaiseMethod(ITypeSymbol type, out IMethodSymbol method)
+        {
+            if (type.Is(KnownSymbol.MvvmLightViewModelBase))
+            {
+                return type.TryGetMethod(
+                    "Set",
+                    x => x.IsGenericMethod &&
+                         x.Parameters.Length == 3 &&
+                         x.Parameters[0].RefKind == RefKind.Ref,
+                    out method);
+            }
+
+            method = null;
+            return false;
+        }
     }
 }

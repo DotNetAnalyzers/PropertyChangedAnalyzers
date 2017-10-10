@@ -50,28 +50,29 @@
                 }
 
                 var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
-                if (type.Is(KnownSymbol.MvvmLightViewModelBase))
+                if (PropertyChanged.TryGetSetAndRaiseMethod(type, out var setAndRaiseMethod))
                 {
+                    var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
                     if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                     {
                         context.RegisterCodeFix(
                             CodeAction.Create(
-                                "GalaSoft.MvvmLight.ViewModelBase.Set.",
+                                key,
                                 cancellationToken => MakeAutoPropertySetAsync(
                                     context.Document,
                                     propertyDeclaration,
                                     semanticModel,
                                     cancellationToken),
-                                "GalaSoft.MvvmLight.ViewModelBase.Set."),
+                                key),
                             diagnostic);
                     }
                     else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                     {
                         context.RegisterCodeFix(
                             CodeAction.Create(
-                                "GalaSoft.MvvmLight.ViewModelBase.Set.",
+                                key,
                                 cancellationToken => MakeWithBackingFieldSetAsync(context.Document, propertyDeclaration, semanticModel, cancellationToken),
-                                "GalaSoft.MvvmLight.ViewModelBase.Set."),
+                                key),
                             diagnostic);
                     }
                 }
