@@ -5,6 +5,7 @@ nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.3.1 lowest_matching: true
 nuget NUnit
 nuget Gu.Roslyn.Asserts
 nuget MvvmLight
+nuget Caliburn.Micro
 
 group Analyzers
   storage: none

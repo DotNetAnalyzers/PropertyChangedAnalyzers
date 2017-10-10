@@ -430,6 +430,14 @@
                     out method);
             }
 
+            if (type.Is(KnownSymbol.CaliburnMicroPropertyChangedBase))
+            {
+                return type.TryGetFirstMember(
+                    "Set",
+                    x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken),
+                    out method);
+            }
+
             return type.TryGetMethod(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method);
         }
 
@@ -494,7 +502,8 @@
             }
 
             return candidate.ContainingType == KnownSymbol.MvvmLightViewModelBase ||
-                   candidate.ContainingType == KnownSymbol.MvvmLightObservableObject;
+                   candidate.ContainingType == KnownSymbol.MvvmLightObservableObject ||
+                   candidate.ContainingType == KnownSymbol.CaliburnMicroPropertyChangedBase;
         }
 
         private static bool TryGetCachedArgs(

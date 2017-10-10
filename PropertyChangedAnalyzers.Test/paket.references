@@ -2,6 +2,7 @@ Microsoft.CodeAnalysis.CSharp.Workspaces
 NUnit
 Gu.Roslyn.Asserts
 MvvmLight
+Caliburn.Micro
 
 group Analyzers
   StyleCop.Analyzers
