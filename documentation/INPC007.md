@@ -1,5 +1,5 @@
 # INPC007
-## Don't raise PropertyChanged for missing property.
+## The class has PropertyChangedEvent but no invoker.
 
 <!-- start generated table -->
 <table>
@@ -21,14 +21,14 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC007DontRaiseChangeForMissingProperty.cs">INPC007DontRaiseChangeForMissingProperty</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC007MissingInvoker.cs">INPC007MissingInvoker</a></td>
 </tr>
 </table>
 <!-- end generated table -->
 
 ## Description
 
-Don't raise PropertyChanged for missing property.
+The class has PropertyChangedEvent but no invoker.
 
 ## Motivation
 
@@ -47,21 +47,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC007 // Don't raise PropertyChanged for missing property.
+#pragma warning disable INPC007 // The class has PropertyChangedEvent but no invoker.
 Code violating the rule here
-#pragma warning restore INPC007 // Don't raise PropertyChanged for missing property.
+#pragma warning restore INPC007 // The class has PropertyChangedEvent but no invoker.
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC007 // Don't raise PropertyChanged for missing property.
+#pragma warning disable INPC007 // The class has PropertyChangedEvent but no invoker.
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC007:Don't raise PropertyChanged for missing property.", 
+    "INPC007:The class has PropertyChangedEvent but no invoker.", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

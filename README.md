@@ -38,6 +38,10 @@ Roslyn analyzers for WPF.
   <td>Check if value is different using object.Equals before notifying.</td>
 </tr>
 <tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC007.md">INPC007</a></td>
+  <td>The class has PropertyChangedEvent but no invoker.</td>
+</tr>
+<tr>
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC008.md">INPC008</a></td>
   <td>Struct must not implement INotifyPropertyChanged</td>
 </tr>
