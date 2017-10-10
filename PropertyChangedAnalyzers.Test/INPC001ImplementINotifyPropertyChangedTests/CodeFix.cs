@@ -405,7 +405,8 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenBaseHasInternalPropertyChangedEventButNoInterface()
+        [Explicit("Not sure how we want this.")]
+        public void IgnoresWhenBaseIsMouseGesture()
         {
             var testCode = @"
 namespace RoslynSandBox

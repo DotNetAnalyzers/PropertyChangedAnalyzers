@@ -12,6 +12,23 @@
         internal static AnalysisResult InvokesPropertyChangedFor(this SyntaxNode assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var invokes = AnalysisResult.No;
+            var argument = assignment.FirstAncestorOrSelf<ArgumentSyntax>();
+            if (argument != null)
+            {
+                var setMethod = (IMethodSymbol)semanticModel.GetSymbolSafe(
+                    argument.FirstAncestorOrSelf<InvocationExpressionSyntax>(),
+                    cancellationToken);
+                if (setMethod == KnownSymbol.MvvmLightViewModelBase.Set &&
+                    setMethod.Parameters[setMethod.Parameters.Length - 1].IsCallerMemberName())
+                {
+                    var inProperty = semanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
+                    if (inProperty?.Name == property.Name)
+                    {
+                        return AnalysisResult.Yes;
+                    }
+                }
+            }
+
             var block = assignment.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Body ??
                         assignment.FirstAncestorOrSelf<AccessorDeclarationSyntax>()?.Body ??
                         assignment.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>()?.Body;

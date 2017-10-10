@@ -109,12 +109,15 @@ namespace PropertyChangedAnalyzers
                 setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>(),
                 cancellationToken);
             if (Property.TryGetBackingFieldAssignedInSetter(
-    property,
-    semanticModel,
-    cancellationToken,
-    out var backingField))
+                property,
+                semanticModel,
+                cancellationToken,
+                out var backingField))
             {
-                var ifReturn = syntaxGenerator.IfValueEqualsBackingFieldReturn(backingField.Name, property, diagnosticOptions);
+                var ifReturn = syntaxGenerator.IfValueEqualsBackingFieldReturn(
+                    backingField.Name,
+                    property,
+                    diagnosticOptions);
                 return new Fix(assignment, ifReturn);
             }
 

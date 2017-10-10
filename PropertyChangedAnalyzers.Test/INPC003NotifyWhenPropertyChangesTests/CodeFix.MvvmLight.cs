@@ -34,7 +34,7 @@ namespace RoslynSandbox
         public string Name
         {
             get { return this.name; }
-            set { ↓this.Set(ref this.name, value); }
+            set { this.Set(↓ref this.name, value); }
         }
     }
 }";
@@ -55,7 +55,170 @@ namespace RoslynSandbox
             {
                 if (this.Set(ref this.name, value))
                 {
-                    this.RaisePropertyChanged(nameof(Greeting));
+                    this.RaisePropertyChanged(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            }
+
+            [Test]
+            public void SetAffectsCalculatedPropertyEmptyIf()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(↓ref this.name, value))
+                {
+                }
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(ref this.name, value))
+                {
+                    this.RaisePropertyChanged(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            }
+
+            [Test]
+            public void SetAffectsSecondCalculatedProperty()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting1 => $""Hello {this.Name}"";
+
+        public string Greeting2 => $""Hej {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(↓ref this.name, value))
+                {
+                    this.RaisePropertyChanged(nameof(this.Greeting1));
+                }
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting1 => $""Hello {this.Name}"";
+
+        public string Greeting2 => $""Hej {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(ref this.name, value))
+                {
+                    this.RaisePropertyChanged(nameof(this.Greeting1));
+                    this.RaisePropertyChanged(nameof(this.Greeting2));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            }
+
+            [Test]
+            public void SetAffectsSecondCalculatedPropertyMissingBraces()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting1 => $""Hello {this.Name}"";
+
+        public string Greeting2 => $""Hej {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(↓ref this.name, value))
+                    this.RaisePropertyChanged(nameof(this.Greeting1));
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting1 => $""Hello {this.Name}"";
+
+        public string Greeting2 => $""Hej {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(ref this.name, value))
+                {
+                    this.RaisePropertyChanged(nameof(this.Greeting1));
+                    this.RaisePropertyChanged(nameof(this.Greeting2));
                 }
             }
         }

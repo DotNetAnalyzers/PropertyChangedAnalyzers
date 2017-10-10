@@ -40,15 +40,51 @@
                                                .FirstAncestorOrSelf<ExpressionSyntax>();
                     var typeDeclaration = expression.FirstAncestorOrSelf<TypeDeclarationSyntax>();
                     var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
-                    if (PropertyChanged.TryGetInvoker(
-                            type,
-                            semanticModel,
-                            context.CancellationToken,
-                            out var invoker) &&
-                        invoker.Parameters[0]
-                               .Type ==
-                        KnownSymbol.String)
+                    if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out var invoker) &&
+                        invoker.Parameters[0].Type == KnownSymbol.String)
                     {
+                        var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+                        if (invocation != null)
+                        {
+                            var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
+                            if (method == KnownSymbol.MvvmLightViewModelBase.Set)
+                            {
+                                if (invocation.Parent is ExpressionStatementSyntax)
+                                {
+                                    context.RegisterCodeFix(
+                                        CodeAction.Create(
+                                            "Notify property change.",
+                                            cancellationToken => MakeNotifyCreateIfAsync(
+                                                context.Document,
+                                                invocation,
+                                                property,
+                                                invoker,
+                                                usesUnderscoreNames,
+                                                cancellationToken),
+                                            this.GetType().Name),
+                                        diagnostic);
+                                    continue;
+                                }
+
+                                if (invocation.Parent is IfStatementSyntax ifStatement)
+                                {
+                                    context.RegisterCodeFix(
+                                        CodeAction.Create(
+                                            "Notify property change.",
+                                            cancellationToken => MakeNotifyInIfAsync(
+                                                context.Document,
+                                                ifStatement,
+                                                property,
+                                                invoker,
+                                                usesUnderscoreNames,
+                                                cancellationToken),
+                                            this.GetType().Name),
+                                        diagnostic);
+                                    continue;
+                                }
+                            }
+                        }
+
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 "Notify property change.",
@@ -59,8 +95,7 @@
                                     invoker,
                                     usesUnderscoreNames,
                                     cancellationToken),
-                                this.GetType()
-                                    .Name),
+                                this.GetType().Name),
                             diagnostic);
                     }
                 }
@@ -101,6 +136,85 @@
             return document;
         }
 
+        private static async Task<Document> MakeNotifyCreateIfAsync(Document document, InvocationExpressionSyntax invocation, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
+                                             .ConfigureAwait(false);
+            var assignStatement = invocation.FirstAncestorOrSelf<ExpressionStatementSyntax>();
+            if (assignStatement?.Parent is BlockSyntax)
+            {
+                editor.ReplaceNode(
+                    assignStatement,
+                    (node, _) =>
+                    {
+                        using (var pooled = StringBuilderPool.Borrow())
+                        {
+                            var code = pooled.Item.AppendLine($"if ({invocation.ToFullString()})")
+                                             .AppendLine("{")
+                                             .AppendLine($"    {OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
+                                             .AppendLine("}")
+                                             .ToString();
+
+                            return SyntaxFactory.ParseStatement(code)
+                                                .WithSimplifiedNames()
+                                                .WithLeadingElasticLineFeed()
+                                                .WithTrailingElasticLineFeed()
+                                                .WithAdditionalAnnotations(Formatter.Annotation);
+                        }
+                    });
+                return editor.GetChangedDocument();
+            }
+
+            return document;
+        }
+
+        private static async Task<Document> MakeNotifyInIfAsync(Document document, IfStatementSyntax ifStatement, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
+                                             .ConfigureAwait(false);
+            var onPropertyChanged = SyntaxFactory.ParseStatement(OnPropertyChanged(invoker, propertyName, usesUnderscoreNames))
+                                                 .WithSimplifiedNames()
+                                                 .WithLeadingElasticLineFeed()
+                                                 .WithTrailingElasticLineFeed()
+                                                 .WithAdditionalAnnotations(Formatter.Annotation);
+
+            if (ifStatement.Statement is BlockSyntax block)
+            {
+                if (block.Statements.Count == 0)
+                {
+                    editor.ReplaceNode(
+                        block,
+                        block.AddStatements(onPropertyChanged));
+                    return editor.GetChangedDocument();
+                }
+
+                var previousStatement = InsertAfter(block, ifStatement, invoker);
+                editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
+                return editor.GetChangedDocument();
+            }
+
+            editor.ReplaceNode(
+                ifStatement.Statement,
+                (node, _) =>
+                {
+                    using (var pooled = StringBuilderPool.Borrow())
+                    {
+                        var code = pooled.Item.AppendLine("{")
+                                              .AppendLine($"{ifStatement.Statement.ToFullString().TrimEnd('\r', '\n')}")
+                                              .AppendLine($"    {OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
+                                              .AppendLine("}")
+                                              .ToString();
+
+                        return SyntaxFactory.ParseStatement(code)
+                                            .WithSimplifiedNames()
+                                            .WithTrailingElasticLineFeed()
+                                            .WithAdditionalAnnotations(Formatter.Annotation);
+                    }
+                });
+
+            return editor.GetChangedDocument();
+        }
+
         private static string OnPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
         {
             if (invoker == null)
@@ -130,10 +244,10 @@
             return "GeneratedSyntaxErrorBugInPropertyChangedAnalyzersCodeFixes";
         }
 
-        private static StatementSyntax InsertAfter(BlockSyntax block, ExpressionStatementSyntax assignStatement, IMethodSymbol invoker)
+        private static StatementSyntax InsertAfter(BlockSyntax block, StatementSyntax assignStatement, IMethodSymbol invoker)
         {
             var index = block.Statements.IndexOf(assignStatement);
-            StatementSyntax previousStatement = assignStatement;
+            var previousStatement = assignStatement;
             for (var i = index + 1; i < block.Statements.Count; i++)
             {
                 var statement = block.Statements[i] as ExpressionStatementSyntax;

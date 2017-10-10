@@ -58,9 +58,14 @@
                     continue;
                 }
 
+                var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
+                if (type.BaseType.TryGetEvent("PropertyChanged", out _))
+                {
+                    continue;
+                }
+
                 if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("GalaSoft.MvvmLight.dll") == true))
                 {
-                    var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
                     if (type.BaseType == KnownSymbol.Object &&
                         !type.Is(KnownSymbol.INotifyPropertyChanged))
                     {

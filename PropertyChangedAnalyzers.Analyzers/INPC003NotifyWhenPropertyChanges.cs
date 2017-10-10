@@ -50,6 +50,7 @@
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.RightShiftAssignmentExpression);
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.SubtractAssignmentExpression);
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.SimpleAssignmentExpression);
+            context.RegisterSyntaxNodeAction(HandleArgument, SyntaxKind.Argument);
         }
 
         private static void HandlePostfixUnaryExpression(SyntaxNodeAnalysisContext context)
@@ -91,6 +92,23 @@
             if (TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out var field))
             {
                 Handle(context, field);
+            }
+        }
+
+        private static void HandleArgument(SyntaxNodeAnalysisContext context)
+        {
+            if (context.IsExcludedFromAnalysis())
+            {
+                return;
+            }
+
+            var argument = (ArgumentSyntax)context.Node;
+            if (argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword))
+            {
+                if (TryGetAssignedField(argument.Expression, context.SemanticModel, context.CancellationToken, out var field))
+                {
+                    Handle(context, field);
+                }
             }
         }
 

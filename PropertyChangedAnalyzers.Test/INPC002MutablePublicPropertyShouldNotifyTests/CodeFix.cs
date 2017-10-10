@@ -95,7 +95,8 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenBaseHasInternalOnPropertyChanged()
+        [Explicit("Not sure how we want this.")]
+        public void NoFixWhenBaseHasInternalOnPropertyChanged()
         {
             var testCode = @"
 namespace RoslynSandBox
