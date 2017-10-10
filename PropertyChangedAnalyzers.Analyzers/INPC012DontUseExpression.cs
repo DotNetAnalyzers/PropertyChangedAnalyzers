@@ -40,7 +40,7 @@ namespace PropertyChangedAnalyzers
             }
 
             var argument = (ArgumentSyntax)context.Node;
-            if (argument.Expression.IsKind(SyntaxKind.SimpleLambdaExpression))
+            if (argument.Expression.IsKind(SyntaxKind.ParenthesizedLambdaExpression))
             {
                 var method = (IMethodSymbol)context.SemanticModel.GetSymbolSafe(argument.FirstAncestorOrSelf<InvocationExpressionSyntax>(), context.CancellationToken);
                 if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)

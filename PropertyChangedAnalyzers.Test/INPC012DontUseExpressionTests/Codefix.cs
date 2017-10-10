@@ -37,7 +37,7 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(() => this.Value);
+                this.OnPropertyChanged(↓() => this.Value);
             }
         }
 
@@ -98,7 +98,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC011DontShadow, RemoveShadowingCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(() => this.Value);
+                this.OnPropertyChanged(↓() => this.Value);
             }
         }
 
@@ -192,7 +192,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC011DontShadow, RemoveShadowingCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
         }
     }
 }
