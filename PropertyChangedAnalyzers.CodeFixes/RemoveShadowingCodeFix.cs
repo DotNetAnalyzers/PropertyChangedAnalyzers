@@ -34,7 +34,7 @@ namespace PropertyChangedAnalyzers
                 }
 
                 var eventFieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                 .FirstAncestorOrSelf<EventFieldDeclarationSyntax>();
+                                                      .FirstAncestorOrSelf<EventFieldDeclarationSyntax>();
                 if (eventFieldDeclaration != null)
                 {
                     context.RegisterCodeFix(

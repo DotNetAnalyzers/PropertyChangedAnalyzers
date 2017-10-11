@@ -183,6 +183,81 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void ExpressionInvokerCalculatedProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Linq.Expressions;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string firstName;
+        private string lastName;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string FullName => $""{this.FirstName} {this.LastName}"";
+
+        public string FirstName
+        {
+            get
+            {
+                return this.firstName;
+            }
+
+            set
+            {
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                this.firstName = value;
+                this.OnPropertyChanged(() => this.FirstName);
+                this.OnPropertyChanged(() => this.FullName);
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return this.lastName;
+            }
+
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged(() => this.LastName);
+                this.OnPropertyChanged(() => this.FullName);
+            }
+        }
+
+        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+        {
+            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+        }
+
+        [Test]
         public void WhenNotifyingCallerMemberNameExpressionBody()
         {
             var testCode = @"
