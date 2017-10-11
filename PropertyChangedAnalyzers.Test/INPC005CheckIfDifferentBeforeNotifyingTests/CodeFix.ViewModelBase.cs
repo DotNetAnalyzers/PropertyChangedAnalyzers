@@ -83,8 +83,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
             }
 
             [Test]
@@ -136,8 +136,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
             }
 
             [Test]
@@ -195,8 +195,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
             }
 
             [Test]
@@ -251,8 +251,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
             }
         }
     }
