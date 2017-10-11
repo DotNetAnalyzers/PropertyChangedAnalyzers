@@ -130,6 +130,18 @@
                     return AnalysisResult.Yes;
                 }
 
+                if (argument.Expression is ParenthesizedLambdaExpressionSyntax lambda)
+                {
+                    if (semanticModel.GetSymbolSafe(lambda.Body, cancellationToken) is IPropertySymbol property)
+                    {
+                        propertyName = property.Name;
+                        nameArg = argument;
+                        return AnalysisResult.Yes;
+                    }
+
+                    return AnalysisResult.No;
+                }
+
                 var symbol = semanticModel.GetTypeInfoSafe(argument.Expression, cancellationToken).Type;
                 if (symbol == KnownSymbol.String)
                 {

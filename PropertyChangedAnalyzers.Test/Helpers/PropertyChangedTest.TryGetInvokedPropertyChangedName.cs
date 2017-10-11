@@ -19,6 +19,7 @@
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"Bar\")")]
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar))")]
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar))")]
+            [TestCase("this.OnPropertyChanged(Cached)")]
             public void WhenTrue(string signature)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
@@ -32,6 +33,8 @@ namespace RoslynSandbox
 
     public class Foo : INotifyPropertyChanged
     {
+        private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(""Bar"");
+
         private int bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -60,6 +63,7 @@ namespace RoslynSandbox
                 this.OnPropertyChanged(new PropertyChangedEventArgs(""Bar""));
                 this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
                 this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)));
+                this.OnPropertyChanged(Cached);
             }
         }
 
