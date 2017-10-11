@@ -197,7 +197,7 @@
             return false;
         }
 
-        internal static bool TryGetBackingFieldAssignedInSetter(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        internal static bool TryGetBackingFieldFromSetter(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
             field = null;
             if (property == null)
@@ -213,20 +213,15 @@
                     continue;
                 }
 
-                if (TryGetBackingFieldAssignedInSetter(propertyDeclaration, out var fieldIdentifier, out FieldDeclarationSyntax _))
-                {
-                    field = semanticModel.GetSymbolSafe(fieldIdentifier, cancellationToken) as IFieldSymbol;
-                    return field != null;
-                }
+                return TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, cancellationToken, out field);
             }
 
             return false;
         }
 
-        internal static bool TryGetBackingFieldAssignedInSetter(PropertyDeclarationSyntax property, out IdentifierNameSyntax field, out FieldDeclarationSyntax fieldDeclaration)
+        internal static bool TryGetBackingFieldFromSetter(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
             field = null;
-            fieldDeclaration = null;
             if (property == null)
             {
                 return false;
@@ -234,44 +229,41 @@
 
             if (property.TryGetSetAccessorDeclaration(out var setter))
             {
+                using (var pooledInvocations = InvocationWalker.Create(setter))
+                {
+                    if (pooledInvocations.Item.Invocations.TryGetSingle(x => PropertyChanged.IsSetAndRaiseCall(x, semanticModel, cancellationToken), out var invocation))
+                    {
+                        var arg = invocation.ArgumentList.Arguments[0].Expression;
+                        if (arg is IdentifierNameSyntax)
+                        {
+                            field = semanticModel.GetSymbolSafe(arg, cancellationToken) as IFieldSymbol;
+                        }
+                        else if (arg is MemberAccessExpressionSyntax memberAccess &&
+                                 memberAccess.Expression is ThisExpressionSyntax)
+                        {
+                            field = semanticModel.GetSymbolSafe(arg, cancellationToken) as IFieldSymbol;
+                        }
+
+                        return field != null;
+                    }
+                }
+
                 using (var pooled = AssignmentWalker.Create(setter))
                 {
-                    if (pooled.Item.Assignments.Count != 1)
+                    if (pooled.Item.Assignments.TryGetSingle(out var assignment))
                     {
-                        return false;
-                    }
-
-                    var left = pooled.Item.Assignments[0].Left;
-                    field = left as IdentifierNameSyntax;
-                    if (field == null)
-                    {
-                        var memberAccess = left as MemberAccessExpressionSyntax;
-                        if (!(memberAccess?.Expression is ThisExpressionSyntax))
+                        var left = assignment.Left;
+                        if (left is IdentifierNameSyntax)
                         {
-                            return false;
+                            field = semanticModel.GetSymbolSafe(left, cancellationToken) as IFieldSymbol;
+                        }
+                        else if (left is MemberAccessExpressionSyntax memberAccess &&
+                                 memberAccess.Expression is ThisExpressionSyntax)
+                        {
+                            field = semanticModel.GetSymbolSafe(left, cancellationToken) as IFieldSymbol;
                         }
 
-                        field = memberAccess.Name as IdentifierNameSyntax;
-                    }
-
-                    if (field == null)
-                    {
-                        return false;
-                    }
-
-                    foreach (var member in property.FirstAncestorOrSelf<TypeDeclarationSyntax>().Members)
-                    {
-                        fieldDeclaration = member as FieldDeclarationSyntax;
-                        if (fieldDeclaration != null)
-                        {
-                            foreach (var variable in fieldDeclaration.Declaration.Variables)
-                            {
-                                if (variable.Identifier.ValueText == field.Identifier.ValueText)
-                                {
-                                    return true;
-                                }
-                            }
-                        }
+                        return field != null;
                     }
                 }
             }

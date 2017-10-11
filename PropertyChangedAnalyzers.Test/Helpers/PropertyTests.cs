@@ -106,7 +106,7 @@ namespace RoslynSandBox
         [TestCase("Value4", false, null)]
         [TestCase("Value5", true, "value5")]
         [TestCase("Value6", true, "value6")]
-        public void TryGetBackingField(string propertyName, bool expected, string field)
+        public void TryGetBackingField(string propertyName, bool expected, string fieldName)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandBox
@@ -147,10 +147,11 @@ namespace RoslynSandBox
         }
     }
 }");
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var property = syntaxTree.FindPropertyDeclaration(propertyName);
-            Assert.AreEqual(expected, Property.TryGetBackingFieldAssignedInSetter(property, out var identifier, out var declaration));
-            Assert.AreEqual(field, identifier?.Identifier.Text);
-            Assert.AreEqual(field, declaration?.Name());
+            Assert.AreEqual(expected, Property.TryGetBackingFieldFromSetter(property, semanticModel, CancellationToken.None, out var field));
+            Assert.AreEqual(field, field?.Name);
         }
     }
 }

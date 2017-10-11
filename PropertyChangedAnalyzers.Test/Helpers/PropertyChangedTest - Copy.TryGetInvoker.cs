@@ -1,6 +1,5 @@
 ﻿namespace PropertyChangedAnalyzers.Test
 {
-    using System.Linq;
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
@@ -33,7 +32,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindBestMatch<PropertyDeclarationSyntax>("Bar");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, Property.TryGetBackingFieldAssignedInSetter(type, semanticModel, CancellationToken.None, out var field));
+                Assert.AreEqual(true, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out var field));
                 Assert.AreEqual("bar", field.Name);
                 Assert.AreEqual("Int32", field.Type.MetadataName);
             }
@@ -45,6 +44,9 @@ namespace RoslynSandbox
                     @"
 namespace RoslynSandbox
 {
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
     public class Foo : INotifyPropertyChanged
     {
         private int bar;
@@ -79,7 +81,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindBestMatch<PropertyDeclarationSyntax>("Bar");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, Property.TryGetBackingFieldAssignedInSetter(type, semanticModel, CancellationToken.None, out var field));
+                Assert.AreEqual(true, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out var field));
                 Assert.AreEqual("bar", field.Name);
                 Assert.AreEqual("Int32", field.Type.MetadataName);
             }
