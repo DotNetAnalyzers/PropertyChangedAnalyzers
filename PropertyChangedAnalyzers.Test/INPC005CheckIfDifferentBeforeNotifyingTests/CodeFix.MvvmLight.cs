@@ -141,7 +141,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(↓ref this.name, value))
+                if (this.Set(ref this.name, value))
                 {
                     this.RaisePropertyChanged(nameof(this.Greeting1));
                 }

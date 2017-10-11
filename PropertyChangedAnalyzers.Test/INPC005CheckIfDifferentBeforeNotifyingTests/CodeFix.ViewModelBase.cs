@@ -43,7 +43,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : ViewModelBase
     {
         private string name;
 
@@ -54,8 +54,8 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                this.Set(↓ref this.name, value)
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.Set(ref this.name, value)
+                ↓this.OnPropertyChanged(nameof(this.Greeting));
             }
         }
     }
@@ -64,7 +64,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : ViewModelBase
     {
         private string name;
 
@@ -93,7 +93,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : ViewModelBase
     {
         private string name;
 
@@ -117,7 +117,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : ViewModelBase
     {
         private string name;
 
@@ -146,7 +146,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : ViewModelBase
     {
         private string name;
 
@@ -159,7 +159,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(↓ref this.name, value))
+                if (this.Set(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting1));
                 }
@@ -173,7 +173,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : ViewModelBase
     {
         private string name;
 
@@ -205,7 +205,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : ViewModelBase
     {
         private string name;
 
@@ -229,7 +229,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : ViewModelBase
     {
         private string name;
 
