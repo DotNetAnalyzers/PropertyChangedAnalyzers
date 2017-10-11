@@ -40,7 +40,7 @@ namespace PropertyChangedAnalyzers
 
             var property = (IPropertySymbol)context.ContainingSymbol;
             if (Property.TryGetBackingFieldReturnedInGetter(property, context.SemanticModel, context.CancellationToken, out var returned) &&
-                Property.TryGetBackingFieldAssignedInSetter(property, context.SemanticModel, context.CancellationToken, out var assigned) &&
+                Property.TryGetBackingFieldFromSetter(property, context.SemanticModel, context.CancellationToken, out var assigned) &&
                 !ReferenceEquals(returned, assigned))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));

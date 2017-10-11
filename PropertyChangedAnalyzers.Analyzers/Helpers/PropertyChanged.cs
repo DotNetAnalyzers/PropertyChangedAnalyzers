@@ -469,6 +469,14 @@
             return type.TryGetMethod(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method);
         }
 
+        internal static bool IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return IsSetAndRaiseMethod(
+                semanticModel.GetSymbolSafe(candidate, cancellationToken) as IMethodSymbol, 
+                semanticModel,
+                cancellationToken);
+        }
+
         internal static bool IsSetAndRaiseMethod(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (candidate == null ||

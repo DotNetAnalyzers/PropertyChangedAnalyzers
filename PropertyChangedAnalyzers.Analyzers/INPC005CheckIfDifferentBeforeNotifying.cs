@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
 
             var propertyDeclaration = setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
             var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
-            if (!Property.TryGetBackingFieldAssignedInSetter(property, context.SemanticModel, context.CancellationToken, out var backingField))
+            if (!Property.TryGetBackingFieldFromSetter(property, context.SemanticModel, context.CancellationToken, out var backingField))
             {
                 return;
             }

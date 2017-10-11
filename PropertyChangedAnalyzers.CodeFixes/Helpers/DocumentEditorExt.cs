@@ -34,9 +34,11 @@ namespace PropertyChangedAnalyzers
             {
                 if (type.Members[i] is PropertyDeclarationSyntax other)
                 {
-                    if (Property.TryGetBackingFieldAssignedInSetter(other, out _, out var field))
+                    if (Property.TryGetBackingFieldFromSetter(other, editor.SemanticModel, cancellationToken, out var field) &&
+                        ReferenceEquals(property.ContainingType, field.ContainingType) &&
+                        field.DeclaringSyntaxReferences.TryGetSingle(out var reference))
                     {
-                        editor.InsertBefore(field, backingField);
+                        editor.InsertBefore(reference.GetSyntax(cancellationToken), backingField);
                         return backingField;
                     }
                 }
@@ -50,9 +52,11 @@ namespace PropertyChangedAnalyzers
             {
                 if (type.Members[i] is PropertyDeclarationSyntax other)
                 {
-                    if (Property.TryGetBackingFieldAssignedInSetter(other, out _, out var field))
+                    if (Property.TryGetBackingFieldFromSetter(other, editor.SemanticModel, cancellationToken, out var field) &&
+                        ReferenceEquals(property.ContainingType, field.ContainingType) &&
+                        field.DeclaringSyntaxReferences.TryGetSingle(out var reference))
                     {
-                        editor.InsertAfter(field, backingField);
+                        editor.InsertAfter(reference.GetSyntax(cancellationToken), backingField);
                         return backingField;
                     }
                 }

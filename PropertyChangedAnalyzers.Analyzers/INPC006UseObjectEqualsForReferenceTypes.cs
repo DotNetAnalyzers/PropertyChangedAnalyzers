@@ -67,7 +67,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (!Property.TryGetBackingFieldAssignedInSetter(property, context.SemanticModel, context.CancellationToken, out var backingField))
+            if (!Property.TryGetBackingFieldFromSetter(property, context.SemanticModel, context.CancellationToken, out var backingField))
             {
                 return;
             }
