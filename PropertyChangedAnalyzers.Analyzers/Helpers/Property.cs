@@ -298,6 +298,7 @@
             {
                 return false;
             }
+
             using (var pooled = AssignmentWalker.Create(setter))
             {
                 if (pooled.Item.Assignments.TryGetSingle(out assignment) &&

@@ -57,6 +57,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC011.md">INPC011</a></td>
   <td>Don't shadow PropertyChanged event.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC012.md">INPC012</a></td>
+  <td>Don't use expression for raising PropertyChanged.</td>
+</tr>
 <table>
 <!-- end generated table -->
 
