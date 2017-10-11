@@ -253,9 +253,7 @@
             if (method == null ||
                 method.IsStatic ||
                 method.Parameters.Length != 1 ||
-                method.AssociatedSymbol != null ||
-               (method.Parameters[0].Type != KnownSymbol.String &&
-                method.Parameters[0].Type != KnownSymbol.PropertyChangedEventArgs))
+                method.AssociatedSymbol != null)
             {
                 return AnalysisResult.No;
             }
@@ -263,14 +261,15 @@
             var parameter = method.Parameters[0];
             if (method.DeclaringSyntaxReferences.Length == 0)
             {
-                if (parameter.Type == KnownSymbol.String)
+                if (method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChanged ||
+                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange)
                 {
-                    if (method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChanged ||
-                        method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange)
-                    {
-                        return AnalysisResult.Yes;
-                    }
+                    return AnalysisResult.Yes;
+                }
 
+                if (parameter.Type == KnownSymbol.String ||
+                    parameter.Type == KnownSymbol.PropertyChangedEventArgs)
+                {
                     if (method.Name.Contains("PropertyChanged"))
                     {
                         // A bit speculative here
@@ -279,6 +278,13 @@
                     }
                 }
 
+                return AnalysisResult.No;
+            }
+
+            if (parameter.Type != KnownSymbol.String &&
+                parameter.Type != KnownSymbol.PropertyChangedEventArgs &&
+                parameter.Type != KnownSymbol.LinqExpressionOfT)
+            {
                 return AnalysisResult.No;
             }
 

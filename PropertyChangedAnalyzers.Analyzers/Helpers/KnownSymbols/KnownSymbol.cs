@@ -9,6 +9,8 @@ namespace PropertyChangedAnalyzers
         internal static readonly NullableType Nullable = new NullableType();
         internal static readonly NullableOfTType NullableOfT = new NullableOfTType();
         internal static readonly EqualityComparerOfTType EqualityComparerOfT = new EqualityComparerOfTType();
+        internal static readonly QualifiedType LambdaExpression = Create("System.Linq.Expressions.LambdaExpression");
+        internal static readonly QualifiedType LinqExpressionOfT = Create("System.Linq.Expressions.Expression`1");
 
         internal static readonly QualifiedType CallerMemberNameAttribute = new QualifiedType("System.Runtime.CompilerServices.CallerMemberNameAttribute");
         internal static readonly INotifyPropertyChangedType INotifyPropertyChanged = new INotifyPropertyChangedType();
