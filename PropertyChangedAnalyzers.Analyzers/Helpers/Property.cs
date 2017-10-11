@@ -153,32 +153,6 @@
             return assignedField.Equals(returnedField) && assignedField.ContainingType == propertySymbol?.ContainingType;
         }
 
-        internal static bool TryGetBackingFieldAssignedInSetter(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
-        {
-            field = null;
-            if (property == null)
-            {
-                return false;
-            }
-
-            foreach (var declaration in property.Declarations(cancellationToken))
-            {
-                var propertyDeclaration = declaration as PropertyDeclarationSyntax;
-                if (propertyDeclaration == null)
-                {
-                    continue;
-                }
-
-                if (TryGetBackingFieldAssignedInSetter(propertyDeclaration, out var fieldIdentifier, out FieldDeclarationSyntax _))
-                {
-                    field = semanticModel.GetSymbolSafe(fieldIdentifier, cancellationToken) as IFieldSymbol;
-                    return field != null;
-                }
-            }
-
-            return false;
-        }
-
         internal static bool TryGetBackingFieldReturnedInGetter(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
             field = null;
@@ -217,6 +191,32 @@
                             return field != null;
                         }
                     }
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool TryGetBackingFieldAssignedInSetter(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        {
+            field = null;
+            if (property == null)
+            {
+                return false;
+            }
+
+            foreach (var declaration in property.Declarations(cancellationToken))
+            {
+                var propertyDeclaration = declaration as PropertyDeclarationSyntax;
+                if (propertyDeclaration == null)
+                {
+                    continue;
+                }
+
+                if (TryGetBackingFieldAssignedInSetter(propertyDeclaration, out var fieldIdentifier, out FieldDeclarationSyntax _))
+                {
+                    field = semanticModel.GetSymbolSafe(fieldIdentifier, cancellationToken) as IFieldSymbol;
+                    return field != null;
                 }
             }
 
