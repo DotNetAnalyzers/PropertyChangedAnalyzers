@@ -20,3 +20,4 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo("PropertyChangedAnalyzers.CodeFixes")]
 [assembly: InternalsVisibleTo("PropertyChangedAnalyzers.Test")]
+[assembly: InternalsVisibleTo("PropertyChangedAnalyzers.Benchmarks")]

@@ -15,4 +15,11 @@ group Analyzers
   nuget AsyncUsageAnalyzers
   nuget Microsoft.CodeAnalysis.Analyzers
 
+group Benchmarks
+  storage: none
+  source http://www.nuget.org/api/v2/
+  nuget BenchmarkDotNet.Diagnostics.Windows
+  nuget Microsoft.CodeAnalysis.CSharp.Workspaces
+  nuget Gu.Roslyn.Asserts
+
   
