@@ -44,5 +44,64 @@
 
             return $"ReferenceEquals({x}, {y})";
         }
+
+        internal static string OnPropertyChanged(IMethodSymbol invoker, IPropertySymbol property, bool usesUnderscoreNames)
+        {
+            if (invoker.IsCallerMemberName())
+            {
+                return usesUnderscoreNames
+                    ? $"{invoker.Name}();"
+                    : $"this.{invoker.Name}();";
+            }
+
+            if (invoker.Parameters.TryGetSingle(out var parameter))
+            {
+                if (parameter.Type == KnownSymbol.String)
+                {
+                    return usesUnderscoreNames
+                        ? $"{invoker.Name}(nameof({property.Name}));"
+                        : $"this.{invoker.Name}(nameof(this.{property.Name}));";
+                }
+
+                if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
+                {
+                    return usesUnderscoreNames
+                        ? $"{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs({property.Name}));"
+                        : $"this.{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{property.Name})));";
+                }
+            }
+
+            return "GeneratedSyntaxErrorBugInPropertyChangedAnalyzersCodeFixes";
+        }
+
+        internal static string OnOtherPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
+        {
+            if (invoker == null)
+            {
+                return usesUnderscoreNames
+                    ? $"PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs({propertyName}));"
+                    : $"this.PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})));";
+            }
+
+            if (invoker.Parameters.TryGetSingle(out var parameter))
+            {
+                if (parameter.Type == KnownSymbol.String)
+                {
+                    return usesUnderscoreNames
+                        ? $"{invoker.Name}(nameof({propertyName}));"
+                        : $"this.{invoker.Name}(nameof(this.{propertyName}));";
+                }
+
+                if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
+                {
+                    return usesUnderscoreNames
+                        ? $"{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs({propertyName}));"
+                        : $"this.{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})));";
+                }
+            }
+
+            return "GeneratedSyntaxErrorBugInPropertyChangedAnalyzersCodeFixes";
+        }
+
     }
 }

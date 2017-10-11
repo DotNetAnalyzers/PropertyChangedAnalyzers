@@ -105,7 +105,7 @@
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
-            var onPropertyChanged = SyntaxFactory.ParseStatement(OnPropertyChanged(invoker, propertyName, usesUnderscoreNames))
+            var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
                                                  .WithSimplifiedNames()
                                                  .WithLeadingElasticLineFeed()
                                                  .WithTrailingElasticLineFeed()
@@ -150,7 +150,7 @@
                         {
                             var code = pooled.Item.AppendLine($"if ({invocation.ToFullString().TrimEnd('\r', '\n')})")
                                              .AppendLine("{")
-                                             .AppendLine($"    {OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
+                                             .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
                                              .AppendLine("}")
                                              .ToString();
 
@@ -171,7 +171,7 @@
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
-            var onPropertyChanged = SyntaxFactory.ParseStatement(OnPropertyChanged(invoker, propertyName, usesUnderscoreNames))
+            var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
                                                  .WithSimplifiedNames()
                                                  .WithLeadingElasticLineFeed()
                                                  .WithTrailingElasticLineFeed()
@@ -200,7 +200,7 @@
                     {
                         var code = pooled.Item.AppendLine("{")
                                               .AppendLine($"{ifStatement.Statement.ToFullString().TrimEnd('\r', '\n')}")
-                                              .AppendLine($"    {OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
+                                              .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
                                               .AppendLine("}")
                                               .ToString();
 
@@ -212,35 +212,6 @@
                 });
 
             return editor.GetChangedDocument();
-        }
-
-        private static string OnPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
-        {
-            if (invoker == null)
-            {
-                return usesUnderscoreNames
-                    ? $"PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs({propertyName}));"
-                    : $"this.PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})));";
-            }
-
-            if (invoker.Parameters.TryGetSingle(out var parameter))
-            {
-                if (parameter.Type == KnownSymbol.String)
-                {
-                    return usesUnderscoreNames
-                        ? $"{invoker.Name}(nameof({propertyName}));"
-                        : $"this.{invoker.Name}(nameof(this.{propertyName}));";
-                }
-
-                if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
-                {
-                    return usesUnderscoreNames
-                        ? $"{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs({propertyName}));"
-                        : $"this.{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})));";
-                }
-            }
-
-            return "GeneratedSyntaxErrorBugInPropertyChangedAnalyzersCodeFixes";
         }
 
         private static StatementSyntax InsertAfter(BlockSyntax block, StatementSyntax assignStatement, IMethodSymbol invoker)

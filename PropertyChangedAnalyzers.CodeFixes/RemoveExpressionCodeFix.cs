@@ -40,7 +40,6 @@ namespace PropertyChangedAnalyzers
                 var type = semanticModel.GetDeclaredSymbolSafe(argument?.FirstAncestorOrSelf<ClassDeclarationSyntax>(), context.CancellationToken);
                 if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out var invoker))
                 {
-
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             "Use overload that does not use expression.",
@@ -51,12 +50,11 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static async Task<Document> RemoveExpressionAsync(Document document, ArgumentSyntax eventFieldDeclaration, IMethodSymbol invoker, CancellationToken cancellationToken)
+        private static async Task<Document> RemoveExpressionAsync(Document document, ArgumentSyntax argument, IMethodSymbol invoker, CancellationToken cancellationToken)
         {
-            return document;
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
-            editor.RemoveNode(eventFieldDeclaration);
+            //editor.ReplaceNode(eventFieldDeclaration);
 
             return editor.GetChangedDocument();
         }
