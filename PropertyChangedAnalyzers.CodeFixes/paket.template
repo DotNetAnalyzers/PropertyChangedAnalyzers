@@ -1,19 +1,19 @@
 ﻿type file
-version 0.2.7.10
+version 0.1.0.0-dev
 title PropertyChangedAnalyzers
 id PropertyChangedAnalyzers
 authors Johan Larsson
 owners Johan Larsson
-copyright Copyright Johan Larsson 2016
+copyright Copyright Johan Larsson 2017
 developmentDependency true
-description Roslyn analyzers for WPF.
+description Roslyn analyzers for INotifyPropertyChanged.
 tags WPF Roslyn Diagnostic Analyzer DotnetAnalyzers
 
 projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 files
-  ../PropertyChangedAnalyzers.Analyzers/bin/Release/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
-  ../PropertyChangedAnalyzers.CodeFixes/bin/Release/PropertyChangedAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
+  bin/Release/netstandard1.3/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
+  bin/Release/netstandard1.3/PropertyChangedAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
   ../.paket/tools/*.ps1 ==> tools
 
