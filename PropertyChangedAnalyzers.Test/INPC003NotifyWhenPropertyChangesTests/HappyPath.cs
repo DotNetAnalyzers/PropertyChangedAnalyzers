@@ -183,6 +183,57 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void CallsOnPropertyChangedWithExpression()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Linq.Expressions;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(() => this.Value);
+            }
+        }
+
+        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+        {
+            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+        }
+
+        [Test]
         public void ExpressionInvokerCalculatedProperty()
         {
             var testCode = @"
