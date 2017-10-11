@@ -136,7 +136,7 @@ namespace RoslynSandbox
 
                 this.name = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(() => this.Greeting);
+                this.OnPropertyChanged(↓() => this.Greeting);
             }
         }
 

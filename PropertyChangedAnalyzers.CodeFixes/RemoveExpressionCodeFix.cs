@@ -7,8 +7,10 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
+    using PropertyChangedAnalyzers.Helpers;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveExpressionCodeFix))]
     [Shared]
@@ -27,6 +29,7 @@ namespace PropertyChangedAnalyzers
             var semanticModel = await context.Document
                                              .GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
+            var usesUnderscoreNames = syntaxRoot.UsesUnderscoreNames(semanticModel, context.CancellationToken);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -43,18 +46,41 @@ namespace PropertyChangedAnalyzers
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             "Use overload that does not use expression.",
-                            cancellationToken => RemoveExpressionAsync(context.Document, argument, invoker, cancellationToken),
+                            cancellationToken => RemoveExpressionAsync(context.Document, argument, invoker, usesUnderscoreNames, cancellationToken),
                             this.GetType().FullName),
                         diagnostic);
                 }
             }
         }
 
-        private static async Task<Document> RemoveExpressionAsync(Document document, ArgumentSyntax argument, IMethodSymbol invoker, CancellationToken cancellationToken)
+        private static async Task<Document> RemoveExpressionAsync(Document document, ArgumentSyntax argument, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
-            //editor.ReplaceNode(eventFieldDeclaration);
+            var invocation = argument.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+            if (PropertyChanged.TryGetInvokedPropertyChangedName(
+                invocation,
+                editor.SemanticModel,
+                cancellationToken,
+                out _,
+                out var name) == AnalysisResult.Yes)
+            {
+                var propertySymbol = editor.SemanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
+                if (propertySymbol?.Name == name)
+                {
+                    editor.ReplaceNode(
+                        invocation,
+                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, propertySymbol, usesUnderscoreNames)
+                                                             .TrimEnd(';')));
+                }
+                else
+                {
+                    editor.ReplaceNode(
+                        invocation,
+                        SyntaxFactory.ParseExpression(Snippet.OnOtherPropertyChanged(invoker, name, usesUnderscoreNames)
+                                                             .TrimEnd(';')));
+                }
+            }
 
             return editor.GetChangedDocument();
         }
