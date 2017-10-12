@@ -59,7 +59,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (Property.TryGetSingleAssignmentInSetter(setter, out var assignment) &&
+            if (Property.TryGetSingleAssignmentInSetter(setter, out _) &&
                 Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
             {
                 using (var pooledIfStatements = IfStatementWalker.Create(setter))

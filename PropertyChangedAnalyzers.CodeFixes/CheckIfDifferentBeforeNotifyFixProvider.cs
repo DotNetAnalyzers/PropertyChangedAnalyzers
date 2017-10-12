@@ -155,8 +155,6 @@ namespace PropertyChangedAnalyzers
                     }
                 });
             return editor.GetChangedDocument();
-
-            return document;
         }
 
         private static async Task<Document> AddToIfAsync(Document document, IfStatementSyntax ifSetAndRaise, ExpressionStatementSyntax invocation, CancellationToken cancellationToken)
