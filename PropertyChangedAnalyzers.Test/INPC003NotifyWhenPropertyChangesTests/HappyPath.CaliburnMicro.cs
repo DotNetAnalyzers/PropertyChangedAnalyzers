@@ -5,18 +5,18 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 
     internal partial class HappyPath
     {
-        internal class MvvmLight
+        internal class CaliburnMicro
         {
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.AddTransitiveMetadataReferences(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly);
+                AnalyzerAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.PropertyChangedBase).Assembly);
             }
 
             [OneTimeTearDown]
             public void TearDown()
             {
-                AnalyzerAssert.ResetAll();
+                AnalyzerAssert.ResetMetadataReferences();
             }
 
             [Test]
@@ -25,7 +25,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -40,12 +40,12 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyNameOf()
+            public void SetAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -58,7 +58,7 @@ namespace RoslynSandbox
             {
                 if (this.Set(ref this.name, value))
                 {
-                    this.RaisePropertyChanged(nameof(Greeting));
+                    this.NotifyOfPropertyChange(nameof(Greeting));
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
         private int name;
 
@@ -86,7 +86,7 @@ namespace RoslynSandbox
             {
                 if (this.Set(ref this.name, value))
                 {
-                    this.RaisePropertyChanged(() => this.Greeting);
+                    this.NotifyOfPropertyChange(() => this.Greeting);
                 }
             }
         }

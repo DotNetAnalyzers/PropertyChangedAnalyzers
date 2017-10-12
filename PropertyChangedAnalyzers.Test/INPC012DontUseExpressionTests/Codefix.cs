@@ -3,7 +3,7 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class Codefix
+    internal partial class Codefix
     {
         [Test]
         public void ExpressionInvokerToCallerMemberName()

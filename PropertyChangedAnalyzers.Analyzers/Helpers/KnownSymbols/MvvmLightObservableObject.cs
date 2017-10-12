@@ -1,13 +1,13 @@
 namespace PropertyChangedAnalyzers
 {
-    internal class MvvmLightViewModelBase : QualifiedType
+    internal class MvvmLightObservableObject : QualifiedType
     {
         internal readonly QualifiedMethod Set;
         internal readonly QualifiedMethod RaisePropertyChanged;
         internal readonly QualifiedMethod RaisePropertyChangedOfT;
 
-        internal MvvmLightViewModelBase()
-            : base("GalaSoft.MvvmLight.ViewModelBase")
+        internal MvvmLightObservableObject()
+            : base("GalaSoft.MvvmLight.ObservableObject")
         {
             this.Set = new QualifiedMethod(this, nameof(this.Set));
             this.RaisePropertyChanged = new QualifiedMethod(this, nameof(this.RaisePropertyChanged));

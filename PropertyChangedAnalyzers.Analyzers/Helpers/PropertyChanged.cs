@@ -274,7 +274,11 @@
             if (method.DeclaringSyntaxReferences.Length == 0)
             {
                 if (method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChanged ||
-                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange)
+                    method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChangedOfT ||
+                    method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChanged ||
+                    method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChangedOfT ||
+                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange ||
+                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChangeOfT)
                 {
                     return AnalysisResult.Yes;
                 }
