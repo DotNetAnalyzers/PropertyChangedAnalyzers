@@ -1,6 +1,5 @@
-NUnit
-
 group Benchmarks
   BenchmarkDotNet.Diagnostics.Windows
   Microsoft.CodeAnalysis.CSharp.Workspaces
   Gu.Roslyn.Asserts
+  NUnit
