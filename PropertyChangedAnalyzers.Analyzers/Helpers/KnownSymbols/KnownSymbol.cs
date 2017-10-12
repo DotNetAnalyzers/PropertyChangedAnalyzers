@@ -39,7 +39,7 @@ namespace PropertyChangedAnalyzers
         internal static readonly XmlnsDefinitionAttributeType XmlnsDefinitionAttribute = new XmlnsDefinitionAttributeType();
 
         internal static readonly MvvmLightViewModelBase MvvmLightViewModelBase = new MvvmLightViewModelBase();
-        internal static readonly QualifiedType MvvmLightObservableObject = new QualifiedType("GalaSoft.MvvmLight.ObservableObject");
+        internal static readonly MvvmLightObservableObject MvvmLightObservableObject = new MvvmLightObservableObject();
         internal static readonly CaliburnMicroPropertyChangedBase CaliburnMicroPropertyChangedBase = new CaliburnMicroPropertyChangedBase();
 
         private static QualifiedType Create(string qualifiedName)
