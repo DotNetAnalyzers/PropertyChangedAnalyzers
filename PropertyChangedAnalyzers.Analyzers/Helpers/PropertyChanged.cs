@@ -472,7 +472,7 @@
         internal static bool IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             return IsSetAndRaiseMethod(
-                semanticModel.GetSymbolSafe(candidate, cancellationToken) as IMethodSymbol, 
+                semanticModel.GetSymbolSafe(candidate, cancellationToken) as IMethodSymbol,
                 semanticModel,
                 cancellationToken);
         }

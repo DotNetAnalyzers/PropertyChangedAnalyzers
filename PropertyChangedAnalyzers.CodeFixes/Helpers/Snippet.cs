@@ -54,24 +54,7 @@
                     : $"this.{invoker.Name}();";
             }
 
-            if (invoker.Parameters.TryGetSingle(out var parameter))
-            {
-                if (parameter.Type == KnownSymbol.String)
-                {
-                    return usesUnderscoreNames
-                        ? $"{invoker.Name}(nameof({property.Name}));"
-                        : $"this.{invoker.Name}(nameof(this.{property.Name}));";
-                }
-
-                if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
-                {
-                    return usesUnderscoreNames
-                        ? $"{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs({property.Name}));"
-                        : $"this.{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{property.Name})));";
-                }
-            }
-
-            return "GeneratedSyntaxErrorBugInPropertyChangedAnalyzersCodeFixes";
+            return OnOtherPropertyChanged(invoker, property.Name, usesUnderscoreNames);
         }
 
         internal static string OnOtherPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
@@ -102,6 +85,5 @@
 
             return "GeneratedSyntaxErrorBugInPropertyChangedAnalyzersCodeFixes";
         }
-
     }
 }
