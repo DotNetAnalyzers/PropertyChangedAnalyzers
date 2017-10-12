@@ -21,5 +21,6 @@ group Benchmarks
   nuget BenchmarkDotNet.Diagnostics.Windows
   nuget Microsoft.CodeAnalysis.CSharp.Workspaces
   nuget Gu.Roslyn.Asserts
+  nuget NUnit
 
   
