@@ -86,7 +86,7 @@ namespace RoslynSandbox
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>(signature);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out var arg, out var name));
+                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out _, out var name));
                 Assert.AreEqual("Bar", name);
             }
         }

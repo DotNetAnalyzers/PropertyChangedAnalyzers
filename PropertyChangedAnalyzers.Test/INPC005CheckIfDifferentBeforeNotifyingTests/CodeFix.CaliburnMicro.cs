@@ -36,7 +36,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                this.Set(ref this.name, value)
+                this.Set(ref this.name, value);
                 ↓this.NotifyOfPropertyChange(nameof(this.Greeting));
             }
         }

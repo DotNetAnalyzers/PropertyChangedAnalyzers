@@ -229,58 +229,35 @@
 
             if (property.TryGetSetAccessorDeclaration(out var setter))
             {
-                using (var pooledInvocations = InvocationWalker.Create(setter))
+                if (TryGetSingleSetAndRaiseInSetter(setter, semanticModel, cancellationToken, out var invocation))
                 {
-                    if (pooledInvocations.Item.Invocations.TryGetSingle(x => PropertyChanged.IsSetAndRaiseCall(x, semanticModel, cancellationToken), out var invocation))
-                    {
-                        var arg = invocation.ArgumentList.Arguments[0].Expression;
-                        if (arg is IdentifierNameSyntax)
-                        {
-                            field = semanticModel.GetSymbolSafe(arg, cancellationToken) as IFieldSymbol;
-                        }
-                        else if (arg is MemberAccessExpressionSyntax memberAccess &&
-                                 memberAccess.Expression is ThisExpressionSyntax)
-                        {
-                            field = semanticModel.GetSymbolSafe(arg, cancellationToken) as IFieldSymbol;
-                        }
-
-                        return field != null;
-                    }
+                    return TryGetBackingField(invocation.ArgumentList.Arguments[0].Expression, semanticModel, cancellationToken, out field);
                 }
 
-                using (var pooled = AssignmentWalker.Create(setter))
+                if (TryGetSingleAssignmentInSetter(setter, out var assignment))
                 {
-                    if (pooled.Item.Assignments.TryGetSingle(out var assignment))
-                    {
-                        var left = assignment.Left;
-                        if (left is IdentifierNameSyntax)
-                        {
-                            field = semanticModel.GetSymbolSafe(left, cancellationToken) as IFieldSymbol;
-                        }
-                        else if (left is MemberAccessExpressionSyntax memberAccess &&
-                                 memberAccess.Expression is ThisExpressionSyntax)
-                        {
-                            field = semanticModel.GetSymbolSafe(left, cancellationToken) as IFieldSymbol;
-                        }
-
-                        return field != null;
-                    }
+                    return TryGetBackingField(assignment.Left, semanticModel, cancellationToken, out field);
                 }
             }
 
             return false;
         }
 
-        internal static bool TryGetSingleAssignmentInSetter(PropertyDeclarationSyntax property, out AssignmentExpressionSyntax assignment)
+        internal static bool TryGetSingleSetAndRaiseInSetter(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax invocation)
         {
-            assignment = null;
-            if (property == null)
+            invocation = null;
+            if (setter == null)
             {
                 return false;
             }
 
-            return property.TryGetSetAccessorDeclaration(out var setter) &&
-                   TryGetSingleAssignmentInSetter(setter, out assignment);
+            using (var pooledInvocations = InvocationWalker.Create(setter))
+            {
+                return pooledInvocations.Item.Invocations.TryGetSingle(
+                    x => PropertyChanged.IsSetAndRaiseCall(
+                        x, semanticModel, cancellationToken),
+                    out invocation);
+            }
         }
 
         internal static bool TryGetSingleAssignmentInSetter(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
@@ -366,6 +343,22 @@
 
             value = null;
             return false;
+        }
+
+        private static bool TryGetBackingField(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        {
+            field = null;
+            if (candidate is IdentifierNameSyntax)
+            {
+                field = semanticModel.GetSymbolSafe(candidate, cancellationToken) as IFieldSymbol;
+            }
+            else if (candidate is MemberAccessExpressionSyntax memberAccess &&
+                     memberAccess.Expression is ThisExpressionSyntax)
+            {
+                field = semanticModel.GetSymbolSafe(candidate, cancellationToken) as IFieldSymbol;
+            }
+
+            return field != null;
         }
     }
 }

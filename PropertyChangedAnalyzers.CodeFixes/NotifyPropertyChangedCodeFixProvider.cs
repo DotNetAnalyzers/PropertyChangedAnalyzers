@@ -192,24 +192,27 @@
                 return editor.GetChangedDocument();
             }
 
-            editor.ReplaceNode(
-                ifStatement.Statement,
-                (node, _) =>
-                {
-                    using (var pooled = StringBuilderPool.Borrow())
+            if (ifStatement.Statement != null)
+            {
+                editor.ReplaceNode(
+                    ifStatement.Statement,
+                    (node, _) =>
                     {
-                        var code = pooled.Item.AppendLine("{")
-                                              .AppendLine($"{ifStatement.Statement.ToFullString().TrimEnd('\r', '\n')}")
-                                              .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
-                                              .AppendLine("}")
-                                              .ToString();
+                        using (var pooled = StringBuilderPool.Borrow())
+                        {
+                            var code = pooled.Item.AppendLine("{")
+                                             .AppendLine($"{ifStatement.Statement.ToFullString().TrimEnd('\r', '\n')}")
+                                             .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
+                                             .AppendLine("}")
+                                             .ToString();
 
-                        return SyntaxFactory.ParseStatement(code)
-                                            .WithSimplifiedNames()
-                                            .WithTrailingElasticLineFeed()
-                                            .WithAdditionalAnnotations(Formatter.Annotation);
-                    }
-                });
+                            return SyntaxFactory.ParseStatement(code)
+                                                .WithSimplifiedNames()
+                                                .WithTrailingElasticLineFeed()
+                                                .WithAdditionalAnnotations(Formatter.Annotation);
+                        }
+                    });
+            }
 
             return editor.GetChangedDocument();
         }
