@@ -1,7 +1,7 @@
 storage: none
 source http://www.nuget.org/api/v2/
 strategy: min
-nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1
+nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1 strategy: min
 
 group Analyzers
   storage: none
@@ -9,7 +9,6 @@ group Analyzers
   nuget StyleCop.Analyzers
   nuget Gu.Analyzers
   nuget AsyncUsageAnalyzers
-  nuget Microsoft.CodeAnalysis.Analyzers
 
 group Benchmarks
   storage: none
