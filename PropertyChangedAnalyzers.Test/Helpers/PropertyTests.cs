@@ -153,7 +153,7 @@ namespace RoslynSandBox
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var property = syntaxTree.FindPropertyDeclaration(propertyName);
             Assert.AreEqual(expected, Property.TryGetBackingFieldFromSetter(property, semanticModel, CancellationToken.None, out var field));
-            Assert.AreEqual(field, field?.Name);
+            Assert.AreEqual(fieldName, field?.Name);
         }
     }
 }

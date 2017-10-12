@@ -40,7 +40,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var invocation = (InvocationExpressionSyntax)context.Node;
+            var invocation = (InvocationExpressionSyntax) context.Node;
             var setter = invocation.FirstAncestorOrSelf<AccessorDeclarationSyntax>();
             if (setter?.IsKind(SyntaxKind.SetAccessorDeclaration) != true)
             {
@@ -59,7 +59,8 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
+            if (Property.TryGetSingleAssignmentInSetter(setter, out var assignment) &&
+                Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
             {
                 using (var pooledIfStatements = IfStatementWalker.Create(setter))
                 {
@@ -70,14 +71,16 @@ namespace PropertyChangedAnalyzers
                             continue;
                         }
 
-                        foreach (var member in new ISymbol[] { backingField, property })
+                        foreach (var member in new ISymbol[] {backingField, property})
                         {
                             if (Equality.IsOperatorEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
-                               IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
+                                IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
                             {
                                 if (ifStatement.Statement.Span.Contains(invocation.Span))
                                 {
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                                    context.ReportDiagnostic(Diagnostic.Create(
+                                                                 Descriptor,
+                                                                 invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                                 }
 
                                 return;
@@ -88,7 +91,9 @@ namespace PropertyChangedAnalyzers
                             {
                                 if (!ifStatement.Statement.Span.Contains(invocation.Span))
                                 {
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                                    context.ReportDiagnostic(Diagnostic.Create(
+                                                                 Descriptor,
+                                                                 invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                                 }
 
                                 return;
@@ -101,9 +106,19 @@ namespace PropertyChangedAnalyzers
                         }
                     }
                 }
-            }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+            }
+            else if (Property.TryGetSingleSetAndRaiseInSetter(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
+            {
+                if (setAndRaise.Parent is IfStatementSyntax ifStatement &&
+                    ifStatement.Span.Contains(invocation.Span))
+                {
+                    return;
+                }
+
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+            }
         }
 
         private static bool IsFirstNotifyPropertyChange(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
