@@ -1,11 +1,8 @@
 storage: none
 source http://www.nuget.org/api/v2/
+lowest_matching: true
 
-nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1 lowest_matching: true
-nuget Gu.Roslyn.Asserts lowest_matching: true
-nuget NUnit
-nuget MvvmLight
-nuget Caliburn.Micro
+nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1
 
 group Analyzers
   storage: none
@@ -22,3 +19,13 @@ group Benchmarks
   nuget Microsoft.CodeAnalysis.CSharp.Workspaces
   nuget Gu.Roslyn.Asserts
   nuget NUnit
+
+group Test
+  storage: none
+  source http://www.nuget.org/api/v2/
+  nuget Microsoft.CodeAnalysis.CSharp.Workspaces
+  nuget Gu.Roslyn.Asserts
+  nuget NUnit
+  nuget NUnit
+  nuget MvvmLight
+  nuget Caliburn.Micro
