@@ -50,7 +50,7 @@
                             {
                                 context.RegisterCodeFix(
                                     CodeAction.Create(
-                                        "Notify property change.",
+                                        $"Notify that property {property} changes.",
                                         cancellationToken => MakeNotifyCreateIfAsync(
                                             context.Document,
                                             invocation,
@@ -68,7 +68,7 @@
                             {
                                 context.RegisterCodeFix(
                                     CodeAction.Create(
-                                        "Notify property change.",
+                                        $"Notify that property {property} changes.",
                                         cancellationToken => MakeNotifyInIfAsync(
                                             context.Document,
                                             ifStatement,
@@ -85,7 +85,7 @@
 
                         context.RegisterCodeFix(
                             CodeAction.Create(
-                                "Notify property change.",
+                                $"Notify that property {property} changes.",
                                 cancellationToken => MakeNotifyAsync(
                                     context.Document,
                                     expression,
