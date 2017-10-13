@@ -4,6 +4,7 @@
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>PropertyChangedAnalyzers</RootNamespace>
     <AssemblyName>PropertyChangedAnalyzers.Vsix</AssemblyName>
+    <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
