@@ -7,9 +7,21 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
+    using Microsoft.CodeAnalysis.Formatting;
 
     internal static class DocumentEditorExt
     {
+        internal static DocumentEditor FormatNode(this DocumentEditor editor, SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return editor;
+            }
+
+            editor.ReplaceNode(node, (x, _) => x.WithAdditionalAnnotations(Formatter.Annotation));
+            return editor;
+        }
+
         internal static FieldDeclarationSyntax AddBackingField(this DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
             var property = editor.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);

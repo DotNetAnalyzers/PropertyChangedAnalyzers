@@ -160,6 +160,8 @@
                                                 .WithAdditionalAnnotations(Formatter.Annotation);
                         }
                     });
+                editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
+
                 return editor.GetChangedDocument();
             }
 

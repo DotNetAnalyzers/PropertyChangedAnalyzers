@@ -293,9 +293,8 @@
                                                                      .WithLeadingElasticLineFeed()
                                                                      .WithTrailingElasticLineFeed()
                                                                      .WithAdditionalAnnotations(Formatter.Annotation);
-                        editor.InsertAfter(
-                            statement,
-                            notifyStatement);
+                        editor.InsertAfter(statement, notifyStatement);
+                        editor.FormatNode(propertyDeclaration);
                         return editor.GetChangedDocument();
                     }
                 }
@@ -325,6 +324,7 @@
                     .WithSimplifiedNames()
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 editor.InsertAfter(statement, notifyStatement);
+                editor.FormatNode(propertyDeclaration);
                 return editor.GetChangedDocument();
             }
 

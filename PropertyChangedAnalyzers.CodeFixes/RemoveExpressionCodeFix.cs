@@ -10,6 +10,7 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
+    using Microsoft.CodeAnalysis.Formatting;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveExpressionCodeFix))]
     [Shared]
@@ -57,27 +58,28 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
             var invocation = argument.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-            if (PropertyChanged.TryGetInvokedPropertyChangedName(
-                invocation,
-                editor.SemanticModel,
-                cancellationToken,
-                out _,
-                out var name) == AnalysisResult.Yes)
+            if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, editor.SemanticModel, cancellationToken, out _, out var name) == AnalysisResult.Yes)
             {
                 var propertySymbol = editor.SemanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
                 if (propertySymbol?.Name == name)
                 {
                     editor.ReplaceNode(
                         invocation,
-                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, propertySymbol, usesUnderscoreNames)
-                                                             .TrimEnd(';')));
+                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, propertySymbol, usesUnderscoreNames).TrimEnd(';'))
+                                     .WithSimplifiedNames()
+                                     .WithLeadingElasticLineFeed()
+                                     .WithTrailingElasticLineFeed()
+                                     .WithAdditionalAnnotations(Formatter.Annotation));
                 }
                 else
                 {
                     editor.ReplaceNode(
                         invocation,
-                        SyntaxFactory.ParseExpression(Snippet.OnOtherPropertyChanged(invoker, name, usesUnderscoreNames)
-                                                             .TrimEnd(';')));
+                        SyntaxFactory.ParseExpression(Snippet.OnOtherPropertyChanged(invoker, name, usesUnderscoreNames).TrimEnd(';'))
+                                     .WithSimplifiedNames()
+                                     .WithLeadingElasticLineFeed()
+                                     .WithTrailingElasticLineFeed()
+                                     .WithAdditionalAnnotations(Formatter.Annotation));
                 }
             }
 

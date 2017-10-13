@@ -95,10 +95,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static async Task<Document> AddCheckIfDifferentAsync(
-            Document document,
-            AssignmentExpressionSyntax assignment,
-            CancellationToken cancellationToken)
+        private static async Task<Document> AddCheckIfDifferentAsync(Document document, AssignmentExpressionSyntax assignment, CancellationToken cancellationToken)
         {
             var statementSyntax = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
             if (statementSyntax == null)
@@ -164,7 +161,9 @@ namespace PropertyChangedAnalyzers
                 editor.RemoveNode(invocation);
                 if (body.Statements.Count == 0)
                 {
-                    editor.ReplaceNode(body, body.AddStatements(invocation.WithLeadingElasticLineFeed()));
+                    editor.ReplaceNode(
+                        body,
+                        body.AddStatements(invocation.WithLeadingElasticLineFeed()));
                 }
                 else
                 {
@@ -178,17 +177,25 @@ namespace PropertyChangedAnalyzers
                     editor.RemoveNode(invocation);
                     editor.ReplaceNode(
                         ifSetAndRaise,
-                        (x, __) => ((IfStatementSyntax)x).WithStatement(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation)));
+                        (x, __) => ((IfStatementSyntax) x)
+                            .WithStatement(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation))
+                            .WithSimplifiedNames()
+                            .WithTrailingElasticLineFeed()
+                            .WithAdditionalAnnotations(Formatter.Annotation));
                 }
                 else
                 {
                     editor.RemoveNode(invocation);
                     editor.ReplaceNode(
                         ifSetAndRaise.Statement,
-                        (_, __) => SyntaxFactory.Block(ifSetAndRaise.Statement, invocation));
+                        (_, __) => SyntaxFactory.Block(ifSetAndRaise.Statement, invocation)
+                                                .WithSimplifiedNames()
+                                                .WithTrailingElasticLineFeed()
+                                                .WithAdditionalAnnotations(Formatter.Annotation));
                 }
             }
 
+            editor.FormatNode(ifSetAndRaise);
             return editor.GetChangedDocument();
         }
     }
