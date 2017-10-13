@@ -25,7 +25,7 @@
                         : $"System.Nullable.Equals({x}, {y})";
                 }
 
-                if (type.GetMembers("Equals")
+                if (type.GetMembers(nameof(Equals))
                         .OfType<IMethodSymbol>()
                         .TryGetSingle(
                             m => m.Parameters.Length == 1 &&

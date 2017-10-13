@@ -60,11 +60,17 @@ namespace PropertyChangedAnalyzers
                 !member.IsStatic &&
                 !argument.UsesUnderscoreNames(editor.SemanticModel, cancellationToken))
             {
-                editor.ReplaceNode(argument.Expression, SyntaxFactory.ParseExpression($"nameof(this.{name})"));
+                editor.ReplaceNode(
+                    argument.Expression,
+                    (x, _) => SyntaxFactory.ParseExpression($"nameof(this.{name})")
+                                           .WithTriviaFrom(x));
             }
             else
             {
-                editor.ReplaceNode(argument.Expression, SyntaxFactory.ParseExpression($"nameof({name})"));
+                editor.ReplaceNode(
+                    argument.Expression,
+                    (x, _) => SyntaxFactory.ParseExpression($"nameof({name})")
+                                           .WithTriviaFrom(x));
             }
 
             return editor.GetChangedDocument();

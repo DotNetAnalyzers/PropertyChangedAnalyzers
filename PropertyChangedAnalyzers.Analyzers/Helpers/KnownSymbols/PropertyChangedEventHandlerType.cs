@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers
         public PropertyChangedEventHandlerType()
             : base("System.ComponentModel.PropertyChangedEventHandler")
         {
-            this.Invoke = new QualifiedMethod(this, "Invoke");
+            this.Invoke = new QualifiedMethod(this, nameof(this.Invoke));
         }
     }
 }

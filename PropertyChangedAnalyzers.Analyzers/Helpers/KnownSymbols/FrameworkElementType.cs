@@ -8,8 +8,8 @@ namespace PropertyChangedAnalyzers
         internal FrameworkElementType()
             : base("System.Windows.FrameworkElement")
         {
-            this.DataContext = new QualifiedProperty(this, "DataContext");
-            this.DataContextProperty = new QualifiedField(this, "DataContextProperty");
+            this.DataContext = new QualifiedProperty(this, nameof(this.DataContext));
+            this.DataContextProperty = new QualifiedField(this, nameof(this.DataContextProperty));
         }
     }
 }

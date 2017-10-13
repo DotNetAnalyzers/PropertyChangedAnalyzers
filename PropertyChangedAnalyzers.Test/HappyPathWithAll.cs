@@ -25,6 +25,12 @@
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
+        public void PropertyChangedAnalyzersSln(DiagnosticAnalyzer analyzer)
+        {
+            AnalyzerAssert.Valid(analyzer, CodeFactory.FindSolutionFile("PropertyChangedAnalyzers.sln"));
+        }
+
+        [TestCaseSource(nameof(AllAnalyzers))]
         public void SomewhatRealisticSample(DiagnosticAnalyzer analyzer)
         {
             // this test just throws some random code at all analyzers
@@ -148,7 +154,7 @@ internal static class BooleanBoxes
         public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
 
         private static readonly DependencyPropertyKey ReadOnlyValuePropertyKey = DependencyProperty.RegisterReadOnly(
-            ""ReadOnlyValue"",
+            nameof(ReadOnlyValue),
             typeof(string),
             typeof(FooControl),
             new PropertyMetadata(default(string)));

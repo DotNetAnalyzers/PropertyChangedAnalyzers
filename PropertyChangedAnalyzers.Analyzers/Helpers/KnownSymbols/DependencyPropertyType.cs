@@ -13,13 +13,12 @@
         internal DependencyPropertyType()
             : base("System.Windows.DependencyProperty")
         {
-            this.Register = new QualifiedMethod(this, "Register");
-            this.RegisterReadOnly = new QualifiedMethod(this, "RegisterReadOnly");
-            this.RegisterAttached = new QualifiedMethod(this, "RegisterAttached");
-            this.RegisterAttachedReadOnly = new QualifiedMethod(this, "RegisterAttachedReadOnly");
-
-            this.AddOwner = new QualifiedMethod(this, "AddOwner");
-            this.OverrideMetadata = new QualifiedMethod(this, "OverrideMetadata");
+            this.Register = new QualifiedMethod(this, nameof(this.Register));
+            this.RegisterReadOnly = new QualifiedMethod(this, nameof(this.RegisterReadOnly));
+            this.RegisterAttached = new QualifiedMethod(this, nameof(this.RegisterAttached));
+            this.RegisterAttachedReadOnly = new QualifiedMethod(this, nameof(this.RegisterAttachedReadOnly));
+            this.AddOwner = new QualifiedMethod(this, nameof(this.AddOwner));
+            this.OverrideMetadata = new QualifiedMethod(this, nameof(this.OverrideMetadata));
         }
     }
 }
