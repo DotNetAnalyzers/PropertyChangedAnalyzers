@@ -177,7 +177,7 @@ namespace PropertyChangedAnalyzers
                     editor.RemoveNode(invocation);
                     editor.ReplaceNode(
                         ifSetAndRaise,
-                        (x, __) => ((IfStatementSyntax) x)
+                        (x, _) => ((IfStatementSyntax)x)
                             .WithStatement(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation))
                             .WithSimplifiedNames()
                             .WithTrailingElasticLineFeed()
