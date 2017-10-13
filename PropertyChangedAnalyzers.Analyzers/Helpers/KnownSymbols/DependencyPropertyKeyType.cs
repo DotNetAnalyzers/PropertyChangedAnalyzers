@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers
         internal DependencyPropertyKeyType()
             : base("System.Windows.DependencyPropertyKey")
         {
-            this.DependencyProperty = new QualifiedProperty(this, "DependencyProperty");
+            this.DependencyProperty = new QualifiedProperty(this, nameof(this.DependencyProperty));
         }
     }
 }
