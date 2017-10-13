@@ -10,7 +10,6 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
-    using PropertyChangedAnalyzers.Helpers;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveExpressionCodeFix))]
     [Shared]
