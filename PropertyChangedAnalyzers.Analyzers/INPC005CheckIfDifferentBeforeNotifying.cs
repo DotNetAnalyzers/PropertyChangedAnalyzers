@@ -40,7 +40,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var invocation = (InvocationExpressionSyntax) context.Node;
+            var invocation = (InvocationExpressionSyntax)context.Node;
             var setter = invocation.FirstAncestorOrSelf<AccessorDeclarationSyntax>();
             if (setter?.IsKind(SyntaxKind.SetAccessorDeclaration) != true)
             {
@@ -71,7 +71,7 @@ namespace PropertyChangedAnalyzers
                             continue;
                         }
 
-                        foreach (var member in new ISymbol[] {backingField, property})
+                        foreach (var member in new ISymbol[] { backingField, property })
                         {
                             if (Equality.IsOperatorEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
                                 IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))

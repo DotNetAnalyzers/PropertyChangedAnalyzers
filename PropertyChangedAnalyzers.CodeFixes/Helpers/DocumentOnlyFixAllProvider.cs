@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Helpers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;

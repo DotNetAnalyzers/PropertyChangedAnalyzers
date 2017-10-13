@@ -1,6 +1,5 @@
 storage: none
 source http://www.nuget.org/api/v2/
-strategy: min
 nuget Microsoft.CodeAnalysis.CSharp.Workspaces 1.2.1 strategy: min
 
 group Analyzers

@@ -12,7 +12,6 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
-    using PropertyChangedAnalyzers.Helpers;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CheckIfDifferentBeforeNotifyFixProvider))]
     [Shared]
@@ -92,7 +91,6 @@ namespace PropertyChangedAnalyzers
                                 diagnostic);
                         }
                     }
-
                 }
             }
         }

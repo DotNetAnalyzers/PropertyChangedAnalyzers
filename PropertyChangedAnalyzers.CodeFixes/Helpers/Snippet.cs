@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Helpers
+﻿namespace PropertyChangedAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
