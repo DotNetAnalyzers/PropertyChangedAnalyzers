@@ -61,6 +61,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC012.md">INPC012</a></td>
   <td>Don't use expression for raising PropertyChanged.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC013.md">INPC013</a></td>
+  <td>Use nameof.</td>
+</tr>
 <table>
 <!-- end generated table -->
 
