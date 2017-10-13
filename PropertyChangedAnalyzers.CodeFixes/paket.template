@@ -1,5 +1,5 @@
 ﻿type file
-version 0.1.0.6-dev
+version 0.1.0.7-dev
 title PropertyChangedAnalyzers
 id PropertyChangedAnalyzers
 authors Johan Larsson
