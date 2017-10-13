@@ -6,13 +6,12 @@
     {
         internal static bool IsVoid(this TypeSyntax type)
         {
-            var predefinedType = type as PredefinedTypeSyntax;
-            if (predefinedType == null)
+            if (type is PredefinedTypeSyntax predefinedType)
             {
-                return false;
+                return predefinedType.Keyword.ValueText == "void";
             }
 
-            return predefinedType.Keyword.ValueText == "void";
+            return false;
         }
     }
 }
