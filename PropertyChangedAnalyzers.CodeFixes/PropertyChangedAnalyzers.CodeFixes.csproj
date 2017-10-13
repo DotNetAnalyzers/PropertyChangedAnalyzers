@@ -7,6 +7,7 @@
     <CodeAnalysisRuleSet>PropertyChangedAnalyzers.CodeFixes.ruleset</CodeAnalysisRuleSet>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>PropertyChangedAnalyzers</RootNamespace>
+    <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\PropertyChangedAnalyzers.Analyzers\PropertyChangedAnalyzers.Analyzers.csproj" />

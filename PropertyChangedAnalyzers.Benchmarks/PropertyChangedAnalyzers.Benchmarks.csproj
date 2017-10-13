@@ -5,6 +5,7 @@
     <OutputType>Exe</OutputType>
     <CodeAnalysisRuleSet>PropertyChangedAnalyzers.Benchmarks.ruleset</CodeAnalysisRuleSet>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="TraceEvent.ReadMe.txt">
