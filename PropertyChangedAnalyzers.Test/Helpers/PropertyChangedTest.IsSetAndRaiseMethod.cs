@@ -1,5 +1,6 @@
 namespace PropertyChangedAnalyzers.Test
 {
+    using System.Linq;
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
@@ -107,6 +108,31 @@ namespace RoslynSandbox
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("SetValue");
+                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+            }
+
+            [Test]
+            public void OverridingCaliburnMicroPropertyChangedBase()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
+    {
+        public override bool Set<T>(ref T oldValue, T newValue, string propertyName = null)
+        {
+            return base.Set(ref oldValue, newValue, propertyName);
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create(
+                    "test",
+                    new[] { syntaxTree },
+                    MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("Set");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
             }

@@ -94,6 +94,39 @@ namespace RoslynSandbox
 }";
                 AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
             }
+
+            [Test]
+            public void WhenOverriddenSet()
+            {
+                var fooBaseCode = @"
+namespace RoslynSandbox
+{
+    public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
+    {
+        public override bool Set<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            return base.Set(ref oldValue, newValue, propertyName);
+        }
+    }
+}";
+
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : FooBase
+    {
+        private int value;
+
+        public int Value
+        {
+            get { return this.value; }
+            set { this.Set(ref this.value, value); }
+        }
+    }
+}";
+
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(fooBaseCode, testCode);
+            }
         }
     }
 }
