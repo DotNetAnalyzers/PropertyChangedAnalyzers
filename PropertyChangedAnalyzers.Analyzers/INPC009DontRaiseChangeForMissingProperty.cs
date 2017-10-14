@@ -102,13 +102,9 @@
                 return false;
             }
 
-            foreach (var member in type.RecursiveMembers(name))
+            if (type.TryGetProperty(name, out _))
             {
-                var property = member as IPropertySymbol;
-                if (property?.IsIndexer == false)
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;

@@ -25,19 +25,6 @@
             }
         }
 
-        internal static IEnumerable<ISymbol> RecursiveMembers(this ITypeSymbol type, string name)
-        {
-            while (type != null)
-            {
-                foreach (var member in type.GetMembers(name))
-                {
-                    yield return member;
-                }
-
-                type = type.BaseType;
-            }
-        }
-
         internal static bool TryGetField(this ITypeSymbol type, string name, out IFieldSymbol field)
         {
             return type.TryGetSingleMember(name, out field);
@@ -78,15 +65,21 @@
                 return false;
             }
 
-            foreach (var symbol in type.RecursiveMembers(name))
+            while (type != null &&
+                   type != KnownSymbol.Object)
             {
-                if (member != null)
+                foreach (var symbol in type.GetMembers(name))
                 {
-                    member = null;
-                    return false;
+                    if (member != null)
+                    {
+                        member = null;
+                        return false;
+                    }
+
+                    member = symbol as TMember;
                 }
 
-                member = symbol as TMember;
+                type = type.BaseType;
             }
 
             return member != null;
@@ -102,19 +95,25 @@
                 return false;
             }
 
-            foreach (var symbol in type.RecursiveMembers())
+            while (type != null &&
+                   type != KnownSymbol.Object)
             {
-                if (symbol is TMember candidate &&
-                    predicate(candidate))
+                foreach (var symbol in type.GetMembers())
                 {
-                    if (member != null)
+                    if (symbol is TMember candidate &&
+                        predicate(candidate))
                     {
-                        member = null;
-                        return false;
-                    }
+                        if (member != null)
+                        {
+                            member = null;
+                            return false;
+                        }
 
-                    member = candidate;
+                        member = candidate;
+                    }
                 }
+
+                type = type.BaseType;
             }
 
             return member != null;
@@ -130,19 +129,25 @@
                 return false;
             }
 
-            foreach (var symbol in type.RecursiveMembers(name))
+            while (type != null &&
+                   type != KnownSymbol.Object)
             {
-                if (symbol is TMember candidate &&
-                    predicate(candidate))
+                foreach (var symbol in type.GetMembers())
                 {
-                    if (member != null)
+                    if (symbol is TMember candidate &&
+                        predicate(candidate))
                     {
-                        member = null;
-                        return false;
-                    }
+                        if (member != null)
+                        {
+                            member = null;
+                            return false;
+                        }
 
-                    member = candidate;
+                        member = candidate;
+                    }
                 }
+
+                type = type.BaseType;
             }
 
             return member != null;
@@ -158,14 +163,20 @@
                 return false;
             }
 
-            foreach (var symbol in type.RecursiveMembers(name))
+            while (type != null &&
+                   type != KnownSymbol.Object)
             {
-                if (symbol is TMember candidate &&
-                    predicate(candidate))
+                foreach (var symbol in type.GetMembers())
                 {
-                    member = candidate;
-                    return true;
+                    if (symbol is TMember candidate &&
+                        predicate(candidate))
+                    {
+                        member = candidate;
+                        return true;
+                    }
                 }
+
+                type = type.BaseType;
             }
 
             return false;
