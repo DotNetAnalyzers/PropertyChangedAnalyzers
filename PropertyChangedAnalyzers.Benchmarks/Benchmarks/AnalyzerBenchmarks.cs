@@ -13,7 +13,7 @@
         }
 
         [Benchmark]
-        public void RunOnPropertyChangedAnalyzersAnalyzers()
+        public void RunOnPropertyChangedAnalyzers()
         {
             this.walker.Run();
         }
