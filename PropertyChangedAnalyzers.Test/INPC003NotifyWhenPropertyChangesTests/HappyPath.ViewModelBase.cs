@@ -20,7 +20,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected virtual bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -57,7 +57,7 @@ namespace RoslynSandbox
         public string Name
         {
             get { return this.name; }
-            set { this.Set(ref this.name, value) }
+            set { this.SetValue(ref this.name, value) }
         }
     }
 }";
@@ -81,7 +81,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetValue(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(Greeting));
                 }
@@ -109,7 +109,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetValue(ref this.name, value))
                 {
                     this.OnPropertyChanged(() => this.Greeting);
                 }
@@ -130,7 +130,7 @@ namespace RoslynSandbox
     {
         public override bool Set<T>(ref T oldValue, T newValue, string propertyName = null)
         {
-            return base.Set(ref oldValue, newValue, propertyName);
+            return base.SetValue(ref oldValue, newValue, propertyName);
         }
     }
 }";
@@ -145,7 +145,7 @@ namespace RoslynSandbox
         public int Value
         {
             get { return this.value; }
-            set { this.Set(ref this.value, value); }
+            set { this.SetValue(ref this.value, value); }
         }
     }
 }";
