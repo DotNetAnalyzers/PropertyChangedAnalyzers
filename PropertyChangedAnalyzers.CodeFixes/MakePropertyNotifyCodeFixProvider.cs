@@ -60,6 +60,7 @@
                                 cancellationToken => MakeAutoPropertySetAsync(
                                     context.Document,
                                     propertyDeclaration,
+                                    setAndRaiseMethod,
                                     semanticModel,
                                     cancellationToken),
                                 key),
@@ -70,7 +71,12 @@
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 key,
-                                cancellationToken => MakeWithBackingFieldSetAsync(context.Document, propertyDeclaration, semanticModel, cancellationToken),
+                                cancellationToken => MakeWithBackingFieldSetAsync(
+                                    context.Document,
+                                    propertyDeclaration,
+                                    setAndRaiseMethod,
+                                    semanticModel,
+                                    cancellationToken),
                                 key),
                             diagnostic);
                     }
@@ -188,7 +194,7 @@
             return document;
         }
 
-        private static async Task<Document> MakeAutoPropertySetAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static async Task<Document> MakeAutoPropertySetAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
@@ -218,7 +224,7 @@
                     var code = pooled.Item.AppendLine($"public Type PropertyName")
                                      .AppendLine("{")
                                      .AppendLine($"    get {{ return {fieldAccess}; }}")
-                                     .AppendLine($"    set {{ {(usesUnderscoreNames ? string.Empty : "this.")}Set(ref {fieldAccess}, value); }}")
+                                     .AppendLine($"    set {{ {(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value); }}")
                                      .AppendLine("}")
                                      .ToString();
                     var template = ParseProperty(code);
@@ -331,7 +337,7 @@
             return document;
         }
 
-        private static async Task<Document> MakeWithBackingFieldSetAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static async Task<Document> MakeWithBackingFieldSetAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
@@ -344,7 +350,7 @@
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
             {
                 var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
-                var setExpression = SyntaxFactory.ParseExpression($"{(usesUnderscoreNames ? string.Empty : "this.")}Set(ref {fieldAccess}, value);")
+                var setExpression = SyntaxFactory.ParseExpression($"{(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                     .WithSimplifiedNames()
                     .WithAdditionalAnnotations(Formatter.Annotation);

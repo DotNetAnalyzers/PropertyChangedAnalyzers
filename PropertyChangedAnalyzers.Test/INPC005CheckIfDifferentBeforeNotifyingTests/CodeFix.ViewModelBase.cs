@@ -18,7 +18,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -54,7 +54,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                this.Set(ref this.name, value)
+                this.SetValue(ref this.name, value)
                 ↓this.OnPropertyChanged(nameof(this.Greeting));
             }
         }
@@ -75,7 +75,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetValue(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }
@@ -104,7 +104,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetValue(ref this.name, value))
                 {
                 }
 
@@ -128,7 +128,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetValue(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }
@@ -159,7 +159,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetValue(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting1));
                 }
@@ -186,7 +186,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetValue(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting1));
                     this.OnPropertyChanged(nameof(this.Greeting2));
@@ -218,7 +218,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetValue(ref this.name, value))
                     this.OnPropertyChanged(nameof(this.Greeting1));
                 ↓this.OnPropertyChanged(nameof(this.Greeting2));
             }
@@ -242,7 +242,7 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetValue(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting1));
                     this.OnPropertyChanged(nameof(this.Greeting2));
