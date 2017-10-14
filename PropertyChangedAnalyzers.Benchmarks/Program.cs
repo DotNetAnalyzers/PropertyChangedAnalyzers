@@ -42,9 +42,9 @@ namespace PropertyChangedAnalyzers.Benchmarks
                 Console.ReadKey();
                 walker.Run();
             }
-            else if (false)
+            else if (true)
             {
-                foreach (var summary in RunSingle<INPC001Benchmarks>())
+                foreach (var summary in RunSingle<INPC013Benchmarks>())
                 {
                     CopyResult(summary.Title);
                 }
