@@ -26,7 +26,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -49,7 +49,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("Set");
+                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("SetValue");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
             }
@@ -121,7 +121,7 @@ namespace RoslynSandbox
 {
     public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
     {
-        public override bool Set<T>(ref T oldValue, T newValue, string propertyName = null)
+        public override bool SetValue<T>(ref T oldValue, T newValue, string propertyName = null)
         {
             return base.Set(ref oldValue, newValue, propertyName);
         }
@@ -132,7 +132,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("Set");
+                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("SetValue");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
             }

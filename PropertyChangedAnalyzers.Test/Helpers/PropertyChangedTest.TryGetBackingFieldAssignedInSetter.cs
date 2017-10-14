@@ -56,10 +56,10 @@ namespace RoslynSandbox
         public int Bar
         {
             get { return this.bar; }
-            set { this.Set(ref bar, value); }
+            set { this.SetValue(ref bar, value); }
         }
 
-        protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
