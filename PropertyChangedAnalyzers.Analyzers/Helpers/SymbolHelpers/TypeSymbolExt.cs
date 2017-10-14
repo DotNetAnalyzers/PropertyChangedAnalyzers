@@ -12,6 +12,7 @@
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal static class TypeSymbolExt
     {
+        [Obsolete("Don't use this")]
         internal static IEnumerable<ISymbol> RecursiveMembers(this ITypeSymbol type)
         {
             while (type != null)

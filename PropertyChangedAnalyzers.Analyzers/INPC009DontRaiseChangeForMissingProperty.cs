@@ -39,9 +39,19 @@
                 return;
             }
 
-            var invocation = (InvocationExpressionSyntax)context.Node;
-            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
+            if (context.ContainingSymbol is IFieldSymbol)
+            {
+                return;
+            }
 
+            var invocation = (InvocationExpressionSyntax)context.Node;
+            if (invocation.ArgumentList == null ||
+                invocation.ArgumentList.Arguments.Count > 2)
+            {
+                return;
+            }
+
+            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
                 PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
             {
@@ -54,7 +64,7 @@
                         ? context.ContainingSymbol.ContainingType
                         : context.SemanticModel.GetTypeInfoSafe((invocation.Expression as MemberAccessExpressionSyntax)?.Expression, context.CancellationToken)
                                  .Type;
-                    if (IsForExistingProperty(type, propertyName))
+                    if (type.TryGetProperty(propertyName, out _))
                     {
                         return;
                     }
@@ -80,35 +90,6 @@
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation()));
                 }
             }
-        }
-
-        private static bool IsForExistingProperty(ITypeSymbol type, string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                return true;
-            }
-
-            if (name == "Item[]")
-            {
-                foreach (var member in type.RecursiveMembers())
-                {
-                    var property = member as IPropertySymbol;
-                    if (property?.IsIndexer == true)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            if (type.TryGetProperty(name, out _))
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }
