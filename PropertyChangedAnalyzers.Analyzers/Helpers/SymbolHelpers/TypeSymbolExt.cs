@@ -1,7 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
@@ -12,20 +11,6 @@
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal static class TypeSymbolExt
     {
-        [Obsolete("Don't use this")]
-        internal static IEnumerable<ISymbol> RecursiveMembers(this ITypeSymbol type)
-        {
-            while (type != null)
-            {
-                foreach (var member in type.GetMembers())
-                {
-                    yield return member;
-                }
-
-                type = type.BaseType;
-            }
-        }
-
         internal static bool TryGetField(this ITypeSymbol type, string name, out IFieldSymbol field)
         {
             return type.TryGetSingleMember(name, out field);

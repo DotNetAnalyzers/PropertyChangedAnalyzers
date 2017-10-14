@@ -219,37 +219,43 @@
                 return invoker != null;
             }
 
-            foreach (var member in @event.ContainingType.RecursiveMembers())
+            var type = @event.ContainingType;
+            while (type != null)
             {
-                if (member is IMethodSymbol method &&
-                    !method.IsStatic &&
-                    method.MethodKind == MethodKind.Ordinary)
+                foreach (var member in type.GetMembers())
                 {
-                    if (method.DeclaredAccessibility == Accessibility.Private &&
-                        method.ContainingType != @event.ContainingType)
+                    if (member is IMethodSymbol method &&
+                        !method.IsStatic &&
+                        method.MethodKind == MethodKind.Ordinary)
                     {
-                        continue;
-                    }
-
-                    switch (IsInvoker(method, semanticModel, cancellationToken))
-                    {
-                        case AnalysisResult.No:
+                        if (method.DeclaredAccessibility == Accessibility.Private &&
+                            method.ContainingType != @event.ContainingType)
+                        {
                             continue;
-                        case AnalysisResult.Yes:
-                            invoker = method;
-                            if (invoker.IsCallerMemberName())
-                            {
-                                return true;
-                            }
+                        }
 
-                            break;
-                        case AnalysisResult.Maybe:
-                            invoker = method;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                        switch (IsInvoker(method, semanticModel, cancellationToken))
+                        {
+                            case AnalysisResult.No:
+                                continue;
+                            case AnalysisResult.Yes:
+                                invoker = method;
+                                if (invoker.IsCallerMemberName())
+                                {
+                                    return true;
+                                }
+
+                                break;
+                            case AnalysisResult.Maybe:
+                                invoker = method;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
                     }
                 }
+
+                type = type.BaseType;
             }
 
             return invoker != null;
