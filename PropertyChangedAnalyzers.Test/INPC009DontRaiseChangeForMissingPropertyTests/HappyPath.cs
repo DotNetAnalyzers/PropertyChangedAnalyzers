@@ -1,6 +1,5 @@
 namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingPropertyTests
 {
-    using System;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
