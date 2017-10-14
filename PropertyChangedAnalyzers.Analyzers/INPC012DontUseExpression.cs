@@ -42,10 +42,15 @@ namespace PropertyChangedAnalyzers
             var argument = (ArgumentSyntax)context.Node;
             if (argument.Expression.IsKind(SyntaxKind.ParenthesizedLambdaExpression))
             {
-                var method = (IMethodSymbol)context.SemanticModel.GetSymbolSafe(argument.FirstAncestorOrSelf<InvocationExpressionSyntax>(), context.CancellationToken);
-                if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                var invocation = argument.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+                if (invocation != null &&
+                    invocation.ArgumentList.Arguments.Count == 1)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+                    var method = (IMethodSymbol)context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
+                    if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+                    }
                 }
             }
         }
