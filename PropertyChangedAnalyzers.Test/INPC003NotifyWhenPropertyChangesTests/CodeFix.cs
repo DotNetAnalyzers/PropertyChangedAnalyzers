@@ -2551,7 +2551,7 @@ namespace RoslynSandbox
         public void FieldUpdatedInMethodWithInvokerInBaseClass()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2568,12 +2568,12 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string text;
 
@@ -2587,12 +2587,12 @@ namespace RoslynSandbox
 }";
 
             var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string text;
 

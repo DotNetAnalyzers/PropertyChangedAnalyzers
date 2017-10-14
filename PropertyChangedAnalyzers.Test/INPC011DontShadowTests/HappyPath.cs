@@ -74,7 +74,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }
