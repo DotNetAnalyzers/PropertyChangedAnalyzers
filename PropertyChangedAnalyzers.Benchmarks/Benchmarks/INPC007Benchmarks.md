@@ -1,13 +1,13 @@
 ``` ini
 
-BenchmarkDotNet=v0.10.9, OS=Windows 10 Redstone 2 (10.0.15063)
-Processor=Intel Core i7-3667U CPU 2.00GHz (Ivy Bridge), ProcessorCount=4
-Frequency=2435876 Hz, Resolution=410.5299 ns, Timer=TSC
-  [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2115.0
-  DefaultJob : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2115.0
+BenchmarkDotNet=v0.10.9, OS=Windows 7 SP1 (6.1.7601)
+Processor=Intel Xeon CPU E5-2637 v4 3.50GHzIntel Xeon CPU E5-2637 v4 3.50GHz, ProcessorCount=16
+Frequency=3410117 Hz, Resolution=293.2451 ns, Timer=TSC
+  [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2114.0
+  DefaultJob : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2114.0
 
 
 ```
- |                                 Method |     Mean |     Error |    StdDev |   Gen 0 |   Gen 1 | Allocated |
- |--------------------------------------- |---------:|----------:|----------:|--------:|--------:|----------:|
- | RunOnPropertyChangedAnalyzersAnalyzers | 14.99 ms | 0.1778 ms | 0.1663 ms | 78.1250 | 15.6250 | 255.12 KB |
+ |                                 Method |     Mean |     Error |   StdDev |   Median |   Gen 0 | Allocated |
+ |--------------------------------------- |---------:|----------:|---------:|---------:|--------:|----------:|
+ | RunOnPropertyChangedAnalyzersAnalyzers | 12.04 ms | 0.6496 ms | 1.915 ms | 11.34 ms | 15.6250 | 160.83 KB |
