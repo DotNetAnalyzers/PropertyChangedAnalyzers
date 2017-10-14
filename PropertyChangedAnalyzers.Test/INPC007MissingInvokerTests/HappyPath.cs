@@ -147,10 +147,10 @@ namespace RoslynSandbox
         public string Name
         {
             get { return this.name; }
-            set { this.Set(ref this.name, value); }
+            set { this.SetValue(ref this.name, value); }
         }
 
-        protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
