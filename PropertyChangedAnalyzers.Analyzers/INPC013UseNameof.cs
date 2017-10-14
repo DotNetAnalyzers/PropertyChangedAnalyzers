@@ -46,46 +46,15 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var symbols = context.SemanticModel.LookupSymbols(argument.SpanStart, name: literal.Token.ValueText);
-            if (symbols.TryGetSingle(x => x.Name == literal.Token.ValueText, out var symbol))
+            if (context.ContainingSymbol is IMethodSymbol method &&
+                method.Parameters.TryGetSingle(x => x.Name == literal.Token.ValueText, out _))
             {
-                if (symbol is IParameterSymbol ||
-                    symbol is ILocalSymbol ||
-                    symbol is IFieldSymbol ||
-                    symbol is IEventSymbol ||
-                    symbol is IPropertySymbol ||
-                    symbol is IMethodSymbol)
-                {
-                    if (symbol is ILocalSymbol local)
-                    {
-                        if (local.DeclaringSyntaxReferences.TryGetSingle(out SyntaxReference reference))
-                        {
-                            var statement = argument.FirstAncestor<StatementSyntax>();
-                            if (statement.Span.Start < reference.Span.Start)
-                            {
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+            }
 
-                    if (symbol is IParameterSymbol ||
-                        symbol is ILocalSymbol ||
-                        symbol.IsStatic ||
-                        context.ContainingSymbol.IsStatic)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
-                        return;
-                    }
-
-                    if (symbol.ContainingType == context.ContainingSymbol.ContainingType)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
-                    }
-                }
+            if (context.ContainingSymbol.ContainingType.TryGetProperty(literal.Token.ValueText, out _))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
             }
         }
     }
