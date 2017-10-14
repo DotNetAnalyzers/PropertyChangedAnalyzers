@@ -10,4 +10,4 @@ Frequency=3410107 Hz, Resolution=293.2459 ns, Timer=TSC
 ```
  |                                 Method |     Mean |     Error |    StdDev |   Gen 0 | Allocated |
  |--------------------------------------- |---------:|----------:|----------:|--------:|----------:|
- | RunOnPropertyChangedAnalyzersAnalyzers | 13.23 ms | 0.2641 ms | 0.6276 ms | 15.6250 | 203.38 KB |
+ | RunOnPropertyChangedAnalyzers | 13.23 ms | 0.2641 ms | 0.6276 ms | 15.6250 | 203.38 KB |
