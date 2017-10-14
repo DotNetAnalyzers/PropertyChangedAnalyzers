@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
         internal class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System;
     using System.Collections.Generic;
@@ -48,9 +48,9 @@ namespace RoslynSandbox
             public void SetProperty()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -68,9 +68,9 @@ namespace RoslynSandbox
             public void SetAffectsCalculatedPropertyNameOf()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -96,9 +96,9 @@ namespace RoslynSandbox
             public void SetAffectsCalculatedPropertyExpression()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private int name;
 
@@ -124,9 +124,9 @@ namespace RoslynSandbox
             public void WhenOverriddenSet()
             {
                 var fooBaseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public abstract class FooBase : ViewModelBase
+    public abstract class FooBase : RoslynSandbox.Core.ViewModelBase
     {
         public override bool Set<T>(ref T oldValue, T newValue, string propertyName = null)
         {
@@ -136,7 +136,7 @@ namespace RoslynSandbox
 }";
 
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     public class Foo : FooBase
     {

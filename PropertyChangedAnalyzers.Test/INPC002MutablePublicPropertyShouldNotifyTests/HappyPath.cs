@@ -343,7 +343,7 @@ namespace RoslynSandbox
         public void CallsChainedOnPropertyChangedInBase()
         {
             var baseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -367,7 +367,7 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private string meh;
 
@@ -398,7 +398,7 @@ namespace RoslynSandbox
         public void CallsChainedOnPropertyChangedInGenericBase()
         {
             var baseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -420,9 +420,9 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class Foo<T> : ViewModelBase<T>
+    public class Foo<T> : RoslynSandbox.Core.ViewModelBase<T>
     {
         private T meh;
 
