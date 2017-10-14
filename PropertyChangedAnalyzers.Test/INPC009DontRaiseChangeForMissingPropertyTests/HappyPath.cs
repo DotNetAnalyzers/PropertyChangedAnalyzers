@@ -540,5 +540,44 @@ namespace RoslynSandBox
 }";
             AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(vmBaseCode, vmCode, testCode);
         }
+
+        [Test]
+        public void WhenNotAnInvoker()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(""Missing"");
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+        }
     }
 }
