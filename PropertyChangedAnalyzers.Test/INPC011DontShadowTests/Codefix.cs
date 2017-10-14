@@ -9,7 +9,7 @@
         public void ShadowingEvent()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -26,22 +26,22 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
     }
 }";
 
             var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
     }
 }";

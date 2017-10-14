@@ -383,7 +383,7 @@ namespace RoslynSandbox
     using System.Runtime.CompilerServices;
     using MvvmFramework;
 
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string firstName;
         private string lastName;

@@ -8,7 +8,7 @@
         internal class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -41,18 +41,18 @@ namespace RoslynSandbox
             public void AutoPropertyToNotifyWhenValueChanges()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         ↓public int Bar { get; set; }
     }
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private int bar;
 
@@ -84,24 +84,24 @@ namespace RoslynSandbox
             public void AutoPropertyToSet()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         ↓public int Bar { get; set; }
     }
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private int bar;
 
@@ -120,18 +120,18 @@ namespace RoslynSandbox
             public void AutoPropertyVirtualToSet()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         ↓public virtual int Bar { get; set; }
     }
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private int bar;
 
@@ -150,18 +150,18 @@ namespace RoslynSandbox
             public void AutoPropertyPrivateSetToSet()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         ↓public int Bar { get; private set; }
     }
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private int bar;
 
@@ -180,9 +180,9 @@ namespace RoslynSandbox
             public void AutoPropertyToSetUnderscoreNames()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         public Foo(int bar)
         {
@@ -194,9 +194,9 @@ namespace RoslynSandbox
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class Foo : ViewModelBase
+    public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private int _bar;
 
@@ -220,9 +220,9 @@ namespace RoslynSandbox
             public void WithBackingFieldToSet()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -235,9 +235,9 @@ namespace RoslynSandbox
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -256,9 +256,9 @@ namespace RoslynSandbox
             public void WithBackingFieldToSetUnderscoreNames()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string _name;
 
@@ -271,9 +271,9 @@ namespace RoslynSandbox
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string _name;
 

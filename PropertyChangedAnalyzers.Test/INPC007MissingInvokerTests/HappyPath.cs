@@ -97,7 +97,7 @@ namespace RoslynSandbox
         public void OverridingEvent()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -114,11 +114,11 @@ namespace RoslynSandbox
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }
@@ -132,7 +132,7 @@ namespace RoslynSandbox
         public void Set()
         {
             var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     using System.Collections.Generic;
     using System.ComponentModel;
