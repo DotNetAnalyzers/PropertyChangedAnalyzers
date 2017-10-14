@@ -18,7 +18,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -108,12 +108,12 @@ namespace RoslynSandbox
         public int Bar
         {
             get { return this.bar; }
-            set { this.Set(ref this.bar, value); }
+            set { this.SetValue(ref this.bar, value); }
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
             }
 
             [Test]
@@ -138,12 +138,12 @@ namespace RoslynSandbox
         public virtual int Bar
         {
             get { return this.bar; }
-            set { this.Set(ref this.bar, value); }
+            set { this.SetValue(ref this.bar, value); }
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
             }
 
             [Test]
@@ -168,12 +168,12 @@ namespace RoslynSandbox
         public int Bar
         {
             get { return this.bar; }
-            private set { this.Set(ref this.bar, value); }
+            private set { this.SetValue(ref this.bar, value); }
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
             }
 
             [Test]
@@ -208,12 +208,12 @@ namespace RoslynSandbox
         public int Bar
         {
             get { return _bar; }
-            set { Set(ref _bar, value); }
+            set { SetValue(ref _bar, value); }
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
             }
 
             [Test]
@@ -244,12 +244,12 @@ namespace RoslynSandbox
         public string Name
         {
             get { return this.name; }
-            set { this.Set(ref this.name, value); }
+            set { this.SetValue(ref this.name, value); }
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
             }
 
             [Test]
@@ -280,12 +280,12 @@ namespace RoslynSandbox
         public string Name
         {
             get { return _name; }
-            set { Set(ref _name, value); }
+            set { SetValue(ref _name, value); }
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.Set.");
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
             }
         }
     }
