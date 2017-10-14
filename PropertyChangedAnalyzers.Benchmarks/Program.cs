@@ -44,7 +44,7 @@ namespace PropertyChangedAnalyzers.Benchmarks
             }
             else if (true)
             {
-                foreach (var summary in RunSingle<INPC013Benchmarks>())
+                foreach (var summary in RunSingle<INPC009Benchmarks>())
                 {
                     CopyResult(summary.Title);
                 }

@@ -255,6 +255,22 @@
             return invoker != null;
         }
 
+        internal static bool IsPotentialInvoker(IMethodSymbol method)
+        {
+            if (method == null ||
+                method.IsStatic ||
+                !method.ReturnsVoid ||
+                method.Parameters.Length != 1 ||
+                method.MethodKind != MethodKind.Ordinary ||
+                method.AssociatedSymbol != null ||
+                !method.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, HashSet<IMethodSymbol> @checked = null)
         {
             if (@checked?.Add(method) == false)
@@ -262,11 +278,7 @@
                 return AnalysisResult.No;
             }
 
-            if (method == null ||
-                method.IsStatic ||
-                method.Parameters.Length != 1 ||
-                method.AssociatedSymbol != null ||
-                !method.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+            if (!IsPotentialInvoker(method))
             {
                 return AnalysisResult.No;
             }

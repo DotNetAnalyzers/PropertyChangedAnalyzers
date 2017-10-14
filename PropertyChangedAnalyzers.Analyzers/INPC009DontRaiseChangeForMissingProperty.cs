@@ -41,6 +41,7 @@
 
             var invocation = (InvocationExpressionSyntax)context.Node;
             var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
+
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
                 PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
             {
