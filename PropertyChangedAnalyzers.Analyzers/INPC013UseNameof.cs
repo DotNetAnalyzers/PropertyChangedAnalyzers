@@ -46,7 +46,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var symbols = context.SemanticModel.LookupSymbols(argument.SpanStart);
+            var symbols = context.SemanticModel.LookupSymbols(argument.SpanStart, name: literal.Token.ValueText);
             if (symbols.TryGetSingle(x => x.Name == literal.Token.ValueText, out var symbol))
             {
                 if (symbol is IParameterSymbol ||
