@@ -64,7 +64,8 @@
                         ? context.ContainingSymbol.ContainingType
                         : context.SemanticModel.GetTypeInfoSafe((invocation.Expression as MemberAccessExpressionSyntax)?.Expression, context.CancellationToken)
                                  .Type;
-                    if (type.TryGetProperty(propertyName, out _))
+                    if (string.IsNullOrWhiteSpace(propertyName) ||
+                        type.TryGetProperty(propertyName, out _))
                     {
                         return;
                     }
