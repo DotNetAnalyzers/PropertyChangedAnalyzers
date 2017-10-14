@@ -265,7 +265,8 @@
             if (method == null ||
                 method.IsStatic ||
                 method.Parameters.Length != 1 ||
-                method.AssociatedSymbol != null)
+                method.AssociatedSymbol != null ||
+                !method.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 return AnalysisResult.No;
             }
