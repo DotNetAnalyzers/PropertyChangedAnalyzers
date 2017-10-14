@@ -6,21 +6,27 @@
 
     internal partial class HappyPath
     {
-        internal class ThirdParty
+        internal class CaliburnMicro
         {
-            [TearDown]
+            [OneTimeSetUp]
+            public void OneTimeSetUp()
+            {
+                AnalyzerAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.PropertyChangedBase).Assembly);
+            }
+
+            [OneTimeTearDown]
             public void TearDown()
             {
-                AnalyzerAssert.ResetMetadataReferences();
+                AnalyzerAssert.ResetAll();
             }
 
             [Test]
-            public void MvvmLightSet()
+            public void Set()
             {
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    public class Foo : Caliburn.Micro.PropertyChangedBase
     {
         private int value;
 
@@ -32,7 +38,6 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly.Location));
                 AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
             }
 
@@ -41,12 +46,12 @@ namespace RoslynSandbox
             [TestCase(@"""Bar""")]
             [TestCase(@"nameof(Bar)")]
             [TestCase(@"nameof(this.Bar)")]
-            public void MvvmLightRaisePropertyChanged(string propertyName)
+            public void RaisePropertyChanged(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
         private int bar;
 
@@ -57,14 +62,13 @@ namespace RoslynSandbox
             {
                 if (value == this.bar) return;
                 this.bar = value;
-                this.RaisePropertyChanged(nameof(Bar));
+                this.NotifyOfPropertyChange(nameof(Bar));
             }
         }
     }
 }";
 
                 testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-                AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly.Location));
                 AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
             }
         }
