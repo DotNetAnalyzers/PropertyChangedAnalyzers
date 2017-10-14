@@ -523,7 +523,9 @@
                         x => IsNotifyPropertyChanged(x, semanticModel, cancellationToken),
                         out _))
                     {
-                        return false;
+                        return pooled.Item.Invocations.TryGetSingle(
+                            x => IsSetAndRaiseCall(x, semanticModel, cancellationToken),
+                            out _);
                     }
                 }
 

@@ -20,7 +20,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected virtual bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -118,6 +118,39 @@ namespace RoslynSandbox
     }
 }";
                 AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(ViewModelBaseCode, testCode);
+            }
+
+            [Test]
+            public void WhenOverriddenSet()
+            {
+                var fooBaseCode = @"
+namespace RoslynSandbox
+{
+    public abstract class FooBase : ViewModelBase
+    {
+        public override bool Set<T>(ref T oldValue, T newValue, string propertyName = null)
+        {
+            return base.Set(ref oldValue, newValue, propertyName);
+        }
+    }
+}";
+
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : FooBase
+    {
+        private int value;
+
+        public int Value
+        {
+            get { return this.value; }
+            set { this.Set(ref this.value, value); }
+        }
+    }
+}";
+
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(fooBaseCode, testCode);
             }
         }
     }
