@@ -365,7 +365,7 @@ namespace RoslynSandbox.Core
 }";
 
             var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
     {
