@@ -38,6 +38,11 @@
 
         internal static bool TryGetProperty(this ITypeSymbol type, string name, out IPropertySymbol property)
         {
+            if (name == "Item[]")
+            {
+                return type.TryGetSingleMember(x => x.IsIndexer, out property);
+            }
+
             return type.TryGetSingleMember(name, out property);
         }
 
