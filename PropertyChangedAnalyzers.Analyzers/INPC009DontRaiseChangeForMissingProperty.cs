@@ -46,6 +46,7 @@
 
             var invocation = (InvocationExpressionSyntax)context.Node;
             if (invocation.ArgumentList == null ||
+                invocation.ArgumentList.Arguments.Count == 0 ||
                 invocation.ArgumentList.Arguments.Count > 2)
             {
                 return;

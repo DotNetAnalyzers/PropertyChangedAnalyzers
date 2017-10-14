@@ -70,7 +70,7 @@
             return invokes;
         }
 
-        internal static AnalysisResult TryGetInvokedPropertyChangedName(this InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string propertyName)
+        internal static AnalysisResult TryGetInvokedPropertyChangedName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string propertyName)
         {
             nameArg = null;
             propertyName = null;
