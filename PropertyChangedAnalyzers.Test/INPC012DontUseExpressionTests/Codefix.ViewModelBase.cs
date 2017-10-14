@@ -8,7 +8,7 @@
         internal class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System;
     using System.Collections.Generic;
@@ -48,9 +48,9 @@ namespace RoslynSandbox
             public void SetAffectsCalculatedPropertyExpression()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private int name;
 
@@ -71,9 +71,9 @@ namespace RoslynSandbox
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private int name;
 

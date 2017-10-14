@@ -1,6 +1,5 @@
 namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingPropertyTests
 {
-    using System;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
@@ -254,7 +253,7 @@ namespace RoslynSandBox
             var testCode = @"
 namespace RoslynSandBox
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private int value;
 
@@ -501,7 +500,7 @@ namespace RoslynSandBox
             var vmCode = @"
 namespace RoslynSandBox
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private int value;
 

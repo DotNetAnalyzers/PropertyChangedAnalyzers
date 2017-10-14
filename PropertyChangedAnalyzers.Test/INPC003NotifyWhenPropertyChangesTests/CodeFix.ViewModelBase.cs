@@ -8,7 +8,7 @@
         internal class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -41,9 +41,9 @@ namespace RoslynSandbox
             public void SetAffectsCalculatedProperty()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -58,9 +58,9 @@ namespace RoslynSandbox
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -87,9 +87,9 @@ namespace RoslynSandbox
             public void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -109,9 +109,9 @@ namespace RoslynSandbox
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -138,9 +138,9 @@ namespace RoslynSandbox
             public void SetAffectsSecondCalculatedProperty()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -163,9 +163,9 @@ namespace RoslynSandbox
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -195,9 +195,9 @@ namespace RoslynSandbox
             public void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -218,9 +218,9 @@ namespace RoslynSandbox
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -250,9 +250,9 @@ namespace RoslynSandbox
             public void OnPropertyChangedAffectsCalculatedProperty()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string firstName;
         private string lastName;
@@ -301,9 +301,9 @@ namespace RoslynSandbox
 }";
 
                 var fixedCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
-    public class ViewModel : ViewModelBase
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string firstName;
         private string lastName;
