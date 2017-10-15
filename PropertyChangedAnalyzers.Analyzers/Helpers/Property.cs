@@ -326,9 +326,9 @@
 
         internal static bool TryFindValue(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out IParameterSymbol value)
         {
-            using (var pooled = IdentifierNameWalker.Create(setter))
+            using (var walker = IdentifierNameWalker.Borrow(setter))
             {
-                foreach (var identifierName in pooled.Item.IdentifierNames)
+                foreach (var identifierName in walker.IdentifierNames)
                 {
                     if (identifierName.Identifier.ValueText == "value")
                     {

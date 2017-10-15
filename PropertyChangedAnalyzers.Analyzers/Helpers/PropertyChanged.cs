@@ -340,7 +340,8 @@
                             continue;
                         }
 
-                        if ((invocation.Expression is MemberAccessExpressionSyntax memberAccess && !(memberAccess.Expression is ThisExpressionSyntax)) ||
+                        if ((invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                             !(memberAccess.Expression is ThisExpressionSyntax)) ||
                             (invocation.Expression is MemberBindingExpressionSyntax))
                         {
                             if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
@@ -356,7 +357,8 @@
                                     if (argument.Expression is ObjectCreationExpressionSyntax objectCreation)
                                     {
                                         var nameArgument = objectCreation.ArgumentList.Arguments[0];
-                                        if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
+                                        if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText ==
+                                            parameter.Name)
                                         {
                                             return AnalysisResult.Yes;
                                         }
@@ -380,7 +382,8 @@
                                 if (argument.Expression is ObjectCreationExpressionSyntax objectCreation)
                                 {
                                     var nameArgument = objectCreation.ArgumentList.Arguments[0];
-                                    if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
+                                    if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText ==
+                                        parameter.Name)
                                     {
                                         return AnalysisResult.Yes;
                                     }
@@ -395,9 +398,9 @@
                             continue;
                         }
 
-                        using (var argsWalker = ArgumentsWalker.Create(invocation.ArgumentList))
+                        using (var argsWalker = IdentifierNameWalker.Borrow(invocation.ArgumentList))
                         {
-                            if (argsWalker.Item.Contains(parameter, semanticModel, cancellationToken))
+                            if (argsWalker.Contains(parameter, semanticModel, cancellationToken))
                             {
                                 if (@checked == null)
                                 {
