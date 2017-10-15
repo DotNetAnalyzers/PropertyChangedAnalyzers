@@ -172,7 +172,7 @@
                 }
             }
 
-            using (var pooledSet = SetPool<IPropertySymbol>.Create())
+            using (var set = PooledHashSet<IPropertySymbol>.Borrow())
             {
                 foreach (var member in typeDeclaration.Members)
                 {
@@ -203,13 +203,13 @@
                         continue;
                     }
 
-                    using (var pooled = TouchedFieldsWalker.Create(getter, context.SemanticModel, context.CancellationToken))
+                    using (var walker = TouchedFieldsWalker.Borrow(getter, context.SemanticModel, context.CancellationToken))
                     {
-                        if (pooled.Item.Contains(assignedField))
+                        if (walker.Contains(assignedField))
                         {
                             if (PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                             {
-                                if (pooledSet.Item.Add(property))
+                                if (set.Add(property))
                                 {
                                     var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
                                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
@@ -262,18 +262,8 @@
             return null;
         }
 
-        private sealed class TouchedFieldsWalker : CSharpSyntaxWalker
+        private sealed class TouchedFieldsWalker : PooledWalker<TouchedFieldsWalker>
         {
-            private static readonly Pool<TouchedFieldsWalker> Cache = new Pool<TouchedFieldsWalker>(
-                () => new TouchedFieldsWalker(),
-                x =>
-                {
-                    x.fields.Clear();
-                    x.visited.Clear();
-                    x.semanticModel = null;
-                    x.cancellationToken = CancellationToken.None;
-                });
-
             private readonly HashSet<IFieldSymbol> fields = new HashSet<IFieldSymbol>();
             private readonly HashSet<SyntaxNode> visited = new HashSet<SyntaxNode>();
 
@@ -284,12 +274,12 @@
             {
             }
 
-            public static Pool<TouchedFieldsWalker>.Pooled Create(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public static TouchedFieldsWalker Borrow(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                var pooled = Cache.GetOrCreate();
-                pooled.Item.semanticModel = semanticModel;
-                pooled.Item.cancellationToken = cancellationToken;
-                pooled.Item.Visit(node);
+                var pooled = Borrow(() => new TouchedFieldsWalker());
+                pooled.semanticModel = semanticModel;
+                pooled.cancellationToken = cancellationToken;
+                pooled.Visit(node);
                 return pooled;
             }
 
@@ -331,6 +321,14 @@
                 }
 
                 base.VisitIdentifierName(node);
+            }
+
+            protected override void Clear()
+            {
+                this.fields.Clear();
+                this.visited.Clear();
+                this.semanticModel = null;
+                this.cancellationToken = CancellationToken.None;
             }
         }
     }

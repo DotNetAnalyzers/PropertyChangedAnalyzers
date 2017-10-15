@@ -12,7 +12,7 @@
         {
             [TestCase("_value1 = value", "Value1")]
             [TestCase("_value2 = value", "Value2")]
-            [TestCase("SetValue(ref _value3, value);", "Value3")]
+            //[TestCase("SetValue(ref _value3, value);", "Value3")]
             public void WhenTrue(string signature, string propertyName)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
