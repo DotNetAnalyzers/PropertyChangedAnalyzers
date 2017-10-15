@@ -180,9 +180,9 @@ namespace PropertyChangedAnalyzers
         {
             var usesValue = false;
             var usesMember = false;
-            using (var pooledIdentifierNames = IdentifierNameWalker.Create(ifStatement.Condition))
+            using (var walker = IdentifierNameWalker.Borrow(ifStatement.Condition))
             {
-                foreach (var identifierName in pooledIdentifierNames.Item.IdentifierNames)
+                foreach (var identifierName in walker.IdentifierNames)
                 {
                     var symbol = semanticModel.GetSymbolSafe(identifierName, cancellationToken);
                     if (symbol == null)
