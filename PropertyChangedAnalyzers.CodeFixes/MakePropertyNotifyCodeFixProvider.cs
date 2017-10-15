@@ -147,10 +147,7 @@
                 var code = StringBuilderPool.Borrow()
                                             .AppendLine($"public Type PropertyName")
                                             .AppendLine("{")
-                                            .AppendLine("    get")
-                                            .AppendLine("    {")
-                                            .AppendLine($"        return {fieldAccess};")
-                                            .AppendLine("    }")
+                                            .AppendLine($"    get => {fieldAccess};")
                                             .AppendLine()
                                             .AppendLine("    set")
                                             .AppendLine("    {")
@@ -167,9 +164,8 @@
                 var template = ParseProperty(code);
                 editor.ReplaceNode(
                     getter,
-                    x => x.WithBody(template.Getter().Body)
-                          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                          .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                    x => x.WithExpressionBody(template.Getter().ExpressionBody)
+                          .WithTrailingElasticLineFeed()
                           .WithAdditionalAnnotations(Formatter.Annotation));
                 editor.ReplaceNode(
                     setter,

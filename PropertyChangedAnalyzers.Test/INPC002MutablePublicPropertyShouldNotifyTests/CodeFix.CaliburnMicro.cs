@@ -40,11 +40,7 @@ namespace RoslynSandbox
 
         public int Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (value == this.bar)
