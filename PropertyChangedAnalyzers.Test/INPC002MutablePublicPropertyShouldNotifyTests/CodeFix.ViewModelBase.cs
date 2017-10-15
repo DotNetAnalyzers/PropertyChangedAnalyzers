@@ -287,6 +287,78 @@ namespace RoslynSandbox.Client
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
                 AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
             }
+
+            [Test]
+            public void AutoPropertyWhenRecursionInSetValue()
+            {
+                var viewModelBaseCode = @"
+namespace RoslynSandbox.Core
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class ViewModelBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            return this.SetValue(ref field, newValue, propertyName);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : RoslynSandbox.Core.ViewModelBase
+    {
+        ↓public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox.Client
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : RoslynSandbox.Core.ViewModelBase
+    {
+        private int bar;
+
+        public int Bar
+        {
+            get
+            {
+                return this.bar;
+            }
+
+            set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged();
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { viewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { viewModelBaseCode, testCode }, fixedCode);
+            }
         }
     }
 }
