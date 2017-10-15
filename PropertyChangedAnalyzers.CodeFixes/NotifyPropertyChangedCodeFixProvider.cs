@@ -46,7 +46,8 @@
                         var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
                         if (PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, context.CancellationToken))
                         {
-                            if (invocation.Parent is ExpressionStatementSyntax)
+                            if (invocation.Parent is ExpressionStatementSyntax ||
+                                invocation.Parent is ArrowExpressionClauseSyntax)
                             {
                                 context.RegisterCodeFix(
                                     CodeAction.Create(
@@ -138,8 +139,8 @@
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
-            var assignStatement = invocation.FirstAncestorOrSelf<ExpressionStatementSyntax>();
-            if (assignStatement?.Parent is BlockSyntax)
+            if (invocation.Parent is ExpressionStatementSyntax assignStatement &&
+                assignStatement.Parent is BlockSyntax)
             {
                 editor.ReplaceNode(
                     assignStatement,
@@ -157,6 +158,34 @@
                                             .WithLeadingElasticLineFeed()
                                             .WithTrailingElasticLineFeed()
                                             .WithAdditionalAnnotations(Formatter.Annotation);
+                    });
+                editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
+
+                return editor.GetChangedDocument();
+            }
+
+            if (invocation.Parent is ArrowExpressionClauseSyntax arrow &&
+                arrow.Parent is AccessorDeclarationSyntax accessor)
+            {
+                editor.RemoveNode(accessor.ExpressionBody);
+                editor.ReplaceNode(
+                    accessor,
+                    x =>
+                    {
+                        var code = StringBuilderPool.Borrow()
+                                                    .AppendLine($"if ({invocation.ToFullString().TrimEnd('\r', '\n')})")
+                                                    .AppendLine("{")
+                                                    .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
+                                                    .AppendLine("}")
+                                                    .Return();
+
+                        var body = SyntaxFactory.ParseStatement(code)
+                                                .WithSimplifiedNames()
+                                                .WithLeadingElasticLineFeed()
+                                                .WithTrailingElasticLineFeed()
+                                                .WithAdditionalAnnotations(Formatter.Annotation);
+                        return x.WithBody(SyntaxFactory.Block(body))
+                                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                     });
                 editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
 

@@ -166,7 +166,7 @@ namespace RoslynSandbox.Client
 
         public string Name
         {
-            get => return this.name;
+            get => this.name;
             set
             {
                 if (this.SetValue(ref this.name, value))

@@ -148,7 +148,7 @@ namespace RoslynSandbox
 
         public string Name
         {
-            get => return this.name;
+            get => this.name;
             set
             {
                 if (this.Set(ref this.name, value))

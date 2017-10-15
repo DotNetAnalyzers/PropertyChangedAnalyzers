@@ -166,23 +166,16 @@
                                             .Return();
                 var template = ParseProperty(code);
                 editor.ReplaceNode(
-                    propertyDeclaration.AccessorList,
-                    propertyDeclaration.AccessorList
-                                       .ReplaceNodes(
-                                           new[] { getter, setter },
-                                           (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
-                                               ? getter.WithBody(
-                                                           template.Getter()
-                                                                   .Body)
-                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                       .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                       .WithAdditionalAnnotations(Formatter.Annotation)
-                                               : setter.WithBody(
-                                                           template.Setter()
-                                                                   .Body)
-                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                       .WithAdditionalAnnotations(Formatter.Annotation))
-                                       .WithAdditionalAnnotations(Formatter.Annotation));
+                    getter,
+                    x => x.WithBody(template.Getter().Body)
+                          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                          .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                          .WithAdditionalAnnotations(Formatter.Annotation));
+                editor.ReplaceNode(
+                    setter,
+                    x => x.WithBody(template.Setter().Body)
+                          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                          .WithAdditionalAnnotations(Formatter.Annotation));
                 if (propertyDeclaration.Initializer != null)
                 {
                     editor.ReplaceNode(
@@ -190,6 +183,7 @@
                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
 
+                editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
                 return editor.GetChangedDocument();
             }
 
