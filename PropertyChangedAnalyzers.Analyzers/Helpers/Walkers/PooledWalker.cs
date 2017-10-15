@@ -6,9 +6,10 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
-    internal abstract class PooledWalker : CSharpSyntaxWalker, IDisposable
+    internal abstract class PooledWalker<T> : CSharpSyntaxWalker, IDisposable
+        where T : PooledWalker<T>
     {
-        private static readonly ConcurrentQueue<PooledWalker> Cache = new ConcurrentQueue<PooledWalker>();
+        private static readonly ConcurrentQueue<PooledWalker<T>> Cache = new ConcurrentQueue<PooledWalker<T>>();
         private int refCount;
 
         public void Dispose()
@@ -16,16 +17,21 @@
             this.Dispose(true);
         }
 
-        protected static T Borrow<T>(SyntaxNode node, Func<T> create)
-            where T : PooledWalker
+        protected static T BorrowAndVisit(SyntaxNode node, Func<T> create)
+        {
+            var walker = Borrow(create);
+            walker.Visit(node);
+            return walker;
+        }
+
+        protected static T Borrow(Func<T> create)
         {
             if (!Cache.TryDequeue(out var walker))
             {
                 walker = create();
             }
 
-            walker.refCount = 0;
-            walker.Visit(node);
+            walker.refCount = 1;
             return (T)walker;
         }
 

@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal sealed class AssignmentWalker : PooledWalker
+    internal sealed class AssignmentWalker : PooledWalker<AssignmentWalker>
     {
         private readonly List<AssignmentExpressionSyntax> assignments = new List<AssignmentExpressionSyntax>();
 
@@ -24,7 +24,7 @@
             base.VisitAssignmentExpression(node);
         }
 
-        internal static AssignmentWalker Borrow(SyntaxNode node) => Borrow(node, () => new AssignmentWalker());
+        internal static AssignmentWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new AssignmentWalker());
 
         internal static bool Assigns(IFieldSymbol field, SyntaxNode scope, SemanticModel semanticModel, CancellationToken cancellationToken)
         {

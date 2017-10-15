@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal sealed class ReturnExpressionsWalker : PooledWalker
+    internal sealed class ReturnExpressionsWalker : PooledWalker<ReturnExpressionsWalker>
     {
         private readonly List<ExpressionSyntax> returnValues = new List<ExpressionSyntax>();
 
@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers
 
         public IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
 
-        public static ReturnExpressionsWalker Borrow(SyntaxNode node) => Borrow(node, () => new ReturnExpressionsWalker());
+        public static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
 
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {
