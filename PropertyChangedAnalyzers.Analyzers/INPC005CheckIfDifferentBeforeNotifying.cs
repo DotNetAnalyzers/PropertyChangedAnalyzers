@@ -61,9 +61,9 @@ namespace PropertyChangedAnalyzers
             if (Property.TryGetSingleAssignmentInSetter(setter, out _) &&
                 Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
             {
-                using (var pooledIfStatements = IfStatementWalker.Create(setter))
+                using (var walker = IfStatementWalker.Borrow(setter))
                 {
-                    foreach (var ifStatement in pooledIfStatements.Item.IfStatements)
+                    foreach (var ifStatement in walker.IfStatements)
                     {
                         if (ifStatement.SpanStart >= invocation.SpanStart)
                         {

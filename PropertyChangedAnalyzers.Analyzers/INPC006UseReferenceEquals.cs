@@ -92,9 +92,9 @@ namespace PropertyChangedAnalyzers
 
         private static bool Notifies(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            using (var pooled = InvocationWalker.Create(setter))
+            using (var walker = InvocationWalker.Borrow(setter))
             {
-                foreach (var invocation in pooled.Item.Invocations)
+                foreach (var invocation in walker.Invocations)
                 {
                     if (PropertyChanged.IsNotifyPropertyChanged(invocation, semanticModel, cancellationToken))
                     {

@@ -1,20 +1,13 @@
 ﻿namespace PropertyChangedAnalyzers
 {
-    using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Threading;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal sealed class IdentifierNameWalker : CSharpSyntaxWalker, IDisposable
+    internal sealed class IdentifierNameWalker : PooledWalker
     {
-        private static readonly ConcurrentQueue<IdentifierNameWalker> Cache = new ConcurrentQueue<IdentifierNameWalker>();
-
         private readonly List<IdentifierNameSyntax> identifierNames = new List<IdentifierNameSyntax>();
-        private int refCount;
 
         private IdentifierNameWalker()
         {
@@ -22,17 +15,7 @@
 
         public IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
 
-        public static IdentifierNameWalker Borrow(SyntaxNode node)
-        {
-            if (!Cache.TryDequeue(out var walker))
-            {
-                walker = new IdentifierNameWalker();
-            }
-
-            walker.refCount = 0;
-            walker.Visit(node);
-            return walker;
-        }
+        public static IdentifierNameWalker Borrow(SyntaxNode node) => Borrow(node, () => new IdentifierNameWalker());
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
@@ -55,23 +38,9 @@
             return false;
         }
 
-        public void Dispose()
+        protected override void Clear()
         {
-            this.refCount--;
-            if (this.refCount == 0)
-            {
-                this.identifierNames.Clear();
-                Cache.Enqueue(this);
-            }
-        }
-
-        [Conditional("DEBUG")]
-        private void ThrowIfDisposed()
-        {
-            if (this.refCount == 0)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            this.identifierNames.Clear();
         }
     }
 }

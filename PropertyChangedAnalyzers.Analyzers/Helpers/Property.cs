@@ -22,14 +22,14 @@
                     return false;
                 }
 
-                using (var pooledReturns = ReturnExpressionsWalker.Create(getter.Body))
+                using (var walker = ReturnExpressionsWalker.Borrow(getter.Body))
                 {
-                    if (pooledReturns.Item.ReturnValues.Count == 0)
+                    if (walker.ReturnValues.Count == 0)
                     {
                         return false;
                     }
 
-                    foreach (var returnValue in pooledReturns.Item.ReturnValues)
+                    foreach (var returnValue in walker.ReturnValues)
                     {
                         var returnedSymbol = returnValue?.IsKind(SyntaxKind.CoalesceExpression) == true
                             ? semanticModel.GetSymbolSafe((returnValue as BinaryExpressionSyntax)?.Left, cancellationToken) as IFieldSymbol
@@ -171,9 +171,9 @@
 
                 if (propertyDeclaration.ExpressionBody != null)
                 {
-                    using (var pooled = ReturnExpressionsWalker.Create(propertyDeclaration.ExpressionBody))
+                    using (var walker = ReturnExpressionsWalker.Borrow(propertyDeclaration.ExpressionBody))
                     {
-                        if (pooled.Item.ReturnValues.TryGetSingle(out var expression))
+                        if (walker.ReturnValues.TryGetSingle(out var expression))
                         {
                             field = semanticModel.GetSymbolSafe(expression, cancellationToken) as IFieldSymbol;
                             return field != null;
@@ -183,9 +183,9 @@
 
                 if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter))
                 {
-                    using (var pooled = ReturnExpressionsWalker.Create(getter))
+                    using (var pooled = ReturnExpressionsWalker.Borrow(getter))
                     {
-                        if (pooled.Item.ReturnValues.TryGetSingle(out var expression))
+                        if (pooled.ReturnValues.TryGetSingle(out var expression))
                         {
                             field = semanticModel.GetSymbolSafe(expression, cancellationToken) as IFieldSymbol;
                             return field != null;
@@ -251,9 +251,9 @@
                 return false;
             }
 
-            using (var pooledInvocations = InvocationWalker.Create(setter))
+            using (var walker = InvocationWalker.Borrow(setter))
             {
-                return pooledInvocations.Item.Invocations.TryGetSingle(
+                return walker.Invocations.TryGetSingle(
                     x => PropertyChanged.IsSetAndRaiseCall(
                         x, semanticModel, cancellationToken),
                     out invocation);
@@ -268,9 +268,9 @@
                 return false;
             }
 
-            using (var pooled = AssignmentWalker.Create(setter))
+            using (var walker = AssignmentWalker.Borrow(setter))
             {
-                if (pooled.Item.Assignments.TryGetSingle(out assignment) &&
+                if (walker.Assignments.TryGetSingle(out assignment) &&
                     assignment.Right is IdentifierNameSyntax identifierName &&
                     identifierName.Identifier.ValueText == "value")
                 {
@@ -284,9 +284,9 @@
 
         internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
         {
-            using (var pooled = AssignmentWalker.Create(setter))
+            using (var walker = AssignmentWalker.Borrow(setter))
             {
-                foreach (var a in pooled.Item.Assignments)
+                foreach (var a in walker.Assignments)
                 {
                     if ((a.Right as IdentifierNameSyntax)?.Identifier.ValueText != "value")
                     {

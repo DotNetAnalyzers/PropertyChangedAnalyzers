@@ -36,9 +36,9 @@
                 return AnalysisResult.No;
             }
 
-            using (var pooled = InvocationWalker.Create(block))
+            using (var walker = InvocationWalker.Borrow(block))
             {
-                foreach (var invocation in pooled.Item.Invocations)
+                foreach (var invocation in walker.Invocations)
                 {
                     if (invocation.SpanStart < assignment.SpanStart)
                     {
@@ -324,9 +324,9 @@
 
             foreach (var declaration in method.Declarations(cancellationToken))
             {
-                using (var pooled = InvocationWalker.Create(declaration))
+                using (var walker = InvocationWalker.Borrow(declaration))
                 {
-                    foreach (var invocation in pooled.Item.Invocations)
+                    foreach (var invocation in walker.Invocations)
                     {
                         if (invocation.ArgumentList == null ||
                             invocation.ArgumentList.Arguments.Count == 0)
@@ -538,21 +538,21 @@
             if (candidate.DeclaringSyntaxReferences.TryGetSingle(out var reference))
             {
                 var syntaxNode = (MethodDeclarationSyntax)reference.GetSyntax();
-                using (var pooled = InvocationWalker.Create(syntaxNode))
+                using (var walker = InvocationWalker.Borrow(syntaxNode))
                 {
-                    if (!pooled.Item.Invocations.TryGetSingle(
+                    if (!walker.Invocations.TryGetSingle(
                         x => IsNotifyPropertyChanged(x, semanticModel, cancellationToken),
                         out _))
                     {
-                        return pooled.Item.Invocations.TryGetSingle(
+                        return walker.Invocations.TryGetSingle(
                             x => IsSetAndRaiseCall(x, semanticModel, cancellationToken),
                             out _);
                     }
                 }
 
-                using (var pooled = AssignmentWalker.Create(syntaxNode))
+                using (var walker = AssignmentWalker.Borrow(syntaxNode))
                 {
-                    if (!pooled.Item.Assignments.TryGetSingle(
+                    if (!walker.Assignments.TryGetSingle(
                         x => semanticModel.GetSymbolSafe(x.Left, cancellationToken)?.Name == candidate.Parameters[0].Name &&
                              semanticModel.GetSymbolSafe(x.Right, cancellationToken)?.Name == candidate.Parameters[1].Name,
                         out _))
