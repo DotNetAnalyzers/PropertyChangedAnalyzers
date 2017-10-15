@@ -144,51 +144,53 @@
                 var fieldAccess = usesUnderscoreNames
                     ? backingField.Name()
                     : $"this.{backingField.Name()}";
-                using (var pooled = StringBuilderPool.Borrow())
+                var code = StringBuilderPool.Borrow()
+                                            .AppendLine($"public Type PropertyName")
+                                            .AppendLine("{")
+                                            .AppendLine("    get")
+                                            .AppendLine("    {")
+                                            .AppendLine($"        return {fieldAccess};")
+                                            .AppendLine("    }")
+                                            .AppendLine()
+                                            .AppendLine("    set")
+                                            .AppendLine("    {")
+                                            .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", fieldAccess, semanticModel)})")
+                                            .AppendLine("        {")
+                                            .AppendLine($"           return;")
+                                            .AppendLine("        }")
+                                            .AppendLine()
+                                            .AppendLine($"        {fieldAccess} = value;")
+                                            .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)}")
+                                            .AppendLine("    }")
+                                            .AppendLine("}")
+                                            .Return();
+                var template = ParseProperty(code);
+                editor.ReplaceNode(
+                    propertyDeclaration.AccessorList,
+                    propertyDeclaration.AccessorList
+                                       .ReplaceNodes(
+                                           new[] { getter, setter },
+                                           (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
+                                               ? getter.WithBody(
+                                                           template.Getter()
+                                                                   .Body)
+                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                       .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                       .WithAdditionalAnnotations(Formatter.Annotation)
+                                               : setter.WithBody(
+                                                           template.Setter()
+                                                                   .Body)
+                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                       .WithAdditionalAnnotations(Formatter.Annotation))
+                                       .WithAdditionalAnnotations(Formatter.Annotation));
+                if (propertyDeclaration.Initializer != null)
                 {
-                    var code = pooled.Item.AppendLine($"public Type PropertyName")
-                                     .AppendLine("{")
-                                     .AppendLine("    get")
-                                     .AppendLine("    {")
-                                     .AppendLine($"        return {fieldAccess};")
-                                     .AppendLine("    }")
-                                     .AppendLine()
-                                     .AppendLine("    set")
-                                     .AppendLine("    {")
-                                     .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", fieldAccess, semanticModel)})")
-                                     .AppendLine("        {")
-                                     .AppendLine($"           return;")
-                                     .AppendLine("        }")
-                                     .AppendLine()
-                                     .AppendLine($"        {fieldAccess} = value;")
-                                     .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)}")
-                                     .AppendLine("    }")
-                                     .AppendLine("}")
-                                     .ToString();
-                    var template = ParseProperty(code);
                     editor.ReplaceNode(
-                        propertyDeclaration.AccessorList,
-                        propertyDeclaration.AccessorList
-                                           .ReplaceNodes(
-                                               new[] { getter, setter },
-                                               (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
-                                                   ? getter.WithBody(template.Getter().Body)
-                                                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                           .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                           .WithAdditionalAnnotations(Formatter.Annotation)
-                                                   : setter.WithBody(template.Setter().Body)
-                                                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                           .WithAdditionalAnnotations(Formatter.Annotation))
-                                           .WithAdditionalAnnotations(Formatter.Annotation));
-                    if (propertyDeclaration.Initializer != null)
-                    {
-                        editor.ReplaceNode(
-                            propertyDeclaration,
-                            (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
-                    }
-
-                    return editor.GetChangedDocument();
+                        propertyDeclaration,
+                        (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
+
+                return editor.GetChangedDocument();
             }
 
             return document;
@@ -219,37 +221,39 @@
                 var fieldAccess = usesUnderscoreNames
                     ? backingField.Name()
                     : $"this.{backingField.Name()}";
-                using (var pooled = StringBuilderPool.Borrow())
+                var code = StringBuilderPool.Borrow()
+                                            .AppendLine($"public Type PropertyName")
+                                            .AppendLine("{")
+                                            .AppendLine($"    get {{ return {fieldAccess}; }}")
+                                            .AppendLine($"    set {{ {(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value); }}")
+                                            .AppendLine("}")
+                                            .Return();
+                var template = ParseProperty(code);
+                editor.ReplaceNode(
+                    propertyDeclaration.AccessorList,
+                    propertyDeclaration.AccessorList
+                                       .ReplaceNodes(
+                                           new[] { getter, setter },
+                                           (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
+                                               ? getter.WithBody(
+                                                           template.Getter()
+                                                                   .Body)
+                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                       .WithAdditionalAnnotations(Formatter.Annotation)
+                                               : setter.WithBody(
+                                                           template.Setter()
+                                                                   .Body)
+                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                                       .WithAdditionalAnnotations(Formatter.Annotation))
+                                       .WithAdditionalAnnotations(Formatter.Annotation));
+                if (propertyDeclaration.Initializer != null)
                 {
-                    var code = pooled.Item.AppendLine($"public Type PropertyName")
-                                     .AppendLine("{")
-                                     .AppendLine($"    get {{ return {fieldAccess}; }}")
-                                     .AppendLine($"    set {{ {(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value); }}")
-                                     .AppendLine("}")
-                                     .ToString();
-                    var template = ParseProperty(code);
                     editor.ReplaceNode(
-                        propertyDeclaration.AccessorList,
-                        propertyDeclaration.AccessorList
-                                           .ReplaceNodes(
-                                               new[] { getter, setter },
-                                               (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
-                                                   ? getter.WithBody(template.Getter().Body)
-                                                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                           .WithAdditionalAnnotations(Formatter.Annotation)
-                                                   : setter.WithBody(template.Setter().Body)
-                                                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                           .WithAdditionalAnnotations(Formatter.Annotation))
-                                           .WithAdditionalAnnotations(Formatter.Annotation));
-                    if (propertyDeclaration.Initializer != null)
-                    {
-                        editor.ReplaceNode(
-                            propertyDeclaration,
-                            (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
-                    }
-
-                    return editor.GetChangedDocument();
+                        propertyDeclaration,
+                        (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
+
+                return editor.GetChangedDocument();
             }
 
             return document;
@@ -277,14 +281,13 @@
                 if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out var assignment, out _))
                 {
                     var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                    using (var pooled = StringBuilderPool.Borrow())
                     {
-                        var code = pooled.Item.AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
+                        var code = StringBuilderPool.Borrow().AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
                                          .AppendLine("        {")
                                          .AppendLine($"           return;")
                                          .AppendLine("        }")
                                          .AppendLine()
-                                         .ToString();
+                                         .Return();
                         var ifStatement = SyntaxFactory.ParseStatement(code)
                                                        .WithSimplifiedNames()
                                                        .WithLeadingElasticLineFeed()
