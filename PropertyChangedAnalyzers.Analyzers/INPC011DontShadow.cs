@@ -27,7 +27,6 @@ namespace PropertyChangedAnalyzers
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(Handle, SyntaxKind.EventFieldDeclaration);
             context.RegisterSyntaxNodeAction(Handle, SyntaxKind.EventDeclaration);
         }
