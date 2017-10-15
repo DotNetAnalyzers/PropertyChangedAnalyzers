@@ -15,6 +15,6 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant(false)]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("0.1.0.10")]
-[assembly: AssemblyFileVersion("0.1.0.10")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: InternalsVisibleTo("PropertyChangedAnalyzers.Test")]
