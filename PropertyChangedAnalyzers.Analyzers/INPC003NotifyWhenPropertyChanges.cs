@@ -256,7 +256,7 @@
 
             if (property.TryGetGetAccessorDeclaration(out var getter))
             {
-                return getter.Body;
+                return (SyntaxNode)getter.Body ?? getter.ExpressionBody;
             }
 
             return null;

@@ -224,28 +224,19 @@
                 var code = StringBuilderPool.Borrow()
                                             .AppendLine($"public Type PropertyName")
                                             .AppendLine("{")
-                                            .AppendLine($"    get {{ return {fieldAccess}; }}")
-                                            .AppendLine($"    set {{ {(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value); }}")
+                                            .AppendLine($"    get => {fieldAccess};")
+                                            .AppendLine($"    set => {(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
                                             .AppendLine("}")
                                             .Return();
                 var template = ParseProperty(code);
                 editor.ReplaceNode(
-                    propertyDeclaration.AccessorList,
-                    propertyDeclaration.AccessorList
-                                       .ReplaceNodes(
-                                           new[] { getter, setter },
-                                           (x, _) => x.IsKind(SyntaxKind.GetAccessorDeclaration)
-                                               ? getter.WithBody(
-                                                           template.Getter()
-                                                                   .Body)
-                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                       .WithAdditionalAnnotations(Formatter.Annotation)
-                                               : setter.WithBody(
-                                                           template.Setter()
-                                                                   .Body)
-                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                                       .WithAdditionalAnnotations(Formatter.Annotation))
-                                       .WithAdditionalAnnotations(Formatter.Annotation));
+                    getter,
+                    x => x.WithExpressionBody(template.Getter().ExpressionBody));
+
+                editor.ReplaceNode(
+                    setter,
+                    x => x.WithExpressionBody(template.Setter().ExpressionBody));
+
                 if (propertyDeclaration.Initializer != null)
                 {
                     editor.ReplaceNode(
@@ -253,6 +244,7 @@
                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
 
+                editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
                 return editor.GetChangedDocument();
             }
 

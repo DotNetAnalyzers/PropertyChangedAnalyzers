@@ -58,6 +58,27 @@ namespace RoslynSandbox.Client
                 AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(ViewModelBaseCode, testCode);
             }
 
+            [Test]
+            public void SetExpressionBodies()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : RoslynSandbox.Core.ViewModelBase
+    {
+        private int value;
+
+        public int Value
+        {
+            get => return value;
+            set => this.SetValue(ref this.value, value);
+        }
+    }
+}";
+
+                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+            }
+
             [TestCase("null")]
             [TestCase("string.Empty")]
             [TestCase(@"""Bar""")]
