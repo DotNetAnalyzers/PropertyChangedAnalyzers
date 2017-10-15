@@ -108,8 +108,10 @@
         {
             if (property.TryGetGetAccessorDeclaration(out getter) &&
                 getter.Body == null &&
+                getter.ExpressionBody == null &&
                 property.TryGetSetAccessorDeclaration(out setter) &&
-                setter.Body == null)
+                setter.Body == null &&
+                setter.ExpressionBody == null)
             {
                 return true;
             }

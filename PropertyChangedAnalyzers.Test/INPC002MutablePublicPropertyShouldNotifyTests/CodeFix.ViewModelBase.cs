@@ -86,9 +86,6 @@ namespace RoslynSandbox.Client
                 var testCode = @"
 namespace RoslynSandbox.Client
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         ↓public int Bar { get; set; }
@@ -98,18 +95,37 @@ namespace RoslynSandbox.Client
                 var fixedCode = @"
 namespace RoslynSandbox.Client
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private int bar;
 
-        public int Bar
-        {
-            get { return this.bar; }
-            set { this.SetValue(ref this.bar, value); }
-        }
+        public int Bar { get => this.bar; set => this.SetValue(ref this.bar, value); }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
+            }
+
+            [Test]
+            public void AutoPropertyInitailzedToSet()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class Foo : RoslynSandbox.Core.ViewModelBase
+    {
+        ↓public int Bar { get; set; } = 1;
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox.Client
+{
+    public class Foo : RoslynSandbox.Core.ViewModelBase
+    {
+        private int bar = 1;
+
+        public int Bar { get => this.bar; set => this.SetValue(ref this.bar, value); }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
@@ -135,11 +151,7 @@ namespace RoslynSandbox.Client
     {
         private int bar;
 
-        public virtual int Bar
-        {
-            get { return this.bar; }
-            set { this.SetValue(ref this.bar, value); }
-        }
+        public virtual int Bar { get => this.bar; set => this.SetValue(ref this.bar, value); }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
@@ -165,11 +177,7 @@ namespace RoslynSandbox.Client
     {
         private int bar;
 
-        public int Bar
-        {
-            get { return this.bar; }
-            private set { this.SetValue(ref this.bar, value); }
-        }
+        public int Bar { get => this.bar; private set => this.SetValue(ref this.bar, value); }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
@@ -205,11 +213,7 @@ namespace RoslynSandbox.Client
             Bar = bar;
         }
 
-        public int Bar
-        {
-            get { return _bar; }
-            set { SetValue(ref _bar, value); }
-        }
+        public int Bar { get => _bar; set => SetValue(ref _bar, value); }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
@@ -317,9 +321,6 @@ namespace RoslynSandbox.Core
                 var testCode = @"
 namespace RoslynSandbox.Client
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         ↓public int Bar { get; set; }
@@ -329,9 +330,6 @@ namespace RoslynSandbox.Client
                 var fixedCode = @"
 namespace RoslynSandbox.Client
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private int bar;

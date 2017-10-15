@@ -155,5 +155,58 @@ namespace RoslynSandBox
             Assert.AreEqual(expected, Property.TryGetBackingFieldFromSetter(property, semanticModel, CancellationToken.None, out var field));
             Assert.AreEqual(fieldName, field?.Name);
         }
+
+        [TestCase("Value1", false)]
+        [TestCase("Value2", true)]
+        [TestCase("Value3", false)]
+        [TestCase("Value4", false)]
+        [TestCase("Value5", false)]
+        [TestCase("Value6", false)]
+        public void IsMutableAutoProperty(string propertyName, bool expected)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandBox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo
+    {
+        private readonly int value3;
+        private readonly int value4;
+        private int value5;
+        private int value6;
+
+        public int Value1 { get; }
+
+        public int Value2 { get; set; }
+
+        public int Value3 => this.value3;
+
+        public int Value4
+        {
+            get
+            {
+                return this.value4;
+            }
+        }
+
+        public int Value5
+        {
+            get { return this.value5; }
+            set { this.value5 = value; }
+        }
+
+        public int Value6
+        {
+            get => this.value6;
+            private set => this.value6 = value;
+        }
+    }
+}");
+            var property = syntaxTree.FindPropertyDeclaration(propertyName);
+            Assert.AreEqual(expected, Property.IsMutableAutoProperty(property));
+        }
     }
 }

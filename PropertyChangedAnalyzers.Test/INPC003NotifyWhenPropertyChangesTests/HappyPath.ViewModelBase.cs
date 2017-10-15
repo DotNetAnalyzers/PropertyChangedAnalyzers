@@ -65,6 +65,26 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
+            public void SetPropertyExpressionBodies()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => return this.name;
+            set => this.SetValue(ref this.name, value)
+        }
+    }
+}";
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            }
+
+            [Test]
             public void SetAffectsCalculatedPropertyNameOf()
             {
                 var testCode = @"
