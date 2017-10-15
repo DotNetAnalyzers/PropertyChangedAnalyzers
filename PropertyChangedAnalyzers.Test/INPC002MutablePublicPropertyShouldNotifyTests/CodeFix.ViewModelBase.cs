@@ -95,7 +95,11 @@ namespace RoslynSandbox.Client
     {
         private int bar;
 
-        public int Bar { get => this.bar; set => this.SetValue(ref this.bar, value); }
+        public int Bar
+        {
+            get => this.bar;
+            set => this.SetValue(ref this.bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
@@ -121,7 +125,11 @@ namespace RoslynSandbox.Client
     {
         private int bar = 1;
 
-        public int Bar { get => this.bar; set => this.SetValue(ref this.bar, value); }
+        public int Bar
+        {
+            get => this.bar;
+            set => this.SetValue(ref this.bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
@@ -147,7 +155,11 @@ namespace RoslynSandbox.Client
     {
         private int bar;
 
-        public virtual int Bar { get => this.bar; set => this.SetValue(ref this.bar, value); }
+        public virtual int Bar
+        {
+            get => this.bar;
+            set => this.SetValue(ref this.bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
@@ -173,7 +185,11 @@ namespace RoslynSandbox.Client
     {
         private int bar;
 
-        public int Bar { get => this.bar; private set => this.SetValue(ref this.bar, value); }
+        public int Bar
+        {
+            get => this.bar;
+            private set => this.SetValue(ref this.bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");
@@ -209,7 +225,11 @@ namespace RoslynSandbox.Client
             Bar = bar;
         }
 
-        public int Bar { get => _bar; set => SetValue(ref _bar, value); }
+        public int Bar
+        {
+            get => _bar;
+            set => SetValue(ref _bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "ViewModelBase.SetValue.");

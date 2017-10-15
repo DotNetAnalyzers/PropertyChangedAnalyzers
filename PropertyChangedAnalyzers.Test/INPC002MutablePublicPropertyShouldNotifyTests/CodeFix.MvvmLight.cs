@@ -77,7 +77,11 @@ namespace RoslynSandbox
     {
         private int bar;
 
-        public int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
+        public int Bar
+        {
+            get => this.bar;
+            set => this.Set(ref this.bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
@@ -103,7 +107,11 @@ namespace RoslynSandbox
     {
         private int bar = 1;
 
-        public int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
+        public int Bar
+        {
+            get => this.bar;
+            set => this.Set(ref this.bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
@@ -129,7 +137,11 @@ namespace RoslynSandbox
     {
         private int bar;
 
-        public virtual int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
+        public virtual int Bar
+        {
+            get => this.bar;
+            set => this.Set(ref this.bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
@@ -155,7 +167,11 @@ namespace RoslynSandbox
     {
         private int bar;
 
-        public int Bar { get => this.bar; private set => this.Set(ref this.bar, value); }
+        public int Bar
+        {
+            get => this.bar;
+            private set => this.Set(ref this.bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
@@ -191,7 +207,11 @@ namespace RoslynSandbox
             Bar = bar;
         }
 
-        public int Bar { get => _bar; set => Set(ref _bar, value); }
+        public int Bar
+        {
+            get => _bar;
+            set => Set(ref _bar, value);
+        }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
