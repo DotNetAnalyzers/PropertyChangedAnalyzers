@@ -14,7 +14,7 @@
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Mutable public property should notify.",
-            messageFormat: "Property '{0}' must notify when value changes.",
+            messageFormat: "Property '{0}' should notify when value changes.",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,

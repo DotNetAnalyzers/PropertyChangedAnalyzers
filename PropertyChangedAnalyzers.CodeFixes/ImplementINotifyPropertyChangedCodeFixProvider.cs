@@ -150,7 +150,11 @@
                         Accessibility.Public));
             }
 
-            if (!type.TryGetMethod("OnPropertyChanged", m => m.Parameters.Length == 1 && m.Parameters[0].Type == KnownSymbol.String, out _))
+            if (!type.TryGetMethod(
+                "OnPropertyChanged",
+                m => m.Parameters.Length == 1 &&
+                     m.Parameters[0].Type == KnownSymbol.String,
+                out _))
             {
                 if (type.IsSealed)
                 {
