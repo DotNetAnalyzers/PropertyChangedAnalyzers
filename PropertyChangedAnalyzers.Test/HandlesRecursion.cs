@@ -30,7 +30,6 @@
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
 {
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -53,9 +52,6 @@ namespace RoslynSandbox.Core
             var testCode = @"
 namespace RoslynSandbox.Client
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private int value2;
@@ -95,9 +91,6 @@ namespace RoslynSandbox.Core
             var testCode = @"
 namespace RoslynSandbox.Client
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         private int value2;
@@ -128,10 +121,10 @@ namespace RoslynSandbox.Client
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public async Task IsProperty(DiagnosticAnalyzer analyzer)
+        public async Task InProperty(DiagnosticAnalyzer analyzer)
         {
             var testCode = @"
-namespace RoslynSandbox.Client
+namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

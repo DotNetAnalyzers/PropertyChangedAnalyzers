@@ -82,6 +82,40 @@ namespace RoslynSandbox
                 Assert.AreEqual("OnPropertyChanged", invoker.Name);
                 Assert.AreEqual("String", invoker.Parameters.Single().Type.MetadataName);
             }
+
+            [Test]
+            public void Recursive()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar { get; set; }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.OnPropertyChanged(e);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.OnPropertyChanged(propertyName);
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var classDeclaration = syntaxTree.FindBestMatch<ClassDeclarationSyntax>("Foo");
+                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+                Assert.AreEqual(false, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out _));
+            }
         }
     }
 }
