@@ -221,11 +221,14 @@
                 var template = ParseProperty(code);
                 editor.ReplaceNode(
                     getter,
-                    x => x.WithExpressionBody(template.Getter().ExpressionBody));
+                    x => x.WithExpressionBody(template.Getter().ExpressionBody)
+                          .WithLeadingLineFeed());
 
                 editor.ReplaceNode(
                     setter,
-                    x => x.WithExpressionBody(template.Setter().ExpressionBody));
+                    x => x.WithExpressionBody(template.Setter().ExpressionBody)
+                          .WithLeadingLineFeed()
+                          .WithTrailingLineFeed());
 
                 if (propertyDeclaration.Initializer != null)
                 {
