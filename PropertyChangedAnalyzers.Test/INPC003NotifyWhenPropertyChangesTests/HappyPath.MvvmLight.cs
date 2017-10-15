@@ -40,6 +40,26 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public void SetPropertyExpressionBodies()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => return this.name;
+            set => this.Set(ref this.name, value)
+        }
+    }
+}";
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            }
+
+            [Test]
             public void SetAffectsCalculatedPropertyNameOf()
             {
                 var testCode = @"

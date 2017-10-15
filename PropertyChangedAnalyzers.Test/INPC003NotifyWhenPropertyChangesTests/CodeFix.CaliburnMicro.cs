@@ -66,6 +66,104 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public void SetAffectsCalculatedPropertyExpressionBodyGetter()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Greeting
+        {
+            get => $""Hello {this.Name}"";
+        }
+
+            public string Name
+        {
+            get { return this.name; }
+            set { this.Set(↓ref this.name, value); }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Greeting
+        {
+            get => $""Hello {this.Name}"";
+        }
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(ref this.name, value))
+                {
+                    this.NotifyOfPropertyChange(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            }
+
+            [Test]
+            public void SetExpressionBodiesAffectsCalculatedProperty()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get => return this.name;
+            set => this.Set(↓ref this.name, value);
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get => return this.name;
+            set
+            {
+                if (this.Set(ref this.name, value))
+                {
+                    this.NotifyOfPropertyChange(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            }
+
+            [Test]
             public void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var testCode = @"
