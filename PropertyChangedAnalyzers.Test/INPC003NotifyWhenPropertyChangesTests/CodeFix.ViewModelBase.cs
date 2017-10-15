@@ -84,6 +84,104 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
+            public void SetAffectsCalculatedPropertyExpressionBodyGetter()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting
+        {
+            get => $""Hello {this.Name}"";
+        }
+
+        public string Name
+        {
+            get { return this.name; }
+            set { this.SetValue(↓ref this.name, value); }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting
+        {
+            get => $""Hello {this.Name}"";
+        }
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.SetValue(ref this.name, value))
+                {
+                    this.OnPropertyChanged(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+            }
+
+            [Test]
+            public void SetExpressionBodiesAffectsCalculatedProperty()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get => this.name;
+            set => this.SetValue(↓ref this.name, value);
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                if (this.SetValue(ref this.name, value))
+                {
+                    this.OnPropertyChanged(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+            }
+
+            [Test]
             public void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var testCode = @"

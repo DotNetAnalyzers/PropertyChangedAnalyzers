@@ -25,9 +25,6 @@
                 var testCode = @"
 namespace RoslynSandbox
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
         ↓public int Bar { get; set; }
@@ -37,9 +34,6 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
         private int bar;
@@ -74,9 +68,6 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
         ↓public int Bar { get; set; }
@@ -86,18 +77,37 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
         private int bar;
 
-        public int Bar
-        {
-            get { return this.bar; }
-            set { this.Set(ref this.bar, value); }
-        }
+        public int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
+            }
+
+            [Test]
+            public void AutoPropertyInitializedToSet()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        ↓public int Bar { get; set; } = 1;
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int bar = 1;
+
+        public int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
@@ -123,11 +133,7 @@ namespace RoslynSandbox
     {
         private int bar;
 
-        public virtual int Bar
-        {
-            get { return this.bar; }
-            set { this.Set(ref this.bar, value); }
-        }
+        public virtual int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
@@ -153,11 +159,7 @@ namespace RoslynSandbox
     {
         private int bar;
 
-        public int Bar
-        {
-            get { return this.bar; }
-            private set { this.Set(ref this.bar, value); }
-        }
+        public int Bar { get => this.bar; private set => this.Set(ref this.bar, value); }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
@@ -193,11 +195,7 @@ namespace RoslynSandbox
             Bar = bar;
         }
 
-        public int Bar
-        {
-            get { return _bar; }
-            set { Set(ref _bar, value); }
-        }
+        public int Bar { get => _bar; set => Set(ref _bar, value); }
     }
 }";
                 AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");

@@ -40,6 +40,27 @@ namespace RoslynSandbox
                 AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
             }
 
+            [Test]
+            public void SetExpressionBodies()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int value;
+
+        public int Value
+        {
+            get => return value;
+            set => this.Set(ref this.value, value);
+        }
+    }
+}";
+
+                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+            }
+
             [TestCase("null")]
             [TestCase("string.Empty")]
             [TestCase(@"""Bar""")]

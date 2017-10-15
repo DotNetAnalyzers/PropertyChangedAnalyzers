@@ -11,6 +11,13 @@ namespace PropertyChangedAnalyzers
 
     internal static class DocumentEditorExt
     {
+        internal static DocumentEditor ReplaceNode<T>(this DocumentEditor editor, T node, Func<T, T> replacement)
+            where T : SyntaxNode
+        {
+            editor.ReplaceNode(node, (x, _) => replacement((T)x));
+            return editor;
+        }
+
         internal static DocumentEditor FormatNode(this DocumentEditor editor, SyntaxNode node)
         {
             if (node == null)
