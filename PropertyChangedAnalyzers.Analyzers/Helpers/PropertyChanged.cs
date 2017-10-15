@@ -1,7 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -276,7 +275,7 @@
             return true;
         }
 
-        internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, HashSet<IMethodSymbol> @checked = null)
+        internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
         {
             if (@checked?.Add(method) == false)
             {
@@ -402,15 +401,10 @@
                         {
                             if (argsWalker.Contains(parameter, semanticModel, cancellationToken))
                             {
-                                if (@checked == null)
+                                using (var set = PooledHashSet<IMethodSymbol>.Borrow(@checked))
                                 {
-                                    using (var pooledSet = SetPool<IMethodSymbol>.Create())
-                                    {
-                                        return IsInvoker(invokedMethod, semanticModel, cancellationToken, pooledSet.Item);
-                                    }
+                                    return IsInvoker(invokedMethod, semanticModel, cancellationToken, set);
                                 }
-
-                                return IsInvoker(invokedMethod, semanticModel, cancellationToken, @checked);
                             }
                         }
                     }
@@ -494,16 +488,22 @@
             return type.TryGetMethod(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method);
         }
 
-        internal static bool IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
         {
             return IsSetAndRaiseMethod(
                 semanticModel.GetSymbolSafe(candidate, cancellationToken) as IMethodSymbol,
                 semanticModel,
-                cancellationToken);
+                cancellationToken,
+                @checked);
         }
 
-        internal static bool IsSetAndRaiseMethod(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsSetAndRaiseMethod(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
         {
+            if (@checked?.Add(candidate) == false)
+            {
+                return false;
+            }
+
             if (candidate == null ||
                 candidate.IsStatic)
             {
@@ -544,9 +544,12 @@
                         x => IsNotifyPropertyChanged(x, semanticModel, cancellationToken),
                         out _))
                     {
-                        return walker.Invocations.TryGetSingle(
-                            x => IsSetAndRaiseCall(x, semanticModel, cancellationToken),
-                            out _);
+                        using (var set = PooledHashSet<IMethodSymbol>.Borrow(@checked))
+                        {
+                            return walker.Invocations.TryGetSingle(
+                                x => IsSetAndRaiseCall(x, semanticModel, cancellationToken, set),
+                                out _);
+                        }
                     }
                 }
 

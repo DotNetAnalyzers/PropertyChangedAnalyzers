@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test
 
     internal partial class PropertyChangedTest
     {
-        internal class IsSetAndRaiseMethod
+        internal class TryGetSetAndRaiseMethod
         {
             [Test]
             public void CustomImplementation1()
@@ -49,9 +49,10 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("SetValue");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindBestMatch<TypeDeclarationSyntax>("ViewModelBase");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual("SetValue", method.Name);
             }
 
             [Test]
@@ -107,9 +108,10 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("SetValue");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindBestMatch<TypeDeclarationSyntax>("ObservableObject");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual("SetValue", method.Name);
             }
 
             [Test]
@@ -132,9 +134,10 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("SetValue");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindBestMatch<TypeDeclarationSyntax>("FooBase");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual("SetValue", method.Name);
             }
 
             [Test]
@@ -172,9 +175,9 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("SetValue");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(false, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindBestMatch<TypeDeclarationSyntax>("ViewModelBase");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(false, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -207,9 +210,9 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("SetValue");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(false, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindBestMatch<TypeDeclarationSyntax>("ViewModelBase");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(false, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out _));
             }
         }
     }

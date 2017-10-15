@@ -4,7 +4,6 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Microsoft.CodeAnalysis;
 
     internal sealed class PooledHashSet<T> : IDisposable
     {
@@ -17,7 +16,11 @@
         {
         }
 
-        public bool Add(T item) => this.inner.Add(item);
+        public bool Add(T item)
+        {
+            this.ThrowIfDisposed();
+            return this.inner.Add(item);
+        }
 
         public void Dispose()
         {

@@ -10,33 +10,31 @@
     {
         internal static bool UsesUnderscoreNames(this SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            using (var pooled = Walker.Create(node, semanticModel, cancellationToken))
+            using (var walker = Walker.Borrow(node, semanticModel, cancellationToken))
             {
-                if (pooled.Item.UsesThis == Result.Yes ||
-                    pooled.Item.UsesUnderScore == Result.No)
+                if (walker.UsesThis == Result.Yes ||
+                    walker.UsesUnderScore == Result.No)
                 {
                     return false;
                 }
 
-                if (pooled.Item.UsesUnderScore == Result.Yes ||
-                    pooled.Item.UsesThis == Result.No)
+                if (walker.UsesUnderScore == Result.Yes ||
+                    walker.UsesThis == Result.No)
                 {
                     return true;
                 }
-            }
 
-            foreach (var tree in semanticModel.Compilation.SyntaxTrees)
-            {
-                using (var pooled = Walker.Create(tree.GetRoot(cancellationToken), semanticModel, cancellationToken))
+                foreach (var tree in semanticModel.Compilation.SyntaxTrees)
                 {
-                    if (pooled.Item.UsesThis == Result.Yes ||
-                        pooled.Item.UsesUnderScore == Result.No)
+                    walker.Visit(tree.GetRoot(cancellationToken));
+                    if (walker.UsesThis == Result.Yes ||
+                        walker.UsesUnderScore == Result.No)
                     {
                         return false;
                     }
 
-                    if (pooled.Item.UsesUnderScore == Result.Yes ||
-                        pooled.Item.UsesThis == Result.No)
+                    if (walker.UsesUnderScore == Result.Yes ||
+                        walker.UsesThis == Result.No)
                     {
                         return true;
                     }
@@ -46,18 +44,8 @@
             return false;
         }
 
-        internal sealed class Walker : CSharpSyntaxWalker
+        internal sealed class Walker : PooledWalker<Walker>
         {
-            private static readonly Pool<Walker> Cache = new Pool<Walker>(
-                () => new Walker(),
-                x =>
-                {
-                    x.UsesThis = Result.Unknown;
-                    x.UsesUnderScore = Result.Unknown;
-                    x.semanticModel = null;
-                    x.cancellationToken = CancellationToken.None;
-                });
-
             private SemanticModel semanticModel;
             private CancellationToken cancellationToken;
 
@@ -69,18 +57,18 @@
 
             public Result UsesUnderScore { get; private set; }
 
-            public static Pool<Walker>.Pooled Create(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public static Walker Borrow(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                var pooled = Cache.GetOrCreate();
+                var walker = Borrow(() => new Walker());
+                walker.semanticModel = semanticModel;
+                walker.cancellationToken = cancellationToken;
                 while (node.Parent != null)
                 {
                     node = node.Parent;
                 }
 
-                pooled.Item.semanticModel = semanticModel;
-                pooled.Item.cancellationToken = cancellationToken;
-                pooled.Item.Visit(node);
-                return pooled;
+                walker.Visit(node);
+                return walker;
             }
 
             public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
@@ -234,6 +222,14 @@
                         }
                     }
                 }
+            }
+
+            protected override void Clear()
+            {
+                this.UsesThis = Result.Unknown;
+                this.UsesUnderScore = Result.Unknown;
+                this.semanticModel = null;
+                this.cancellationToken = CancellationToken.None;
             }
         }
     }
