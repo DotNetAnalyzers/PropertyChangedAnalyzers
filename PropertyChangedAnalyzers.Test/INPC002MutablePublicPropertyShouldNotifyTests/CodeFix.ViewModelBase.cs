@@ -58,11 +58,7 @@ namespace RoslynSandbox.Client
 
         public int Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (value == this.bar)
@@ -336,11 +332,7 @@ namespace RoslynSandbox.Client
 
         public int Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (value == this.bar)

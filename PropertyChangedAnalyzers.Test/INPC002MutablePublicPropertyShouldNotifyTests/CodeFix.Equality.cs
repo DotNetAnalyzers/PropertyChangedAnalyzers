@@ -48,11 +48,7 @@ namespace RoslynSandbox
 
         public int Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (value == this.bar)
@@ -117,11 +113,7 @@ namespace RoslynSandbox
 
         public ReferenceType Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (ReferenceEquals(value, this.bar))
@@ -209,11 +201,7 @@ namespace RoslynSandbox
 
         public EquatableStruct Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (value.Equals(this.bar))
@@ -302,11 +290,7 @@ namespace RoslynSandbox
 
         public EquatableStruct? Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (System.Nullable.Equals(value, this.bar))
@@ -405,11 +389,7 @@ namespace RoslynSandbox
 
         public EquatableStruct Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (value == this.bar)
@@ -507,11 +487,7 @@ namespace RoslynSandbox
 
         public EquatableStruct? Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (value == this.bar)
@@ -581,11 +557,7 @@ namespace RoslynSandbox
 
         public NotEquatableStruct Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (System.Collections.Generic.EqualityComparer<NotEquatableStruct>.Default.Equals(value, this.bar))
@@ -655,11 +627,7 @@ namespace RoslynSandbox
 
         public NotEquatableStruct? Bar
         {
-            get
-            {
-                return this.bar;
-            }
-
+            get => this.bar;
             set
             {
                 if (System.Nullable.Equals(value, this.bar))
