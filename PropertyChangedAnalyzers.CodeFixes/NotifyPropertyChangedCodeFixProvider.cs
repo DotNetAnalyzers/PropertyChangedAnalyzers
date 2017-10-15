@@ -145,20 +145,18 @@
                     assignStatement,
                     (node, _) =>
                     {
-                        using (var pooled = StringBuilderPool.Borrow())
-                        {
-                            var code = pooled.Item.AppendLine($"if ({invocation.ToFullString().TrimEnd('\r', '\n')})")
-                                             .AppendLine("{")
-                                             .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
-                                             .AppendLine("}")
-                                             .ToString();
+                        var code = StringBuilderPool.Borrow()
+                                                    .AppendLine($"if ({invocation.ToFullString().TrimEnd('\r', '\n')})")
+                                                    .AppendLine("{")
+                                                    .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
+                                                    .AppendLine("}")
+                                                    .Return();
 
-                            return SyntaxFactory.ParseStatement(code)
-                                                .WithSimplifiedNames()
-                                                .WithLeadingElasticLineFeed()
-                                                .WithTrailingElasticLineFeed()
-                                                .WithAdditionalAnnotations(Formatter.Annotation);
-                        }
+                        return SyntaxFactory.ParseStatement(code)
+                                            .WithSimplifiedNames()
+                                            .WithLeadingElasticLineFeed()
+                                            .WithTrailingElasticLineFeed()
+                                            .WithAdditionalAnnotations(Formatter.Annotation);
                     });
                 editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
 
@@ -199,19 +197,17 @@
                     ifStatement.Statement,
                     (node, _) =>
                     {
-                        using (var pooled = StringBuilderPool.Borrow())
-                        {
-                            var code = pooled.Item.AppendLine("{")
-                                             .AppendLine($"{ifStatement.Statement.ToFullString().TrimEnd('\r', '\n')}")
-                                             .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
-                                             .AppendLine("}")
-                                             .ToString();
+                        var code = StringBuilderPool.Borrow()
+                                                    .AppendLine("{")
+                                                    .AppendLine($"{ifStatement.Statement.ToFullString().TrimEnd('\r', '\n')}")
+                                                    .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
+                                                    .AppendLine("}")
+                                                    .Return();
 
-                            return SyntaxFactory.ParseStatement(code)
-                                                .WithSimplifiedNames()
-                                                .WithTrailingElasticLineFeed()
-                                                .WithAdditionalAnnotations(Formatter.Annotation);
-                        }
+                        return SyntaxFactory.ParseStatement(code)
+                                            .WithSimplifiedNames()
+                                            .WithTrailingElasticLineFeed()
+                                            .WithAdditionalAnnotations(Formatter.Annotation);
                     });
             }
 

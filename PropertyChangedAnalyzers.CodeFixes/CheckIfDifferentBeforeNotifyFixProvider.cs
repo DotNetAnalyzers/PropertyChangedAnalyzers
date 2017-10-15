@@ -106,23 +106,20 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
             var type = editor.SemanticModel.GetTypeInfoSafe(assignment.Left, cancellationToken).Type;
-            using (var pooled = StringBuilderPool.Borrow())
-            {
-                var code = pooled.Item
-                                 .AppendLine($"if ({Snippet.EqualityCheck(type, "value", assignment.Left.ToString(), editor.SemanticModel)})")
-                                 .AppendLine("{")
-                                 .AppendLine("   return;")
-                                 .AppendLine("}")
-                                 .AppendLine()
-                                 .ToString();
-                var ifReturn = SyntaxFactory.ParseStatement(code)
-                                            .WithSimplifiedNames()
-                                            .WithLeadingElasticLineFeed()
-                                            .WithTrailingElasticLineFeed()
-                                            .WithAdditionalAnnotations(Formatter.Annotation);
-                editor.InsertBefore(statementSyntax, ifReturn);
-                return editor.GetChangedDocument();
-            }
+            var code = StringBuilderPool.Borrow()
+                                        .AppendLine($"if ({Snippet.EqualityCheck(type, "value", assignment.Left.ToString(), editor.SemanticModel)})")
+                                        .AppendLine("{")
+                                        .AppendLine("   return;")
+                                        .AppendLine("}")
+                                        .AppendLine()
+                                        .Return();
+            var ifReturn = SyntaxFactory.ParseStatement(code)
+                                        .WithSimplifiedNames()
+                                        .WithLeadingElasticLineFeed()
+                                        .WithTrailingElasticLineFeed()
+                                        .WithAdditionalAnnotations(Formatter.Annotation);
+            editor.InsertBefore(statementSyntax, ifReturn);
+            return editor.GetChangedDocument();
         }
 
         private static async Task<Document> CreateIfAsync(Document document, ExpressionStatementSyntax setAndRaise, ExpressionStatementSyntax invocation, CancellationToken cancellationToken)
@@ -134,20 +131,18 @@ namespace PropertyChangedAnalyzers
                 invocation,
                 (node, _) =>
                 {
-                    using (var pooled = StringBuilderPool.Borrow())
-                    {
-                        var code = pooled.Item.AppendLine($"if ({setAndRaise.ToFullString().TrimEnd('\r', '\n', ';')})")
-                                         .AppendLine("{")
-                                         .AppendLine($"    {invocation.ToFullString().TrimEnd('\r', '\n')}")
-                                         .AppendLine("}")
-                                         .ToString();
+var code = StringBuilderPool.Borrow()
+                            .AppendLine($"if ({setAndRaise.ToFullString().TrimEnd('\r', '\n', ';')})")
+                            .AppendLine("{")
+                            .AppendLine($"    {invocation.ToFullString().TrimEnd('\r', '\n')}")
+                            .AppendLine("}")
+                            .Return();
 
-                        return SyntaxFactory.ParseStatement(code)
-                                            .WithSimplifiedNames()
-                                            .WithLeadingElasticLineFeed()
-                                            .WithTrailingElasticLineFeed()
-                                            .WithAdditionalAnnotations(Formatter.Annotation);
-                    }
+                    return SyntaxFactory.ParseStatement(code)
+                                        .WithSimplifiedNames()
+                                        .WithLeadingElasticLineFeed()
+                                        .WithTrailingElasticLineFeed()
+                                        .WithAdditionalAnnotations(Formatter.Annotation);
                 });
             return editor.GetChangedDocument();
         }
