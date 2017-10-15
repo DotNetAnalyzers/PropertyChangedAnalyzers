@@ -25,3 +25,8 @@ group Test
   nuget NUnit
   nuget MvvmLight
   nuget Caliburn.Micro
+
+group Build
+  storage: none
+  source http://www.nuget.org/api/v2/
+  nuget Microsoft.VSSDK.BuildTools
