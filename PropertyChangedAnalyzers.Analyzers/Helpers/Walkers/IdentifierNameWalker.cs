@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal sealed class IdentifierNameWalker : PooledWalker
+    internal sealed class IdentifierNameWalker : PooledWalker<IdentifierNameWalker>
     {
         private readonly List<IdentifierNameSyntax> identifierNames = new List<IdentifierNameSyntax>();
 
@@ -15,7 +15,7 @@
 
         public IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
 
-        public static IdentifierNameWalker Borrow(SyntaxNode node) => Borrow(node, () => new IdentifierNameWalker());
+        public static IdentifierNameWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IdentifierNameWalker());
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {

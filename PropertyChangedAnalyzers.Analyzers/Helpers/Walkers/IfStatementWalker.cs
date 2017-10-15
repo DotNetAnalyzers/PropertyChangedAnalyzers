@@ -4,7 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal sealed class IfStatementWalker : PooledWalker
+    internal sealed class IfStatementWalker : PooledWalker<IfStatementWalker>
     {
         private readonly List<IfStatementSyntax> ifStatements = new List<IfStatementSyntax>();
 
@@ -14,7 +14,7 @@
 
         public IReadOnlyList<IfStatementSyntax> IfStatements => this.ifStatements;
 
-        public static IfStatementWalker Borrow(SyntaxNode node) => Borrow(node, () => new IfStatementWalker());
+        public static IfStatementWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IfStatementWalker());
 
         public override void VisitIfStatement(IfStatementSyntax node)
         {
