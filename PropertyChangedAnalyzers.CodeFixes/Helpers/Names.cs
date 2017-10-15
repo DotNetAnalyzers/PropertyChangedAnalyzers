@@ -173,6 +173,14 @@
                 base.VisitConditionalAccessExpression(node);
             }
 
+            protected override void Clear()
+            {
+                this.UsesThis = Result.Unknown;
+                this.UsesUnderScore = Result.Unknown;
+                this.semanticModel = null;
+                this.cancellationToken = CancellationToken.None;
+            }
+
             private void CheckUsesThis(ExpressionSyntax expression)
             {
                 if (expression == null)
@@ -222,14 +230,6 @@
                         }
                     }
                 }
-            }
-
-            protected override void Clear()
-            {
-                this.UsesThis = Result.Unknown;
-                this.UsesUnderScore = Result.Unknown;
-                this.semanticModel = null;
-                this.cancellationToken = CancellationToken.None;
             }
         }
     }
