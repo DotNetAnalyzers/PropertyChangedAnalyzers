@@ -47,45 +47,9 @@ namespace PropertyChangedAnalyzers
                 type: propertyDeclaration.Type,
                 initializer: propertyDeclaration.Initializer?.Value);
             var type = propertyDeclaration.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-
-            var index = type.Members.IndexOf(propertyDeclaration);
-            for (var i = index + 1; i < type.Members.Count; i++)
-            {
-                if (type.Members[i] is PropertyDeclarationSyntax other)
-                {
-                    if (Property.TryGetBackingFieldFromSetter(other, editor.SemanticModel, cancellationToken, out var field) &&
-                        ReferenceEquals(property.ContainingType, field.ContainingType) &&
-                        field.DeclaringSyntaxReferences.TryGetSingle(out var reference))
-                    {
-                        editor.InsertBefore(reference.GetSyntax(cancellationToken), backingField);
-                        return backingField;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            for (var i = index - 1; i >= 0; i--)
-            {
-                if (type.Members[i] is PropertyDeclarationSyntax other)
-                {
-                    if (Property.TryGetBackingFieldFromSetter(other, editor.SemanticModel, cancellationToken, out var field) &&
-                        ReferenceEquals(property.ContainingType, field.ContainingType) &&
-                        field.DeclaringSyntaxReferences.TryGetSingle(out var reference))
-                    {
-                        editor.InsertAfter(reference.GetSyntax(cancellationToken), backingField);
-                        return backingField;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            editor.AddField(type, backingField);
+            editor.ReplaceNode(
+                type,
+                (node, generator) => AddBackingField((TypeDeclarationSyntax)node, backingField, property.Name, generator));
             return backingField;
         }
 
@@ -113,7 +77,70 @@ namespace PropertyChangedAnalyzers
             return editor;
         }
 
-        private static SyntaxNode AddSorted(SyntaxGenerator generator, TypeDeclarationSyntax containingType, MemberDeclarationSyntax memberDeclaration)
+        private static TypeDeclarationSyntax AddBackingField(TypeDeclarationSyntax type, FieldDeclarationSyntax backingField, string propertyName, SyntaxGenerator syntaxGenerator)
+        {
+            bool TryGetFieldName(ExpressionSyntax candidate, out string name)
+            {
+                if (candidate is IdentifierNameSyntax identifierName)
+                {
+                    name = identifierName.Identifier.ValueText;
+                    return true;
+                }
+
+                if (candidate is MemberAccessExpressionSyntax memberAccess &&
+                    memberAccess.Expression is ThisExpressionSyntax)
+                {
+                    return TryGetFieldName(memberAccess.Name, out name);
+                }
+
+                name = null;
+                return false;
+            }
+
+            if (type.TryFindProperty(propertyName, out var propertyDeclaration))
+            {
+                var index = type.Members.IndexOf(propertyDeclaration);
+                for (var i = index + 1; i < type.Members.Count; i++)
+                {
+                    if (type.Members[i] is PropertyDeclarationSyntax other)
+                    {
+                        if (Property.TryGetSingleReturnedInGetter(other, out var expression) &&
+                            TryGetFieldName(expression, out var fieldName) &&
+                            type.TryFindField(fieldName, out var otherField))
+                        {
+                            return type.InsertNodesBefore(otherField, new[] { backingField });
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                for (var i = index - 1; i >= 0; i--)
+                {
+                    if (type.Members[i] is PropertyDeclarationSyntax other)
+                    {
+                        if (Property.TryGetSingleReturnedInGetter(other, out var expression) &&
+                            TryGetFieldName(expression, out var fieldName) &&
+                            type.TryFindField(fieldName, out var otherField))
+                        {
+                            return type.InsertNodesAfter(otherField, new[] { backingField });
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                return AddSorted(syntaxGenerator, type, backingField);
+            }
+
+            return type;
+        }
+
+        private static TypeDeclarationSyntax AddSorted(SyntaxGenerator generator, TypeDeclarationSyntax containingType, MemberDeclarationSyntax memberDeclaration)
         {
             var memberIndex = MemberIndex(memberDeclaration);
             for (var i = 0; i < containingType.Members.Count; i++)
@@ -121,11 +148,11 @@ namespace PropertyChangedAnalyzers
                 var member = containingType.Members[i];
                 if (memberIndex < MemberIndex(member))
                 {
-                    return generator.InsertMembers(containingType, i, memberDeclaration);
+                    return (TypeDeclarationSyntax)generator.InsertMembers(containingType, i, memberDeclaration);
                 }
             }
 
-            return generator.AddMembers(containingType, memberDeclaration);
+            return (TypeDeclarationSyntax)generator.AddMembers(containingType, memberDeclaration);
         }
 
         private static int MemberIndex(MemberDeclarationSyntax member)
