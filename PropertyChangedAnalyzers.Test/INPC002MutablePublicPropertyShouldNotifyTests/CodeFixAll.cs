@@ -103,6 +103,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            AnalyzerAssert.FixAllInDocument<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
             AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
