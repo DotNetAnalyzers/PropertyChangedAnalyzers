@@ -199,19 +199,34 @@
                 return false;
             }
 
-            if (property.ExpressionBody != null)
+            var expressionBody = property.ExpressionBody;
+            if (expressionBody != null)
             {
-                using (var walker = ReturnExpressionsWalker.Borrow(property.ExpressionBody))
-                {
-                    return walker.ReturnValues.TryGetSingle(out result);
-                }
+                result = expressionBody.Expression;
+                return result != null;
             }
 
             if (property.TryGetGetAccessorDeclaration(out var getter))
             {
-                using (var walker = ReturnExpressionsWalker.Borrow(getter))
+                expressionBody = getter.ExpressionBody;
+                if (expressionBody != null)
                 {
-                    return walker.ReturnValues.TryGetSingle(out result);
+                    result = expressionBody.Expression;
+                    return result != null;
+                }
+
+                var body = getter.Body;
+                if (body == null ||
+                    body.Statements.Count == 0)
+                {
+                    return false;
+                }
+
+                if (body.Statements.TryGetSingle(out var statement) &&
+                    statement is ReturnStatementSyntax returnStatement)
+                {
+                    result = returnStatement.Expression;
+                    return result != null;
                 }
             }
 
