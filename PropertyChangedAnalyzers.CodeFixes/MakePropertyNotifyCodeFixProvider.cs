@@ -122,11 +122,6 @@
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
-            var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-            if (classDeclaration == null)
-            {
-                return document;
-            }
 
             if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
             {
