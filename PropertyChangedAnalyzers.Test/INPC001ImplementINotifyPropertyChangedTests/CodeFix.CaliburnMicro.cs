@@ -25,9 +25,9 @@
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo
+    ↓public class Foo
     {
-        ↓public int Bar { get; set; }
+        public int Bar { get; set; }
     }
 }";
 
@@ -48,9 +48,9 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo
+    ↓public class Foo
     {
-        ↓public int Bar { get; set; }
+        public int Bar { get; set; }
     }
 }";
 
