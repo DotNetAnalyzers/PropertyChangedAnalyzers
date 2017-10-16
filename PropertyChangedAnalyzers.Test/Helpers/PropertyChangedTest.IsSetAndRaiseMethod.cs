@@ -121,7 +121,32 @@ namespace RoslynSandbox
 {
     public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
     {
-        public override bool SetValue<T>(ref T oldValue, T newValue, string propertyName = null)
+        public override bool Set<T>(ref T oldValue, T newValue, string propertyName = null)
+        {
+            return base.Set(ref oldValue, newValue, propertyName);
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create(
+                    "test",
+                    new[] { syntaxTree },
+                    MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var methodDeclaration = syntaxTree.FindBestMatch<MethodDeclarationSyntax>("Set");
+                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+            }
+
+            [Test]
+            public void CallingCaliburnMicroPropertyChangedBase()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
+    {
+        public bool SetValue<T>(ref T oldValue, T newValue, string propertyName = null)
         {
             return base.Set(ref oldValue, newValue, propertyName);
         }

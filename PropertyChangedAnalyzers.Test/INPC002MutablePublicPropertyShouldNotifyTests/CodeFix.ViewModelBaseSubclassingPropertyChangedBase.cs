@@ -10,11 +10,13 @@
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
 {
+    using System.Runtime.CompilerServices;
+
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
         protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
-            return base.Set(field, newValue, propertyName);
+            return base.Set(ref field, newValue, propertyName);
         }
     }
 }";
@@ -61,7 +63,7 @@ namespace RoslynSandbox.Client
                 }
 
                 this.bar = value;
-                this.OnPropertyChanged();
+                this.NotifyOfPropertyChange();
             }
         }
     }
