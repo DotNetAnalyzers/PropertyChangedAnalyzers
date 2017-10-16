@@ -101,7 +101,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void AutoPropertyInitailzedToSet()
+            public void AutoPropertyInitializedToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
