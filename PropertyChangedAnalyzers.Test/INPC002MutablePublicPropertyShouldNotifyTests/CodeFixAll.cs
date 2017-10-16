@@ -155,11 +155,7 @@ namespace RoslynSandbox
 
         public int Bar1
         {
-            get
-            {
-                return _bar1;
-            }
-
+            get => _bar1;
             set
             {
                 if (value == _bar1)
@@ -174,11 +170,7 @@ namespace RoslynSandbox
 
         public int Bar2
         {
-            get
-            {
-                return _bar2;
-            }
-
+            get => _bar2;
             set
             {
                 if (value == _bar2)
@@ -193,11 +185,7 @@ namespace RoslynSandbox
 
         public int Bar3
         {
-            get
-            {
-                return _bar3;
-            }
-
+            get => _bar3;
             set
             {
                 if (value == _bar3)
@@ -236,11 +224,7 @@ namespace RoslynSandbox
 
         public int Bar1
         {
-            get
-            {
-                return _bar1;
-            }
-
+            get => _bar1;
             set
             {
                 if (value == _bar1)
@@ -280,11 +264,7 @@ namespace RoslynSandbox
 
         public int Bar1
         {
-            get
-            {
-                return _bar1;
-            }
-
+            get => _bar1;
             set
             {
                 if (value == _bar1)
@@ -299,11 +279,7 @@ namespace RoslynSandbox
 
         public int Bar2
         {
-            get
-            {
-                return _bar2;
-            }
-
+            get => _bar2;
             set
             {
                 if (value == _bar2)
@@ -318,11 +294,7 @@ namespace RoslynSandbox
 
         public int Bar3
         {
-            get
-            {
-                return _bar3;
-            }
-
+            get => _bar3;
             set
             {
                 if (value == _bar3)
@@ -363,11 +335,7 @@ namespace RoslynSandbox
 
         public int Bar2
         {
-            get
-            {
-                return _bar2;
-            }
-
+            get => _bar2;
             set
             {
                 if (value == _bar2)
@@ -405,11 +373,7 @@ namespace RoslynSandbox
 
         public int Bar1
         {
-            get
-            {
-                return _bar1;
-            }
-
+            get => _bar1;
             set
             {
                 if (value == _bar1)
@@ -424,11 +388,7 @@ namespace RoslynSandbox
 
         public int Bar2
         {
-            get
-            {
-                return _bar2;
-            }
-
+            get => _bar2;
             set
             {
                 if (value == _bar2)
@@ -443,11 +403,7 @@ namespace RoslynSandbox
 
         public int Bar3
         {
-            get
-            {
-                return _bar3;
-            }
-
+            get => _bar3;
             set
             {
                 if (value == _bar3)
@@ -490,11 +446,7 @@ namespace RoslynSandbox
 
         public int Bar3
         {
-            get
-            {
-                return _bar3;
-            }
-
+            get => _bar3;
             set
             {
                 if (value == _bar3)
@@ -530,11 +482,7 @@ namespace RoslynSandbox
 
         public int Bar1
         {
-            get
-            {
-                return _bar1;
-            }
-
+            get => _bar1;
             set
             {
                 if (value == _bar1)
@@ -549,11 +497,7 @@ namespace RoslynSandbox
 
         public int Bar2
         {
-            get
-            {
-                return _bar2;
-            }
-
+            get => _bar2;
             set
             {
                 if (value == _bar2)
@@ -568,11 +512,7 @@ namespace RoslynSandbox
 
         public int Bar3
         {
-            get
-            {
-                return _bar3;
-            }
-
+            get => _bar3;
             set
             {
                 if (value == _bar3)
@@ -652,11 +592,7 @@ namespace RoslynSandbox
 
         public int Bar1
         {
-            get
-            {
-                return this.bar1;
-            }
-
+            get => this.bar1;
             set
             {
                 if (value == this.bar1)
@@ -671,11 +607,7 @@ namespace RoslynSandbox
 
         public int Bar2
         {
-            get
-            {
-                return this.bar2;
-            }
-
+            get => this.bar2;
             set
             {
                 if (value == this.bar2)
@@ -690,11 +622,7 @@ namespace RoslynSandbox
 
         public int Bar3
         {
-            get
-            {
-                return this.bar3;
-            }
-
+            get => this.bar3;
             set
             {
                 if (value == this.bar3)
@@ -723,11 +651,7 @@ namespace RoslynSandbox
 
         public int Bar1
         {
-            get
-            {
-                return this.bar1;
-            }
-
+            get => this.bar1;
             set
             {
                 if (value == this.bar1)
@@ -742,11 +666,7 @@ namespace RoslynSandbox
 
         public int Bar2
         {
-            get
-            {
-                return this.bar2;
-            }
-
+            get => this.bar2;
             set
             {
                 if (value == this.bar2)
@@ -761,11 +681,7 @@ namespace RoslynSandbox
 
         public int Bar3
         {
-            get
-            {
-                return this.bar3;
-            }
-
+            get => this.bar3;
             set
             {
                 if (value == this.bar3)
