@@ -3,6 +3,7 @@
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using NUnit.Framework;
 
     internal class PropertyTests
@@ -207,6 +208,46 @@ namespace RoslynSandBox
 }");
             var property = syntaxTree.FindPropertyDeclaration(propertyName);
             Assert.AreEqual(expected, Property.IsMutableAutoProperty(property));
+        }
+
+        [TestCase("Value11", "this.value1")]
+        [TestCase("Value12", "this.value1")]
+        [TestCase("Value1", "this.value1")]
+        [TestCase("Value2", "this.value1")]
+        public void TryGetSingleReturnedInGetter(string propertyName, string expected)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private int value1;
+        private int value2;
+
+        public int Value11 => this.value1;
+
+        public int Value12
+        {
+            get => this.value1;
+        }
+
+        public int Value1
+        {
+            get { return this.value1; }
+            set { this.value1 = value; }
+        }
+
+        public int Value2
+        {
+            get => this.value2;
+            set => this.value2 = value;
+        }
+    }
+}");
+            var declaration = syntaxTree.FindBestMatch<PropertyDeclarationSyntax>(propertyName);
+            Assert.AreEqual(true, Property.TryGetSingleReturnedInGetter(declaration, out var expression));
+            Assert.AreEqual(expected, expression.ToString());
         }
     }
 }
