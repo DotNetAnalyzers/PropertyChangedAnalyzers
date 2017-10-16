@@ -85,7 +85,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            //AnalyzerAssert.FixAllOneByOne<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAllOneByOne<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
             AnalyzerAssert.FixAllInDocument<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
 
