@@ -213,7 +213,7 @@ namespace RoslynSandBox
         [TestCase("Value11", "this.value1")]
         [TestCase("Value12", "this.value1")]
         [TestCase("Value1", "this.value1")]
-        [TestCase("Value2", "this.value1")]
+        [TestCase("Value2", "this.value2")]
         public void TryGetSingleReturnedInGetter(string propertyName, string expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(
