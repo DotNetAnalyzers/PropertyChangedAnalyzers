@@ -179,36 +179,37 @@
                 return false;
             }
 
-            foreach (var declaration in property.Declarations(cancellationToken))
+            if (property.TryGetSingleDeclaration(cancellationToken, out var propertyDeclaration) &&
+                TryGetSingleReturnedInGetter(propertyDeclaration, out var expression))
             {
-                var propertyDeclaration = declaration as PropertyDeclarationSyntax;
-                if (propertyDeclaration == null)
-                {
-                    continue;
-                }
+                field = semanticModel.GetSymbolSafe(expression, cancellationToken) as IFieldSymbol;
+                return field != null;
+            }
 
-                if (propertyDeclaration.ExpressionBody != null)
-                {
-                    using (var walker = ReturnExpressionsWalker.Borrow(propertyDeclaration.ExpressionBody))
-                    {
-                        if (walker.ReturnValues.TryGetSingle(out var expression))
-                        {
-                            field = semanticModel.GetSymbolSafe(expression, cancellationToken) as IFieldSymbol;
-                            return field != null;
-                        }
-                    }
-                }
+            return false;
+        }
 
-                if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter))
+        internal static bool TryGetSingleReturnedInGetter(PropertyDeclarationSyntax property, out ExpressionSyntax result)
+        {
+            result = null;
+            if (property == null)
+            {
+                return false;
+            }
+
+            if (property.ExpressionBody != null)
+            {
+                using (var walker = ReturnExpressionsWalker.Borrow(property.ExpressionBody))
                 {
-                    using (var pooled = ReturnExpressionsWalker.Borrow(getter))
-                    {
-                        if (pooled.ReturnValues.TryGetSingle(out var expression))
-                        {
-                            field = semanticModel.GetSymbolSafe(expression, cancellationToken) as IFieldSymbol;
-                            return field != null;
-                        }
-                    }
+                    return walker.ReturnValues.TryGetSingle(out result);
+                }
+            }
+
+            if (property.TryGetGetAccessorDeclaration(out var getter))
+            {
+                using (var walker = ReturnExpressionsWalker.Borrow(getter))
+                {
+                    return walker.ReturnValues.TryGetSingle(out result);
                 }
             }
 
