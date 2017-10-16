@@ -42,13 +42,13 @@
                 }
 
                 var propertyDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-                var typeDeclaration = propertyDeclaration?.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-                if (typeDeclaration == null)
+                var classDeclarationSyntax = propertyDeclaration?.Parent as ClassDeclarationSyntax;
+                if (classDeclarationSyntax == null)
                 {
                     continue;
                 }
 
-                var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
+                var type = semanticModel.GetDeclaredSymbolSafe(classDeclarationSyntax, context.CancellationToken);
                 if (PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
                 {
                     var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
