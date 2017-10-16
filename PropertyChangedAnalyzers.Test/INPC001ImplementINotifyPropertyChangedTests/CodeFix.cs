@@ -6,14 +6,51 @@
     internal partial class CodeFix
     {
         [Test]
+        public void WhenAutoPropertiesMessage()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    ↓public class Foo
+    {
+        public int Bar1 { get; set; }
+
+        public int Bar2 { get; set; }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1 { get; set; }
+
+        public int Bar2 { get; set; }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var expectedMessage = ExpectedMessage.Create("The class Foo should notify for:\nBar1\nBar2");
+            AnalyzerAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, testCode);
+            AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+        }
+
+        [Test]
         public void WhenNotNotifyingAutoProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo
+    ↓public class Foo
     {
-        ↓public int Bar { get; set; }
+        public int Bar { get; set; }
     }
 }";
 
@@ -32,6 +69,8 @@ namespace RoslynSandbox
         }
     }
 }";
+            var expectedMessage = ExpectedMessage.Create("The class Foo should notify for:\nBar");
+            AnalyzerAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, testCode);
             AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
             AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
@@ -42,11 +81,11 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo
+    ↓public class Foo
     {
         private int value;
 
-        ↓public int Value
+        public int Value
         {
             get
             {
@@ -92,16 +131,59 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void WhenNotNotifyingWithBackingFieldExpressionBodies()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    ↓public class Foo
+    {
+        private int value;
+
+        public int Value
+        {
+            get => this.value;
+            private set =>this.value = value;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int value;
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get => this.value;
+            private set =>this.value = value;
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+        }
+
+        [Test]
         public void WhenNotNotifyingWithBackingFieldUnderscoreNames()
         {
             var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo
+    ↓public class Foo
     {
         private int _value;
 
-        ↓public int Value
+        public int Value
         {
             get
             {
@@ -147,193 +229,6 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenInterfaceOnly()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : ↓INotifyPropertyChanged
-    {
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
-    {
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0246", testCode, fixedCode);
-        }
-
-        [Test]
-        public void WhenInterfaceOnlySealed()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    public sealed class Foo : ↓INotifyPropertyChanged
-    {
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    public sealed class Foo : System.ComponentModel.INotifyPropertyChanged
-    {
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0246", testCode, fixedCode);
-        }
-
-        [Test]
-        public void WhenInterfaceAndUsingSealed()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-
-    public sealed class Foo : ↓INotifyPropertyChanged
-    {
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-
-    public sealed class Foo : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0535", testCode, fixedCode);
-        }
-
-        [Test]
-        public void WhenInterfaceOnlyWithUsing()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-
-    public class Foo : ↓INotifyPropertyChanged
-    {
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-
-    public class Foo : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0535", testCode, fixedCode);
-        }
-
-        [Test]
-        public void WhenInterfaceOnlyWithUsingUnderscore()
-        {
-            var testCode = @"
-#pragma warning disable 169
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-
-    public class Foo : ↓INotifyPropertyChanged
-    {
-        private int _value;
-    }
-}";
-
-            var fixedCode = @"
-#pragma warning disable 169
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-
-    public class Foo : INotifyPropertyChanged
-    {
-        private int _value;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0535", testCode, fixedCode);
-        }
-
-        [Test]
-        public void WhenInterfaceOnlyAndUsings()
-        {
-            var testCode = @"
-#pragma warning disable 8019
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class Foo : ↓INotifyPropertyChanged
-    {
-    }
-}";
-
-            var fixedCode = @"
-#pragma warning disable 8019
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class Foo : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0535", testCode, fixedCode);
-        }
-
-        [Test]
         public void WhenEventOnly()
         {
             var testCode = @"
@@ -341,9 +236,9 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public class Foo
+    ↓public class Foo
     {
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }";
 
@@ -362,6 +257,8 @@ namespace RoslynSandbox
         }
     }
 }";
+            var expectedMessage = ExpectedMessage.Create("The class Foo has event PropertyChanged but does not implement INotifyPropertyChanged.");
+            AnalyzerAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, testCode);
             AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
 
@@ -374,9 +271,9 @@ namespace RoslynSandbox
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo
+    ↓public class Foo
     {
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

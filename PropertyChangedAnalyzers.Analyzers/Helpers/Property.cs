@@ -62,6 +62,24 @@
             return AssignmentWalker.Assigns(returnedField, arrow.Expression, semanticModel, cancellationToken);
         }
 
+        internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (declaration == null ||
+                !declaration.Modifiers.Any(SyntaxKind.PublicKeyword) ||
+                declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
+                declaration.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
+                !declaration.TryGetSetAccessorDeclaration(out _))
+            {
+                return false;
+            }
+
+            return ShouldNotify(
+                declaration,
+                semanticModel.GetDeclaredSymbolSafe(declaration, cancellationToken),
+                semanticModel,
+                cancellationToken);
+        }
+
         internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, IPropertySymbol propertySymbol, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertySymbol.IsIndexer ||
