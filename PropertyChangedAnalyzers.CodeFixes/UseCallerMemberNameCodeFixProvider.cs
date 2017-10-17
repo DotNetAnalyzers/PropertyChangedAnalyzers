@@ -5,10 +5,10 @@ namespace PropertyChangedAnalyzers
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Simplification;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCallerMemberNameCodeFixProvider))]
@@ -25,7 +25,7 @@ namespace PropertyChangedAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC004UseCallerMemberName.DiagnosticId);
 
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -49,12 +49,10 @@ namespace PropertyChangedAnalyzers
                 if (parameter != null)
                 {
                     context.RegisterCodeFix(
-                        CodeAction.Create(
+                        new DocumentEditorAction(
                             "Use [CallerMemberName]",
-                            cancellationToken =>
-                                Task.FromResult(
-                                    context.Document.WithSyntaxRoot(
-                                        syntaxRoot.ReplaceNode(parameter, AsCallerMemberName(parameter)))),
+                            context.Document,
+                            (editor, _) => MakeUseCallerMemberName(editor, parameter, AsCallerMemberName(parameter)),
                             this.GetType().FullName),
                         diagnostic);
                     continue;
@@ -79,32 +77,34 @@ namespace PropertyChangedAnalyzers
                             var nameParameter = methodDeclaration.ParameterList.Parameters[0];
 
                             context.RegisterCodeFix(
-                                CodeAction.Create(
+                                new DocumentEditorAction(
                                     "Use [CallerMemberName]",
-                                    cancellationToken =>
-                                        Task.FromResult(
-                                            context.Document.WithSyntaxRoot(
-                                                syntaxRoot.ReplaceNode(
-                                                    nameParameter,
-                                                    AsCallerMemberName(nameParameter)))),
+                                    context.Document,
+                                    (editor, _) => MakeUseCallerMemberName(editor, nameParameter, AsCallerMemberName(nameParameter)),
                                     this.GetType().FullName),
                                 diagnostic);
                         }
                     }
 
-                    var updated = invocation.RemoveNode(
-                        invocation.ArgumentList.Arguments[0],
-                        SyntaxRemoveOptions.AddElasticMarker);
                     context.RegisterCodeFix(
-                        CodeAction.Create(
+                        new DocumentEditorAction(
                             "Use [CallerMemberName]",
-                            cancellationToken =>
-                                Task.FromResult(
-                                    context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(invocation, updated))),
+                            context.Document,
+                            (editor, _) => MakeUseCallerMemberName(
+                                editor,
+                                invocation,
+                                invocation.RemoveNode(
+                                    invocation.ArgumentList.Arguments[0],
+                                    SyntaxRemoveOptions.AddElasticMarker)),
                             this.GetType().FullName),
                         diagnostic);
                 }
             }
+        }
+
+        private static void MakeUseCallerMemberName(DocumentEditor editor, SyntaxNode oldNode, SyntaxNode newNode)
+        {
+            editor.ReplaceNode(oldNode, (_, __) => newNode);
         }
 
         private static ParameterSyntax AsCallerMemberName(ParameterSyntax parameter)
