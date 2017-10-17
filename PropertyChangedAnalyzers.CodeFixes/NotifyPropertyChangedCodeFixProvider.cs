@@ -2,7 +2,6 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -57,8 +56,7 @@
                                             invocation,
                                             property,
                                             invoker,
-                                            usesUnderscoreNames,
-                                            cancellationToken),
+                                            usesUnderscoreNames),
                                         this.GetType().Name),
                                     diagnostic);
                                 continue;
@@ -70,13 +68,12 @@
                                     new DocumentEditorAction(
                                         $"Notify that property {property} changes.",
                                         context.Document,
-                                        (editor, cancellationToken) => MakeNotifyInIf(
+                                        (editor, _) => MakeNotifyInIf(
                                             editor,
                                             ifStatement,
                                             property,
                                             invoker,
-                                            usesUnderscoreNames,
-                                            cancellationToken),
+                                            usesUnderscoreNames),
                                         this.GetType()
                                             .Name),
                                     diagnostic);
@@ -88,13 +85,12 @@
                             new DocumentEditorAction(
                                 $"Notify that property {property} changes.",
                                 context.Document,
-                                (editor, cancellationToken) => MakeNotify(
+                                (editor, _) => MakeNotify(
                                     editor,
                                     expression,
                                     property,
                                     invoker,
-                                    usesUnderscoreNames,
-                                    cancellationToken),
+                                    usesUnderscoreNames),
                                 this.GetType().Name),
                             diagnostic);
                     }
@@ -102,7 +98,7 @@
             }
         }
 
-        private static void MakeNotify(DocumentEditor editor, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        private static void MakeNotify(DocumentEditor editor, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
         {
             var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
                                                  .WithSimplifiedNames()
@@ -130,7 +126,7 @@
             }
         }
 
-        private static void MakeNotifyCreateIf(DocumentEditor editor, InvocationExpressionSyntax invocation, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        private static void MakeNotifyCreateIf(DocumentEditor editor, InvocationExpressionSyntax invocation, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
         {
             if (invocation.Parent is ExpressionStatementSyntax assignStatement &&
                 assignStatement.Parent is BlockSyntax)
@@ -183,7 +179,7 @@
             }
         }
 
-        private static void MakeNotifyInIf(DocumentEditor editor, IfStatementSyntax ifStatement, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        private static void MakeNotifyInIf(DocumentEditor editor, IfStatementSyntax ifStatement, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
         {
             var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
                                                  .WithSimplifiedNames()

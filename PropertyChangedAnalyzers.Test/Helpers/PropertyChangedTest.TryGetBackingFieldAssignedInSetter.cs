@@ -128,7 +128,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindBestMatch<PropertyDeclarationSyntax>("Bar");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(false, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out var field));
+                Assert.AreEqual(false, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out _));
             }
         }
     }
