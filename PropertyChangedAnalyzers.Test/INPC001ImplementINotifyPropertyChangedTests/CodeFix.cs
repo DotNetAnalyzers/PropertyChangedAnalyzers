@@ -43,7 +43,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotNotifyingAutoProperty()
+        public void WhenPublicClassPublicAutoProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -62,6 +62,39 @@ namespace RoslynSandbox
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
         public int Bar { get; set; }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var expectedMessage = ExpectedMessage.Create("The class Foo should notify for:\nBar");
+            AnalyzerAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, testCode);
+            AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+        }
+
+        [Test]
+        public void WhenInternalClassInternalAutoProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    internal class ↓Foo
+    {
+        internal int Bar { get; set; }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    internal class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        internal int Bar { get; set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
