@@ -15,8 +15,6 @@ namespace PropertyChangedAnalyzers
     [Shared]
     internal class UseNameofCodeFixProvider : CodeFixProvider
     {
-        private static readonly IdentifierNameSyntax NameofIdentifier = SyntaxFactory.IdentifierName(@"nameof");
-
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC013UseNameof.DiagnosticId);
 
