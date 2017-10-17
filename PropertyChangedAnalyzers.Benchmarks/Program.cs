@@ -36,17 +36,19 @@ namespace PropertyChangedAnalyzers.Benchmarks
         {
             if (false)
             {
-                var walker = new BenchmarkWalker(Code.AnalyzersProject, new INPC001ImplementINotifyPropertyChanged());
+                var benchmark = Gu.Roslyn.Asserts.Benchmark.Create(
+                    Code.AnalyzersProject,
+                    new INPC001ImplementINotifyPropertyChanged());
 
                 // Warmup
-                walker.Run();
+                benchmark.Run();
                 Console.WriteLine("Attach profiler and press any key to continue...");
                 Console.ReadKey();
-                walker.Run();
+                benchmark.Run();
             }
-            else if (false)
+            else if (true)
             {
-                foreach (var summary in RunSingle<INPC009Benchmarks>())
+                foreach (var summary in RunSingle<AllBenchmarks>())
                 {
                     CopyResult(summary.Title);
                 }

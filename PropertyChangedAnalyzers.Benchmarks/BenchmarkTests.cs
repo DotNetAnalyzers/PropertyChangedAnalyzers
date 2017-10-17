@@ -8,7 +8,7 @@
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Benchmarks.Benchmarks;
 
-    internal class BenchmarkWalkerTests
+    internal class BenchmarkTests
     {
         private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } = typeof(KnownSymbol).Assembly
                                                                                                     .GetTypes()
@@ -20,8 +20,8 @@
                                                                                                   .Where(typeof(AnalyzerBenchmarks).IsAssignableFrom)
                                                                                                   .ToArray();
 
-        private static IReadOnlyList<BenchmarkWalker> AllBenchmarkWalkers { get; } = AllAnalyzers
-            .Select(x => new BenchmarkWalker(Code.AnalyzersProject, x))
+        private static IReadOnlyList<Gu.Roslyn.Asserts.Benchmark> AllBenchmarkWalkers { get; } = AllAnalyzers
+            .Select(x => Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, x))
             .ToArray();
 
         [OneTimeSetUp]
@@ -34,7 +34,7 @@
         }
 
         [TestCaseSource(nameof(AllBenchmarkWalkers))]
-        public void Run(BenchmarkWalker walker)
+        public void Run(Gu.Roslyn.Asserts.Benchmark walker)
         {
             walker.Run();
         }
