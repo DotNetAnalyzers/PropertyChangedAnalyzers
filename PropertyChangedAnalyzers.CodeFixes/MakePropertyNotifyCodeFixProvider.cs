@@ -187,7 +187,7 @@
                 {
                     editor.ReplaceNode(
                         propertyDeclaration,
-                        (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
+                        x => x.WithoutInitializer());
                 }
 
                 return editor.GetChangedDocument();
