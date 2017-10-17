@@ -49,7 +49,7 @@
             return false;
         }
 
-        internal sealed class Walker : PooledWalker<Walker>
+        private sealed class Walker : PooledWalker<Walker>
         {
             private SemanticModel semanticModel;
             private CancellationToken cancellationToken;
