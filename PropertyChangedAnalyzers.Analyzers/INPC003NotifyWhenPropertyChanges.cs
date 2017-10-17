@@ -178,14 +178,23 @@
                 {
                     var propertyDeclaration = member as PropertyDeclarationSyntax;
                     if (propertyDeclaration == null ||
+                        propertyDeclaration.Modifiers.Any(SyntaxKind.PrivateKeyword) ||
+                        propertyDeclaration.Modifiers.Any(SyntaxKind.ProtectedKeyword) ||
                         Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken))
                     {
                         continue;
                     }
 
-                    var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
                     var getter = GetterBody(propertyDeclaration);
-                    if (getter == null || property == null || property.DeclaredAccessibility != Accessibility.Public)
+                    if (getter == null)
+                    {
+                        continue;
+                    }
+
+                    var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
+                    if (property == null ||
+                        property.DeclaredAccessibility == Accessibility.Private ||
+                        property.DeclaredAccessibility == Accessibility.Protected)
                     {
                         continue;
                     }
