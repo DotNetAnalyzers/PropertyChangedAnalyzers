@@ -39,7 +39,7 @@ namespace PropertyChangedAnalyzers
                 modifiers: DeclarationModifiers.None,
                 type: propertyDeclaration.Type,
                 initializer: propertyDeclaration.Initializer?.Value);
-            var type = propertyDeclaration.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+            var type = (TypeDeclarationSyntax)propertyDeclaration.Parent;
             editor.ReplaceNode(
                 type,
                 (node, generator) => AddBackingField((TypeDeclarationSyntax)node, backingField, property.Name, generator));
