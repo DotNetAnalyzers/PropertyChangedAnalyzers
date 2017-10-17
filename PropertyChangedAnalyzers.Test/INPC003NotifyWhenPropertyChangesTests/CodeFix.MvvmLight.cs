@@ -66,6 +66,52 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public void SetAffectsCalculatedPropertyInternalClassInternalProperty()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    internal class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        internal string Greeting => $""Hello {this.Name}"";
+
+        internal string Name
+        {
+            get { return this.name; }
+            set { this.Set(↓ref this.name, value); }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    internal class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        internal string Greeting => $""Hello {this.Name}"";
+
+        internal string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(ref this.name, value))
+                {
+                    this.RaisePropertyChanged(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            }
+
+            [Test]
             public void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var testCode = @"

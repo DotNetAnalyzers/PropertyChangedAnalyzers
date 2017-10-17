@@ -344,6 +344,136 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void WhenUsingPropertiesExpressionBodyStringInterpolationInternalClassInternalProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class ViewModel : INotifyPropertyChanged
+    {
+        private string firstName;
+        private string lastName;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal string FullName => $""{this.FirstName} {this.LastName}"";
+
+        internal string FirstName
+        {
+            get
+            {
+                return this.firstName;
+            }
+
+            set
+            {
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                ↓this.firstName = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        internal string LastName
+        {
+            get
+            {
+                return this.lastName;
+            }
+
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class ViewModel : INotifyPropertyChanged
+    {
+        private string firstName;
+        private string lastName;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal string FullName => $""{this.FirstName} {this.LastName}"";
+
+        internal string FirstName
+        {
+            get
+            {
+                return this.firstName;
+            }
+
+            set
+            {
+                if (value == this.firstName)
+                {
+                    return;
+                }
+
+                this.firstName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
+
+        internal string LastName
+        {
+            get
+            {
+                return this.lastName;
+            }
+
+            set
+            {
+                if (value == this.lastName)
+                {
+                    return;
+                }
+
+                this.lastName = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FullName));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+        }
+
+        [Test]
         public void WhenUsingPropertiesCopyLocalNullCheckInvoke()
         {
             var testCode = @"

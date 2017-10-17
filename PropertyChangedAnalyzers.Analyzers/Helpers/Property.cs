@@ -7,7 +7,7 @@
 
     internal static class Property
     {
-        internal static bool IsLazy(this PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsLazy(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertyDeclaration.TryGetSetAccessorDeclaration(out _))
             {
