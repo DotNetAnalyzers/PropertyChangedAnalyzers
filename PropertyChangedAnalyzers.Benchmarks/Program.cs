@@ -1,5 +1,7 @@
 ﻿// ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
+#pragma warning disable CS0162 // Unreachable code detected
+#pragma warning disable GU0011 // Don't ignore the returnvalue.
 namespace PropertyChangedAnalyzers.Benchmarks
 {
     using System;

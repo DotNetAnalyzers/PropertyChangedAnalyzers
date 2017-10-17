@@ -642,7 +642,7 @@ NUGET
       BenchmarkDotNet.Core (>= 0.10.9) - restriction: >= net46
       Microsoft.CodeAnalysis.CSharp (>= 2.0) - restriction: >= net46
       System.Threading.Tasks (>= 4.3) - restriction: >= net46
-    Gu.Roslyn.Asserts (0.3.5)
+    Gu.Roslyn.Asserts (0.3.6)
       Microsoft.CodeAnalysis.CSharp.Workspaces  - restriction: || (>= net461) (>= netstandard2.0)
     ManagedEsent (1.9.4) - restriction: >= net46
     Microsoft.CodeAnalysis.Analyzers (1.1) - restriction: >= netstandard1.3
@@ -1343,7 +1343,7 @@ NUGET
       Microsoft.Xaml.Behaviors.Uwp.Managed (>= 1.1) - restriction: >= uap10.0
     Caliburn.Micro.Core (3.2)
     CommonServiceLocator (2.0.1) - restriction: || (>= monoandroid) (&& (>= net35) (< net40) (< portable-net45+win8+wp8+wpa81)) (&& (>= net40) (< portable-net45+win8+wp8+wpa81)) (>= net45) (>= sl5) (>= win81) (>= wp8) (>= wpa81) (>= xamarinios)
-    Gu.Roslyn.Asserts (0.3.5)
+    Gu.Roslyn.Asserts (0.3.6)
       Microsoft.CodeAnalysis.CSharp.Workspaces  - restriction: || (>= net461) (>= netstandard2.0)
     ManagedEsent (1.9.4) - restriction: >= net46
     Microsoft.CodeAnalysis.Analyzers (1.1) - restriction: >= netstandard1.3
