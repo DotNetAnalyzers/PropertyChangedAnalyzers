@@ -5,7 +5,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -20,7 +19,7 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC003NotifyWhenPropertyChanges.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentOnlyFixAllProvider.Default;
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -50,17 +49,17 @@
                                 invocation.Parent is ArrowExpressionClauseSyntax)
                             {
                                 context.RegisterCodeFix(
-                                    CodeAction.Create(
+                                    new DocumentEditorAction(
                                         $"Notify that property {property} changes.",
-                                        cancellationToken => MakeNotifyCreateIfAsync(
-                                            context.Document,
+                                        context.Document,
+                                        (editor, cancellationToken) => MakeNotifyCreateIf(
+                                            editor,
                                             invocation,
                                             property,
                                             invoker,
                                             usesUnderscoreNames,
                                             cancellationToken),
-                                        this.GetType()
-                                            .Name),
+                                        this.GetType().Name),
                                     diagnostic);
                                 continue;
                             }
@@ -68,10 +67,11 @@
                             if (invocation.Parent is IfStatementSyntax ifStatement)
                             {
                                 context.RegisterCodeFix(
-                                    CodeAction.Create(
+                                    new DocumentEditorAction(
                                         $"Notify that property {property} changes.",
-                                        cancellationToken => MakeNotifyInIfAsync(
-                                            context.Document,
+                                        context.Document,
+                                        (editor, cancellationToken) => MakeNotifyInIf(
+                                            editor,
                                             ifStatement,
                                             property,
                                             invoker,
@@ -85,10 +85,11 @@
                         }
 
                         context.RegisterCodeFix(
-                            CodeAction.Create(
+                            new DocumentEditorAction(
                                 $"Notify that property {property} changes.",
-                                cancellationToken => MakeNotifyAsync(
-                                    context.Document,
+                                context.Document,
+                                (editor, cancellationToken) => MakeNotify(
+                                    editor,
                                     expression,
                                     property,
                                     invoker,
@@ -101,10 +102,8 @@
             }
         }
 
-        private static async Task<Document> MakeNotifyAsync(Document document, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        private static void MakeNotify(DocumentEditor editor, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
                                                  .WithSimplifiedNames()
                                                  .WithLeadingElasticLineFeed()
@@ -117,28 +116,22 @@
                 {
                     var previousStatement = InsertAfter(block, assignStatement, invoker);
                     editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
-                    return editor.GetChangedDocument();
+                    return;
                 }
 
                 var expressionStatement = (ExpressionStatementSyntax)editor.Generator.ExpressionStatement(anonymousFunction.Body);
                 var withStatements = editor.Generator.WithStatements(anonymousFunction, new[] { expressionStatement, onPropertyChanged });
                 editor.ReplaceNode(anonymousFunction, withStatements);
-                return editor.GetChangedDocument();
             }
             else if (assignStatement?.Parent is BlockSyntax block)
             {
                 var previousStatement = InsertAfter(block, assignStatement, invoker);
                 editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
-                return editor.GetChangedDocument();
             }
-
-            return document;
         }
 
-        private static async Task<Document> MakeNotifyCreateIfAsync(Document document, InvocationExpressionSyntax invocation, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        private static void MakeNotifyCreateIf(DocumentEditor editor, InvocationExpressionSyntax invocation, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             if (invocation.Parent is ExpressionStatementSyntax assignStatement &&
                 assignStatement.Parent is BlockSyntax)
             {
@@ -160,8 +153,7 @@
                                             .WithAdditionalAnnotations(Formatter.Annotation);
                     });
                 editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
-
-                return editor.GetChangedDocument();
+                return;
             }
 
             if (invocation.Parent is ArrowExpressionClauseSyntax arrow &&
@@ -188,17 +180,11 @@
                                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                     });
                 editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
-
-                return editor.GetChangedDocument();
             }
-
-            return document;
         }
 
-        private static async Task<Document> MakeNotifyInIfAsync(Document document, IfStatementSyntax ifStatement, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        private static void MakeNotifyInIf(DocumentEditor editor, IfStatementSyntax ifStatement, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
                                                  .WithSimplifiedNames()
                                                  .WithLeadingElasticLineFeed()
@@ -212,12 +198,12 @@
                     editor.ReplaceNode(
                         block,
                         block.AddStatements(onPropertyChanged));
-                    return editor.GetChangedDocument();
+                    return;
                 }
 
                 var previousStatement = InsertAfter(block, ifStatement, invoker);
                 editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
-                return editor.GetChangedDocument();
+                return;
             }
 
             if (ifStatement.Statement != null)
@@ -239,8 +225,6 @@
                                             .WithAdditionalAnnotations(Formatter.Annotation);
                     });
             }
-
-            return editor.GetChangedDocument();
         }
 
         private static StatementSyntax InsertAfter(BlockSyntax block, StatementSyntax assignStatement, IMethodSymbol invoker)
