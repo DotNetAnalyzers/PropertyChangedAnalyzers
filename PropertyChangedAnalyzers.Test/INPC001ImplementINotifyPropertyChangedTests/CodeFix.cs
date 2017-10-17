@@ -11,7 +11,7 @@
             var testCode = @"
 namespace RoslynSandbox
 {
-    ↓public class Foo
+    public class ↓Foo
     {
         public int Bar1 { get; set; }
 
@@ -48,7 +48,7 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
-    ↓public class Foo
+    public class ↓Foo
     {
         public int Bar { get; set; }
     }
@@ -81,7 +81,7 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
-    ↓public class Foo
+    public class ↓Foo
     {
         private int value;
 
@@ -136,7 +136,7 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
-    ↓public class Foo
+    public class ↓Foo
     {
         private int value;
 
@@ -179,7 +179,7 @@ namespace RoslynSandbox
             var testCode = @"
 namespace RoslynSandbox
 {
-    ↓public class Foo
+    public class ↓Foo
     {
         private int _value;
 
@@ -236,7 +236,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    ↓public class Foo
+    public class ↓Foo
     {
         public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -271,7 +271,7 @@ namespace RoslynSandbox
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    ↓public class Foo
+    public class ↓Foo
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
