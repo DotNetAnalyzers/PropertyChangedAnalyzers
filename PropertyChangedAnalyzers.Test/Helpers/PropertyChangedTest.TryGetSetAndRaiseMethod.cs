@@ -137,7 +137,7 @@ namespace RoslynSandbox
                 var typeDeclaration = syntaxTree.FindBestMatch<TypeDeclarationSyntax>("FooBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
                 Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
-                Assert.AreEqual("SetValue", method.Name);
+                Assert.AreEqual("Set", method.Name);
             }
 
             [Test]
