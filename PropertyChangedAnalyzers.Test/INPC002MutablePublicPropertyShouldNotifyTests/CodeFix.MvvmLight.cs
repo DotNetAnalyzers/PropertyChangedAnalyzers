@@ -89,6 +89,36 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public void InternalClassInternalPropertyAutoPropertyToSet()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    internal class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        ↓internal int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    internal class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int bar;
+
+        internal int Bar
+        {
+            get => this.bar;
+            set => this.Set(ref this.bar, value);
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "ViewModelBase.Set.");
+            }
+
+            [Test]
             public void AutoPropertyInitializedToSet()
             {
                 var testCode = @"

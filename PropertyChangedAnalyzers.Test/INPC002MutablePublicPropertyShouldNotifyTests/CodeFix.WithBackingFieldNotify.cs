@@ -7,72 +7,6 @@
     {
         internal class WithBackingFieldNotify
         {
-            [Test]
-            public void ExplicitName()
-            {
-                var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-
-    public class Foo : INotifyPropertyChanged
-    {
-        private int value;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        ↓public int Value
-        {
-            get
-            {
-                return this.value;
-            }
-            private set
-            {
-                this.value = value;
-            }
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
-                var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-
-    public class Foo : INotifyPropertyChanged
-    {
-        private int value;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int Value
-        {
-            get
-            {
-                return this.value;
-            }
-            private set
-            {
-                this.value = value;
-                this.OnPropertyChanged(nameof(this.Value));
-            }
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify.");
-            }
 
             [Test]
             public void CallerMemberName()
@@ -136,6 +70,144 @@ namespace RoslynSandbox
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify.");
+            }
+
+            [Test]
+            public void InternalClassInternalPropertyCallerMemberName()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓internal int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            private set
+            {
+                this.value = value;
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            private set
+            {
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify.");
+                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify.");
+            }
+
+            [Test]
+            public void ExplicitName()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+            private set
+            {
+                this.value = value;
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+            private set
+            {
+                this.value = value;
+                this.OnPropertyChanged(nameof(this.Value));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
