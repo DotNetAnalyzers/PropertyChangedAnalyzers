@@ -23,7 +23,7 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC002MutablePublicPropertyShouldNotify.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentOnlyFixAllProvider.Default;
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
