@@ -20,6 +20,8 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public int Sum => this.value1 + this.value2;
+
         public int Value1
         {
             get
@@ -36,6 +38,7 @@ namespace RoslynSandbox
 
                 this.value1 = value;
                 this.OnPropertyChanged(↓nameof(Value1));
+                this.OnPropertyChanged(nameof(this.Sum));
             }
         }
 
@@ -55,6 +58,7 @@ namespace RoslynSandbox
 
                 this.value2 = value;
                 this.OnPropertyChanged(↓nameof(Value2));
+                this.OnPropertyChanged(nameof(this.Sum));
             }
         }
 
@@ -77,6 +81,8 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public int Sum => this.value1 + this.value2;
+
         public int Value1
         {
             get
@@ -93,6 +99,7 @@ namespace RoslynSandbox
 
                 this.value1 = value;
                 this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Sum));
             }
         }
 
@@ -112,6 +119,7 @@ namespace RoslynSandbox
 
                 this.value2 = value;
                 this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Sum));
             }
         }
 
