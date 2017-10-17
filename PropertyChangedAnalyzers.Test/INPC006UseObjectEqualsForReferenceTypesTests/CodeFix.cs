@@ -237,6 +237,80 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void OperatorEqualsInternalClassInternalProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class ViewModel : INotifyPropertyChanged
+    {
+        private Foo bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal Foo Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                ↓if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class ViewModel : INotifyPropertyChanged
+    {
+        private Foo bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal Foo Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (Equals(value, this.bar))
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll<INPC006UseObjectEqualsForReferenceTypes, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+        }
+
+        [Test]
         public void OperatorNotEquals()
         {
             var testCode = @"

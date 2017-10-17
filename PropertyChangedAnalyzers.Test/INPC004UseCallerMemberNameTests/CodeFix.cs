@@ -90,6 +90,88 @@ namespace RoslynSandbox
             AnalyzerAssert.FixAll<INPC004UseCallerMemberName, UseCallerMemberNameCodeFixProvider>(testCode, fixedCode);
         }
 
+        [Test]
+        public void InternalClassInternalPropertyProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(↓nameof(Value));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<INPC004UseCallerMemberName, UseCallerMemberNameCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC004UseCallerMemberName, UseCallerMemberNameCodeFixProvider>(testCode, fixedCode);
+        }
+
         [TestCase("this.PropertyChanged")]
         [TestCase("PropertyChanged")]
         public void Invoker(string member)

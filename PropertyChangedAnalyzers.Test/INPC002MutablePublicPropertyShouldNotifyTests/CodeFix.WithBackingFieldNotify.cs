@@ -7,7 +7,6 @@
     {
         internal class WithBackingFieldNotify
         {
-
             [Test]
             public void CallerMemberName()
             {
