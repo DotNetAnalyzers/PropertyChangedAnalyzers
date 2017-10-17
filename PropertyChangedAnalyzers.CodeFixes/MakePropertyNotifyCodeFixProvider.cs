@@ -191,7 +191,6 @@
                         propertyDeclaration,
                         x => x.WithoutInitializer());
                 }
-
             }
         }
 
@@ -249,7 +248,6 @@
                         propertyDeclaration,
                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
-
             }
         }
 
