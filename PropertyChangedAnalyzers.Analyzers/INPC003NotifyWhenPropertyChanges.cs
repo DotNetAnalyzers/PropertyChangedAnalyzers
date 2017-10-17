@@ -303,9 +303,9 @@
 
                 if (symbol is IPropertySymbol property)
                 {
-                    foreach (var declaration in property.Declarations(this.cancellationToken))
+                    if (property.GetMethod != null)
                     {
-                        if (((PropertyDeclarationSyntax)declaration).TryGetGetAccessorDeclaration(out var getter))
+                        foreach (var getter in property.GetMethod.Declarations(this.cancellationToken))
                         {
                             this.Visit(getter);
                         }

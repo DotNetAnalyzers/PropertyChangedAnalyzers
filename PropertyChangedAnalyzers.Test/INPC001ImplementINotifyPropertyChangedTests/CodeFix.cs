@@ -131,49 +131,6 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotNotifyingWithBackingFieldExpressionBodies()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    public class ↓Foo
-    {
-        private int value;
-
-        public int Value
-        {
-            get => this.value;
-            private set =>this.value = value;
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
-    {
-        private int value;
-
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
-        public int Value
-        {
-            get => this.value;
-            private set =>this.value = value;
-        }
-
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
-            AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
-        }
-
-        [Test]
         public void WhenNotNotifyingWithBackingFieldUnderscoreNames()
         {
             var testCode = @"

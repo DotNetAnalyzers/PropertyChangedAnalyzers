@@ -206,13 +206,6 @@
 
             if (property.TryGetGetAccessorDeclaration(out var getter))
             {
-                expressionBody = getter.ExpressionBody;
-                if (expressionBody != null)
-                {
-                    result = expressionBody.Expression;
-                    return result != null;
-                }
-
                 var body = getter.Body;
                 if (body == null ||
                     body.Statements.Count == 0)

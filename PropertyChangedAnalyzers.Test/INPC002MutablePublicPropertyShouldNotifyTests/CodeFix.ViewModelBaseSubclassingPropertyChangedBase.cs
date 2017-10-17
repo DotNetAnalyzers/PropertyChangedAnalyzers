@@ -54,7 +54,11 @@ namespace RoslynSandbox.Client
 
         public int Bar
         {
-            get => this.bar;
+            get
+            {
+                return this.bar;
+            }
+
             set
             {
                 if (value == this.bar)
@@ -93,8 +97,8 @@ namespace RoslynSandbox.Client
 
         public int Bar
         {
-            get => this.bar;
-            set => this.SetValue(ref this.bar, value);
+            get { return this.bar; }
+            set { this.SetValue(ref this.bar, value); }
         }
     }
 }";
@@ -123,8 +127,8 @@ namespace RoslynSandbox.Client
 
         public int Bar
         {
-            get => this.bar;
-            set => this.SetValue(ref this.bar, value);
+            get { return this.bar; }
+            set { this.SetValue(ref this.bar, value); }
         }
     }
 }";
@@ -153,8 +157,8 @@ namespace RoslynSandbox.Client
 
         public virtual int Bar
         {
-            get => this.bar;
-            set => this.SetValue(ref this.bar, value);
+            get { return this.bar; }
+            set { this.SetValue(ref this.bar, value); }
         }
     }
 }";
@@ -183,8 +187,8 @@ namespace RoslynSandbox.Client
 
         public int Bar
         {
-            get => this.bar;
-            private set => this.SetValue(ref this.bar, value);
+            get { return this.bar; }
+            private set { this.SetValue(ref this.bar, value); }
         }
     }
 }";
@@ -223,8 +227,8 @@ namespace RoslynSandbox.Client
 
         public int Bar
         {
-            get => _bar;
-            set => SetValue(ref _bar, value);
+            get { return _bar; }
+            set { SetValue(ref _bar, value); }
         }
     }
 }";
@@ -348,7 +352,11 @@ namespace RoslynSandbox.Client
 
         public int Bar
         {
-            get => this.bar;
+            get
+            {
+                return this.bar;
+            }
+
             set
             {
                 if (value == this.bar)
