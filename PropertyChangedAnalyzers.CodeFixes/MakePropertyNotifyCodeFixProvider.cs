@@ -55,10 +55,11 @@
                     if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                     {
                         context.RegisterCodeFix(
-                            CodeAction.Create(
+                            new DocumentEditorAction(
                                 key,
-                                cancellationToken => MakeAutoPropertySetAsync(
-                                    context.Document,
+                                context.Document,
+                                (editor, cancellationToken) => MakeAutoPropertySet(
+                                    editor,
                                     propertyDeclaration,
                                     setAndRaiseMethod,
                                     semanticModel,
@@ -69,10 +70,11 @@
                     else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                     {
                         context.RegisterCodeFix(
-                            CodeAction.Create(
+                            new DocumentEditorAction(
                                 key,
-                                cancellationToken => MakeWithBackingFieldSetAsync(
-                                    context.Document,
+                                context.Document,
+                                (editor, cancellationToken) => MakeWithBackingFieldSet(
+                                    editor,
                                     propertyDeclaration,
                                     setAndRaiseMethod,
                                     semanticModel,
@@ -91,25 +93,33 @@
                         if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                         {
                             context.RegisterCodeFix(
-                                CodeAction.Create(
+                                new DocumentEditorAction(
                                     NotifyWhenValueChanges,
-                                    cancellationToken => MakeAutoPropertyNotifyWhenValueChangesAsync(context.Document, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                    context.Document,
+                                    (editor, cancellationToken) => MakeAutoPropertyNotifyWhenValueChanges(
+                                        editor,
+                                        propertyDeclaration,
+                                        invoker,
+                                        semanticModel,
+                                        cancellationToken),
                                     NotifyWhenValueChanges),
                                 diagnostic);
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                         {
                             context.RegisterCodeFix(
-                                CodeAction.Create(
+                                new DocumentEditorAction(
                                     NotifyWhenValueChanges,
-                                    cancellationToken => MakeWithBackingFieldNotifyWhenValueChangesAsync(context.Document, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                    context.Document,
+                                    (editor, cancellationToken) => MakeWithBackingFieldNotifyWhenValueChanges(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
                                     NotifyWhenValueChanges),
                                 diagnostic);
 
                             context.RegisterCodeFix(
-                                CodeAction.Create(
+                                new DocumentEditorAction(
                                     "Notify.",
-                                    cancellationToken => MakeWithBackingFieldNotifyAsync(context.Document, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                    context.Document,
+                                    (editor, cancellationToken) => MakeWithBackingFieldNotify(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
                                     "Notify."),
                                 diagnostic);
                         }
@@ -118,11 +128,8 @@
             }
         }
 
-        private static async Task<Document> MakeAutoPropertyNotifyWhenValueChangesAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static void MakeAutoPropertyNotifyWhenValueChanges(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
-
             if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
             {
                 if (getter.Body != null ||
@@ -130,7 +137,7 @@
                     setter.Body != null ||
                     setter.ContainsSkippedText)
                 {
-                    return document;
+                    return;
                 }
 
                 var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
@@ -185,20 +192,15 @@
                         x => x.WithoutInitializer());
                 }
 
-                return editor.GetChangedDocument();
             }
-
-            return document;
         }
 
-        private static async Task<Document> MakeAutoPropertySetAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static void MakeAutoPropertySet(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration == null)
             {
-                return document;
+                return;
             }
 
             if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
@@ -208,7 +210,7 @@
                     setter.Body != null ||
                     setter.ContainsSkippedText)
                 {
-                    return document;
+                    return;
                 }
 
                 var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
@@ -248,20 +250,15 @@
                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
 
-                return editor.GetChangedDocument();
             }
-
-            return document;
         }
 
-        private static async Task<Document> MakeWithBackingFieldNotifyWhenValueChangesAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static void MakeWithBackingFieldNotifyWhenValueChanges(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration == null)
             {
-                return document;
+                return;
             }
 
             if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter) &&
@@ -270,7 +267,7 @@
                 if (getter.Body?.Statements.Count != 1 ||
                     setter.Body?.Statements.Count != 1)
                 {
-                    return document;
+                    return;
                 }
 
                 if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out var assignment, out _))
@@ -299,22 +296,17 @@
                                                                      .WithAdditionalAnnotations(Formatter.Annotation);
                         editor.InsertAfter(statement, notifyStatement);
                         editor.FormatNode(propertyDeclaration);
-                        return editor.GetChangedDocument();
                     }
                 }
             }
-
-            return document;
         }
 
-        private static async Task<Document> MakeWithBackingFieldNotifyAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static void MakeWithBackingFieldNotify(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol invoker, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration == null)
             {
-                return document;
+                return;
             }
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out _, out _))
@@ -329,20 +321,16 @@
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 editor.InsertAfter(statement, notifyStatement);
                 editor.FormatNode(propertyDeclaration);
-                return editor.GetChangedDocument();
+                return;
             }
-
-            return document;
         }
 
-        private static async Task<Document> MakeWithBackingFieldSetAsync(Document document, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static void MakeWithBackingFieldSet(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration == null)
             {
-                return document;
+                return;
             }
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
@@ -353,10 +341,7 @@
                     .WithSimplifiedNames()
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 editor.ReplaceNode(assignment, setExpression);
-                return editor.GetChangedDocument();
             }
-
-            return document;
         }
 
         private static PropertyDeclarationSyntax ParseProperty(string code)
