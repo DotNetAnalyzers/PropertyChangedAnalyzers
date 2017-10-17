@@ -307,38 +307,6 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreInternalClass()
-        {
-            // maybe this should notify?
-            var testCode = @"
-namespace RoslynSandBox
-{
-    internal class Foo
-    {
-        public int Bar { get; set; }
-    }
-}";
-
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
-        }
-
-        [Test]
-        public void IgnoreInternalProperty()
-        {
-            // maybe this should notify?
-            var testCode = @"
-namespace RoslynSandBox
-{
-    public class Foo
-    {
-        internal int Bar { get; set; }
-    }
-}";
-
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
-        }
-
-        [Test]
         public void IgnoreDependencyProperty()
         {
             var testCode = @"
