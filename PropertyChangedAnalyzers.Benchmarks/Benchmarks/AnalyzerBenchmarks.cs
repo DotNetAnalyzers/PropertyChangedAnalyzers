@@ -5,17 +5,17 @@
 
     public abstract class AnalyzerBenchmarks
     {
-        private readonly BenchmarkWalker walker;
+        private readonly Gu.Roslyn.Asserts.Benchmark benchmark;
 
         protected AnalyzerBenchmarks(DiagnosticAnalyzer analyzer)
         {
-            this.walker = new BenchmarkWalker(Code.AnalyzersProject, analyzer);
+            this.benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, analyzer);
         }
 
         [Benchmark]
         public void RunOnPropertyChangedAnalyzers()
         {
-            this.walker.Run();
+            this.benchmark.Run();
         }
     }
 }
