@@ -49,5 +49,50 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Diagnostics<INPC010SetAndReturnSameField>(testCode);
         }
+
+        [Test]
+        public void GetterReturnsOtherThanSetterAssignsInternalClassInternalProperty()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class ViewModel : INotifyPropertyChanged
+    {
+        private int otherValue;
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓internal int Value
+        {
+            get
+            {
+                return this.otherValue;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(nameof(Value));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics<INPC010SetAndReturnSameField>(testCode);
+        }
     }
 }

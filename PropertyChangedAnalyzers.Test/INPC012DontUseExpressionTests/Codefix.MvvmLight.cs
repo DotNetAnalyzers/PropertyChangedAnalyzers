@@ -69,6 +69,57 @@ namespace RoslynSandbox
 }";
                 AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
             }
+
+            [Test]
+            public void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    internal class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int name;
+
+        public string Greeting => $""Hello{this.Name}"";
+
+        internal int Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(ref this.name, value))
+                {
+                    this.RaisePropertyChanged(↓() => this.Greeting);
+                }
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    internal class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int name;
+
+        public string Greeting => $""Hello{this.Name}"";
+
+        internal int Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.Set(ref this.name, value))
+                {
+                    this.RaisePropertyChanged(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
+            }
         }
     }
 }
