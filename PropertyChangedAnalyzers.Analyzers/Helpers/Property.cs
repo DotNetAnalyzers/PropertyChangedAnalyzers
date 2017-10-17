@@ -65,7 +65,8 @@
         internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (declaration == null ||
-                !declaration.Modifiers.Any(SyntaxKind.PublicKeyword) ||
+                declaration.Modifiers.Any(SyntaxKind.PrivateKeyword) ||
+                declaration.Modifiers.Any(SyntaxKind.ProtectedKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
                 !declaration.TryGetSetAccessorDeclaration(out _))
@@ -83,13 +84,16 @@
         internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, IPropertySymbol propertySymbol, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertySymbol.IsIndexer ||
-                propertySymbol.DeclaredAccessibility != Accessibility.Public ||
+                propertySymbol.DeclaredAccessibility == Accessibility.Private ||
+                propertySymbol.DeclaredAccessibility == Accessibility.Protected ||
                 propertySymbol.IsStatic ||
                 propertySymbol.IsReadOnly ||
                 propertySymbol.GetMethod == null ||
                 propertySymbol.IsAbstract ||
+                propertySymbol.ContainingType == null ||
                 propertySymbol.ContainingType.IsValueType ||
-                propertySymbol.ContainingType.DeclaredAccessibility != Accessibility.Public)
+                propertySymbol.ContainingType.DeclaredAccessibility == Accessibility.Private ||
+                propertySymbol.ContainingType.DeclaredAccessibility == Accessibility.Protected)
             {
                 return false;
             }
