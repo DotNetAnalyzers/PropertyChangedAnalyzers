@@ -57,7 +57,8 @@
                                             property,
                                             invoker,
                                             usesUnderscoreNames),
-                                        this.GetType().Name),
+                                        this.GetType()
+                                            .Name),
                                     diagnostic);
                                 continue;
                             }
@@ -76,6 +77,26 @@
                                             usesUnderscoreNames),
                                         this.GetType()
                                             .Name),
+                                    diagnostic);
+                                continue;
+                            }
+
+                            if (invocation.Parent is PrefixUnaryExpressionSyntax unary &&
+                                unary.IsKind(SyntaxKind.LogicalNotExpression) &&
+                                unary.Parent is IfStatementSyntax ifStatement2 &&
+                                ifStatement2.IsReturnOnly())
+                            {
+                                context.RegisterCodeFix(
+                                    new DocumentEditorAction(
+                                        $"Notify that property {property} changes.",
+                                        context.Document,
+                                        (editor, _) => MakeNotify(
+                                            editor,
+                                            expression,
+                                            property,
+                                            invoker,
+                                            usesUnderscoreNames),
+                                        this.GetType().Name),
                                     diagnostic);
                                 continue;
                             }
@@ -105,13 +126,16 @@
                                                  .WithLeadingElasticLineFeed()
                                                  .WithTrailingElasticLineFeed()
                                                  .WithAdditionalAnnotations(Formatter.Annotation);
-            var assignStatement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
             if (assignment.Parent is AnonymousFunctionExpressionSyntax anonymousFunction)
             {
                 if (anonymousFunction.Body is BlockSyntax block)
                 {
-                    var previousStatement = InsertAfter(block, assignStatement, invoker);
-                    editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
+                    if (block.Statements.Count > 1)
+                    {
+                        var previousStatement = InsertAfter(block, block.Statements.Last(), invoker);
+                        editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
+                    }
+
                     return;
                 }
 
@@ -119,9 +143,17 @@
                 var withStatements = editor.Generator.WithStatements(anonymousFunction, new[] { expressionStatement, onPropertyChanged });
                 editor.ReplaceNode(anonymousFunction, withStatements);
             }
-            else if (assignStatement?.Parent is BlockSyntax block)
+            else if (assignment.Parent is ExpressionStatementSyntax assignStatement &&
+                     assignStatement.Parent is BlockSyntax assignBlock)
             {
-                var previousStatement = InsertAfter(block, assignStatement, invoker);
+                var previousStatement = InsertAfter(assignBlock, assignStatement, invoker);
+                editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
+            }
+            else if (assignment.Parent is PrefixUnaryExpressionSyntax unary &&
+                     unary.Parent is IfStatementSyntax ifStatement &&
+                     ifStatement.Parent is BlockSyntax ifBlock)
+            {
+                var previousStatement = InsertAfter(ifBlock, ifStatement, invoker);
                 editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
             }
         }
