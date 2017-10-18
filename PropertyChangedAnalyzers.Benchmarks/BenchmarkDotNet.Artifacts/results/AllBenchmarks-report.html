@@ -22,22 +22,22 @@ Frequency=3410126 Hz, Resolution=293.2443 ns, Timer=TSC
 <pre><code></code></pre>
 
 <table>
-<thead><tr><th>                            Method</th><th>     Mean</th><th>   Error</th><th>  StdDev</th><th>Gen 0</th><th>Gen 1</th><th>Allocated</th>
+<thead><tr><th>                            Method</th><th>     Mean</th><th>   Error</th><th>  StdDev</th><th>   Median</th><th>Gen 0</th><th>Gen 1</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>INPC001ImplementINotifyPropertyChanged</td><td>198,147.57 ns</td><td>4,788.2704 ns</td><td>14,043.168 ns</td><td>1.7090</td><td>1.7090</td><td>9672 B</td>
-</tr><tr><td>INPC002MutablePublicPropertyShouldNotify</td><td>36,382.25 ns</td><td>1,139.1951 ns</td><td>3,323.086 ns</td><td>-</td><td>-</td><td>244 B</td>
-</tr><tr><td>  INPC003NotifyWhenPropertyChanges</td><td>2,799,411.79 ns</td><td>90,715.6071 ns</td><td>264,621.684 ns</td><td>-</td><td>-</td><td>15424 B</td>
-</tr><tr><td>        INPC004UseCallerMemberName</td><td>1,296,767.72 ns</td><td>38,337.1295 ns</td><td>111,222.964 ns</td><td>-</td><td>-</td><td>272 B</td>
-</tr><tr><td>INPC005CheckIfDifferentBeforeNotifying</td><td>1,139,137.32 ns</td><td>26,667.5946 ns</td><td>78,211.439 ns</td><td>-</td><td>-</td><td>32 B</td>
-</tr><tr><td>INPC006UseObjectEqualsForReferenceTypes</td><td>668,505.82 ns</td><td>19,996.2820 ns</td><td>58,645.634 ns</td><td>-</td><td>-</td><td>32 B</td>
-</tr><tr><td>         INPC006UseReferenceEquals</td><td>689,712.31 ns</td><td>17,088.4152 ns</td><td>50,385.578 ns</td><td>-</td><td>-</td><td>32 B</td>
-</tr><tr><td>             INPC007MissingInvoker</td><td> 35.79 ns</td><td>0.7905 ns</td><td>2.294 ns</td><td>0.0045</td><td>0.0045</td><td>24 B</td>
-</tr><tr><td>        INPC008StructMustNotNotify</td><td> 36.10 ns</td><td>0.9542 ns</td><td>2.813 ns</td><td>0.0045</td><td>0.0045</td><td>24 B</td>
-</tr><tr><td>INPC009DontRaiseChangeForMissingProperty</td><td>2,665,653.46 ns</td><td>87,003.3854 ns</td><td>256,531.445 ns</td><td>35.1563</td><td>-</td><td>199586 B</td>
-</tr><tr><td>      INPC010SetAndReturnSameField</td><td>45,908.75 ns</td><td>1,373.1661 ns</td><td>4,048.811 ns</td><td>0.2441</td><td>0.2441</td><td>1572 B</td>
-</tr><tr><td>                 INPC011DontShadow</td><td> 36.53 ns</td><td>1.2892 ns</td><td>3.781 ns</td><td>0.0045</td><td>0.0045</td><td>24 B</td>
-</tr><tr><td>          INPC012DontUseExpression</td><td>1,648,858.00 ns</td><td>42,249.4841 ns</td><td>123,243.728 ns</td><td>-</td><td>-</td><td>256 B</td>
-</tr><tr><td>                  INPC013UseNameof</td><td>1,676,187.82 ns</td><td>33,735.0047 ns</td><td>98,406.592 ns</td><td>1.9531</td><td>1.9531</td><td>18304 B</td>
+</thead><tbody><tr><td>INPC001ImplementINotifyPropertyChanged</td><td>182,658.38 ns</td><td>6,629.3421 ns</td><td>17,695.056 ns</td><td>179,756.64 ns</td><td>1.7090</td><td>1.7090</td><td>9672 B</td>
+</tr><tr><td>INPC002MutablePublicPropertyShouldNotify</td><td>32,892.01 ns</td><td>1,022.7271 ns</td><td>2,999.482 ns</td><td>32,811.71 ns</td><td>-</td><td>-</td><td>244 B</td>
+</tr><tr><td>  INPC003NotifyWhenPropertyChanges</td><td>2,717,700.37 ns</td><td>62,361.9652 ns</td><td>180,923.369 ns</td><td>2,711,729.09 ns</td><td>-</td><td>-</td><td>15419 B</td>
+</tr><tr><td>        INPC004UseCallerMemberName</td><td>1,238,335.68 ns</td><td>40,183.4150 ns</td><td>117,851.000 ns</td><td>1,236,045.79 ns</td><td>-</td><td>-</td><td>272 B</td>
+</tr><tr><td>INPC005CheckIfDifferentBeforeNotifying</td><td>1,319,629.83 ns</td><td>84,690.7814 ns</td><td>249,712.680 ns</td><td>1,197,863.49 ns</td><td>-</td><td>-</td><td>32 B</td>
+</tr><tr><td>INPC006UseObjectEqualsForReferenceTypes</td><td>620,422.22 ns</td><td>12,653.6769 ns</td><td>36,508.751 ns</td><td>616,494.73 ns</td><td>-</td><td>-</td><td>32 B</td>
+</tr><tr><td>         INPC006UseReferenceEquals</td><td>614,839.69 ns</td><td>16,097.0330 ns</td><td>47,462.465 ns</td><td>596,837.20 ns</td><td>-</td><td>-</td><td>32 B</td>
+</tr><tr><td>             INPC007MissingInvoker</td><td> 34.65 ns</td><td>0.9380 ns</td><td>2.751 ns</td><td> 34.30 ns</td><td>0.0045</td><td>0.0045</td><td>24 B</td>
+</tr><tr><td>        INPC008StructMustNotNotify</td><td> 32.04 ns</td><td>0.6929 ns</td><td>2.010 ns</td><td> 31.87 ns</td><td>0.0045</td><td>0.0045</td><td>24 B</td>
+</tr><tr><td>INPC009DontRaiseChangeForMissingProperty</td><td>2,172,400.56 ns</td><td>13,924.3960 ns</td><td>11,627.500 ns</td><td>2,167,462.81 ns</td><td>35.1563</td><td>-</td><td>199809 B</td>
+</tr><tr><td>      INPC010SetAndReturnSameField</td><td>40,002.61 ns</td><td>796.7847 ns</td><td>1,954.526 ns</td><td>39,911.80 ns</td><td>0.2441</td><td>0.2441</td><td>1572 B</td>
+</tr><tr><td>                 INPC011DontShadow</td><td> 31.94 ns</td><td>0.6695 ns</td><td>1.604 ns</td><td> 31.50 ns</td><td>0.0045</td><td>0.0045</td><td>24 B</td>
+</tr><tr><td>          INPC012DontUseExpression</td><td>1,535,292.09 ns</td><td>30,516.0019 ns</td><td>63,698.260 ns</td><td>1,527,046.68 ns</td><td>-</td><td>-</td><td>256 B</td>
+</tr><tr><td>                  INPC013UseNameof</td><td>1,570,255.97 ns</td><td>30,648.5879 ns</td><td>56,042.676 ns</td><td>1,559,187.71 ns</td><td>1.9531</td><td>1.9531</td><td>18336 B</td>
 </tr></tbody></table>
 </body>
 </html>
