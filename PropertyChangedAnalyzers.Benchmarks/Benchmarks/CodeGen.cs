@@ -49,7 +49,8 @@
         {
             var fileName = Path.Combine(Program.BenchmarksDirectory, "AllBenchmarks.cs");
             var builder = new StringBuilder();
-            builder.AppendLine($"namespace {this.GetType().Namespace}")
+            builder.AppendLine("// ReSharper disable InconsistentNaming")
+                   .AppendLine($"namespace {this.GetType().Namespace}")
                    .AppendLine("{")
                    .AppendLine("    public class AllBenchmarks")
                    .AppendLine("    {");
