@@ -1,10 +1,13 @@
-﻿namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
+namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
-    public class INPC002Benchmarks : AnalyzerBenchmarks
+    public class INPC002Benchmarks
     {
-        public INPC002Benchmarks()
-            : base(new PropertyChangedAnalyzers.INPC002MutablePublicPropertyShouldNotify())
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC002MutablePublicPropertyShouldNotify());
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RunOnPropertyChangedAnalyzers()
         {
+            Benchmark.Run();
         }
     }
 }

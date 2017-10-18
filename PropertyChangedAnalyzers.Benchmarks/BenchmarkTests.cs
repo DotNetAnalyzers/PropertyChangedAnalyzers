@@ -16,10 +16,6 @@
                                                                                                     .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
                                                                                                     .ToArray();
 
-        private static IReadOnlyList<Type> AllBenchmarkTypes { get; } = typeof(AnalyzerBenchmarks).Assembly.GetTypes()
-                                                                                                  .Where(typeof(AnalyzerBenchmarks).IsAssignableFrom)
-                                                                                                  .ToArray();
-
         private static IReadOnlyList<Gu.Roslyn.Asserts.Benchmark> AllBenchmarkWalkers { get; } = AllAnalyzers
             .Select(x => Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, x))
             .ToArray();
@@ -37,22 +33,6 @@
         public void Run(Gu.Roslyn.Asserts.Benchmark walker)
         {
             walker.Run();
-        }
-
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public void AllAnalyzersHaveBenchmarks(DiagnosticAnalyzer analyzer)
-        {
-            var id = analyzer.SupportedDiagnostics.Single().Id;
-            var expectedName = id + (id.Contains("_") ? "_" : string.Empty) + "Benchmarks";
-            var match = AllBenchmarkTypes.SingleOrDefault(x => x.Name == expectedName);
-            Assert.NotNull(match, expectedName);
-        }
-
-        [Test]
-        public void ProjectFileExists()
-        {
-            var projectFile = Path.Combine(Program.ProjectDirectory, "PropertyChangedAnalyzers.Benchmarks.csproj");
-            Assert.AreEqual(true, File.Exists(projectFile), projectFile);
         }
 
         [Test]
