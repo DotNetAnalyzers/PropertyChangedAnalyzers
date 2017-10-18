@@ -422,16 +422,7 @@ namespace RoslynSandbox.Client
         public int Bar
         {
             get => this.bar;
-            set
-            {
-                if (value == this.bar)
-                {
-                    return;
-                }
-
-                this.bar = value;
-                this.OnPropertyChanged();
-            }
+            set => this.SetValue(ref this.bar, value);
         }
     }
 }";
