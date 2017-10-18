@@ -150,6 +150,7 @@
                 editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
             }
             else if (assignment.Parent is PrefixUnaryExpressionSyntax unary &&
+                     unary.IsKind(SyntaxKind.LogicalNotExpression) &&
                      unary.Parent is IfStatementSyntax ifStatement &&
                      ifStatement.Parent is BlockSyntax ifBlock)
             {
