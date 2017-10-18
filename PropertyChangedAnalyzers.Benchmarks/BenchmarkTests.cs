@@ -23,16 +23,16 @@
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            foreach (var walker in AllBenchmarks)
+            foreach (var benchmark in AllBenchmarks)
             {
-                walker.Run();
+                benchmark.Run();
             }
         }
 
         [TestCaseSource(nameof(AllBenchmarks))]
-        public void Run(Gu.Roslyn.Asserts.Benchmark walker)
+        public void Run(Gu.Roslyn.Asserts.Benchmark benchmark)
         {
-            walker.Run();
+            benchmark.Run();
         }
 
         [Test]
