@@ -73,7 +73,8 @@ namespace PropertyChangedAnalyzers
                         if (IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
                             IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
                         {
-                            if (ifStatement.Statement.Span.Contains(invocation.Span))
+                            if (ifStatement.Statement.Span.Contains(invocation.Span) ||
+                                !ifStatement.IsReturnOnly())
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                             }
@@ -84,7 +85,8 @@ namespace PropertyChangedAnalyzers
                         if (IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
                             IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
                         {
-                            if (!ifStatement.Statement.Span.Contains(invocation.Span))
+                            if (!ifStatement.Statement.Span.Contains(invocation.Span) ||
+                                ifStatement.IsReturnOnly())
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                             }
