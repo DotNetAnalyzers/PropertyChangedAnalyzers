@@ -193,6 +193,36 @@ namespace RoslynSandbox
 }";
                 AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
             }
+
+            [Test]
+            public void IfNotSetReturnCalculatedProperty()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (!Set(ref this.name, value))
+                {
+                    return;
+                }
+
+                this.RaisePropertyChanged(nameof(this.Greeting));
+            }
+        }
+    }
+}";
+                AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            }
         }
     }
 }
