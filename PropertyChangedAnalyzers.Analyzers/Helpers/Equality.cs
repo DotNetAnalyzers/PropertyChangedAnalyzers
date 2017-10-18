@@ -82,30 +82,29 @@
 
         internal static bool IsObjectEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
-            var equals = condition as InvocationExpressionSyntax;
-            var method = semanticModel.GetSymbolSafe(@equals, cancellationToken) as IMethodSymbol;
-            if (method?.Parameters.Length == 2 &&
-                method == KnownSymbol.Object.Equals)
-            {
-                return IsArguments(equals, semanticModel, cancellationToken, first, other);
-            }
-
-            return false;
+            return condition is InvocationExpressionSyntax invocation &&
+                   invocation.ArgumentList?.Arguments.Count == 2 &&
+                   semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
+                   method == KnownSymbol.Object.Equals &&
+                   IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
         internal static bool IsEqualityComparerEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
-            if (condition is InvocationExpressionSyntax invocation)
-            {
-                var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-                if (method?.Parameters.Length == 2 &&
-                    method == KnownSymbol.EqualityComparerOfT.EqualsMethod)
-                {
-                    return IsArguments(invocation, semanticModel, cancellationToken, first, other);
-                }
-            }
+            return condition is InvocationExpressionSyntax invocation &&
+                   invocation.ArgumentList?.Arguments.Count == 2 &&
+                   semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
+                   method == KnownSymbol.EqualityComparerOfT.EqualsMethod &&
+                   IsArguments(invocation, semanticModel, cancellationToken, first, other);
+        }
 
-            return false;
+        internal static bool IsStringEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        {
+            return condition is InvocationExpressionSyntax invocation &&
+                   semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
+                   method.ContainingType == KnownSymbol.String &&
+                   method.Name == "Equals" &&
+                   IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
         internal static bool IsInstanceEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol instance, ISymbol arg)
@@ -143,15 +142,11 @@
 
         internal static bool IsReferenceEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
-            var equals = condition as InvocationExpressionSyntax;
-            var method = semanticModel.GetSymbolSafe(@equals, cancellationToken) as IMethodSymbol;
-            if (method?.Parameters.Length == 2 &&
-                method == KnownSymbol.Object.ReferenceEquals)
-            {
-                return IsArguments(equals, semanticModel, cancellationToken, first, other);
-            }
-
-            return false;
+            return condition is InvocationExpressionSyntax invocation &&
+                   invocation.ArgumentList?.Arguments.Count == 2 &&
+                   semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
+                   method == KnownSymbol.Object.ReferenceEquals &&
+                   IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
         internal static bool UsesObjectOrNone(ExpressionSyntax condition)
