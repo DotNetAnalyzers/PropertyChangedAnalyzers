@@ -77,9 +77,7 @@ namespace PropertyChangedAnalyzers
                             {
                                 if (ifStatement.Statement.Span.Contains(invocation.Span))
                                 {
-                                    context.ReportDiagnostic(Diagnostic.Create(
-                                                                 Descriptor,
-                                                                 invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                                 }
 
                                 return;
@@ -90,9 +88,7 @@ namespace PropertyChangedAnalyzers
                             {
                                 if (!ifStatement.Statement.Span.Contains(invocation.Span))
                                 {
-                                    context.ReportDiagnostic(Diagnostic.Create(
-                                                                 Descriptor,
-                                                                 invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                                 }
 
                                 return;
@@ -110,8 +106,16 @@ namespace PropertyChangedAnalyzers
             }
             else if (Property.TryGetSingleSetAndRaiseInSetter(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
             {
-                if (setAndRaise.Parent is IfStatementSyntax ifStatement &&
-                    ifStatement.Span.Contains(invocation.Span))
+                if (setAndRaise.Parent is IfStatementSyntax ifStatement1 &&
+                    ifStatement1.Span.Contains(invocation.Span))
+                {
+                    return;
+                }
+
+                if (setAndRaise.Parent is PrefixUnaryExpressionSyntax unary &&
+                    unary.IsKind(SyntaxKind.LogicalNotExpression) &&
+                    unary.Parent is IfStatementSyntax ifStatement2 &&
+                    !ifStatement2.Span.Contains(invocation.Span))
                 {
                     return;
                 }
