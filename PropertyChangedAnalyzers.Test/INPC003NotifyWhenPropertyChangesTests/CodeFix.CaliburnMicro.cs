@@ -480,6 +480,124 @@ namespace RoslynSandbox
                 AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
                 AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
             }
+
+            [Test]
+            public void IfNotSetReturnSetAffectsSecondCalculatedProperty()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Greeting1 => $""Hello {this.Name}"";
+
+        public string Greeting2 => $""Hej {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (!this.Set(↓ref this.name, value))
+                {
+                    return;
+                }
+                
+                this.NotifyOfPropertyChange(nameof(this.Greeting1));
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Greeting1 => $""Hello {this.Name}"";
+
+        public string Greeting2 => $""Hej {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (!this.Set(ref this.name, value))
+                {
+                    return;
+                }
+                
+                this.NotifyOfPropertyChange(nameof(this.Greeting1));
+                this.NotifyOfPropertyChange(nameof(this.Greeting2));
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            }
+
+            [Test]
+            public void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Greeting1 => $""Hello {this.Name}"";
+
+        public string Greeting2 => $""Hej {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (!this.Set(↓ref this.name, value))
+                    return;
+                
+                this.NotifyOfPropertyChange(nameof(this.Greeting1));
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Greeting1 => $""Hello {this.Name}"";
+
+        public string Greeting2 => $""Hej {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (!this.Set(ref this.name, value))
+                    return;
+                
+                this.NotifyOfPropertyChange(nameof(this.Greeting1));
+                this.NotifyOfPropertyChange(nameof(this.Greeting2));
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            }
         }
     }
 }
