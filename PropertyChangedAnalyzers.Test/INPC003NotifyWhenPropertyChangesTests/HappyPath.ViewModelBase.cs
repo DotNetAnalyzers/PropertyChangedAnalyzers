@@ -65,6 +65,56 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
+            public void SetPropertyWhenNullCoalescingInSetValue()
+            {
+                var viewModelBaseCode = @"
+namespace RoslynSandbox.Core
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class ViewModelBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName ?? string.Empty);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get { return this.name; }
+            set { this.SetValue(ref this.name, value) }
+        }
+    }
+}";
+                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(viewModelBaseCode, testCode);
+            }
+
+            [Test]
             public void SetPropertyExpressionBodies()
             {
                 var testCode = @"
