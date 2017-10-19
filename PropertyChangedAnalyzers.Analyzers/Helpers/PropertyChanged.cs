@@ -469,6 +469,11 @@
 
         internal static bool TryGetSetAndRaiseMethod(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
+            if (type.TryGetFirstMethod(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method))
+            {
+                return true;
+            }
+
             if (type.Is(KnownSymbol.MvvmLightViewModelBase))
             {
                 return type.TryGetFirstMember(
@@ -485,7 +490,7 @@
                     out method);
             }
 
-            return type.TryGetMethod(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method);
+            return false;
         }
 
         internal static bool IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
@@ -510,11 +515,12 @@
                 return false;
             }
 
-            if (!candidate.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) ||
+            if (candidate.MethodKind != MethodKind.Ordinary ||
                 candidate.ReturnType != KnownSymbol.Boolean ||
                 !candidate.IsGenericMethod ||
                 candidate.TypeParameters.Length != 1 ||
-                candidate.Parameters.Length < 3)
+                candidate.Parameters.Length < 3 ||
+                    !candidate.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 return false;
             }
