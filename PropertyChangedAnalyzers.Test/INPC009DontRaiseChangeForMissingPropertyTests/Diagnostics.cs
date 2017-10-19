@@ -269,7 +269,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void Foo
+        public void Foo()
         {
             ↓this.OnPropertyChanged();
         }
@@ -285,7 +285,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExpressionInvokerWithEvent()
+        public void ExpressionInvokerWithMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -316,9 +316,11 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(↓() => this.PropertyChanged);
+                this.OnPropertyChanged(↓() => this.Foo());
             }
         }
+
+        private int Foo() => 1;
 
         protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
         {
