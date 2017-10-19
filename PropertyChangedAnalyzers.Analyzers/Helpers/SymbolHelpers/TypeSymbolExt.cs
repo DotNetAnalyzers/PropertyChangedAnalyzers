@@ -123,7 +123,7 @@
             while (type != null &&
                    type != KnownSymbol.Object)
             {
-                foreach (var symbol in type.GetMembers())
+                foreach (var symbol in type.GetMembers(name))
                 {
                     if (symbol is TMember candidate &&
                         predicate(candidate))
@@ -157,7 +157,7 @@
             while (type != null &&
                    type != KnownSymbol.Object)
             {
-                foreach (var symbol in type.GetMembers())
+                foreach (var symbol in type.GetMembers(name))
                 {
                     if (symbol is TMember candidate &&
                         predicate(candidate))
