@@ -103,6 +103,7 @@
 
             if (semanticModel == null ||
                 node == null ||
+                node.SyntaxTree == null ||
                 node.IsMissing)
             {
                 return null;
