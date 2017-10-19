@@ -45,9 +45,7 @@
             }
 
             var invocation = (InvocationExpressionSyntax)context.Node;
-            if (invocation.ArgumentList == null ||
-                invocation.ArgumentList.Arguments.Count == 0 ||
-                invocation.ArgumentList.Arguments.Count > 2)
+            if (!IsPotentialInvocation(invocation))
             {
                 return;
             }
@@ -68,6 +66,12 @@
                     if (string.IsNullOrWhiteSpace(propertyName) ||
                         type.TryGetProperty(propertyName, out _))
                     {
+                        return;
+                    }
+
+                    if (nameArg == null)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation()));
                         return;
                     }
 
@@ -92,6 +96,50 @@
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation()));
                 }
             }
+        }
+
+        /// <summary>
+        /// This is an optimization for exiting early.
+        /// </summary>
+        private static bool IsPotentialInvocation(InvocationExpressionSyntax invocation)
+        {
+            if (invocation == null)
+            {
+                return false;
+            }
+
+            var argumentList = invocation.ArgumentList;
+
+            if (argumentList == null ||
+                argumentList.Arguments.Count == 0)
+            {
+                // Zero arguments can be [CallerMemberName]
+                return true;
+            }
+
+            if (argumentList.Arguments.Count > 2)
+            {
+                return false;
+            }
+
+            if (argumentList.Arguments.Count == 2 &&
+                !(argumentList.Arguments[0]
+                              .Expression is InstanceExpressionSyntax))
+            {
+                return false;
+            }
+
+            var argument = argumentList.Arguments.Last();
+            switch (argument.Kind())
+            {
+                case SyntaxKind.NumericLiteralExpression:
+                case SyntaxKind.NullLiteralExpression:
+                case SyntaxKind.TrueLiteralExpression:
+                case SyntaxKind.FalseLiteralExpression:
+                    return false;
+            }
+
+            return true;
         }
     }
 }

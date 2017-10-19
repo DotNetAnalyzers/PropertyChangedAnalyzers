@@ -130,7 +130,7 @@
 
                 if (argument.Expression is ParenthesizedLambdaExpressionSyntax lambda)
                 {
-                    if (semanticModel.GetSymbolSafe(lambda.Body, cancellationToken) is IPropertySymbol property)
+                    if (semanticModel.GetSymbolSafe(lambda.Body, cancellationToken) is ISymbol property)
                     {
                         propertyName = property.Name;
                         nameArg = argument;
@@ -464,7 +464,7 @@
 
             var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
             return method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
-                   IsInvoker(method, semanticModel, cancellationToken) != AnalysisResult.No;
+                             IsInvoker(method, semanticModel, cancellationToken) != AnalysisResult.No;
         }
 
         internal static bool TryGetSetAndRaiseMethod(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
