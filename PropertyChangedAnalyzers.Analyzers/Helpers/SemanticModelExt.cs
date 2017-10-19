@@ -13,103 +13,131 @@
     {
         private static readonly ConditionalWeakTable<SyntaxTree, SemanticModel> Cache = new ConditionalWeakTable<SyntaxTree, SemanticModel>();
 
+        internal static ISymbol GetSymbolSafe(this SemanticModel semanticModel, AwaitExpressionSyntax node, CancellationToken cancellationToken)
+        {
+            return semanticModel.GetSymbolSafe(node.Expression, cancellationToken);
+        }
+
+        internal static IMethodSymbol GetSymbolSafe(this SemanticModel semanticModel, ConstructorInitializerSyntax node, CancellationToken cancellationToken)
+        {
+            return (IMethodSymbol)semanticModel.GetSymbolSafe((SyntaxNode)node, cancellationToken);
+        }
+
         internal static ISymbol GetSymbolSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
-            return SemanticModelFor(semanticModel, node)?.GetSymbolInfo(node, cancellationToken).Symbol;
+            if (node is AwaitExpressionSyntax awaitExpression)
+            {
+                return GetSymbolSafe(semanticModel, awaitExpression, cancellationToken);
+            }
+
+            return semanticModel.SemanticModelFor(node)
+                                ?.GetSymbolInfo(node, cancellationToken)
+                                .Symbol;
         }
 
         internal static IFieldSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, FieldDeclarationSyntax node, CancellationToken cancellationToken)
         {
-            return (IFieldSymbol)GetDeclaredSymbolSafe(semanticModel, (SyntaxNode)node, cancellationToken);
+            return (IFieldSymbol)semanticModel.SemanticModelFor(node)
+                                              ?.GetDeclaredSymbol(node, cancellationToken);
         }
 
         internal static IMethodSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, ConstructorDeclarationSyntax node, CancellationToken cancellationToken)
         {
-            return (IMethodSymbol)GetDeclaredSymbolSafe(semanticModel, (SyntaxNode)node, cancellationToken);
+            return (IMethodSymbol)semanticModel.SemanticModelFor(node)
+                                               ?.GetDeclaredSymbol(node, cancellationToken);
+        }
+
+        internal static ISymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, BasePropertyDeclarationSyntax node, CancellationToken cancellationToken)
+        {
+            return semanticModel.SemanticModelFor(node)
+                                ?.GetDeclaredSymbol(node, cancellationToken);
         }
 
         internal static IPropertySymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, PropertyDeclarationSyntax node, CancellationToken cancellationToken)
         {
-            return (IPropertySymbol)GetDeclaredSymbolSafe(semanticModel, (SyntaxNode)node, cancellationToken);
+            return (IPropertySymbol)semanticModel.SemanticModelFor(node)
+                                                 ?.GetDeclaredSymbol(node, cancellationToken);
+        }
+
+        internal static IPropertySymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, IndexerDeclarationSyntax node, CancellationToken cancellationToken)
+        {
+            return (IPropertySymbol)semanticModel.SemanticModelFor(node)
+                                                 ?.GetDeclaredSymbol(node, cancellationToken);
         }
 
         internal static IMethodSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, MethodDeclarationSyntax node, CancellationToken cancellationToken)
         {
-            return (IMethodSymbol)GetDeclaredSymbolSafe(semanticModel, (SyntaxNode)node, cancellationToken);
+            return (IMethodSymbol)semanticModel.SemanticModelFor(node)
+                                               .GetDeclaredSymbol(node, cancellationToken);
         }
 
         internal static ITypeSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, TypeDeclarationSyntax node, CancellationToken cancellationToken)
         {
-            return (ITypeSymbol)GetDeclaredSymbolSafe(semanticModel, (SyntaxNode)node, cancellationToken);
+            return (ITypeSymbol)semanticModel.SemanticModelFor(node)
+                                             ?.GetDeclaredSymbol(node, cancellationToken);
+        }
+
+        internal static IParameterSymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, ParameterSyntax node, CancellationToken cancellationToken)
+        {
+            return (IParameterSymbol)GetDeclaredSymbolSafe(semanticModel, (SyntaxNode)node, cancellationToken);
         }
 
         internal static ISymbol GetDeclaredSymbolSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
-            return SemanticModelFor(semanticModel, node)?.GetDeclaredSymbol(node, cancellationToken);
+            return semanticModel.SemanticModelFor(node)
+                                ?.GetDeclaredSymbol(node, cancellationToken);
         }
 
         internal static Optional<object> GetConstantValueSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
-            return SemanticModelFor(semanticModel, node)?.GetConstantValue(node, cancellationToken) ?? default(Optional<object>);
-        }
-
-        internal static bool TryGetConstantValue<T>(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken, out T value)
-        {
-            var optional = GetConstantValueSafe(semanticModel, node, cancellationToken);
-            if (optional.HasValue)
-            {
-                value = (T)optional.Value;
-                return true;
-            }
-
-            value = default(T);
-            return false;
+            return semanticModel.SemanticModelFor(node)
+                                ?.GetConstantValue(node, cancellationToken) ?? default(Optional<object>);
         }
 
         internal static TypeInfo GetTypeInfoSafe(this SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
-            return SemanticModelFor(semanticModel, node)?.GetTypeInfo(node, cancellationToken) ?? default(TypeInfo);
+            return semanticModel.SemanticModelFor(node)
+                                ?.GetTypeInfo(node, cancellationToken) ?? default(TypeInfo);
         }
 
         /// <summary>
-        /// Gets the semantic model for <paramref name="node"/>
+        /// Gets the semantic model for <paramref name="expression"/>
         /// This can be needed for partial classes.
         /// </summary>
         /// <param name="semanticModel">The semantic model.</param>
-        /// <param name="node">The expression.</param>
-        /// <returns>The semantic model that corresponds to <paramref name="node"/></returns>
-        internal static SemanticModel SemanticModelFor(this SemanticModel semanticModel, SyntaxNode node)
+        /// <param name="expression">The expression.</param>
+        /// <returns>The semantic model that corresponds to <paramref name="expression"/></returns>
+        internal static SemanticModel SemanticModelFor(this SemanticModel semanticModel, SyntaxNode expression)
         {
-            SemanticModel Create(Compilation compilation, SyntaxTree tree)
+            if (semanticModel == null ||
+                expression == null ||
+                expression.IsMissing)
             {
-                if (compilation.ContainsSyntaxTree(tree))
-                {
-                    return semanticModel.Compilation.GetSemanticModel(tree);
-                }
+                return null;
+            }
 
-                foreach (var reference in compilation.References)
+            if (ReferenceEquals(semanticModel.SyntaxTree, expression.SyntaxTree))
+            {
+                return semanticModel;
+            }
+
+            if (semanticModel.Compilation.ContainsSyntaxTree(expression.SyntaxTree))
+            {
+                return semanticModel.Compilation.GetSemanticModel(expression.SyntaxTree);
+            }
+
+            foreach (var metadataReference in semanticModel.Compilation.References)
+            {
+                if (metadataReference is CompilationReference compilationReference)
                 {
-                    if (reference is CompilationReference compilationReference)
+                    if (compilationReference.Compilation.ContainsSyntaxTree(expression.SyntaxTree))
                     {
-                        if (compilationReference.Compilation.ContainsSyntaxTree(tree))
-                        {
-                            return compilationReference.Compilation.GetSemanticModel(tree);
-                        }
+                        return compilationReference.Compilation.GetSemanticModel(expression.SyntaxTree);
                     }
                 }
-
-                return null;
             }
 
-            if (semanticModel == null ||
-                node == null ||
-                node.SyntaxTree == null ||
-                node.IsMissing)
-            {
-                return null;
-            }
-
-            return Cache.GetValue(node.SyntaxTree, x => Create(semanticModel.Compilation, x));
+            return null;
         }
     }
 }
