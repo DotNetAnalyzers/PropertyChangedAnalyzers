@@ -29,33 +29,56 @@ namespace PropertyChangedAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleArguments, SyntaxKind.Argument);
+            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.Argument);
         }
 
-        private static void HandleArguments(SyntaxNodeAnalysisContext context)
+        private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.IsExcludedFromAnalysis())
             {
                 return;
             }
 
-            var argument = (ArgumentSyntax)context.Node;
-            var literal = argument.Expression as LiteralExpressionSyntax;
-            if (literal?.IsKind(SyntaxKind.StringLiteralExpression) != true)
+            if (context.Node is ArgumentSyntax argument &&
+                argument.Expression is LiteralExpressionSyntax literal &&
+                literal.IsKind(SyntaxKind.StringLiteralExpression) &&
+                IsPotentialNameOf(literal.Token.ValueText))
             {
-                return;
+                if (context.ContainingSymbol is IMethodSymbol method &&
+                    method.Parameters.TryGetSingle(x => x.Name == literal.Token.ValueText, out _))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+                }
+
+                if (context.ContainingSymbol.ContainingType.TryGetProperty(literal.Token.ValueText, out _))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Optimization for early exit while still in the syntax world.
+        /// </summary>
+        private static bool IsPotentialNameOf(string text)
+        {
+            if (string.IsNullOrEmpty(text) ||
+                text.Length > 100)
+            {
+                return false;
             }
 
-            if (context.ContainingSymbol is IMethodSymbol method &&
-                method.Parameters.TryGetSingle(x => x.Name == literal.Token.ValueText, out _))
+            foreach (var c in text)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+                if (c == ' ' ||
+                    c == '.' ||
+                    c == ',')
+                {
+                    return false;
+                }
             }
 
-            if (context.ContainingSymbol.ContainingType.TryGetProperty(literal.Token.ValueText, out _))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
-            }
+            return true;
         }
     }
 }
