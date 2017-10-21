@@ -24,10 +24,17 @@
             Assert.Pass($"Count: {AllAnalyzers.Count}");
         }
 
+        [Explicit("Requires updated Gu.Roslyn.Asserts")]
         [TestCaseSource(nameof(AllAnalyzers))]
         public void PropertyChangedAnalyzersSln(DiagnosticAnalyzer analyzer)
         {
             AnalyzerAssert.Valid(analyzer, CodeFactory.FindSolutionFile("PropertyChangedAnalyzers.sln"));
+        }
+
+        [TestCaseSource(nameof(AllAnalyzers))]
+        public void PropertyChangedAnalyzersProject(DiagnosticAnalyzer analyzer)
+        {
+            AnalyzerAssert.Valid(analyzer, CodeFactory.FindProjectFile("PropertyChangedAnalyzers.Analyzers.csproj"));
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]

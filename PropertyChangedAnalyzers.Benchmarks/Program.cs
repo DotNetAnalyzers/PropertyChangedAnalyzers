@@ -14,21 +14,9 @@ namespace PropertyChangedAnalyzers.Benchmarks
 
     public class Program
     {
+        public static string ProjectDirectory { get; } = CodeFactory.FindProjectFile("PropertyChangedAnalyzers.Benchmarks.csproj").DirectoryName;
+
         public static string BenchmarksDirectory { get; } = Path.Combine(ProjectDirectory, "Benchmarks");
-
-        public static string ProjectDirectory
-        {
-            get
-            {
-                var directoryInfo = new DirectoryInfo(Path.GetDirectoryName(new Uri(typeof(Program).Assembly.CodeBase, UriKind.Absolute).LocalPath));
-                if (CodeFactory.TryFindFileInParentDirectory(directoryInfo, "PropertyChangedAnalyzers.Benchmarks.csproj", out var projectfile))
-                {
-                    return projectfile.Directory.FullName;
-                }
-
-                throw new FileNotFoundException();
-            }
-        }
 
         private static string ArtifactsDirectory { get; } = Path.Combine(ProjectDirectory, "BenchmarkDotNet.Artifacts", "results");
 

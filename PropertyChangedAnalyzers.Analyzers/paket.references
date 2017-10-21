@@ -4,3 +4,4 @@ group Analyzers
   StyleCop.Analyzers
   Gu.Analyzers
   AsyncUsageAnalyzers
+  IDisposableAnalyzers
