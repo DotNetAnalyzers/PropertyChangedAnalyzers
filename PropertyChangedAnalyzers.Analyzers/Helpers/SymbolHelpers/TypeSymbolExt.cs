@@ -41,6 +41,21 @@
             return type.TryGetFirstMember(predicate, out property);
         }
 
+        internal static bool TryGetSingleMethod(this ITypeSymbol type, string name, out IMethodSymbol property)
+        {
+            return type.TryGetSingleMember(name, out property);
+        }
+
+        internal static bool TryGetSingleMethod(this ITypeSymbol type, Func<IMethodSymbol, bool> predicate, out IMethodSymbol property)
+        {
+            return type.TryGetSingleMember(predicate, out property);
+        }
+
+        internal static bool TryGetSingleMethod(this ITypeSymbol type, string name, Func<IMethodSymbol, bool> predicate, out IMethodSymbol property)
+        {
+            return type.TryGetSingleMember(name, predicate, out property);
+        }
+
         internal static bool TryGetFirstMethod(this ITypeSymbol type, string name, Func<IMethodSymbol, bool> predicate, out IMethodSymbol property)
         {
             return type.TryGetSingleMember(name, predicate, out property);
