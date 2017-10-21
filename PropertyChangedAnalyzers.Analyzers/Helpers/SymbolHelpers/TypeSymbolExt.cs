@@ -25,10 +25,10 @@
         {
             if (name == "Item[]")
             {
-                return type.TryGetSingleMember(x => x.IsIndexer, out property);
+                return type.TryGetFirstMember(x => x.IsIndexer, out property);
             }
 
-            return type.TryGetSingleMember(name, out property);
+            return type.TryGetFirstMember(name, out property);
         }
 
         internal static bool TryGetFirstMethod(this ITypeSymbol type, string name, out IMethodSymbol property)
