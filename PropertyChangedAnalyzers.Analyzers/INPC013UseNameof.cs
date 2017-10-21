@@ -42,7 +42,7 @@ namespace PropertyChangedAnalyzers
             if (context.Node is ArgumentSyntax argument &&
                 argument.Expression is LiteralExpressionSyntax literal &&
                 literal.IsKind(SyntaxKind.StringLiteralExpression) &&
-                IsPotentialNameOf(literal.Token.ValueText))
+                SyntaxFacts.IsValidIdentifier(literal.Token.ValueText))
             {
                 if (context.ContainingSymbol is IMethodSymbol method &&
                     method.Parameters.TryGetSingle(x => x.Name == literal.Token.ValueText, out _))
@@ -55,30 +55,6 @@ namespace PropertyChangedAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
                 }
             }
-        }
-
-        /// <summary>
-        /// Optimization for early exit while still in the syntax world.
-        /// </summary>
-        private static bool IsPotentialNameOf(string text)
-        {
-            if (string.IsNullOrEmpty(text) ||
-                text.Length > 100)
-            {
-                return false;
-            }
-
-            foreach (var c in text)
-            {
-                if (c == ' ' ||
-                    c == '.' ||
-                    c == ',')
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }
