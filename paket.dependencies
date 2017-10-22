@@ -15,14 +15,14 @@ group Benchmarks
   source http://www.nuget.org/api/v2/
   nuget BenchmarkDotNet.Diagnostics.Windows
   nuget Microsoft.CodeAnalysis.CSharp.Workspaces
-  nuget Gu.Roslyn.Asserts
+  nuget Gu.Roslyn.Asserts ~> 2
   nuget NUnit
 
 group Test
   storage: none
   source http://www.nuget.org/api/v2/
   nuget Microsoft.CodeAnalysis.CSharp.Workspaces 2.3.1 strategy: min
-  nuget Gu.Roslyn.Asserts
+  nuget Gu.Roslyn.Asserts ~> 2
   nuget NUnit
   nuget MvvmLight
   nuget Caliburn.Micro
