@@ -7,13 +7,15 @@
     {
         internal class CS0246
         {
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0246");
+
             [Test]
             public void WhenInterfaceOnly()
             {
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : ↓INotifyPropertyChanged
+    public class Foo : INotifyPropertyChanged
     {
     }
 }";
@@ -31,7 +33,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0246", testCode, fixedCode);
+                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -40,7 +42,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public sealed class Foo : ↓INotifyPropertyChanged
+    public sealed class Foo : INotifyPropertyChanged
     {
     }
 }";
@@ -58,7 +60,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0246", testCode, fixedCode);
+                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
             }
         }
     }
