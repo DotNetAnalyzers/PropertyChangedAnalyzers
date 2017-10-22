@@ -8,6 +8,36 @@
         internal class AutoProperty
         {
             [Test]
+            public void Message()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Bar { get; set; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var expectedMessage = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
+                    "INPC002",
+                    "Property 'Bar' should notify when value changes.",
+                    testCode,
+                    out testCode);
+                AnalyzerAssert.Diagnostics<INPC002MutablePublicPropertyShouldNotify>(expectedMessage, testCode);
+            }
+
+            [Test]
             public void CallerMemberName()
             {
                 var testCode = @"

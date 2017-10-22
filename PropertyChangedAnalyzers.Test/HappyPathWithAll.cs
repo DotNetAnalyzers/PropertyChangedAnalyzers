@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     using NUnit.Framework;
@@ -17,6 +18,16 @@
             .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
             .ToArray();
 
+        private static readonly Solution Solution = CodeFactory.CreateSolution(
+            CodeFactory.FindSolutionFile("PropertyChangedAnalyzers.sln"),
+            AllAnalyzers,
+            AnalyzerAssert.MetadataReferences);
+
+        private static readonly Solution PropertyChangedAnalyzersProjectSln = CodeFactory.CreateSolution(
+            CodeFactory.FindProjectFile("PropertyChangedAnalyzers.Analyzers.csproj"),
+            AllAnalyzers,
+            AnalyzerAssert.MetadataReferences);
+
         [Test]
         public void NotEmpty()
         {
@@ -24,17 +35,16 @@
             Assert.Pass($"Count: {AllAnalyzers.Count}");
         }
 
-        [Explicit("Requires updated Gu.Roslyn.Asserts")]
         [TestCaseSource(nameof(AllAnalyzers))]
         public void PropertyChangedAnalyzersSln(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, CodeFactory.FindSolutionFile("PropertyChangedAnalyzers.sln"));
+            AnalyzerAssert.Valid(analyzer, Solution);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
         public void PropertyChangedAnalyzersProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, CodeFactory.FindProjectFile("PropertyChangedAnalyzers.Analyzers.csproj"));
+            AnalyzerAssert.Valid(analyzer, PropertyChangedAnalyzersProjectSln);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
