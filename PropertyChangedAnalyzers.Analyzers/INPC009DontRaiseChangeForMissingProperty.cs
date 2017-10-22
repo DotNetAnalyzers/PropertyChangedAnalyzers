@@ -109,7 +109,6 @@
             }
 
             var argumentList = invocation.ArgumentList;
-
             if (argumentList == null ||
                 argumentList.Arguments.Count == 0)
             {
