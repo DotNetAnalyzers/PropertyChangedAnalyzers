@@ -7,6 +7,8 @@
     {
         internal class CS0535
         {
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
+
             [Test]
             public void WhenInterfaceAndUsingSealed()
             {
@@ -15,7 +17,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public sealed class Foo : ↓INotifyPropertyChanged
+    public sealed class Foo : INotifyPropertyChanged
     {
     }
 }";
@@ -35,7 +37,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0535", testCode, fixedCode);
+                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -46,7 +48,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public class Foo : ↓INotifyPropertyChanged
+    public class Foo : INotifyPropertyChanged
     {
     }
 }";
@@ -66,7 +68,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0535", testCode, fixedCode);
+                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -78,7 +80,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public class Foo : ↓INotifyPropertyChanged
+    public class Foo : INotifyPropertyChanged
     {
         private int _value;
     }
@@ -102,7 +104,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0535", testCode, fixedCode);
+                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -115,7 +117,7 @@ namespace RoslynSandbox
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : ↓INotifyPropertyChanged
+    public class Foo : INotifyPropertyChanged
     {
     }
 }";
@@ -137,7 +139,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>("CS0535", testCode, fixedCode);
+                AnalyzerAssert.CodeFix<ImplementINotifyPropertyChangedCodeFixProvider>(ExpectedDiagnostic, testCode, fixedCode);
             }
         }
     }
