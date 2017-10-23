@@ -5,10 +5,10 @@ nuget Microsoft.CodeAnalysis.CSharp.Workspaces 2.3.1 strategy: min
 group Analyzers
   storage: none
   source http://www.nuget.org/api/v2/
-  nuget StyleCop.Analyzers
-  nuget Gu.Analyzers
   nuget AsyncUsageAnalyzers
   nuget IDisposableAnalyzers
+  nuget StyleCop.Analyzers
+  nuget Gu.Analyzers
 
 group Benchmarks
   storage: none
