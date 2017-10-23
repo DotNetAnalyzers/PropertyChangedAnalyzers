@@ -195,15 +195,15 @@
 
             public DiagnosticAnalyzer DiagnosticAnalyzer { get; }
 
-            public bool DocExists => File.Exists(this.DocFileName);
-
-            public DiagnosticDescriptor DiagnosticDescriptor => this.DiagnosticAnalyzer.SupportedDiagnostics.Single();
-
             public string DocFileName { get; }
 
             public string CodeFileName { get; }
 
             public string CodeFileUri { get; }
+
+            public bool DocExists => File.Exists(this.DocFileName);
+
+            public DiagnosticDescriptor DiagnosticDescriptor => this.DiagnosticAnalyzer.SupportedDiagnostics.Single();
 
             public static DescriptorInfo Create(DiagnosticAnalyzer analyzer) => new DescriptorInfo(analyzer);
 
