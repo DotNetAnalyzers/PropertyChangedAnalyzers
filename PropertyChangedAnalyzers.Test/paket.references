@@ -6,6 +6,8 @@ group Test
   Caliburn.Micro
 
 group Analyzers
+  AsyncUsageAnalyzers
+  IDisposableAnalyzers
   StyleCop.Analyzers
   Gu.Analyzers
-  AsyncUsageAnalyzers
+
