@@ -3,6 +3,7 @@ namespace PropertyChangedAnalyzers.Test
     using System.Linq;
     using System.Threading;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using NUnit.Framework;
@@ -11,6 +12,90 @@ namespace PropertyChangedAnalyzers.Test
     {
         internal class IsSetAndRaiseMethod
         {
+            [Test]
+            public void Stylet()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    public class Foo : Stylet.PropertyChangedBase
+    {
+        private int value;
+
+        public int Value
+        {
+            get { return value; }
+            set { this.SetAndNotify(ref this.value, value); }
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create(
+                    "test",
+                    new[] { syntaxTree },
+                    MetadataReferences.FromAttributes().Concat(new[] { SpecialMetadataReferences.Stylet }));
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("SetAndNotify");
+                var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+            }
+
+            [Test]
+            public void CaliburnMicro()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    public class Foo : Caliburn.Micro.PropertyChangedBase
+    {
+        private int value;
+
+        public int Value
+        {
+            get { return value; }
+            set { this.Set(ref this.value, value); }
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create(
+                    "test",
+                    new[] { syntaxTree },
+                    MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("Set");
+                var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+            }
+
+            [Test]
+            public void MvvmLight()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private int value;
+
+        public int Value
+        {
+            get { return value; }
+            set { this.Set(ref this.value, value); }
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create(
+                    "test",
+                    new[] { syntaxTree },
+                    MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("Set");
+                var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+            }
+
             [Test]
             public void CustomImplementation1()
             {

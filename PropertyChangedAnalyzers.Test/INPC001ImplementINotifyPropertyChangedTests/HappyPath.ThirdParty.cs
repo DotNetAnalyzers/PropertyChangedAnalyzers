@@ -29,6 +29,38 @@ namespace RoslynSandbox
                 AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly.Location));
                 AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
             }
+
+            [Test]
+            public void CaliburnMicro()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : Caliburn.Micro.PropertyChangedBase
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(Caliburn.Micro.PropertyChangedBase).Assembly.Location));
+                AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            }
+
+            [Test]
+            public void Stylet()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : Stylet.PropertyChangedBase
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
+                AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            }
         }
     }
 }

@@ -295,7 +295,9 @@
                     method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChanged ||
                     method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChangedOfT ||
                     method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange ||
-                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChangeOfT)
+                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChangeOfT ||
+                    method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChange ||
+                    method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChangeOfT)
                 {
                     return AnalysisResult.Yes;
                 }
@@ -573,9 +575,10 @@
                 return true;
             }
 
-            return candidate.ContainingType == KnownSymbol.MvvmLightViewModelBase ||
-                   candidate.ContainingType == KnownSymbol.MvvmLightObservableObject ||
-                   candidate.ContainingType == KnownSymbol.CaliburnMicroPropertyChangedBase;
+            return candidate == KnownSymbol.MvvmLightViewModelBase.Set ||
+                   candidate == KnownSymbol.MvvmLightObservableObject.Set ||
+                   candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
+                   candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify;
         }
 
         private static bool TryGetCachedArgs(

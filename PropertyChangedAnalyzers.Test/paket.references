@@ -4,6 +4,7 @@ group Test
   Gu.Roslyn.Asserts
   MvvmLight
   Caliburn.Micro
+  Stylet
 
 group Analyzers
   AsyncUsageAnalyzers
