@@ -36,6 +36,10 @@
                                                                                            .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                            .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
+        private static readonly TypeSyntax StyletPropertyChangedBase = SyntaxFactory.ParseTypeName("Stylet.PropertyChangedBase")
+                                                                                           .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                           .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             INPC001ImplementINotifyPropertyChanged.DiagnosticId,
@@ -68,10 +72,10 @@
                     continue;
                 }
 
-                if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("GalaSoft.MvvmLight.dll") == true))
+                if (type.BaseType == KnownSymbol.Object &&
+                    !type.Is(KnownSymbol.INotifyPropertyChanged))
                 {
-                    if (type.BaseType == KnownSymbol.Object &&
-                        !type.Is(KnownSymbol.INotifyPropertyChanged))
+                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("GalaSoft.MvvmLight.dll") == true))
                     {
                         context.RegisterCodeFix(
                             CodeAction.Create(
@@ -85,12 +89,8 @@
                                 this.GetType().FullName + "Subclass GalaSoft.MvvmLight.ViewModelBase"),
                             diagnostic);
                     }
-                }
 
-                if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Caliburn.Micro.dll") == true))
-                {
-                    if (type.BaseType == KnownSymbol.Object &&
-                        !type.Is(KnownSymbol.INotifyPropertyChanged))
+                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Caliburn.Micro.dll") == true))
                     {
                         context.RegisterCodeFix(
                             CodeAction.Create(
@@ -102,6 +102,21 @@
                                         CaliburnMicroPropertyChangedBase,
                                         cancellationToken),
                                 this.GetType().FullName + "Subclass Caliburn.Micro.PropertyChangedBase"),
+                            diagnostic);
+                    }
+
+                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Stylet.dll") == true))
+                    {
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Subclass Stylet.PropertyChangedBase",
+                                cancellationToken =>
+                                    SubclassViewModelBaseAsync(
+                                        context,
+                                        classDeclaration,
+                                        StyletPropertyChangedBase,
+                                        cancellationToken),
+                                this.GetType().FullName + "Subclass Stylet.PropertyChangedBase"),
                             diagnostic);
                     }
                 }
