@@ -138,6 +138,12 @@
                     return false;
             }
 
+            if (argument.Expression is LiteralExpressionSyntax literal &&
+                literal.IsKind(SyntaxKind.StringLiteralExpression))
+            {
+                return SyntaxFacts.IsValidIdentifier(literal.Token.ValueText);
+            }
+
             return true;
         }
     }
