@@ -41,6 +41,7 @@ namespace PropertyChangedAnalyzers
         internal static readonly MvvmLightViewModelBase MvvmLightViewModelBase = new MvvmLightViewModelBase();
         internal static readonly MvvmLightObservableObject MvvmLightObservableObject = new MvvmLightObservableObject();
         internal static readonly CaliburnMicroPropertyChangedBase CaliburnMicroPropertyChangedBase = new CaliburnMicroPropertyChangedBase();
+        internal static readonly StyletPropertyChangedBase StyletPropertyChangedBase = new StyletPropertyChangedBase();
 
         private static QualifiedType Create(string qualifiedName)
         {
