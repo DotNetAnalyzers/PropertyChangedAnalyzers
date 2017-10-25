@@ -1,9 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
-    using System;
-    using System.Linq;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
     internal partial class CodeFix
@@ -2869,11 +2866,6 @@ namespace RoslynSandbox
         [Test]
         public void AssigningFieldsInGetter()
         {
-            foreach (var name in Enum.GetNames(typeof(SyntaxKind)).Where(x => x.Contains("Expression")))
-            {
-                Console.WriteLine(name);
-            }
-
             var testCode = @"
 namespace RoslynSandbox
 {
