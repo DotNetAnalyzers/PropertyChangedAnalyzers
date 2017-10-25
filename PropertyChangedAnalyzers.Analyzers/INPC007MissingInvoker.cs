@@ -38,10 +38,27 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var eventFieldDeclaration = (EventFieldDeclarationSyntax)context.Node;
-            if (!PropertyChanged.TryGetInvoker(context.ContainingSymbol as IEventSymbol, context.SemanticModel, context.CancellationToken, out _))
+            if (context.Node is EventFieldDeclarationSyntax eventFieldDeclaration &&
+                context.ContainingSymbol is IEventSymbol eventSymbol &&
+                 !eventSymbol.ContainingType.IsInterface())
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
+                if (eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged)
+                {
+                    if (!PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
+                    }
+                }
+
+                if (eventSymbol.ContainingType.IsStatic &&
+                    eventSymbol.Type == KnownSymbol.PropertyChangedEventHandler &&
+                    eventSymbol.Name == "PropertyChanged")
+                {
+                    if (!PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
+                    }
+                }
             }
         }
     }
