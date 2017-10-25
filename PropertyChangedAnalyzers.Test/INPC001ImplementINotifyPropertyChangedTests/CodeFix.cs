@@ -6,7 +6,7 @@
     internal partial class CodeFix
     {
         [Test]
-        public void WhenAutoPropertiesMessage()
+        public void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -19,27 +19,8 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
-    {
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
-        public int Bar1 { get; set; }
-
-        public int Bar2 { get; set; }
-
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            var expectedMessage = ExpectedMessage.Create("The class Foo should notify for:\nBar1\nBar2");
-            AnalyzerAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, testCode);
-            AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
-            AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            var expectedDiagnostic = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated("INPC001", "The class Foo should notify for:\r\nBar1\r\nBar2", testCode, out testCode);
+            AnalyzerAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedDiagnostic, testCode);
         }
 
         [Test]
@@ -69,8 +50,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedMessage = ExpectedMessage.Create("The class Foo should notify for:\nBar");
-            AnalyzerAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, testCode);
             AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
             AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
@@ -102,8 +81,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedMessage = ExpectedMessage.Create("The class Foo should notify for:\nBar");
-            AnalyzerAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, testCode);
             AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
             AnalyzerAssert.FixAll<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
@@ -247,8 +224,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            var expectedMessage = ExpectedMessage.Create("The class Foo has event PropertyChanged but does not implement INotifyPropertyChanged.");
-            AnalyzerAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, testCode);
             AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
 

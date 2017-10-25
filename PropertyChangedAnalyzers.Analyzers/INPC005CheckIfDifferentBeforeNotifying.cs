@@ -70,48 +70,46 @@ namespace PropertyChangedAnalyzers
                             continue;
                         }
 
-                        foreach (var member in new ISymbol[] { backingField, property })
+                        if (IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
+                            IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
                         {
-                            if (Equality.IsOperatorEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
-                                IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
+                            if (ifStatement.Statement.Span.Contains(invocation.Span) ||
+                                !ifStatement.IsReturnOnly())
                             {
-                                if (ifStatement.Statement.Span.Contains(invocation.Span))
-                                {
-                                    context.ReportDiagnostic(Diagnostic.Create(
-                                                                 Descriptor,
-                                                                 invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
-                                }
-
-                                return;
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                             }
 
-                            if (Equality.IsOperatorNotEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
-                                IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
-                            {
-                                if (!ifStatement.Statement.Span.Contains(invocation.Span))
-                                {
-                                    context.ReportDiagnostic(Diagnostic.Create(
-                                                                 Descriptor,
-                                                                 invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
-                                }
+                            return;
+                        }
 
-                                return;
+                        if (IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
+                            IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
+                        {
+                            if (!ifStatement.Statement.Span.Contains(invocation.Span) ||
+                                ifStatement.IsReturnOnly())
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                             }
 
-                            if (UsesValueAndMember(ifStatement, context.SemanticModel, context.CancellationToken, value, member))
-                            {
-                                return;
-                            }
+                            return;
                         }
                     }
-                }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                }
             }
             else if (Property.TryGetSingleSetAndRaiseInSetter(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
             {
-                if (setAndRaise.Parent is IfStatementSyntax ifStatement &&
-                    ifStatement.Span.Contains(invocation.Span))
+                if (setAndRaise.Parent is IfStatementSyntax ifStatement1 &&
+                    ifStatement1.Span.Contains(invocation.Span))
+                {
+                    return;
+                }
+
+                if (setAndRaise.Parent is PrefixUnaryExpressionSyntax unary &&
+                    unary.IsKind(SyntaxKind.LogicalNotExpression) &&
+                    unary.Parent is IfStatementSyntax ifStatement2 &&
+                    !ifStatement2.Span.Contains(invocation.Span))
                 {
                     return;
                 }
@@ -146,34 +144,34 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsNegatedEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
-            var unaryExpression = expression as PrefixUnaryExpressionSyntax;
-            if (unaryExpression?.IsKind(SyntaxKind.LogicalNotExpression) == true)
+            if (expression is PrefixUnaryExpressionSyntax unary &&
+                unary.IsKind(SyntaxKind.LogicalNotExpression))
             {
-                return IsEqualsCheck(unaryExpression.Operand, semanticModel, cancellationToken, value, member);
+                return IsEqualsCheck(unary.Operand, semanticModel, cancellationToken, value, member);
             }
 
-            return false;
+            return Equality.IsOperatorNotEquals(expression, semanticModel, cancellationToken, value, member);
         }
 
         private static bool IsEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
-            var equals = expression as InvocationExpressionSyntax;
-            if (equals == null)
+            if (expression is InvocationExpressionSyntax equals)
             {
+                if (Equality.IsObjectEquals(equals, semanticModel, cancellationToken, value, member) ||
+                    Equality.IsInstanceEquals(equals, semanticModel, cancellationToken, value, member) ||
+                    Equality.IsInstanceEquals(equals, semanticModel, cancellationToken, member, value) ||
+                    Equality.IsReferenceEquals(equals, semanticModel, cancellationToken, value, member) ||
+                    Equality.IsEqualityComparerEquals(equals, semanticModel, cancellationToken, value, member) ||
+                    Equality.IsStringEquals(equals, semanticModel, cancellationToken, value, member) ||
+                    Equality.IsNullableEquals(equals, semanticModel, cancellationToken, value, member))
+                {
+                    return true;
+                }
+
                 return false;
             }
 
-            if (Equality.IsObjectEquals(equals, semanticModel, cancellationToken, value, member) ||
-                Equality.IsInstanceEquals(equals, semanticModel, cancellationToken, value, member) ||
-                Equality.IsInstanceEquals(equals, semanticModel, cancellationToken, member, value) ||
-                Equality.IsReferenceEquals(equals, semanticModel, cancellationToken, value, member) ||
-                Equality.IsEqualityComparerEquals(equals, semanticModel, cancellationToken, value, member) ||
-                Equality.IsNullableEquals(equals, semanticModel, cancellationToken, value, member))
-            {
-                return true;
-            }
-
-            return false;
+            return Equality.IsOperatorEquals(expression, semanticModel, cancellationToken, value, member);
         }
 
         private static bool UsesValueAndMember(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)

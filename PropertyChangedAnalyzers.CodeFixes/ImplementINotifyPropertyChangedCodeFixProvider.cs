@@ -165,7 +165,7 @@
                         Accessibility.Public));
             }
 
-            if (!type.TryGetMethod(
+            if (!type.TryGetFirstMethod(
                 "OnPropertyChanged",
                 m => m.Parameters.Length == 1 &&
                      m.Parameters[0].Type == KnownSymbol.String,
