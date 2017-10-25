@@ -5,6 +5,8 @@ namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
 
     internal class HappyPath
     {
+        private static readonly INPC007MissingInvoker Analyzer = new INPC007MissingInvoker();
+
         [Test]
         public void OnPropertyChangedCallerMemberName()
         {
@@ -46,7 +48,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC007MissingInvoker>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -90,7 +92,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC007MissingInvoker>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -124,7 +126,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-            AnalyzerAssert.Valid<INPC007MissingInvoker>(viewModelBaseCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, viewModelBaseCode, testCode);
         }
 
         [Test]
@@ -164,7 +166,24 @@ namespace RoslynSandbox.Client
     }
 }";
 
-            AnalyzerAssert.Valid<INPC007MissingInvoker>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void Interface()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    internal interface IPropertyTracker
+    {
+        event PropertyChangedEventHandler TrackedPropertyChanged;
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

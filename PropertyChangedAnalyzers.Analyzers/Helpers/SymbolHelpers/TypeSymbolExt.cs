@@ -407,7 +407,7 @@
                 return false;
             }
 
-            return type != KnownSymbol.Object && type.BaseType == null;
+            return type.IsAbstract && type != KnownSymbol.Object && type.BaseType == null;
         }
 
         internal static bool AreEquivalent(this INamedTypeSymbol first, INamedTypeSymbol other)
