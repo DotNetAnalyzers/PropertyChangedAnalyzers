@@ -245,7 +245,7 @@ namespace RoslynSandbox
         }
     }
 }");
-            var declaration = syntaxTree.FindBestMatch<PropertyDeclarationSyntax>(propertyName);
+            var declaration = syntaxTree.FindPropertyDeclaration(propertyName);
             Assert.AreEqual(true, Property.TryGetSingleReturnedInGetter(declaration, out var expression));
             Assert.AreEqual(expected, expression.ToString());
         }

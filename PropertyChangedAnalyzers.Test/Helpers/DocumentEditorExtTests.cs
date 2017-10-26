@@ -29,7 +29,7 @@ namespace RoslynSandbox
 }";
             var sln = CodeFactory.CreateSolution(testCode);
             var editor = await DocumentEditor.CreateAsync(sln.Projects.First().Documents.First()).ConfigureAwait(false);
-            var property = editor.OriginalRoot.SyntaxTree.FindBestMatch<PropertyDeclarationSyntax>("Value");
+            var property = editor.OriginalRoot.SyntaxTree.FindPropertyDeclaration("Value");
             var field = editor.AddBackingField(property, usesUnderscoreNames: false, cancellationToken: CancellationToken.None);
             Assert.AreEqual("privateint value;", field.ToFullString());
             var expected = @"
@@ -62,7 +62,7 @@ namespace RoslynSandbox
 }";
             var sln = CodeFactory.CreateSolution(testCode);
             var editor = await DocumentEditor.CreateAsync(sln.Projects.First().Documents.First()).ConfigureAwait(false);
-            var property = editor.OriginalRoot.SyntaxTree.FindBestMatch<PropertyDeclarationSyntax>("Value");
+            var property = editor.OriginalRoot.SyntaxTree.FindPropertyDeclaration("Value");
             var field = editor.AddBackingField(property, usesUnderscoreNames: false, cancellationToken: CancellationToken.None);
             Assert.AreEqual("privateint value_;", field.ToFullString());
             var expected = @"
@@ -123,7 +123,7 @@ namespace RoslynSandbox
 }";
             var sln = CodeFactory.CreateSolution(testCode);
             var editor = await DocumentEditor.CreateAsync(sln.Projects.First().Documents.First()).ConfigureAwait(false);
-            var containingType = editor.OriginalRoot.SyntaxTree.FindBestMatch<ClassDeclarationSyntax>("Foo");
+            var containingType = editor.OriginalRoot.SyntaxTree.FindClassDeclaration("Foo");
             var method = SyntaxFactory.ParseCompilationUnit("private int NewMethod() => 1;")
                                       .Members
                                       .Single()
@@ -220,7 +220,7 @@ namespace RoslynSandbox
 }";
             var sln = CodeFactory.CreateSolution(testCode);
             var editor = await DocumentEditor.CreateAsync(sln.Projects.First().Documents.First()).ConfigureAwait(false);
-            var containingType = editor.OriginalRoot.SyntaxTree.FindBestMatch<ClassDeclarationSyntax>("Foo");
+            var containingType = editor.OriginalRoot.SyntaxTree.FindClassDeclaration("Foo");
             var method = SyntaxFactory.ParseCompilationUnit("public int NewMethod() => 1;")
                                       .Members
                                       .Single()

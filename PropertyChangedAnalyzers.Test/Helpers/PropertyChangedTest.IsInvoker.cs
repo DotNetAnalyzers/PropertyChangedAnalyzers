@@ -44,7 +44,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes().Concat(new[] { SpecialMetadataReferences.Stylet }));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("NotifyOfPropertyChange");
+                var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsInvoker(method, semanticModel, CancellationToken.None));
             }
@@ -81,7 +81,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("NotifyOfPropertyChange");
+                var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsInvoker(method, semanticModel, CancellationToken.None));
             }
@@ -118,7 +118,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindBestMatch<InvocationExpressionSyntax>("RaisePropertyChanged");
+                var invocation = syntaxTree.FindInvocation("RaisePropertyChanged");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsInvoker(method, semanticModel, CancellationToken.None));
             }

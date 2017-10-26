@@ -30,7 +30,7 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindBestMatch<PropertyDeclarationSyntax>("Bar");
+                var classDeclaration = syntaxTree.FindPropertyDeclaration("Bar");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out var field));
                 Assert.AreEqual("bar", field.Name);
@@ -79,7 +79,7 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindBestMatch<PropertyDeclarationSyntax>("Bar");
+                var classDeclaration = syntaxTree.FindPropertyDeclaration("Bar");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out var field));
                 Assert.AreEqual("bar", field.Name);
@@ -126,7 +126,7 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindBestMatch<PropertyDeclarationSyntax>("Bar");
+                var classDeclaration = syntaxTree.FindPropertyDeclaration("Bar");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(false, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out _));
             }
