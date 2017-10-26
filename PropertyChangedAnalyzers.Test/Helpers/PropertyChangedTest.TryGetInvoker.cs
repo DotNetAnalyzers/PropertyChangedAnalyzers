@@ -40,7 +40,7 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindBestMatch<ClassDeclarationSyntax>("Foo");
+                var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
                 Assert.AreEqual("OnPropertyChanged", invoker.Name);
@@ -76,7 +76,7 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindBestMatch<ClassDeclarationSyntax>("Foo");
+                var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
                 Assert.AreEqual("OnPropertyChanged", invoker.Name);
@@ -112,7 +112,7 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindBestMatch<ClassDeclarationSyntax>("Foo");
+                var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(false, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out _));
             }
