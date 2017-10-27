@@ -140,7 +140,7 @@
             var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
-            var usesUnderscoreNames = classDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+            var usesUnderscoreNames = classDeclaration.UsesUnderscore(semanticModel, cancellationToken);
             if (!type.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 if (classDeclaration.BaseList != null &&
