@@ -1,10 +1,15 @@
-﻿namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
+// ReSharper disable RedundantNameQualifier
+// ReSharper disable InconsistentNaming
+namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
-    public class INPC006_a_Benchmarks : AnalyzerBenchmarks
+    public class INPC006_a_Benchmarks
     {
-        public INPC006_a_Benchmarks()
-            : base(new PropertyChangedAnalyzers.INPC006UseReferenceEquals())
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC006UseReferenceEquals());
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void RunOnPropertyChangedAnalyzers()
         {
+            Benchmark.Run();
         }
     }
 }

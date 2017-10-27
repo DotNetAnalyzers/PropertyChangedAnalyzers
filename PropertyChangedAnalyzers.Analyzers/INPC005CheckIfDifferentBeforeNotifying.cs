@@ -173,34 +173,5 @@ namespace PropertyChangedAnalyzers
 
             return Equality.IsOperatorEquals(expression, semanticModel, cancellationToken, value, member);
         }
-
-        private static bool UsesValueAndMember(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
-        {
-            var usesValue = false;
-            var usesMember = false;
-            using (var walker = IdentifierNameWalker.Borrow(ifStatement.Condition))
-            {
-                foreach (var identifierName in walker.IdentifierNames)
-                {
-                    var symbol = semanticModel.GetSymbolSafe(identifierName, cancellationToken);
-                    if (symbol == null)
-                    {
-                        continue;
-                    }
-
-                    if (symbol.Equals(value))
-                    {
-                        usesValue = true;
-                    }
-
-                    if (symbol.Equals(member))
-                    {
-                        usesMember = true;
-                    }
-                }
-            }
-
-            return usesMember && usesValue;
-        }
-    }
+   }
 }
