@@ -24,6 +24,7 @@
             var expectedName = id + (id.Contains("_") ? "_" : string.Empty) + "Benchmarks";
             var fileName = Path.Combine(Program.BenchmarksDirectory, expectedName + ".cs");
             var code = new StringBuilder().AppendLine("// ReSharper disable RedundantNameQualifier")
+                                          .AppendLine("// ReSharper disable InconsistentNaming")
                                           .AppendLine($"namespace {this.GetType().Namespace}")
                                           .AppendLine("{")
                                           .AppendLine($"    public class {expectedName}")

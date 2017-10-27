@@ -1,4 +1,5 @@
 // ReSharper disable RedundantNameQualifier
+// ReSharper disable InconsistentNaming
 namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
     public class INPC006_a_Benchmarks
