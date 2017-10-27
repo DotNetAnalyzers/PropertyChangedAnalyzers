@@ -3,7 +3,6 @@
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using NUnit.Framework;
 
     internal class PropertyTests

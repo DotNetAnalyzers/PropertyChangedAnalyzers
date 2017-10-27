@@ -1,4 +1,5 @@
-﻿namespace PropertyChangedAnalyzers
+﻿// ReSharper disable UnusedMember.Global
+namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Collections.Generic;
@@ -38,7 +39,6 @@
                 return true;
             }
 
-            result = default(T);
             return false;
         }
 
@@ -59,7 +59,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -73,7 +72,6 @@
 
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -98,7 +96,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -112,7 +109,6 @@
 
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -138,18 +134,12 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
         internal static bool TryGetAtIndex<T>(this ImmutableArray<T> source, int index, out T result)
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Length <= index)
             {
                 return false;
@@ -162,29 +152,18 @@
         internal static bool TryGetSingle<T>(this ImmutableArray<T> source, out T result)
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Length == 1)
             {
                 result = source[0];
                 return true;
             }
 
-            result = default(T);
             return false;
         }
 
         internal static bool TryGetSingle<T>(this ImmutableArray<T> source, Func<T, bool> selector, out T result)
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -194,21 +173,14 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
         internal static bool TryGetFirst<T>(this ImmutableArray<T> source, out T result)
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Length == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -219,11 +191,6 @@
         internal static bool TryGetFirst<T>(this ImmutableArray<T> source, Func<T, bool> selector, out T result)
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -233,21 +200,14 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
         internal static bool TryGetLast<T>(this ImmutableArray<T> source, out T result)
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Length == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -258,11 +218,6 @@
         internal static bool TryGetLast<T>(this ImmutableArray<T> source, Func<T, bool> selector, out T result)
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             for (var i = source.Length - 1; i >= 0; i--)
             {
                 var item = source[i];
@@ -273,18 +228,12 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
         internal static bool TryGetAtIndex(this ChildSyntaxList source, int index, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count <= index)
             {
                 return false;
@@ -297,29 +246,18 @@
         internal static bool TryGetSingle(this ChildSyntaxList source, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 1)
             {
                 result = source[0];
                 return true;
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
         internal static bool TryGetSingle(this ChildSyntaxList source, Func<SyntaxNodeOrToken, bool> selector, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -329,21 +267,14 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
         internal static bool TryGetFirst(this ChildSyntaxList source, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(SyntaxNodeOrToken);
                 return false;
             }
 
@@ -354,11 +285,6 @@
         internal static bool TryGetFirst(this ChildSyntaxList source, Func<SyntaxNodeOrToken, bool> selector, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -368,21 +294,14 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
         internal static bool TryGetLast(this ChildSyntaxList source, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(SyntaxNodeOrToken);
                 return false;
             }
 
@@ -393,11 +312,6 @@
         internal static bool TryGetLast(this ChildSyntaxList source, Func<SyntaxNodeOrToken, bool> selector, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             for (var i = source.Count - 1; i >= 0; i--)
             {
                 var item = source[i];
@@ -408,7 +322,6 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
@@ -416,11 +329,6 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count <= index)
             {
                 return false;
@@ -434,18 +342,12 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 1)
             {
                 result = source[0];
                 return true;
             }
 
-            result = default(T);
             return false;
         }
 
@@ -453,11 +355,6 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -467,7 +364,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -475,14 +371,8 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -494,11 +384,6 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -508,7 +393,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -516,14 +400,8 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -535,11 +413,6 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             for (var i = source.Count - 1; i >= 0; i--)
             {
                 var item = source[i];
@@ -550,7 +423,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -558,11 +430,6 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count <= index)
             {
                 return false;
@@ -576,18 +443,12 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 1)
             {
                 result = source[0];
                 return true;
             }
 
-            result = default(T);
             return false;
         }
 
@@ -595,11 +456,6 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -609,7 +465,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -617,14 +472,8 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -636,11 +485,6 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -650,7 +494,6 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
@@ -658,14 +501,8 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(T);
                 return false;
             }
 
@@ -677,11 +514,6 @@
             where T : SyntaxNode
         {
             result = default(T);
-            if (source == null)
-            {
-                return false;
-            }
-
             for (var i = source.Count - 1; i >= 0; i--)
             {
                 var item = source[i];
@@ -692,18 +524,12 @@
                 }
             }
 
-            result = default(T);
             return false;
         }
 
         internal static bool TryGetAtIndex(this SyntaxNodeOrTokenList source, int index, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count <= index)
             {
                 return false;
@@ -716,29 +542,18 @@
         internal static bool TryGetSingle(this SyntaxNodeOrTokenList source, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 1)
             {
                 result = source[0];
                 return true;
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
         internal static bool TryGetSingle(this SyntaxNodeOrTokenList source, Func<SyntaxNodeOrToken, bool> selector, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -748,21 +563,14 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
         internal static bool TryGetFirst(this SyntaxNodeOrTokenList source, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(SyntaxNodeOrToken);
                 return false;
             }
 
@@ -773,11 +581,6 @@
         internal static bool TryGetFirst(this SyntaxNodeOrTokenList source, Func<SyntaxNodeOrToken, bool> selector, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -787,21 +590,14 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
         internal static bool TryGetLast(this SyntaxNodeOrTokenList source, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(SyntaxNodeOrToken);
                 return false;
             }
 
@@ -812,11 +608,6 @@
         internal static bool TryGetLast(this SyntaxNodeOrTokenList source, Func<SyntaxNodeOrToken, bool> selector, out SyntaxNodeOrToken result)
         {
             result = default(SyntaxNodeOrToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             for (var i = source.Count - 1; i >= 0; i--)
             {
                 var item = source[i];
@@ -827,18 +618,12 @@
                 }
             }
 
-            result = default(SyntaxNodeOrToken);
             return false;
         }
 
         internal static bool TryGetAtIndex(this SyntaxTokenList source, int index, out SyntaxToken result)
         {
             result = default(SyntaxToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count <= index)
             {
                 return false;
@@ -851,29 +636,18 @@
         internal static bool TryGetSingle(this SyntaxTokenList source, out SyntaxToken result)
         {
             result = default(SyntaxToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 1)
             {
                 result = source[0];
                 return true;
             }
 
-            result = default(SyntaxToken);
             return false;
         }
 
         internal static bool TryGetSingle(this SyntaxTokenList source, Func<SyntaxToken, bool> selector, out SyntaxToken result)
         {
             result = default(SyntaxToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -883,21 +657,14 @@
                 }
             }
 
-            result = default(SyntaxToken);
             return false;
         }
 
         internal static bool TryGetFirst(this SyntaxTokenList source, out SyntaxToken result)
         {
             result = default(SyntaxToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(SyntaxToken);
                 return false;
             }
 
@@ -908,11 +675,6 @@
         internal static bool TryGetFirst(this SyntaxTokenList source, Func<SyntaxToken, bool> selector, out SyntaxToken result)
         {
             result = default(SyntaxToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -922,21 +684,14 @@
                 }
             }
 
-            result = default(SyntaxToken);
             return false;
         }
 
         internal static bool TryGetLast(this SyntaxTokenList source, out SyntaxToken result)
         {
             result = default(SyntaxToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(SyntaxToken);
                 return false;
             }
 
@@ -947,11 +702,6 @@
         internal static bool TryGetLast(this SyntaxTokenList source, Func<SyntaxToken, bool> selector, out SyntaxToken result)
         {
             result = default(SyntaxToken);
-            if (source == null)
-            {
-                return false;
-            }
-
             for (var i = source.Count - 1; i >= 0; i--)
             {
                 var item = source[i];
@@ -962,18 +712,12 @@
                 }
             }
 
-            result = default(SyntaxToken);
             return false;
         }
 
         internal static bool TryGetAtIndex(this SyntaxTriviaList source, int index, out SyntaxTrivia result)
         {
             result = default(SyntaxTrivia);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count <= index)
             {
                 return false;
@@ -986,29 +730,18 @@
         internal static bool TryGetSingle(this SyntaxTriviaList source, out SyntaxTrivia result)
         {
             result = default(SyntaxTrivia);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 1)
             {
                 result = source[0];
                 return true;
             }
 
-            result = default(SyntaxTrivia);
             return false;
         }
 
         internal static bool TryGetSingle(this SyntaxTriviaList source, Func<SyntaxTrivia, bool> selector, out SyntaxTrivia result)
         {
             result = default(SyntaxTrivia);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -1018,21 +751,14 @@
                 }
             }
 
-            result = default(SyntaxTrivia);
             return false;
         }
 
         internal static bool TryGetFirst(this SyntaxTriviaList source, out SyntaxTrivia result)
         {
             result = default(SyntaxTrivia);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(SyntaxTrivia);
                 return false;
             }
 
@@ -1043,11 +769,6 @@
         internal static bool TryGetFirst(this SyntaxTriviaList source, Func<SyntaxTrivia, bool> selector, out SyntaxTrivia result)
         {
             result = default(SyntaxTrivia);
-            if (source == null)
-            {
-                return false;
-            }
-
             foreach (var item in source)
             {
                 if (selector(item))
@@ -1057,21 +778,14 @@
                 }
             }
 
-            result = default(SyntaxTrivia);
             return false;
         }
 
         internal static bool TryGetLast(this SyntaxTriviaList source, out SyntaxTrivia result)
         {
             result = default(SyntaxTrivia);
-            if (source == null)
-            {
-                return false;
-            }
-
             if (source.Count == 0)
             {
-                result = default(SyntaxTrivia);
                 return false;
             }
 
@@ -1082,11 +796,6 @@
         internal static bool TryGetLast(this SyntaxTriviaList source, Func<SyntaxTrivia, bool> selector, out SyntaxTrivia result)
         {
             result = default(SyntaxTrivia);
-            if (source == null)
-            {
-                return false;
-            }
-
             for (var i = source.Count - 1; i >= 0; i--)
             {
                 var item = source[i];
@@ -1097,7 +806,6 @@
                 }
             }
 
-            result = default(SyntaxTrivia);
             return false;
         }
     }
