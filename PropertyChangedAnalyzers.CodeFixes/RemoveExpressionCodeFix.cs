@@ -29,7 +29,7 @@ namespace PropertyChangedAnalyzers
             var semanticModel = await context.Document
                                              .GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
-            var usesUnderscoreNames = syntaxRoot.UsesUnderscoreNames(semanticModel, context.CancellationToken);
+            var usesUnderscoreNames = syntaxRoot.UsesUnderscore(semanticModel, context.CancellationToken);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);

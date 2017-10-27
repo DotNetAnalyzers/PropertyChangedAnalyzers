@@ -139,7 +139,7 @@
                     return;
                 }
 
-                var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var backingField = editor.AddBackingField(propertyDeclaration, usesUnderscoreNames, cancellationToken);
                 var fieldAccess = usesUnderscoreNames
@@ -202,7 +202,7 @@
                     return;
                 }
 
-                var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
                 var backingField = editor.AddBackingField(propertyDeclaration, usesUnderscoreNames, cancellationToken);
                 var fieldAccess = usesUnderscoreNames
                     ? backingField.Name()
@@ -272,7 +272,7 @@
                         editor.InsertBefore(
                             statement,
                             ifStatement);
-                        var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                        var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
                         var notifyStatement = SyntaxFactory.ParseStatement(Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames))
                                                                      .WithSimplifiedNames()
                                                                      .WithLeadingElasticLineFeed()
@@ -295,7 +295,7 @@
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out _, out _))
             {
-                var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var notifyStatement = SyntaxFactory
                     .ParseStatement(Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames))
@@ -319,7 +319,7 @@
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
             {
-                var usesUnderscoreNames = propertyDeclaration.UsesUnderscoreNames(semanticModel, cancellationToken);
+                var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
                 var setExpression = SyntaxFactory.ParseExpression($"{(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                     .WithSimplifiedNames()
