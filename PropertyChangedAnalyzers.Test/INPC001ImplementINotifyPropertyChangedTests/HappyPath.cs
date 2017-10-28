@@ -459,6 +459,7 @@ namespace RoslynSandBox
         public void IgnoresWhenBaseHasPropertyChangedEventButNoInterface()
         {
             Assert.Inconclusive("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D");
+            // ReSharper disable once HeuristicUnreachableCode
             var testCode = @"
 namespace RoslynSandBox
 {

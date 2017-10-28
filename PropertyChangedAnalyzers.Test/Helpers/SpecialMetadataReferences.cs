@@ -24,6 +24,7 @@
 
         private static MetadataReference CreateDllReference(string dllName)
         {
+            // ReSharper disable once PossibleNullReferenceException
             var dll = CodeFactory.FindSolutionFile("PropertyChangedAnalyzers.sln")
                                  .Directory.EnumerateFiles(dllName, SearchOption.AllDirectories)
                                  .First();
