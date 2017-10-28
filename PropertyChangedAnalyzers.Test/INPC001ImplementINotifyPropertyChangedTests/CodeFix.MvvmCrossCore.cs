@@ -10,7 +10,7 @@
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.MvvmCross);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCrossReferences);
             }
 
             [OneTimeTearDown]
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged", AllowCompilationErrors.Yes);
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged");
             }
 
             [Test]
@@ -62,7 +62,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass MvvmCross.Core.ViewModels.MvxViewModel", AllowCompilationErrors.Yes);
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass MvvmCross.Core.ViewModels.MvxViewModel");
             }
 
             [Test]
