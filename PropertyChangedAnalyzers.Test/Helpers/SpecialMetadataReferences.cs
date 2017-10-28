@@ -1,7 +1,9 @@
 ﻿namespace PropertyChangedAnalyzers.Test
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
 
@@ -10,19 +12,34 @@
         /// <summary>
         /// This is needed as stylet is not signed.
         /// </summary>
-        internal static MetadataReference Stylet { get; } = CreateStyletReference("Stylet.dll");
+        internal static MetadataReference Stylet { get; } = CreateDllReference("Stylet.dll");
 
         /// <summary>
-        /// This is needed as stylet is not signed.
+        /// This is needed as MvvmCross is not signed.
         /// </summary>
-        internal static MetadataReference MvvmCross { get; } = CreateStyletReference("MvvmCross.Core.dll");
+        internal static MetadataReference MvvmCross { get; } = CreateDllReference("MvvmCross.Core.dll");
 
-        private static MetadataReference CreateStyletReference(string dllName)
+        internal static MetadataReference MvvmCrossPlatform { get; } = CreateDllReference("MvvmCross.Platform.dll");
+
+        internal static IReadOnlyList<MetadataReference> MvvmCrossReferences { get; } = CreateMvvmCrossReferences();
+
+        private static MetadataReference CreateDllReference(string dllName)
         {
             var dll = CodeFactory.FindSolutionFile("PropertyChangedAnalyzers.sln")
                                  .Directory.EnumerateFiles(dllName, SearchOption.AllDirectories)
                                  .First();
             return MetadataReference.CreateFromFile(dll.FullName);
+        }
+
+        private static IReadOnlyList<MetadataReference> CreateMvvmCrossReferences()
+        {
+            return new[]
+                             {
+                                 MvvmCross,
+                                 MvvmCrossPlatform,
+                                 CreateDllReference("System.Runtime.dll"),
+                                 CreateDllReference("netstandard.dll"),
+                             };
         }
     }
 }

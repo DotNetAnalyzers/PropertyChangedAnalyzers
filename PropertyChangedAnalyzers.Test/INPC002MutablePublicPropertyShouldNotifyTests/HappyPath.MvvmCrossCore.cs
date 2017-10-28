@@ -5,12 +5,12 @@
 
     internal partial class HappyPath
     {
-        internal class StyletMvvm
+        internal class MvvmCrossCore
         {
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCrossReferences);
             }
 
             [OneTimeTearDown]
@@ -20,19 +20,19 @@
             }
 
             [Test]
-            public void Set()
+            public void SetProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
     {
         private int value;
 
         public int Value
         {
             get { return value; }
-            set { this.SetAndNotify(ref this.value, value); }
+            set { this.SetProperty(ref this.value, value); }
         }
     }
 }";
@@ -46,14 +46,14 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
     {
         private int value;
 
         public int Value
         {
             get => return value;
-            set => this.SetAndNotify(ref this.value, value);
+            set => this.SetProperty(ref this.value, value);
         }
     }
 }";
@@ -71,7 +71,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
     {
         private int bar;
 
@@ -82,7 +82,7 @@ namespace RoslynSandbox
             {
                 if (value == this.bar) return;
                 this.bar = value;
-                this.NotifyOfPropertyChange(nameof(Bar));
+                this.RaisePropertyChanged(nameof(Bar));
             }
         }
     }
