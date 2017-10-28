@@ -61,7 +61,7 @@ namespace RoslynSandbox
                 AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
             }
 
-            [TestCase("null")]
+            [TestCase("(string)null")]
             [TestCase("string.Empty")]
             [TestCase(@"""Bar""")]
             [TestCase(@"nameof(Bar)")]
