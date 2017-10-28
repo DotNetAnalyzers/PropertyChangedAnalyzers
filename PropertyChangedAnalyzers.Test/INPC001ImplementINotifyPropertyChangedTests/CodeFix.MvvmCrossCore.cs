@@ -5,12 +5,12 @@
 
     internal partial class CodeFix
     {
-        internal class MvvmLight
+        internal class MvvmCrossCore
         {
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.AddTransitiveMetadataReferences(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCrossReferences);
             }
 
             [OneTimeTearDown]
@@ -20,7 +20,7 @@
             }
 
             [Test]
-            public void SubclassViewModelBase()
+            public void SubclassMvxNotifyPropertyChanged()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -34,12 +34,35 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
     {
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass GalaSoft.MvvmLight.ViewModelBase");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged");
+            }
+
+            [Test]
+            public void SubclassMvxViewModel()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ↓Foo
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : MvvmCross.Core.ViewModels.MvxViewModel
+    {
+        public int Bar { get; set; }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass MvvmCross.Core.ViewModels.MvxViewModel");
             }
 
             [Test]

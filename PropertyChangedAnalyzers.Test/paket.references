@@ -5,6 +5,7 @@ group Test
   MvvmLight
   Caliburn.Micro
   Stylet
+  MvvmCross
 
 group Analyzers
   AsyncUsageAnalyzers
