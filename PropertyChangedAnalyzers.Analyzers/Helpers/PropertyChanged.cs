@@ -556,6 +556,7 @@
                     {
                         using (var set = PooledHashSet<IMethodSymbol>.Borrow(@checked))
                         {
+                            // ReSharper disable once AccessToDisposedClosure R# does not figure things out here.
                             return walker.Invocations.TryGetSingle(
                                 x => IsSetAndRaiseCall(x, semanticModel, cancellationToken, set),
                                 out _);

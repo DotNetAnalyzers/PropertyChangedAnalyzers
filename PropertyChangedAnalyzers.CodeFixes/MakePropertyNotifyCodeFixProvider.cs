@@ -319,7 +319,6 @@
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 editor.InsertAfter(statement, notifyStatement);
                 editor.FormatNode(propertyDeclaration);
-                return;
             }
         }
 
