@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
 
@@ -34,12 +33,14 @@
         private static IReadOnlyList<MetadataReference> CreateMvvmCrossReferences()
         {
             return new[]
-                             {
-                                 MvvmCross,
-                                 MvvmCrossPlatform,
-                                 CreateDllReference("System.Runtime.dll"),
-                                 CreateDllReference("netstandard.dll"),
-                             };
+                   {
+                       MvvmCross,
+                       MvvmCrossPlatform,
+                       CreateDllReference("System.Runtime.dll"),
+                       CreateDllReference("netstandard.dll"),
+                       CreateDllReference("System.Linq.Expressions.dll"),
+                       CreateDllReference("System.ObjectModel.dll"),
+                   };
         }
     }
 }
