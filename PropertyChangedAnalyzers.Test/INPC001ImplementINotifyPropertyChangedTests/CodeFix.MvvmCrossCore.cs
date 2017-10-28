@@ -5,12 +5,12 @@
 
     internal partial class CodeFix
     {
-        internal class CaliburnMicro
+        internal class MvvmCrossCore
         {
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.PropertyChangedBase).Assembly);
+                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.MvvmCross);
             }
 
             [OneTimeTearDown]
@@ -20,7 +20,7 @@
             }
 
             [Test]
-            public void SubclassPropertyChangedBase()
+            public void SubclassMvxNotifyPropertyChanged()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -34,12 +34,35 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
     {
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass Caliburn.Micro.PropertyChangedBase");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged", AllowCompilationErrors.Yes);
+            }
+
+            [Test]
+            public void SubclassMvxViewModel()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ↓Foo
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : MvvmCross.Core.ViewModels.MvxViewModel
+    {
+        public int Bar { get; set; }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass MvvmCross.Core.ViewModels.MvxViewModel", AllowCompilationErrors.Yes);
             }
 
             [Test]
@@ -69,7 +92,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Implement INotifyPropertyChanged.");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Implement INotifyPropertyChanged.", AllowCompilationErrors.Yes);
             }
         }
     }

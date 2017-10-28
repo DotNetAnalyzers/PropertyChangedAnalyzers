@@ -40,6 +40,14 @@
                                                                                            .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                            .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
+        private static readonly TypeSyntax MvxNotifyPropertyChanged = SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged")
+                                                                                   .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                   .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
+        private static readonly TypeSyntax MvxViewModel = SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxViewModel")
+                                                                       .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                       .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             INPC001ImplementINotifyPropertyChanged.DiagnosticId,
@@ -117,6 +125,33 @@
                                         StyletPropertyChangedBase,
                                         cancellationToken),
                                 this.GetType().FullName + "Subclass Stylet.PropertyChangedBase"),
+                            diagnostic);
+                    }
+
+                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("MvvmCross.Core.dll") == true))
+                    {
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged",
+                                cancellationToken =>
+                                    SubclassViewModelBaseAsync(
+                                        context,
+                                        classDeclaration,
+                                        MvxNotifyPropertyChanged,
+                                        cancellationToken),
+                                this.GetType().FullName + "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged"),
+                            diagnostic);
+
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Subclass MvvmCross.Core.ViewModels.MvxViewModel",
+                                cancellationToken =>
+                                    SubclassViewModelBaseAsync(
+                                        context,
+                                        classDeclaration,
+                                        MvxViewModel,
+                                        cancellationToken),
+                                this.GetType().FullName + "Subclass MvvmCross.Core.ViewModels.MvxViewModel"),
                             diagnostic);
                     }
                 }
