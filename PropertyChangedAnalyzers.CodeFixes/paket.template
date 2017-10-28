@@ -13,7 +13,7 @@ projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  FEATURE: Support Stylet.
+  FEATURE: Support MvvmCross.
 
 files
   bin/Release/netstandard1.3/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
