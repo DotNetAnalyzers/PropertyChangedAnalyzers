@@ -61,6 +61,22 @@ namespace RoslynSandbox
                 AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
                 AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
             }
+
+            [Test]
+            public void MvvmCross()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.MvvmCross);
+                AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            }
         }
     }
 }
