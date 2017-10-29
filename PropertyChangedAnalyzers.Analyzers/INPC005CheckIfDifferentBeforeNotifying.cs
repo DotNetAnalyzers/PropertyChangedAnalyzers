@@ -58,9 +58,16 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (Property.TryGetSingleAssignmentInSetter(setter, out _) &&
+            if (Property.TryGetSingleAssignmentInSetter(setter, out var assignment) &&
                 Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
             {
+                if (!AreInSameBlock(assignment, invocation) ||
+                    assignment.SpanStart > invocation.SpanStart)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                    return;
+                }
+
                 using (var walker = IfStatementWalker.Borrow(setter))
                 {
                     foreach (var ifStatement in walker.IfStatements)
@@ -73,8 +80,7 @@ namespace PropertyChangedAnalyzers
                         if (IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
                             IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
                         {
-                            if (ifStatement.Statement.Span.Contains(invocation.Span) ||
-                                !ifStatement.IsReturnOnly())
+                            if (ifStatement.Statement.Span.Contains(invocation.Span))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                             }
@@ -86,7 +92,7 @@ namespace PropertyChangedAnalyzers
                             IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
                         {
                             if (!ifStatement.Statement.Span.Contains(invocation.Span) ||
-                                ifStatement.IsReturnOnly())
+                                ifStatement.IsReturnIfTrue())
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                             }
@@ -116,6 +122,17 @@ namespace PropertyChangedAnalyzers
 
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
             }
+        }
+
+        private static bool AreInSameBlock(SyntaxNode node1, SyntaxNode node2)
+        {
+            if (node1?.FirstAncestor<BlockSyntax>() is BlockSyntax block1 &&
+                node2?.FirstAncestor<BlockSyntax>() is BlockSyntax block2)
+            {
+                return block1 == block2;
+            }
+
+            return false;
         }
 
         private static bool IsFirstNotifyPropertyChange(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -173,5 +190,5 @@ namespace PropertyChangedAnalyzers
 
             return Equality.IsOperatorEquals(expression, semanticModel, cancellationToken, value, member);
         }
-   }
+    }
 }
