@@ -24,6 +24,86 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
             new EqualsItem("string", "ReferenceEquals(value, this.bar)"),
         };
 
+        [TestCaseSource(nameof(EqualsSource))]
+        public void Check(EqualsItem check)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (Equals(value, this.bar))
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+        }
+
+        [TestCaseSource(nameof(EqualsSource))]
+        public void NegatedCheck(EqualsItem check)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (!Equals(value, this.bar))
+                {
+                    this.bar = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+        }
+
         [Test]
         public void SimpleProperty()
         {
@@ -262,8 +342,8 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
-        [TestCaseSource(nameof(EqualsSource))]
-        public void Check(EqualsItem check)
+        [Test]
+        public void CheckSideEffectReturn()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -275,6 +355,7 @@ namespace RoslynSandbox
     public class ViewModel : INotifyPropertyChanged
     {
         private string bar;
+        private int misses;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -285,6 +366,7 @@ namespace RoslynSandbox
             {
                 if (Equals(value, this.bar))
                 {
+                    misses++;
                     return;
                 }
 
@@ -299,46 +381,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
-        }
-
-        [TestCaseSource(nameof(EqualsSource))]
-        public void NegatedCheck(EqualsItem check)
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private string bar;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Bar
-        {
-            get { return this.bar; }
-            set
-            {
-                if (!Equals(value, this.bar))
-                {
-                    this.bar = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-                }
-            }
-        }
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
-    }
-}";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
             AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
