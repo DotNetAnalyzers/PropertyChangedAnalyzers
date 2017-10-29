@@ -1,5 +1,5 @@
 ﻿type file
-version 2.2.0.0
+version 2.2.1.0
 title PropertyChangedAnalyzers
 id PropertyChangedAnalyzers
 authors Johan Larsson
@@ -13,7 +13,8 @@ projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  FEATURE: Support MvvmCross.
+  BUGFIX: Handle side effect in if return.
+  FEATURE: Check that assignment is before notification.
 
 files
   bin/Release/netstandard1.3/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
