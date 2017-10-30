@@ -76,5 +76,47 @@
 
             return false;
         }
+
+        internal static bool TryFindMember(this TypeDeclarationSyntax type, string name, out MemberDeclarationSyntax match)
+        {
+            match = null;
+            if (type == null)
+            {
+                return false;
+            }
+
+            foreach (var member in type.Members)
+            {
+                if (member is FieldDeclarationSyntax fieldDeclaration &&
+                    fieldDeclaration.Declaration.Variables.TryGetSingle(x => x.Identifier.ValueText == name, out _))
+                {
+                    match = fieldDeclaration;
+                    return true;
+                }
+
+                if (member is EventDeclarationSyntax eventDeclaration &&
+                    eventDeclaration.Identifier.ValueText == name)
+                {
+                    match = eventDeclaration;
+                    return true;
+                }
+
+                if (member is PropertyDeclarationSyntax propertyDeclaration &&
+                    propertyDeclaration.Identifier.ValueText == name)
+                {
+                    match = propertyDeclaration;
+                    return true;
+                }
+
+                if (member is MethodDeclarationSyntax methodDeclaration &&
+                    methodDeclaration.Identifier.ValueText == name)
+                {
+                    match = methodDeclaration;
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
