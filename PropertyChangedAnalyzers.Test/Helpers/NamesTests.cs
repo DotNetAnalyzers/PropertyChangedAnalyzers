@@ -50,6 +50,28 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void WhenPropertyIsAssignedWithoutThis()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandbox
+{
+    class Foo
+    {
+        public Foo(int bar)
+        {
+            Bar = bar;
+        }
+
+        public int Bar { get; set; }
+    }
+}");
+
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            Assert.AreEqual(true, syntaxTree.GetRoot().UsesUnderscore(semanticModel, CancellationToken.None));
+        }
+
+        [Test]
         public void WhenFieldIsNotNamedWithUnderscore()
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
