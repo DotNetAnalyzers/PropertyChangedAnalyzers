@@ -82,6 +82,8 @@ namespace RoslynSandbox
     public sealed class ViewModel : INotifyPropertyChanged
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value { get; set; }
     }
 }";
 
@@ -93,6 +95,8 @@ namespace RoslynSandbox
     public sealed class ViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value { get; set; }
 
         private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
@@ -183,6 +187,56 @@ namespace RoslynSandbox.Client
 }";
 
             AnalyzerAssert.CodeFix<INPC007MissingInvoker, AddInvokerCodeFix>(new[] { viewModelBaseCode, testCode }, fixedCode);
+        }
+
+        [Test]
+        public void WithNoMutableProperties()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        public Foo(int value )
+        {
+            this.Value = value;
+        }
+
+        ↓public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value { get; }
+
+        public int Squared => this.Value * this.Value;
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        public Foo(int value )
+        {
+            this.Value = value;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value { get; }
+
+        public int Squared => this.Value * this.Value;
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, AddInvokerCodeFix>(testCode, fixedCode);
         }
     }
 }
