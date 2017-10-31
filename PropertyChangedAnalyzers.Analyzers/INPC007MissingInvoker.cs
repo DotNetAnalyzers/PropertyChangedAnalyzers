@@ -28,6 +28,7 @@ namespace PropertyChangedAnalyzers
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(HandleEventField, SyntaxKind.EventFieldDeclaration);
         }
 
@@ -40,12 +41,23 @@ namespace PropertyChangedAnalyzers
 
             if (context.Node is EventFieldDeclarationSyntax eventFieldDeclaration &&
                 context.ContainingSymbol is IEventSymbol eventSymbol &&
-                 !eventSymbol.ContainingType.IsInterface())
+                !eventSymbol.ContainingType.IsInterface())
             {
                 if (eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged)
                 {
                     if (!PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                     {
+                        var containingType = context.ContainingSymbol.ContainingType;
+                        if (containingType.IsSealed &&
+                            !containingType.GetMembers()
+                                           .TryGetFirst(
+                                               x => x is IPropertySymbol p &&
+                                                    p.SetMethod != null,
+                                               out _))
+                        {
+                            return;
+                        }
+
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
                     }
                 }

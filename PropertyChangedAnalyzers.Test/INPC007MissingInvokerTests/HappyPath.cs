@@ -224,5 +224,31 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void SealedWithNoMutableProperties()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public sealed class Foo : INotifyPropertyChanged
+    {
+        public Foo(int value )
+        {
+            this.Value = value;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value { get; }
+
+        public int Squared => this.Value * this.Value;
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
