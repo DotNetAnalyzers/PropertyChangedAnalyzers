@@ -47,36 +47,30 @@
                             if (invocation.Parent is ExpressionStatementSyntax ||
                                 invocation.Parent is ArrowExpressionClauseSyntax)
                             {
-                                context.RegisterCodeFix(
-                                    new DocumentEditorAction(
-                                        $"Notify that property {property} changes.",
-                                        context.Document,
-                                        (editor, cancellationToken) => MakeNotifyCreateIf(
-                                            editor,
-                                            invocation,
-                                            property,
-                                            invoker,
-                                            usesUnderscoreNames),
-                                        this.GetType()
-                                            .Name),
+                                context.RegisterDocumentEditorFix(
+                                    $"Notify that property {property} changes.",
+                                    (editor, cancellationToken) => MakeNotifyCreateIf(
+                                        editor,
+                                        invocation,
+                                        property,
+                                        invoker,
+                                        usesUnderscoreNames),
+                                    this.GetType(),
                                     diagnostic);
                                 continue;
                             }
 
                             if (invocation.Parent is IfStatementSyntax ifStatement)
                             {
-                                context.RegisterCodeFix(
-                                    new DocumentEditorAction(
-                                        $"Notify that property {property} changes.",
-                                        context.Document,
-                                        (editor, _) => MakeNotifyInIf(
-                                            editor,
-                                            ifStatement,
-                                            property,
-                                            invoker,
-                                            usesUnderscoreNames),
-                                        this.GetType()
-                                            .Name),
+                                context.RegisterDocumentEditorFix(
+                                    $"Notify that property {property} changes.",
+                                    (editor, _) => MakeNotifyInIf(
+                                        editor,
+                                        ifStatement,
+                                        property,
+                                        invoker,
+                                        usesUnderscoreNames),
+                                    this.GetType(),
                                     diagnostic);
                                 continue;
                             }
@@ -86,33 +80,29 @@
                                 unary.Parent is IfStatementSyntax ifStatement2 &&
                                 ifStatement2.IsReturnOnly())
                             {
-                                context.RegisterCodeFix(
-                                    new DocumentEditorAction(
-                                        $"Notify that property {property} changes.",
-                                        context.Document,
-                                        (editor, _) => MakeNotify(
-                                            editor,
-                                            expression,
-                                            property,
-                                            invoker,
-                                            usesUnderscoreNames),
-                                        this.GetType().Name),
+                                context.RegisterDocumentEditorFix(
+                                    $"Notify that property {property} changes.",
+                                    (editor, _) => MakeNotify(
+                                        editor,
+                                        expression,
+                                        property,
+                                        invoker,
+                                        usesUnderscoreNames),
+                                    this.GetType(),
                                     diagnostic);
                                 continue;
                             }
                         }
 
-                        context.RegisterCodeFix(
-                            new DocumentEditorAction(
-                                $"Notify that property {property} changes.",
-                                context.Document,
-                                (editor, _) => MakeNotify(
-                                    editor,
-                                    expression,
-                                    property,
-                                    invoker,
-                                    usesUnderscoreNames),
-                                this.GetType().Name),
+                        context.RegisterDocumentEditorFix(
+                            $"Notify that property {property} changes.",
+                            (editor, _) => MakeNotify(
+                                editor,
+                                expression,
+                                property,
+                                invoker,
+                                usesUnderscoreNames),
+                            this.GetType(),
                             diagnostic);
                     }
                 }

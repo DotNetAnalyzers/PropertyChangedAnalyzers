@@ -54,32 +54,28 @@
                     var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
                     if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                     {
-                        context.RegisterCodeFix(
-                            new DocumentEditorAction(
-                                key,
-                                context.Document,
-                                (editor, cancellationToken) => MakeAutoPropertySet(
-                                    editor,
-                                    propertyDeclaration,
-                                    setAndRaiseMethod,
-                                    semanticModel,
-                                    cancellationToken),
-                                key),
+                        context.RegisterDocumentEditorFix(
+                            key,
+                            (editor, cancellationToken) => MakeAutoPropertySet(
+                                editor,
+                                propertyDeclaration,
+                                setAndRaiseMethod,
+                                semanticModel,
+                                cancellationToken),
+                            key,
                             diagnostic);
                     }
                     else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                     {
-                        context.RegisterCodeFix(
-                            new DocumentEditorAction(
-                                key,
-                                context.Document,
-                                (editor, cancellationToken) => MakeWithBackingFieldSet(
-                                    editor,
-                                    propertyDeclaration,
-                                    setAndRaiseMethod,
-                                    semanticModel,
-                                    cancellationToken),
-                                key),
+                        context.RegisterDocumentEditorFix(
+                            key,
+                            (editor, cancellationToken) => MakeWithBackingFieldSet(
+                                editor,
+                                propertyDeclaration,
+                                setAndRaiseMethod,
+                                semanticModel,
+                                cancellationToken),
+                            key,
                             diagnostic);
                     }
                 }
@@ -92,35 +88,24 @@
                     {
                         if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                         {
-                            context.RegisterCodeFix(
-                                new DocumentEditorAction(
-                                    NotifyWhenValueChanges,
-                                    context.Document,
-                                    (editor, cancellationToken) => MakeAutoPropertyNotifyWhenValueChanges(
-                                        editor,
-                                        propertyDeclaration,
-                                        invoker,
-                                        semanticModel,
-                                        cancellationToken),
-                                    NotifyWhenValueChanges),
+                            context.RegisterDocumentEditorFix(
+                                NotifyWhenValueChanges,
+                                (editor, cancellationToken) => MakeAutoPropertyNotifyWhenValueChanges(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                NotifyWhenValueChanges,
                                 diagnostic);
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                         {
-                            context.RegisterCodeFix(
-                                new DocumentEditorAction(
-                                    NotifyWhenValueChanges,
-                                    context.Document,
-                                    (editor, cancellationToken) => MakeWithBackingFieldNotifyWhenValueChanges(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
-                                    NotifyWhenValueChanges),
+                            context.RegisterDocumentEditorFix(
+                                NotifyWhenValueChanges,
+                                (editor, cancellationToken) => MakeWithBackingFieldNotifyWhenValueChanges(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                NotifyWhenValueChanges,
                                 diagnostic);
 
-                            context.RegisterCodeFix(
-                                new DocumentEditorAction(
-                                    "Notify.",
-                                    context.Document,
-                                    (editor, cancellationToken) => MakeWithBackingFieldNotify(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
-                                    "Notify."),
+                            context.RegisterDocumentEditorFix(
+                                "Notify.",
+                                (editor, cancellationToken) => MakeWithBackingFieldNotify(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
+                                "Notify.",
                                 diagnostic);
                         }
                     }

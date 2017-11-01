@@ -48,12 +48,10 @@ namespace PropertyChangedAnalyzers
                                           .FirstAncestorOrSelf<ParameterSyntax>();
                 if (parameter != null)
                 {
-                    context.RegisterCodeFix(
-                        new DocumentEditorAction(
-                            "Use [CallerMemberName]",
-                            context.Document,
-                            (editor, _) => MakeUseCallerMemberName(editor, parameter, AsCallerMemberName(parameter)),
-                            this.GetType().FullName),
+                    context.RegisterDocumentEditorFix(
+                        "Use [CallerMemberName]",
+                        (editor, _) => MakeUseCallerMemberName(editor, parameter, AsCallerMemberName(parameter)),
+                        this.GetType(),
                         diagnostic);
                     continue;
                 }
@@ -76,28 +74,24 @@ namespace PropertyChangedAnalyzers
 
                             var nameParameter = methodDeclaration.ParameterList.Parameters[0];
 
-                            context.RegisterCodeFix(
-                                new DocumentEditorAction(
+                            context.RegisterDocumentEditorFix(
                                     "Use [CallerMemberName]",
-                                    context.Document,
                                     (editor, _) => MakeUseCallerMemberName(editor, nameParameter, AsCallerMemberName(nameParameter)),
-                                    this.GetType().FullName),
-                                diagnostic);
+                                    this.GetType(),
+                                    diagnostic);
                         }
                     }
 
-                    context.RegisterCodeFix(
-                        new DocumentEditorAction(
+                    context.RegisterDocumentEditorFix(
                             "Use [CallerMemberName]",
-                            context.Document,
                             (editor, _) => MakeUseCallerMemberName(
                                 editor,
                                 invocation,
                                 invocation.RemoveNode(
                                     invocation.ArgumentList.Arguments[0],
                                     SyntaxRemoveOptions.AddElasticMarker)),
-                            this.GetType().FullName),
-                        diagnostic);
+                            this.GetType(),
+                            diagnostic);
                 }
             }
         }
