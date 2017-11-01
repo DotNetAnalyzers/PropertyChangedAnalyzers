@@ -384,6 +384,50 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
+        [Test]
+        public void WithCheckAndThrowBefore()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+
+    public class ViewModel : System.ComponentModel.INotifyPropertyChanged
+    {
+        private bool _isBusy;
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsBusy
+        {
+            get => _isBusy;
+
+            private set
+            {
+                if (value && _isBusy)
+                {
+                    throw new InvalidOperationException(""Already busy"");
+                }
+
+                if (value == _isBusy)
+                {
+                    return;
+                }
+
+                _isBusy = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+        }
+
         public class EqualsItem
         {
             public EqualsItem(string type, string call)
