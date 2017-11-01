@@ -6,7 +6,6 @@ namespace PropertyChangedAnalyzers
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -21,7 +20,7 @@ namespace PropertyChangedAnalyzers
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC005CheckIfDifferentBeforeNotifying.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentOnlyFixAllProvider.Default;
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -55,11 +54,10 @@ namespace PropertyChangedAnalyzers
                         continue;
                     }
 
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
+                    context.RegisterDocumentEditorFix(
                             "Check that value is different before notifying.",
-                            cancellationToken => AddCheckIfDifferentAsync(context.Document, assignment, cancellationToken),
-                            this.GetType().Name),
+                            (editor, cancellationToken) => AddCheckIfDifferent(editor, assignment, cancellationToken),
+                            this.GetType(),
                         diagnostic);
                 }
 
@@ -70,11 +68,10 @@ namespace PropertyChangedAnalyzers
                         if (invocationStatement.Parent is BlockSyntax block &&
                             block.Statements.IndexOf(setAndRaiseStatement) == block.Statements.IndexOf(invocationStatement) - 1)
                         {
-                            context.RegisterCodeFix(
-                                CodeAction.Create(
+                            context.RegisterDocumentEditorFix(
                                     "Check that value is different before notifying.",
-                                    cancellationToken => CreateIfAsync(context.Document, setAndRaiseStatement, invocationStatement, cancellationToken),
-                                    this.GetType().Name),
+                                    (editor, cancellationToken) => CreateIf(editor, setAndRaiseStatement, invocationStatement),
+                                    this.GetType(),
                                 diagnostic);
                         }
                     }
@@ -83,11 +80,10 @@ namespace PropertyChangedAnalyzers
                         if (invocationStatement.Parent is BlockSyntax block &&
                             block.Statements.IndexOf(ifSetAndRaiseStatement) == block.Statements.IndexOf(invocationStatement) - 1)
                         {
-                            context.RegisterCodeFix(
-                                CodeAction.Create(
-                                    "Check that value is different before notifying.",
-                                    cancellationToken => AddToIfAsync(context.Document, ifSetAndRaiseStatement, invocationStatement, cancellationToken),
-                                    this.GetType().Name),
+                            context.RegisterDocumentEditorFix(
+                                "Check that value is different before notifying.",
+                                (editor, cancellationToken) => AddToIf(editor, ifSetAndRaiseStatement, invocationStatement),
+                                this.GetType(),
                                 diagnostic);
                         }
                     }
@@ -95,16 +91,14 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static async Task<Document> AddCheckIfDifferentAsync(Document document, AssignmentExpressionSyntax assignment, CancellationToken cancellationToken)
+        private static void AddCheckIfDifferent(DocumentEditor editor, AssignmentExpressionSyntax assignment, CancellationToken cancellationToken)
         {
             var statementSyntax = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
             if (statementSyntax == null)
             {
-                return document;
+                return;
             }
 
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             var type = editor.SemanticModel.GetTypeInfoSafe(assignment.Left, cancellationToken).Type;
             var code = StringBuilderPool.Borrow()
                                         .AppendLine($"if ({Snippet.EqualityCheck(type, "value", assignment.Left.ToString(), editor.SemanticModel)})")
@@ -119,24 +113,21 @@ namespace PropertyChangedAnalyzers
                                         .WithTrailingElasticLineFeed()
                                         .WithAdditionalAnnotations(Formatter.Annotation);
             editor.InsertBefore(statementSyntax, ifReturn);
-            return editor.GetChangedDocument();
         }
 
-        private static async Task<Document> CreateIfAsync(Document document, ExpressionStatementSyntax setAndRaise, ExpressionStatementSyntax invocation, CancellationToken cancellationToken)
+        private static void CreateIf(DocumentEditor editor, ExpressionStatementSyntax setAndRaise, ExpressionStatementSyntax invocation)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             editor.RemoveNode(setAndRaise);
             editor.ReplaceNode(
                 invocation,
                 (node, _) =>
                 {
-var code = StringBuilderPool.Borrow()
-                            .AppendLine($"if ({setAndRaise.ToFullString().TrimEnd('\r', '\n', ';')})")
-                            .AppendLine("{")
-                            .AppendLine($"    {invocation.ToFullString().TrimEnd('\r', '\n')}")
-                            .AppendLine("}")
-                            .Return();
+                    var code = StringBuilderPool.Borrow()
+                                                .AppendLine($"if ({setAndRaise.ToFullString().TrimEnd('\r', '\n', ';')})")
+                                                .AppendLine("{")
+                                                .AppendLine($"    {invocation.ToFullString().TrimEnd('\r', '\n')}")
+                                                .AppendLine("}")
+                                                .Return();
 
                     return SyntaxFactory.ParseStatement(code)
                                         .WithSimplifiedNames()
@@ -144,13 +135,10 @@ var code = StringBuilderPool.Borrow()
                                         .WithTrailingElasticLineFeed()
                                         .WithAdditionalAnnotations(Formatter.Annotation);
                 });
-            return editor.GetChangedDocument();
         }
 
-        private static async Task<Document> AddToIfAsync(Document document, IfStatementSyntax ifSetAndRaise, ExpressionStatementSyntax invocation, CancellationToken cancellationToken)
+        private static void AddToIf(DocumentEditor editor, IfStatementSyntax ifSetAndRaise, ExpressionStatementSyntax invocation)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             if (ifSetAndRaise.Statement is BlockSyntax body)
             {
                 editor.RemoveNode(invocation);
@@ -191,7 +179,6 @@ var code = StringBuilderPool.Borrow()
             }
 
             editor.FormatNode(ifSetAndRaise);
-            return editor.GetChangedDocument();
         }
     }
 }
