@@ -428,6 +428,46 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
         }
 
+        [TestCase("if (Math.Abs(value - this.value) < 1e-6)")]
+        [TestCase("if (Math.Abs(this.value - value) < 1e-6)")]
+        public void WithCheckAndThrowBefore(string code)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+
+    public class ViewModel : System.ComponentModel.INotifyPropertyChanged
+    {
+        private double value;
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        public double Value
+        {
+            get => value;
+
+            set
+            {
+                if (Math.Abs(value - this.value) < 1e-6)
+                {
+                    return;
+                }
+
+                this.value = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("if (Math.Abs(value - this.value) < 1e-6)", code);
+            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+        }
+
         public class EqualsItem
         {
             public EqualsItem(string type, string call)
