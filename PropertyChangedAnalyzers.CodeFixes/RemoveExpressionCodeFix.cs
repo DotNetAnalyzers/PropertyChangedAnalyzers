@@ -5,7 +5,6 @@ namespace PropertyChangedAnalyzers
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -19,7 +18,7 @@ namespace PropertyChangedAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC012DontUseExpression.DiagnosticId);
 
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -43,20 +42,17 @@ namespace PropertyChangedAnalyzers
                 var type = semanticModel.GetDeclaredSymbolSafe(argument?.FirstAncestorOrSelf<ClassDeclarationSyntax>(), context.CancellationToken);
                 if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out var invoker))
                 {
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "Use overload that does not use expression.",
-                            cancellationToken => RemoveExpressionAsync(context.Document, argument, invoker, usesUnderscoreNames, cancellationToken),
-                            this.GetType().FullName),
+                    context.RegisterDocumentEditorFix(
+                        "Use overload that does not use expression.",
+                        (editor, cancellationToken) => RemoveExpression(editor, argument, invoker, usesUnderscoreNames, cancellationToken),
+                        this.GetType(),
                         diagnostic);
                 }
             }
         }
 
-        private static async Task<Document> RemoveExpressionAsync(Document document, ArgumentSyntax argument, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        private static void RemoveExpression(DocumentEditor editor, ArgumentSyntax argument, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             var invocation = argument.FirstAncestorOrSelf<InvocationExpressionSyntax>();
             if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, editor.SemanticModel, cancellationToken, out _, out var name) == AnalysisResult.Yes)
             {
@@ -82,8 +78,6 @@ namespace PropertyChangedAnalyzers
                                      .WithAdditionalAnnotations(Formatter.Annotation));
                 }
             }
-
-            return editor.GetChangedDocument();
         }
     }
 }

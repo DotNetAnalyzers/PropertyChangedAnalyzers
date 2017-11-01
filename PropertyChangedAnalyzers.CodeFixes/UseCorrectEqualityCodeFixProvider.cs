@@ -6,7 +6,6 @@ namespace PropertyChangedAnalyzers
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -20,7 +19,7 @@ namespace PropertyChangedAnalyzers
             INPC006UseReferenceEquals.DiagnosticId,
             INPC006UseObjectEqualsForReferenceTypes.DiagnosticId);
 
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -82,11 +81,10 @@ namespace PropertyChangedAnalyzers
                                                                     semanticModel))
                                                             .WithSimplifiedNames();
 
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                $"Use {equalsExpression}",
-                                cancellationToken => Task.FromResult(context.Document.WithSyntaxRoot(syntaxRoot.ReplaceNode(ifStatement.Condition, equalsExpression))),
-                                this.GetType().FullName),
+                        context.RegisterDocumentEditorFix(
+                            $"Use {equalsExpression}",
+                            (editor, cancellationToken) => editor.ReplaceNode(ifStatement.Condition, equalsExpression),
+                            this.GetType(),
                             diagnostic);
                     }
                 }
