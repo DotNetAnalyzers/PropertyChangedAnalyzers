@@ -57,10 +57,24 @@ namespace PropertyChangedAnalyzers
 
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            "Check that value is different before notifying.",
-                            cancellationToken => AddCheckIfDifferentAsync(context.Document, assignment, cancellationToken),
-                            this.GetType().Name),
+                        "Check that value is different before notifying.",
+                        (editor, cancellationToken) => AddCheckIfDifferent(editor, assignment, cancellationToken),
+                        this.GetType(),
                         diagnostic);
+
+                    var type = semanticModel.GetDeclaredSymbolSafe(
+                        setter.FirstAncestor<ClassDeclarationSyntax>(),
+                        context.CancellationToken);
+                    if (setter.Body.Statements.Count == 2 &&
+                        ReferenceEquals(setter.Body.Statements[0], statementSyntax) &&
+                        PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
+                    {
+                        context.RegisterDocumentEditorFix(
+                            $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",
+                            (editor, cancellationToken) => UseSetAndRaise(editor, setter, assignment, setAndRaiseMethod, cancellationToken),
+                            $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",
+                            diagnostic);
+                    }
                 }
 
                 if (Property.TryGetSingleSetAndRaiseInSetter(setter, semanticModel, context.CancellationToken, out var setAndRaise))
@@ -191,7 +205,20 @@ var code = StringBuilderPool.Borrow()
             }
 
             editor.FormatNode(ifSetAndRaise);
-            return editor.GetChangedDocument();
+        }
+
+        private static void UseSetAndRaise(DocumentEditor editor, AccessorDeclarationSyntax setter, AssignmentExpressionSyntax assignment, IMethodSymbol setAndRaise, CancellationToken cancellationToken)
+        {
+            var usesUnderscoreNames = assignment.UsesUnderscore(editor.SemanticModel, cancellationToken);
+            editor.ReplaceNode(
+                setter,
+                x => x.WithBody(null)
+                      .WithExpressionBody(
+                          SyntaxFactory.ArrowExpressionClause(
+                              SyntaxFactory.ParseExpression(
+                                  $"{(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {assignment.Left}, value);")))
+                      .WithTrailingElasticLineFeed()
+                      .WithAdditionalAnnotations(Formatter.Annotation));
         }
     }
 }
