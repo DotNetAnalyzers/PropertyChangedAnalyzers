@@ -20,6 +20,135 @@
             }
 
             [Test]
+            public void NoCheckAddIfReturn()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.NotifyOfPropertyChange();
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                if (value == this.name)
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.NotifyOfPropertyChange();
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Check that value is different before notifying.");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Check that value is different before notifying.");
+            }
+
+            [Test]
+            public void NoCheckToUseSetAndRaise()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.NotifyOfPropertyChange();
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.Set(ref this.name, value);
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Use PropertyChangedBase.Set");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Use PropertyChangedBase.Set");
+            }
+
+            [Test]
+            public void NoCheckExpressionToUseSetAndRaise()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.NotifyOfPropertyChange(() => this.Name);
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.Set(ref this.name, value);
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Use PropertyChangedBase.Set");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Use PropertyChangedBase.Set");
+            }
+
+            [Test]
             public void SetAffectsCalculatedProperty()
             {
                 var testCode = @"

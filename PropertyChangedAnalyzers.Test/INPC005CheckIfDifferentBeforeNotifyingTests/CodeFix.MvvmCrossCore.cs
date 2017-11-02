@@ -20,6 +20,135 @@
             }
 
             [Test]
+            public void NoCheckAddIfReturn()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.RaisePropertyChanged();
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                if (value == this.name)
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.RaisePropertyChanged();
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Check that value is different before notifying.");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Check that value is different before notifying.");
+            }
+
+            [Test]
+            public void NoCheckToUseSetAndRaise()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.RaisePropertyChanged();
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.SetProperty(ref this.name, value);
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Use MvxNotifyPropertyChanged.SetProperty");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Use MvxNotifyPropertyChanged.SetProperty");
+            }
+
+            [Test]
+            public void NoCheckExpressionToUseSetAndRaise()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.RaisePropertyChanged(() => this.Name);
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.SetProperty(ref this.name, value);
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Use MvxNotifyPropertyChanged.SetProperty");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode, "Use MvxNotifyPropertyChanged.SetProperty");
+            }
+
+            [Test]
             public void SetAffectsCalculatedProperty()
             {
                 var testCode = @"

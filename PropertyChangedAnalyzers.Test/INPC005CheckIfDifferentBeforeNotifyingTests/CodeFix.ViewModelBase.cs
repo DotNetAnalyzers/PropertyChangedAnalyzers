@@ -10,8 +10,10 @@
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
     public abstract class ViewModelBase : INotifyPropertyChanged
@@ -30,12 +32,146 @@ namespace RoslynSandbox.Core
             return true;
         }
 
+        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+        {
+            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
+        }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
+
+            [Test]
+            public void NoCheckAddIfReturn()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client 
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.OnPropertyChanged();
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox.Client 
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                if (value == this.name)
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.OnPropertyChanged();
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Check that value is different before notifying.");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Check that value is different before notifying.");
+            }
+
+            [Test]
+            public void NoCheckToUseSetAndRaise()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client 
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.OnPropertyChanged();
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox.Client 
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.SetValue(ref this.name, value);
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Use ViewModelBase.SetValue");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Use ViewModelBase.SetValue");
+            }
+
+            [Test]
+            public void NoCheckExpressionToUseSetAndRaise()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client 
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.OnPropertyChanged(() => this.Name);
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox.Client 
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.SetValue(ref this.name, value);
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Use ViewModelBase.SetValue");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Use ViewModelBase.SetValue");
+            }
 
             [Test]
             public void SetAffectsCalculatedProperty()
