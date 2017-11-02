@@ -4,7 +4,6 @@ namespace PropertyChangedAnalyzers
     using System.Linq;
     using System.Threading;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
@@ -12,30 +11,6 @@ namespace PropertyChangedAnalyzers
 
     internal static class DocumentEditorExt
     {
-        internal static void RegisterDocumentEditorFix(
-            this CodeFixContext context,
-            string title,
-            Action<DocumentEditor, CancellationToken> action,
-            Type equivalenceKey,
-            Diagnostic diagnostic)
-        {
-            context.RegisterCodeFix(
-                new DocumentEditorAction(title, context.Document, action, equivalenceKey.FullName),
-                diagnostic);
-        }
-
-        internal static void RegisterDocumentEditorFix(
-            this CodeFixContext context,
-            string title,
-            Action<DocumentEditor, CancellationToken> action,
-            string equivalenceKey,
-            Diagnostic diagnostic)
-        {
-            context.RegisterCodeFix(
-                new DocumentEditorAction(title, context.Document, action, equivalenceKey),
-                diagnostic);
-        }
-
         internal static DocumentEditor ReplaceNode<T>(this DocumentEditor editor, T node, Func<T, T> replacement)
             where T : SyntaxNode
         {
