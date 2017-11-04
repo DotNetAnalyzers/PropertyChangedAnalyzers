@@ -19,7 +19,9 @@
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC012 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new INPC012DontUseExpression());
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC013 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new INPC013UseNameof());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC014 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC014PreferSettingBackingFieldInCtor());
         [Benchmark]
+
         public void INPC001ImplementINotifyPropertyChanged()
         {
             INPC001.Run();
@@ -101,6 +103,12 @@
         public void INPC013UseNameof()
         {
             INPC013.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void INPC014PreferSettingBackingFieldInCtor()
+        {
+            INPC014.Run();
         }
     }
 }
