@@ -157,6 +157,11 @@ namespace RoslynSandbox
     public class Foo : Caliburn.Micro.Screen
     {
         ↓public int Bar { get; private set; }
+
+        public void Mutate()
+        {
+            this.Bar++;
+        }
     }
 }";
 
@@ -171,6 +176,11 @@ namespace RoslynSandbox
         {
             get => this.bar;
             private set => this.Set(ref this.bar, value);
+        }
+
+        public void Mutate()
+        {
+            this.Bar++;
         }
     }
 }";

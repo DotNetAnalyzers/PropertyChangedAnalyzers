@@ -286,8 +286,10 @@ namespace RoslynSandBox
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
-            [Test]
-            public void PrivateSetterOnlyAssignedInCtor()
+            [TestCase("Value = value;")]
+            [TestCase("Value++")]
+            [TestCase("Value--")]
+            public void PrivateSetterOnlyAssignedInCtor(string code)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -314,7 +316,7 @@ namespace RoslynSandbox
         }
     }
 }";
-
+                testCode = testCode.AssertReplace("Value = value;", code);
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
         }

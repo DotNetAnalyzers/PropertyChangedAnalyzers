@@ -69,7 +69,8 @@
                 declaration.Modifiers.Any(SyntaxKind.ProtectedKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
-                !declaration.TryGetSetAccessorDeclaration(out _))
+                !declaration.TryGetSetAccessorDeclaration(out _) ||
+                IsAutoPropertyOnlyAssignedInCtor(declaration))
             {
                 return false;
             }
@@ -93,7 +94,8 @@
                 propertySymbol.ContainingType == null ||
                 propertySymbol.ContainingType.IsValueType ||
                 propertySymbol.ContainingType.DeclaredAccessibility == Accessibility.Private ||
-                propertySymbol.ContainingType.DeclaredAccessibility == Accessibility.Protected)
+                propertySymbol.ContainingType.DeclaredAccessibility == Accessibility.Protected ||
+                IsAutoPropertyOnlyAssignedInCtor(declaration))
             {
                 return false;
             }
@@ -399,6 +401,65 @@
             }
 
             return field != null;
+        }
+
+        private static bool IsAutoPropertyOnlyAssignedInCtor(PropertyDeclarationSyntax propertyDeclaration)
+        {
+            if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
+                setter.Body == null &&
+                setter.ExpressionBody == null)
+            {
+                if (!propertyDeclaration.Modifiers.Any(SyntaxKind.PrivateKeyword) &&
+                    !setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                {
+                    return false;
+                }
+
+                var name = propertyDeclaration.Identifier.ValueText;
+                using (var walker = IdentifierNameWalker.Borrow(propertyDeclaration.FirstAncestor<TypeDeclarationSyntax>()))
+                {
+                    foreach (var identifierName in walker.IdentifierNames)
+                    {
+                        if (identifierName.Identifier.ValueText == name)
+                        {
+                            var parent = identifierName.Parent;
+                            if (parent is MemberAccessExpressionSyntax memberAccess)
+                            {
+                                if (memberAccess.Expression is ThisExpressionSyntax)
+                                {
+                                    parent = memberAccess.Parent;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+
+                            switch (parent)
+                            {
+                                case AssignmentExpressionSyntax a when a.Right.Contains(identifierName):
+                                    continue;
+                                case PostfixUnaryExpressionSyntax _:
+                                    break;
+                                case PrefixUnaryExpressionSyntax p when p.IsKind(SyntaxKind.LogicalNotExpression):
+                                    continue;
+                                default:
+                                    continue;
+                            }
+
+                            if (identifierName.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() == null ||
+                                identifierName.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
