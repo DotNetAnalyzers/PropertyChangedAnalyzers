@@ -5,6 +5,8 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
 
     internal partial class HappyPath
     {
+        private static readonly INPC001ImplementINotifyPropertyChanged Analyzer = new INPC001ImplementINotifyPropertyChanged();
+
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""Bar""")]
@@ -43,7 +45,7 @@ namespace RoslynSandBox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("null")]
@@ -85,7 +87,7 @@ namespace RoslynSandBox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -121,7 +123,7 @@ namespace RoslynSandBox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("null")]
@@ -159,7 +161,7 @@ namespace RoslynSandBox
     }
 }";
             testCode = testCode.AssertReplace(@"nameof(this.Bar))", propertyName);
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -192,7 +194,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -206,7 +208,7 @@ namespace RoslynSandBox
         public int Bar { get; set; }
     }
 }";
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -221,7 +223,7 @@ namespace RoslynSandBox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -236,7 +238,7 @@ namespace RoslynSandBox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -254,7 +256,7 @@ namespace RoslynSandBox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -269,7 +271,7 @@ namespace RoslynSandBox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -285,7 +287,7 @@ namespace RoslynSandBox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -303,7 +305,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -327,7 +329,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -343,7 +345,7 @@ namespace RoslynSandBox
         public event EventHandler foo;
     }
 }";
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -400,7 +402,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -452,7 +454,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -471,7 +473,7 @@ namespace RoslynSandBox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

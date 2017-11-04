@@ -8,39 +8,6 @@
         internal class Ignores
         {
             [Test]
-            public void InvokesCached()
-            {
-                var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private static readonly PropertyChangedEventArgs BarPropertyChangedArgs = new PropertyChangedEventArgs(nameof(Bar));
-        private int bar;
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int Bar
-        {
-            get { return this.bar; }
-            set
-            {
-                if (value == this.bar)
-                {
-                    return;
-                }
-
-                this.bar = value;
-                this.PropertyChanged?.Invoke(this, BarPropertyChangedArgs);
-            }
-        }
-    }
-}";
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
-            }
-
-            [Test]
             public void IgnoreStruct()
             {
                 var testCode = @"
@@ -52,7 +19,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -67,7 +34,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -100,7 +67,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -115,7 +82,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -133,7 +100,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -148,7 +115,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -164,7 +131,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -180,7 +147,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -196,7 +163,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -220,7 +187,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
         }
     }

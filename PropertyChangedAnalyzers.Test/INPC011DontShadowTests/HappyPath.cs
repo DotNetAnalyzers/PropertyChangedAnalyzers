@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly INPC011DontShadow Analyzer = new INPC011DontShadow();
+
         [Test]
         public void NoBaseClass()
         {
@@ -46,7 +48,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC011DontShadow>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -80,7 +82,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC011DontShadow>(viewModelBaseCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, viewModelBaseCode, testCode);
         }
     }
 }

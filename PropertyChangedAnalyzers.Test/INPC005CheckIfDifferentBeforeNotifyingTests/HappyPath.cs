@@ -6,7 +6,9 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
 
     internal partial class HappyPath
     {
-        public static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
+        private static readonly INPC005CheckIfDifferentBeforeNotifying Analyzer = new INPC005CheckIfDifferentBeforeNotifying();
+
+        private static readonly IReadOnlyList<EqualsItem> EqualsSource = new[]
         {
             new EqualsItem("string", "Equals(value, this.bar)"),
             new EqualsItem("string", "Equals(this.bar, value)"),
@@ -62,7 +64,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCaseSource(nameof(EqualsSource))]
@@ -101,7 +103,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -131,7 +133,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -167,7 +169,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -202,7 +204,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -239,7 +241,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -274,7 +276,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -306,7 +308,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -339,7 +341,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -381,7 +383,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -425,7 +427,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("if (Math.Abs(value - this.value) < 1e-6)")]
@@ -465,7 +467,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("if (Math.Abs(value - this.value) < 1e-6)", code);
-            AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         public class EqualsItem

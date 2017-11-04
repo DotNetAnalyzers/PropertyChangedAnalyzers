@@ -5,6 +5,8 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
 
     internal class HappyPath
     {
+        private static readonly INPC009DontRaiseChangeForMissingProperty Analyzer = new INPC009DontRaiseChangeForMissingProperty();
+
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""""")]
@@ -44,7 +46,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -80,7 +82,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -120,7 +122,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -160,7 +162,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("null")]
@@ -198,7 +200,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace(@"nameof(this.Bar))", propertyName);
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -231,7 +233,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -277,7 +279,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(vmCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, vmCode, testCode);
         }
 
         [Test]
@@ -307,7 +309,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -377,7 +379,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(extCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, extCode, testCode);
         }
 
         [Test]
@@ -426,7 +428,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -478,7 +480,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(vmCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, vmCode, testCode);
         }
 
         [Test]
@@ -537,7 +539,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(vmBaseCode, vmCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, vmBaseCode, vmCode, testCode);
         }
 
         [Test]
@@ -576,7 +578,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

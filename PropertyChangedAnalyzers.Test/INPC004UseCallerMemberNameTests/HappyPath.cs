@@ -5,6 +5,8 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 
     internal class HappyPath
     {
+        private static readonly INPC004UseCallerMemberName Analyzer = new INPC004UseCallerMemberName();
+
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""""")]
@@ -44,7 +46,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -80,7 +82,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCase("null")]
@@ -118,7 +120,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace(@"nameof(this.Bar))", propertyName);
-            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -151,7 +153,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -200,7 +202,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -249,7 +251,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -305,7 +307,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(viewModelCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, viewModelCode, testCode);
         }
 
         [Test]
@@ -407,7 +409,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC004UseCallerMemberName>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -56,7 +56,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -84,7 +84,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -112,7 +112,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -145,7 +145,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(fooBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, fooBaseCode, testCode);
             }
         }
     }

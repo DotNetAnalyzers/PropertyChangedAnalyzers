@@ -55,7 +55,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -76,7 +76,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [TestCase("null")]
@@ -107,7 +107,7 @@ namespace RoslynSandbox.Client
 }";
 
                 testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
         }
     }

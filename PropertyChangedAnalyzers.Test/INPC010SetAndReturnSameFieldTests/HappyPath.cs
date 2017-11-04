@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly INPC010SetAndReturnSameField Analyzer = new INPC010SetAndReturnSameField();
+
         [Test]
         public void GetterReturnsWhatSetterAssigns()
         {
@@ -46,7 +48,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC010SetAndReturnSameField>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -77,7 +79,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC010SetAndReturnSameField>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

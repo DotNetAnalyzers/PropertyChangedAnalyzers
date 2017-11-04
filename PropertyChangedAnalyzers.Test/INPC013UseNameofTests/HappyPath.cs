@@ -5,6 +5,8 @@ namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
 
     internal class HappyPath
     {
+        private static readonly INPC013UseNameof Analyzer = new INPC013UseNameof();
+
         [Test]
         public void WhenThrowingArgumentException()
         {
@@ -24,7 +26,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC013UseNameof>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -47,7 +49,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC013UseNameof>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -62,7 +64,7 @@ namespace RoslynSandbox
         public string Name { get; }
     }
 }";
-            AnalyzerAssert.Valid<INPC013UseNameof>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -86,7 +88,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC013UseNameof>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -110,7 +112,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC013UseNameof>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -134,7 +136,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC013UseNameof>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }
