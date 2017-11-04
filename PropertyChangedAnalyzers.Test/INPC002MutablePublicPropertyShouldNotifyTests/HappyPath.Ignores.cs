@@ -8,7 +8,7 @@
         internal class Ignores
         {
             [Test]
-            public void IgnoreStruct()
+            public void Struct()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -23,7 +23,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreGetOnly()
+            public void GetOnly()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -38,7 +38,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreSetOnly()
+            public void SetOnly()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreExpressionBody()
+            public void ExpressionBody()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -86,7 +86,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreCalculatedBody()
+            public void CalculatedBody()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -104,7 +104,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreAbstract()
+            public void Abstract()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -119,7 +119,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreStatic()
+            public void Static()
             {
                 // maybe this should notify?
                 var testCode = @"
@@ -135,7 +135,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreInternalClass()
+            public void InternalClass()
             {
                 // maybe this should notify?
                 var testCode = @"
@@ -151,7 +151,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreInternalProperty()
+            public void InternalProperty()
             {
                 // maybe this should notify?
                 var testCode = @"
@@ -167,7 +167,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreDependencyProperty()
+            public void DependencyProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -191,7 +191,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnorePrivateSetterOnlyAssignedInCtor()
+            public void PrivateSetterOnlyAssignedInCtor()
             {
                 var testCode = @"
 namespace RoslynSandbox

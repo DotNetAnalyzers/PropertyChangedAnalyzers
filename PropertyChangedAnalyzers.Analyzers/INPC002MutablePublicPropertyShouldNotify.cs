@@ -40,30 +40,11 @@
 
             if (context.ContainingSymbol is IPropertySymbol propertySymbol &&
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
-                propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+                propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) &&
+                Property.ShouldNotify(propertyDeclaration, propertySymbol, context.SemanticModel, context.CancellationToken))
             {
-                if (propertySymbol.SetMethod != null &&
-                    propertySymbol.SetMethod.DeclaredAccessibility == Accessibility.Private)
-                {
-                    using (var walker = IdentifierNameWalker.Borrow(propertyDeclaration.FirstAncestor<ClassDeclarationSyntax>()))
-                    {
-                        foreach (var name in walker.IdentifierNames)
-                        {
-                            if (name.Identifier.ValueText == propertySymbol.Name)
-                            {
-                                
-                            }
-                        }
-                    }
-                }
-
-                if (Property.ShouldNotify(propertyDeclaration, propertySymbol, context.SemanticModel, context.CancellationToken))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), context.ContainingSymbol.Name));
-                }
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), context.ContainingSymbol.Name));
             }
         }
-
-        private static bool IsOnlyAssignedInCtor(PropertyDeclarationSyntax propertyDeclaration, IPropertySymbol propertySymbol)
     }
 }
