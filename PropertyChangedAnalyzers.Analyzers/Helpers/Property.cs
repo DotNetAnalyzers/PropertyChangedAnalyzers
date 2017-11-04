@@ -302,6 +302,13 @@
             }
         }
 
+        internal static bool TryGetSingleAssignmentInSetter(PropertyDeclarationSyntax propertyDeclaration, out AssignmentExpressionSyntax assignment)
+        {
+            assignment = null;
+            return propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
+                   TryGetSingleAssignmentInSetter(setter, out assignment);
+        }
+
         internal static bool TryGetSingleAssignmentInSetter(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
         {
             assignment = null;
@@ -384,6 +391,29 @@
             }
 
             value = null;
+            return false;
+        }
+
+        internal static bool TryGetAssignedProperty(AssignmentExpressionSyntax assignment, out PropertyDeclarationSyntax propertyDeclaration)
+        {
+            propertyDeclaration = null;
+            var typeDeclaration = assignment?.FirstAncestor<TypeDeclarationSyntax>();
+            if (typeDeclaration == null)
+            {
+                return false;
+            }
+
+            if (assignment.Left is IdentifierNameSyntax identifierName)
+            {
+                return typeDeclaration.TryFindProperty(identifierName.Identifier.ValueText, out propertyDeclaration);
+            }
+
+            if (assignment.Left is MemberAccessExpressionSyntax memberAccess &&
+                memberAccess.Expression is ThisExpressionSyntax)
+            {
+                return typeDeclaration.TryFindProperty(memberAccess.Name.Identifier.ValueText, out propertyDeclaration);
+            }
+
             return false;
         }
 

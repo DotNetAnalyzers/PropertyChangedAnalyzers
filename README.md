@@ -67,6 +67,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC013.md">INPC013</a></td>
   <td>Use nameof.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC014.md">INPC014</a></td>
+  <td>Prefer setting backing field in constructor.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

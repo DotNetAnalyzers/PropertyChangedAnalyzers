@@ -12,6 +12,15 @@ namespace PropertyChangedAnalyzers
             this CodeFixContext context,
             string title,
             Action<DocumentEditor, CancellationToken> action,
+            Diagnostic diagnostic)
+        {
+            RegisterDocumentEditorFix(context, title, action, title, diagnostic);
+        }
+
+        internal static void RegisterDocumentEditorFix(
+            this CodeFixContext context,
+            string title,
+            Action<DocumentEditor, CancellationToken> action,
             Type equivalenceKey,
             Diagnostic diagnostic)
         {
