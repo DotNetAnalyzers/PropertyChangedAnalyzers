@@ -38,17 +38,32 @@
                 return;
             }
 
-            var propertySymbol = (IPropertySymbol)context.ContainingSymbol;
-            if (!propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+            if (context.ContainingSymbol is IPropertySymbol propertySymbol &&
+                context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+                propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
             {
-                return;
-            }
+                if (propertySymbol.SetMethod != null &&
+                    propertySymbol.SetMethod.DeclaredAccessibility == Accessibility.Private)
+                {
+                    using (var walker = IdentifierNameWalker.Borrow(propertyDeclaration.FirstAncestor<ClassDeclarationSyntax>()))
+                    {
+                        foreach (var name in walker.IdentifierNames)
+                        {
+                            if (name.Identifier.ValueText == propertySymbol.Name)
+                            {
+                                
+                            }
+                        }
+                    }
+                }
 
-            var declaration = (PropertyDeclarationSyntax)context.Node;
-            if (Property.ShouldNotify(declaration, propertySymbol, context.SemanticModel, context.CancellationToken))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), context.ContainingSymbol.Name));
+                if (Property.ShouldNotify(propertyDeclaration, propertySymbol, context.SemanticModel, context.CancellationToken))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), context.ContainingSymbol.Name));
+                }
             }
         }
+
+        private static bool IsOnlyAssignedInCtor(PropertyDeclarationSyntax propertyDeclaration, IPropertySymbol propertySymbol)
     }
 }

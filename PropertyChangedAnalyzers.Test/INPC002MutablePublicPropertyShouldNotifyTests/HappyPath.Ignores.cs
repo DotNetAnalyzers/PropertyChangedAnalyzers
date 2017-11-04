@@ -189,6 +189,38 @@ namespace RoslynSandbox
 }";
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
+
+            [Test]
+            public void IgnorePrivateSetterOnlyAssignedInCtor()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.Serialization;
+
+    [DataContract]
+    public class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public ViewModel(int value)
+        {
+            Value = value;
+        }
+
+        [DataMember]
+        public int Value { get; private set; }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
         }
     }
 }
