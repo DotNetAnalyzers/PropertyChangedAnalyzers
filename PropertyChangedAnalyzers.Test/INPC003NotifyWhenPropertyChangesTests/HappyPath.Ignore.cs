@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
         internal class Ignore
         {
             [Test]
-            public void IgnoringLazy1()
+            public void Lazy1()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -88,7 +88,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void IgnoringLazy2()
+            public void Lazy2()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -168,7 +168,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void IgnoringLazyNullCoalesce()
+            public void LazyNullCoalesce()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -243,7 +243,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void IgnoringLazyNullCoalesceExpressionBody()
+            public void LazyNullCoalesceExpressionBody()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -312,7 +312,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void IgnoreInCtor()
+            public void InCtor()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -344,7 +344,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void IgnoreInInitializer()
+            public void InInitializer()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -376,7 +376,7 @@ namespace RoslynSandBox
             }
 
             [Test(Description = "We let INPC002 nag about this.")]
-            public void IgnoreSimplePropertyWithBackingField()
+            public void SimplePropertyWithBackingField()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -507,7 +507,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void IgnoreDisposeMethod()
+            public void DisposeMethod()
             {
                 var testCode = @"
 namespace RoslynSandBox

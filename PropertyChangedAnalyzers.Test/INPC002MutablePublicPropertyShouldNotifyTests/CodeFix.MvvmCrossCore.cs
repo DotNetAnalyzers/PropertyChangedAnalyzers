@@ -187,6 +187,11 @@ namespace RoslynSandbox
     public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
     {
         ↓public int Bar { get; private set; }
+
+        public void Mutate()
+        {
+            this.Bar++;
+        }
     }
 }";
 
@@ -201,6 +206,11 @@ namespace RoslynSandbox
         {
             get => this.bar;
             private set => this.SetProperty(ref this.bar, value);
+        }
+
+        public void Mutate()
+        {
+            this.Bar++;
         }
     }
 }";

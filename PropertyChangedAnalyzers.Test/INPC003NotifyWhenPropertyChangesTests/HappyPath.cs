@@ -116,7 +116,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsOnPropertyChangedCopyLocalNullcheckInvoke()
+        public void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
         {
             var testCode = @"
 namespace RoslynSandbox

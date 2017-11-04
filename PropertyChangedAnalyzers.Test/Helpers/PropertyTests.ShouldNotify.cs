@@ -1,0 +1,118 @@
+﻿namespace PropertyChangedAnalyzers.Test
+{
+    using System.Threading;
+    using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CSharp;
+    using NUnit.Framework;
+
+    internal partial class PropertyTests
+    {
+        internal class ShouldNotify
+        {
+            [TestCase("Value1", false)]
+            [TestCase("Value2", true)]
+            [TestCase("Value3", true)]
+            [TestCase("Value4", false)]
+            [TestCase("Value5", true)]
+            [TestCase("Value6", true)]
+            [TestCase("Value7", false)]
+            [TestCase("Value8", true)]
+            [TestCase("Value9", false)]
+            public void MiscProperties(string propertyName, bool expected)
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+    public class Foo
+    {
+        public Foo(int value4, int value5)
+        {
+            this.Value4 = value4;
+            this.Value5 = value5;
+        }
+
+        public int Value1 { get; }
+
+        public int Value2 { get; set; }
+
+        public int Value3 { get; protected set; }
+
+        public int Value4 { get; private set; }
+
+        public int Value5 { get; private set; }
+
+        public int Value6 { get; private set; }
+
+        internal int Value7 { get; }
+
+        internal int Value8 { get; set; }
+
+        internal int Value9 { get; private set; }
+
+        public void Mutate()
+        {
+            this.Value5++;
+            this.Value6++;
+        }
+    }");
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var propertyDeclaration = syntaxTree.FindPropertyDeclaration(propertyName);
+                var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration);
+                Assert.AreEqual(expected, Property.ShouldNotify(propertyDeclaration, propertySymbol, semanticModel, CancellationToken.None));
+            }
+
+            [TestCase("Value1", false)]
+            [TestCase("Value2", true)]
+            [TestCase("Value3", true)]
+            [TestCase("Value4", false)]
+            [TestCase("Value5", true)]
+            [TestCase("Value6", true)]
+            [TestCase("Value7", false)]
+            [TestCase("Value8", true)]
+            [TestCase("Value9", false)]
+            public void MiscPropertiesUnderscoreNames(string propertyName, bool expected)
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        public Foo(int value4, int value5)
+        {
+            Value4 = value4;
+            Value5 = value5;
+        }
+
+        public int Value1 { get; }
+
+        public int Value2 { get; set; }
+
+        public int Value3 { get; protected set; }
+
+        public int Value4 { get; private set; }
+
+        public int Value5 { get; private set; }
+
+        public int Value6 { get; private set; }
+
+        internal int Value7 { get; }
+
+        internal int Value8 { get; set; }
+
+        internal int Value9 { get; private set; }
+
+        public void Mutate()
+        {
+            Value5++;
+            Value6++;
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var propertyDeclaration = syntaxTree.FindPropertyDeclaration(propertyName);
+                var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration);
+                Assert.AreEqual(expected, Property.ShouldNotify(propertyDeclaration, propertySymbol, semanticModel, CancellationToken.None));
+            }
+        }
+    }
+}
