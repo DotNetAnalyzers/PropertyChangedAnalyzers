@@ -5,6 +5,8 @@
 
     internal class Diagnostics
     {
+        private static readonly INPC010SetAndReturnSameField Analyzer = new INPC010SetAndReturnSameField();
+
         [Test]
         public void GetterReturnsOtherThanSetterAssigns()
         {
@@ -47,7 +49,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<INPC010SetAndReturnSameField>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -92,7 +94,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<INPC010SetAndReturnSameField>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
     }
 }

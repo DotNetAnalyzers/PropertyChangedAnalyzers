@@ -5,6 +5,8 @@
 
     internal class Diagnostics
     {
+        private static readonly INPC009DontRaiseChangeForMissingProperty Analyzer = new INPC009DontRaiseChangeForMissingProperty();
+
         [TestCase(@"""Missing""")]
         [TestCase(@"nameof(PropertyChanged)")]
         [TestCase(@"nameof(this.PropertyChanged)")]
@@ -49,7 +51,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [TestCase(@"""Missing""")]
@@ -88,7 +90,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [TestCase(@"""Missing""")]
@@ -135,7 +137,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -173,7 +175,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -217,7 +219,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -253,7 +255,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -281,7 +283,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -334,7 +336,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
     }
 }
