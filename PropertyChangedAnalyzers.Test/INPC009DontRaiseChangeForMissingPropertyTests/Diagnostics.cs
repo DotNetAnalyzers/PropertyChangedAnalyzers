@@ -5,6 +5,8 @@
 
     internal class Diagnostics
     {
+        private static readonly INPC009DontRaiseChangeForMissingProperty Analyzer = new INPC009DontRaiseChangeForMissingProperty();
+
         [TestCase(@"""Missing""")]
         [TestCase(@"nameof(PropertyChanged)")]
         [TestCase(@"nameof(this.PropertyChanged)")]
@@ -49,7 +51,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [TestCase(@"""Missing""")]
@@ -88,7 +90,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [TestCase(@"""Missing""")]
@@ -135,7 +137,7 @@ namespace RoslynSandbox
 }";
 
             testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -173,7 +175,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -217,7 +219,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -253,7 +255,88 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics<INPC009DontRaiseChangeForMissingProperty>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
+        }
+
+        [Test]
+        public void CallsCallerMemberNameFromMethod()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void Foo()
+        {
+            ↓this.OnPropertyChanged();
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
+        }
+
+        [Test]
+        public void ExpressionInvokerWithMethod()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Linq.Expressions;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(↓() => this.Foo());
+            }
+        }
+
+        private int Foo() => 1;
+
+        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+        {
+            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
     }
 }

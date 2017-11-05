@@ -5,6 +5,8 @@
 
     public class Diagnostics
     {
+        private static readonly INPC008StructMustNotNotify Analyzer = new INPC008StructMustNotNotify();
+
         [Test]
         public void WhenNotifying()
         {
@@ -18,7 +20,7 @@ namespace RoslynSandbox
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }";
-            AnalyzerAssert.Diagnostics<INPC008StructMustNotNotify>(testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
         }
     }
 }
