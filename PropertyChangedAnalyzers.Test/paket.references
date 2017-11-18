@@ -6,6 +6,7 @@ group Test
   Caliburn.Micro
   Stylet
   MvvmCross
+  Prism.Mvvm
 
 group Analyzers
   AsyncUsageAnalyzers
