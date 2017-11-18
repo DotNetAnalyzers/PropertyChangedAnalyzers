@@ -1,7 +1,7 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System;
-
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class FieldDeclarationSyntaxExt
@@ -11,6 +11,12 @@
             VariableDeclaratorSyntax variable = null;
             if (declaration?.Declaration?.Variables.TryGetSingle(out variable) == true)
             {
+                if (SyntaxFacts.GetKeywordKind(variable.Identifier.ValueText) != SyntaxKind.None ||
+                    SyntaxFacts.GetContextualKeywordKind(variable.Identifier.ValueText) != SyntaxKind.None)
+                {
+                    return "@" + variable.Identifier.ValueText;
+                }
+
                 return variable.Identifier.ValueText;
             }
 
