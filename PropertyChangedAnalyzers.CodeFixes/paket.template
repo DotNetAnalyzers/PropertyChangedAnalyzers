@@ -12,6 +12,8 @@ tags WPF Roslyn Diagnostic Analyzer DotnetAnalyzers
 projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
+  BUGFIX: Handle backing field named as keyword 
+  FEATURE: Support Prism.Mvvm
 files
   bin/Release/netstandard1.3/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
   bin/Release/netstandard1.3/PropertyChangedAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
