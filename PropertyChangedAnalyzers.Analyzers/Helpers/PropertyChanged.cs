@@ -298,8 +298,10 @@
                     method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChangeOfT ||
                     method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChange ||
                     method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChangeOfT ||
-                    method == KnownSymbol.MvvmCrossCoreMvxMvxNotifyPropertyChanged.RaisePropertyChanged ||
-                    method == KnownSymbol.MvvmCrossCoreMvxMvxNotifyPropertyChanged.RaisePropertyChangedOfT)
+                    method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChanged ||
+                    method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChangedOfT ||
+                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChanged ||
+                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChangedOfT)
                 {
                     return AnalysisResult.Yes;
                 }
@@ -582,7 +584,8 @@
                    candidate == KnownSymbol.MvvmLightObservableObject.Set ||
                    candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
                    candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
-                   candidate == KnownSymbol.MvvmCrossCoreMvxMvxNotifyPropertyChanged.SetProperty;
+                   candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
+                   candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty;
         }
 
         private static bool TryGetCachedArgs(
