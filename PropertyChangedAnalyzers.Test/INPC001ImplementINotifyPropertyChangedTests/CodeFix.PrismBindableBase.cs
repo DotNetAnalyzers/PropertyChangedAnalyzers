@@ -20,7 +20,7 @@
             }
 
             [Test]
-            public void SubclassPropertyChangedBase()
+            public void SubclassBindableBase()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass Prism.Mvvm.BindableBase");
             }
 
             [Test]

@@ -48,6 +48,10 @@
                                                                        .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                        .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
+        private static readonly TypeSyntax PrismMvvmBindableBase = SyntaxFactory.ParseTypeName("Microsoft.Practices.Prism.Mvvm.BindableBase")
+                                                                                .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             INPC001ImplementINotifyPropertyChanged.DiagnosticId,
@@ -152,6 +156,21 @@
                                         MvxViewModel,
                                         cancellationToken),
                                 this.GetType().FullName + "Subclass MvvmCross.Core.ViewModels.MvxViewModel"),
+                            diagnostic);
+                    }
+
+                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Prism.Mvvm.dll") == true))
+                    {
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Subclass Prism.Mvvm.BindableBase",
+                                cancellationToken =>
+                                    SubclassViewModelBaseAsync(
+                                        context,
+                                        classDeclaration,
+                                        PrismMvvmBindableBase,
+                                        cancellationToken),
+                                this.GetType().FullName + "Subclass Prism.Mvvm.BindableBase"),
                             diagnostic);
                     }
                 }

@@ -1,12 +1,12 @@
 namespace PropertyChangedAnalyzers
 {
-    internal class MvvmCrossCoreMvxMvxNotifyPropertyChanged : QualifiedType
+    internal class MvvmCrossCoreMvxNotifyPropertyChanged : QualifiedType
     {
         internal readonly QualifiedMethod SetProperty;
         internal readonly QualifiedMethod RaisePropertyChanged;
         internal readonly QualifiedMethod RaisePropertyChangedOfT;
 
-        internal MvvmCrossCoreMvxMvxNotifyPropertyChanged()
+        internal MvvmCrossCoreMvxNotifyPropertyChanged()
             : base("MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged")
         {
             this.SetProperty = new QualifiedMethod(this, nameof(this.SetProperty));
