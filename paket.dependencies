@@ -31,6 +31,7 @@ group Test
   nuget Caliburn.Micro
   nuget Stylet
   nuget MvvmCross
+  nuget Prism.Mvvm
 
 group Build
   storage: none
