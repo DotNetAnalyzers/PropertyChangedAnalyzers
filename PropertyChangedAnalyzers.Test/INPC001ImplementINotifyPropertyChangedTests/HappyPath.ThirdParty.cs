@@ -77,6 +77,21 @@ namespace RoslynSandbox
                 AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.MvvmCross);
                 AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
             }
+
+            [Test]
+            public void SubclassBindableBase()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
+    {
+        public int Bar { get; set; }
+    }
+}";
+                AnalyzerAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
         }
     }
 }

@@ -193,24 +193,29 @@
             {
                 foreach (var member in @event.ContainingType.GetMembers())
                 {
-                    var method = member as IMethodSymbol;
-                    switch (IsInvoker(method, semanticModel, cancellationToken))
+                    if (member is IMethodSymbol candidate &&
+                        candidate.IsStatic)
                     {
-                        case AnalysisResult.No:
-                            continue;
-                        case AnalysisResult.Yes:
-                            invoker = method;
-                            if (invoker.IsCallerMemberName())
-                            {
-                                return true;
-                            }
+                        switch (IsInvoker(candidate, semanticModel, cancellationToken))
+                        {
+                            case AnalysisResult.No:
+                                continue;
+                            case AnalysisResult.Yes:
+                                invoker = candidate;
+                                if (invoker.Parameters.Length == 1 &&
+                                    invoker.Parameters[0]
+                                           .Type == KnownSymbol.String)
+                                {
+                                    return true;
+                                }
 
-                            break;
-                        case AnalysisResult.Maybe:
-                            invoker = method;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                                break;
+                            case AnalysisResult.Maybe:
+                                invoker = candidate;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
                     }
                 }
 
@@ -222,30 +227,32 @@
             {
                 foreach (var member in type.GetMembers())
                 {
-                    if (member is IMethodSymbol method &&
-                        !method.IsStatic &&
-                        method.MethodKind == MethodKind.Ordinary)
+                    if (member is IMethodSymbol candidate &&
+                        !candidate.IsStatic &&
+                        candidate.MethodKind == MethodKind.Ordinary)
                     {
-                        if (method.DeclaredAccessibility == Accessibility.Private &&
-                            method.ContainingType != @event.ContainingType)
+                        if (candidate.DeclaredAccessibility == Accessibility.Private &&
+                            candidate.ContainingType != @event.ContainingType)
                         {
                             continue;
                         }
 
-                        switch (IsInvoker(method, semanticModel, cancellationToken))
+                        switch (IsInvoker(candidate, semanticModel, cancellationToken))
                         {
                             case AnalysisResult.No:
                                 continue;
                             case AnalysisResult.Yes:
-                                invoker = method;
-                                if (invoker.IsCallerMemberName())
+                                invoker = candidate;
+                                if (invoker.Parameters.Length == 1 &&
+                                    invoker.Parameters[0]
+                                           .Type == KnownSymbol.String)
                                 {
                                     return true;
                                 }
 
                                 break;
                             case AnalysisResult.Maybe:
-                                invoker = method;
+                                invoker = candidate;
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
