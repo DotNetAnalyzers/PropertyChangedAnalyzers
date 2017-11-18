@@ -13,8 +13,8 @@ projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  BUGFIX: Handle arbitraty check if different.
-  FEATURE: Suggest refactor to set and raise method.
+  BUGFIX: Handle backing field named as keyword 
+  FEATURE: Support Prism.Mvvm
 
 files
   bin/Release/netstandard1.3/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
