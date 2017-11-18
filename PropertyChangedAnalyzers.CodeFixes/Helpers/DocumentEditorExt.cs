@@ -66,6 +66,12 @@ namespace PropertyChangedAnalyzers
                 name += "_";
             }
 
+            if (SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None ||
+                SyntaxFacts.GetContextualKeywordKind(name) != SyntaxKind.None)
+            {
+                name = "@" + name;
+            }
+
             var backingField = (FieldDeclarationSyntax)editor.Generator.FieldDeclaration(
                 name,
                 accessibility: Accessibility.Private,
