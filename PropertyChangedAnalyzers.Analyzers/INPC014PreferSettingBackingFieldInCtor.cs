@@ -44,7 +44,8 @@ namespace PropertyChangedAnalyzers
                 IsInConstructor(assignment) &&
                 Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                 propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
-                Property.TryGetSingleAssignmentInSetter(setter, out _))
+                Property.TryGetSingleAssignmentInSetter(setter, out _) &&
+                !ThrowWalker.Throws(setter))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation()));
             }
