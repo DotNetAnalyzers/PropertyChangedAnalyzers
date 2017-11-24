@@ -4,7 +4,7 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodFix
+    internal partial class CodeFix
     {
         internal class WhenError
         {
