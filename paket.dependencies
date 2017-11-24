@@ -12,7 +12,6 @@ group Analyzers
   nuget IDisposableAnalyzers
   nuget StyleCop.Analyzers
   nuget Gu.Analyzers
-  nuget AsyncUsageAnalyzers
 
 group Benchmarks
   storage: none
