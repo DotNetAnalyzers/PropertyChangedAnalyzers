@@ -1,7 +1,2 @@
 group Build
   Microsoft.VSSDK.BuildTools
-
-group Analyzers
-  StyleCop.Analyzers
-  Gu.Analyzers
-  AsyncUsageAnalyzers
