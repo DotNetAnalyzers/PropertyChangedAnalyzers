@@ -69,7 +69,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -97,7 +97,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -128,7 +128,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -216,7 +216,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC005CheckIfDifferentBeforeNotifying>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
         }
     }

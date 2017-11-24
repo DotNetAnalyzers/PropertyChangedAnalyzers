@@ -18,12 +18,6 @@
             base.VisitThrowStatement(node);
         }
 
-        public override void VisitThrowExpression(ThrowExpressionSyntax node)
-        {
-            this.throws.Add(node.ThrowKeyword);
-            base.VisitThrowExpression(node);
-        }
-
         internal static ThrowWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ThrowWalker());
 
         internal static bool Throws(SyntaxNode scope)

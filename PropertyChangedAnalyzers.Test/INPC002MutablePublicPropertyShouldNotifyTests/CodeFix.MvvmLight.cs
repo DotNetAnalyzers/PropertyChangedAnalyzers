@@ -143,6 +143,11 @@ namespace RoslynSandbox
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
         ↓public int Bar { get; private set; }
+
+        public void Mutate()
+        {
+            this.Bar++;
+        }
     }
 }";
 
@@ -157,6 +162,11 @@ namespace RoslynSandbox
         {
             get { return this.bar; }
             private set { this.Set(ref this.bar, value); }
+        }
+
+        public void Mutate()
+        {
+            this.Bar++;
         }
     }
 }";

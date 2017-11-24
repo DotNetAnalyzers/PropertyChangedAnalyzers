@@ -27,7 +27,7 @@ namespace RoslynSandbox
 }";
 
                 AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly.Location));
-                AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -43,7 +43,7 @@ namespace RoslynSandbox
 }";
 
                 AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(Caliburn.Micro.PropertyChangedBase).Assembly.Location));
-                AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -59,7 +59,7 @@ namespace RoslynSandbox
 }";
 
                 AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
-                AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -75,7 +75,7 @@ namespace RoslynSandbox
 }";
 
                 AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.MvvmCross);
-                AnalyzerAssert.Valid<INPC001ImplementINotifyPropertyChanged>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]

@@ -52,7 +52,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get => this.value;
+            get { return this.value; }
             private set
             {
                 this.value = value;
@@ -75,7 +75,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get => this.value;
+            get { return this.value; }
             private set
             {
                 this.value = value;
@@ -103,7 +103,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get => _value;
+            get { return _value; }
             private set
             {
                 _value = value;
@@ -126,7 +126,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get => _value;
+            get { return _value; }
             private set
             {
                 _value = value;
@@ -161,7 +161,7 @@ namespace RoslynSandbox
         [DataMember]
         public int Value
         {
-            get => this.value;
+            get { return this.value; }
             private set
             {
                 if (value == this.value)
@@ -202,7 +202,7 @@ namespace RoslynSandbox
         [DataMember]
         public int Value
         {
-            get => this.value;
+            get { return this.value; }
             private set
             {
                 if (value == this.value)
@@ -241,8 +241,8 @@ namespace RoslynSandbox.Client
         
         public int Bar
         {
-            get => this.bar;
-            set => this.SetValue(ref this.bar, value);
+            get { return this.bar; }
+            set { this.SetValue(ref this.bar, value); }
         }
     }
 }";
@@ -260,8 +260,8 @@ namespace RoslynSandbox.Client
         
         public int Bar
         {
-            get => this.bar;
-            set => this.SetValue(ref this.bar, value);
+            get { return this.bar; }
+            set { this.SetValue(ref this.bar, value); }
         }
     }
 }";

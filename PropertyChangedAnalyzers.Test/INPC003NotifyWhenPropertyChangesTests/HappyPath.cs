@@ -5,6 +5,8 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 
     internal partial class HappyPath
     {
+        private static readonly INPC003NotifyWhenPropertyChanges Analyzer = new INPC003NotifyWhenPropertyChanges();
+
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""Bar""")]
@@ -42,7 +44,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -110,7 +112,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -179,7 +181,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -230,7 +232,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -305,7 +307,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -370,7 +372,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -432,7 +434,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -504,7 +506,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -553,7 +555,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -586,7 +588,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -624,7 +626,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -660,7 +662,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

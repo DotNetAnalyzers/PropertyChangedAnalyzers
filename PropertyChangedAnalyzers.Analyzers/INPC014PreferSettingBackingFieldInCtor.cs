@@ -44,7 +44,7 @@ namespace PropertyChangedAnalyzers
                 IsInConstructor(assignment) &&
                 Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                 propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
-                (setter.Body != null || setter.ExpressionBody != null) &&
+                setter.Body != null &&
                 !ThrowWalker.Throws(setter))
             {
                 using (var mutations = MutationWalker.Borrow(setter))

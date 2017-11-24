@@ -40,7 +40,11 @@ namespace RoslynSandbox
 
         public int Bar
         {
-            get => this.bar;
+            get
+            {
+                return this.bar;
+            }
+
             set
             {
                 if (value == this.bar)
@@ -79,8 +83,8 @@ namespace RoslynSandbox
 
         public int Bar
         {
-            get => this.bar;
-            set => this.SetProperty(ref this.bar, value);
+            get { return this.bar; }
+            set { this.SetProperty(ref this.bar, value); }
         }
     }
 }";
@@ -109,8 +113,8 @@ namespace RoslynSandbox
 
         internal int Bar
         {
-            get => this.bar;
-            set => this.SetProperty(ref this.bar, value);
+            get { return this.bar; }
+            set { this.SetProperty(ref this.bar, value); }
         }
     }
 }";
@@ -139,8 +143,8 @@ namespace RoslynSandbox
 
         public int Bar
         {
-            get => this.bar;
-            set => this.SetProperty(ref this.bar, value);
+            get { return this.bar; }
+            set { this.SetProperty(ref this.bar, value); }
         }
     }
 }";
@@ -169,8 +173,8 @@ namespace RoslynSandbox
 
         public virtual int Bar
         {
-            get => this.bar;
-            set => this.SetProperty(ref this.bar, value);
+            get { return this.bar; }
+            set { this.SetProperty(ref this.bar, value); }
         }
     }
 }";
@@ -187,6 +191,11 @@ namespace RoslynSandbox
     public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
     {
         ↓public int Bar { get; private set; }
+
+        public void Mutate()
+        {
+            this.Bar++;
+        }
     }
 }";
 
@@ -199,8 +208,13 @@ namespace RoslynSandbox
 
         public int Bar
         {
-            get => this.bar;
-            private set => this.SetProperty(ref this.bar, value);
+            get { return this.bar; }
+            private set { this.SetProperty(ref this.bar, value); }
+        }
+
+        public void Mutate()
+        {
+            this.Bar++;
         }
     }
 }";
@@ -239,8 +253,8 @@ namespace RoslynSandbox
 
         public int Bar
         {
-            get => _bar;
-            set => SetProperty(ref _bar, value);
+            get { return _bar; }
+            set { SetProperty(ref _bar, value); }
         }
     }
 }";

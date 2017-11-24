@@ -175,6 +175,11 @@ namespace RoslynSandbox.Client
     public class Foo : RoslynSandbox.Core.ViewModelBase
     {
         ↓public int Bar { get; private set; }
+
+        public void Mutate()
+        {
+            this.Bar++;
+        }
     }
 }";
 
@@ -189,6 +194,11 @@ namespace RoslynSandbox.Client
         {
             get { return this.bar; }
             private set { this.SetValue(ref this.bar, value); }
+        }
+
+        public void Mutate()
+        {
+            this.Bar++;
         }
     }
 }";

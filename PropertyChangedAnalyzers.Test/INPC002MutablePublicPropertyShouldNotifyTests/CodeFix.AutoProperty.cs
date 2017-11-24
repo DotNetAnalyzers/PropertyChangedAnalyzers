@@ -750,6 +750,11 @@ namespace RoslynSandbox
 
         ↓public int Bar { get; private set; }
 
+        public void Mutate()
+        {
+            this.Bar++;
+        }
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -785,6 +790,11 @@ namespace RoslynSandbox
                 this.bar = value;
                 this.OnPropertyChanged(nameof(this.Bar));
             }
+        }
+
+        public void Mutate()
+        {
+            this.Bar++;
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -1477,7 +1487,11 @@ namespace RoslynSandbox
 
         public string Operator
         {
-            get => this.@operator;
+            get
+            {
+                return this.@operator;
+            }
+
             set
             {
                 if (value == this.@operator)

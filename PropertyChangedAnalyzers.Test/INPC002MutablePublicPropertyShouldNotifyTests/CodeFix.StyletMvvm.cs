@@ -191,6 +191,11 @@ namespace RoslynSandbox
     public class Foo : Stylet.PropertyChangedBase
     {
         ↓public int Bar { get; private set; }
+
+        public void Mutate()
+        {
+            this.Bar++;
+        }
     }
 }";
 
@@ -205,6 +210,11 @@ namespace RoslynSandbox
         {
             get { return this.bar; }
             private set { this.SetAndNotify(ref this.bar, value); }
+        }
+
+        public void Mutate()
+        {
+            this.Bar++;
         }
     }
 }";

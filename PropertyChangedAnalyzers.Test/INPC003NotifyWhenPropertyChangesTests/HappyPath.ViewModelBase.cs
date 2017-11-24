@@ -61,7 +61,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -89,7 +89,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -117,7 +117,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -150,7 +150,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.Valid<INPC003NotifyWhenPropertyChanges>(fooBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, fooBaseCode, testCode);
             }
         }
     }

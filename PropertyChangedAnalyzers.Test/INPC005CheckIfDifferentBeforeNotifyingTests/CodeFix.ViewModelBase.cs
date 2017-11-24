@@ -56,7 +56,7 @@ namespace RoslynSandbox.Client
 
         public string Name
         {
-            get => this.name;
+            get { return this.name; }
             set
             {
                 this.name = value;
@@ -75,7 +75,7 @@ namespace RoslynSandbox.Client
 
         public string Name
         {
-            get => this.name;
+            get { return this.name; }
             set
             {
                 if (value == this.name)
@@ -105,7 +105,7 @@ namespace RoslynSandbox.Client
 
         public string Name
         {
-            get => this.name;
+            get { return this.name; }
             set
             {
                 this.name = value;
@@ -124,8 +124,11 @@ namespace RoslynSandbox.Client
 
         public string Name
         {
-            get => this.name;
-            set => this.SetValue(ref this.name, value);
+            get { return this.name; }
+            set
+            {
+                this.SetValue(ref this.name, value);
+            }
         }
     }
 }";
@@ -145,7 +148,7 @@ namespace RoslynSandbox.Client
 
         public string Name
         {
-            get => this.name;
+            get { return this.name; }
             set
             {
                 this.name = value;
@@ -164,8 +167,11 @@ namespace RoslynSandbox.Client
 
         public string Name
         {
-            get => this.name;
-            set => this.SetValue(ref this.name, value);
+            get { return this.name; }
+            set
+            {
+                this.SetValue(ref this.name, value);
+            }
         }
     }
 }";

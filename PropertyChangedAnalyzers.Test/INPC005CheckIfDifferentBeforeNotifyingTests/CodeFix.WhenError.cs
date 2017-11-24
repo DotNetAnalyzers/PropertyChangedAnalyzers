@@ -4,7 +4,7 @@
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodFix
+    internal partial class CodeFix
     {
         internal class WhenError
         {
@@ -25,10 +25,88 @@
                 new TestCase("string", "ReferenceEquals(value, this.bar)"),
             };
 
-            [TestCaseSource(nameof(EqualsSource))]
-            public void Check(EqualsItem check)
-            [TestCaseSource(nameof(EqualsSource))]
-            public void NegatedCheckReturn(EqualsItem check)
+            [TestCaseSource(nameof(TestCases))]
+            public void Check(TestCase check)
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (Equals(value, this.bar))
+                {
+                    this.bar = value;
+                    ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+                testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
+                                   .AssertReplace("string", check.Type);
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
+            }
+
+            [TestCaseSource(nameof(TestCases))]
+            public void NegatedCheckReturn(TestCase check)
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (!Equals(value, this.bar))
+                {
+                    return;
+                }
+
+                this.bar = value;
+                ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+                testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
+                                   .AssertReplace("string", check.Type);
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
+            }
+
             [Test]
             public void OperatorNotEquals()
             {
@@ -66,8 +144,47 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
-                    testCode);
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
+            }
+
+            [Test]
+            public void OperatorNotEqualsReturn()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value != this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
             }
 
             [Test]
@@ -108,73 +225,31 @@ namespace RoslynSandbox
                 AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
             }
 
-            [TestCaseSource(nameof(EqualsSource))]
-            public void Check(EqualsItem check)
+            [Test]
+            public void OperatorEqualsNoReturn()
             {
                 var testCode = @"
 namespace RoslynSandbox
 {
-    using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private string bar;
+        private int bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Bar
+        public int Bar
         {
             get { return this.bar; }
             set
             {
-                if (Equals(value, this.bar))
+                if (value == this.bar)
                 {
                     this.bar = value;
-                    ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-                }
-            }
-        }
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
-    }
-}";
-                testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
-                                   .AssertReplace("string", check.Type);
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
-            }
-
-            [TestCaseSource(nameof(EqualsSource))]
-            public void NegatedCheck(EqualsItem check)
-            {
-                var testCode = @"
-namespace RoslynSandbox
-{
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private string bar;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Bar
-        {
-            get { return this.bar; }
-            set
-            {
-                if (!Equals(value, this.bar))
-                {
-                    return;
                 }
 
-                this.bar = value;
                 ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
             }
         }
@@ -185,10 +260,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
-                                   .AssertReplace("string", check.Type);
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
-                    testCode);
+
+                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
             }
 
             [Test]

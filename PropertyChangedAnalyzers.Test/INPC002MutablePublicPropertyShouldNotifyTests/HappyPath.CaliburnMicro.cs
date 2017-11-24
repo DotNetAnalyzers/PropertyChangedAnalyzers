@@ -37,7 +37,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [TestCase("null")]
@@ -68,7 +68,7 @@ namespace RoslynSandbox
 }";
 
                 testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-                AnalyzerAssert.Valid<INPC002MutablePublicPropertyShouldNotify>(testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
         }
     }

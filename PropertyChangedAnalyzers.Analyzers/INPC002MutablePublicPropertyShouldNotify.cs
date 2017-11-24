@@ -38,16 +38,12 @@
                 return;
             }
 
-            var propertySymbol = (IPropertySymbol)context.ContainingSymbol;
-            if (!propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+            if (context.ContainingSymbol is IPropertySymbol propertySymbol &&
+                context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+                propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) &&
+                Property.ShouldNotify(propertyDeclaration, propertySymbol, context.SemanticModel, context.CancellationToken))
             {
-                return;
-            }
-
-            var declaration = (PropertyDeclarationSyntax)context.Node;
-            if (Property.ShouldNotify(declaration, propertySymbol, context.SemanticModel, context.CancellationToken))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.GetLocation(), context.ContainingSymbol.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyDeclaration.GetLocation(), context.ContainingSymbol.Name));
             }
         }
     }
