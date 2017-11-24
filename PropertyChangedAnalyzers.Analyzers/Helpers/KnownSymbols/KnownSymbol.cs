@@ -6,6 +6,7 @@ namespace PropertyChangedAnalyzers
         internal static readonly ObjectType Object = new ObjectType();
         internal static readonly StringType String = new StringType();
         internal static readonly QualifiedType Boolean = Create("System.Boolean");
+        internal static readonly QualifiedType Attribute = Create("System.Attribute");
         internal static readonly NullableType Nullable = new NullableType();
         internal static readonly NullableOfTType NullableOfT = new NullableOfTType();
         internal static readonly EqualityComparerOfTType EqualityComparerOfT = new EqualityComparerOfTType();
