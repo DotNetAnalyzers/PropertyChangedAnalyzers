@@ -1,5 +1,5 @@
 ﻿type file
-version 1.1.1.0
+version 1.2.0.0
 title PropertyChangedAnalyzers
 id PropertyChangedAnalyzers
 authors Johan Larsson
@@ -12,8 +12,15 @@ tags WPF Roslyn Diagnostic Analyzer DotnetAnalyzers
 projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
+releasenotes
+  FEATURE: Support MvvmCross.
+  BUGFIX: Handle side effect in if return.
+  FEATURE: Check that assignment is before notification.
+  BUGFIX: Handle arbitraty check if different.
+  FEATURE: Suggest refactor to set and raise method.
   BUGFIX: Handle backing field named as keyword 
   FEATURE: Support Prism.Mvvm
+
 files
   bin/Release/netstandard1.3/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
   bin/Release/netstandard1.3/PropertyChangedAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
