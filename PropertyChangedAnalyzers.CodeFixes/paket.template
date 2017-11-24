@@ -1,5 +1,5 @@
 ﻿type file
-version 2.5.0.0
+version 2.5.1.0
 title PropertyChangedAnalyzers
 id PropertyChangedAnalyzers
 authors Johan Larsson
@@ -13,8 +13,8 @@ projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  BUGFIX: Handle backing field named as keyword 
-  FEATURE: Support Prism.Mvvm
+  BUGFIX: INPC014 igore when setter has validation.
+  BUGFIX: INPC001 ignore attribute
 
 files
   bin/Release/netstandard1.3/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs

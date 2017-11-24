@@ -1,3 +1,7 @@
+#### 2.5.1
+* BUGFIX: INPC014 igore when setter has validation.
+* BUGFIX: INPC001 ignore attribute
+
 #### 2.5.0
 * BUGFIX: Handle backing field named as keyword 
 * FEATURE: Support Prism.Mvvm
