@@ -134,7 +134,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreWhenValidation()
+        public void IgnoreWhenValidationCall()
         {
             var testCode = @"
 namespace RoslynSandbox

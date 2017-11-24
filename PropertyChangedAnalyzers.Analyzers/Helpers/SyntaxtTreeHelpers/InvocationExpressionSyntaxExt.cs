@@ -1,5 +1,7 @@
 ﻿namespace PropertyChangedAnalyzers
 {
+    using System.Threading;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -42,6 +44,30 @@
                 default:
                     return false;
             }
+        }
+
+        internal static bool TryGetInvokedSymbol(this InvocationExpressionSyntax invocation, QualifiedMethod expected, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol result)
+        {
+            result = null;
+            if (invocation == null)
+            {
+                return false;
+            }
+
+            if (invocation.TryGetInvokedMethodName(out var name) &&
+                name != expected.Name)
+            {
+                return false;
+            }
+
+            if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol candidate &&
+                candidate == expected)
+            {
+                result = candidate;
+                return true;
+            }
+
+            return false;
         }
 
         internal static bool IsNameOf(this InvocationExpressionSyntax invocation)
