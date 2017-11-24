@@ -1,13 +1,13 @@
 ``` ini
 
-BenchmarkDotNet=v0.10.9, OS=Windows 7 SP1 (6.1.7601)
+BenchmarkDotNet=v0.10.10, OS=Windows 7 SP1 (6.1.7601.0)
 Processor=Intel Xeon CPU E5-2637 v4 3.50GHzIntel Xeon CPU E5-2637 v4 3.50GHz, ProcessorCount=16
-Frequency=3410107 Hz, Resolution=293.2459 ns, Timer=TSC
-  [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2116.0
-  DefaultJob : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2116.0
+Frequency=3410126 Hz, Resolution=293.2443 ns, Timer=TSC
+  [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2117.0
+  DefaultJob : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2117.0
 
 
 ```
- |                        Method |     Mean |     Error |    StdDev | Allocated |
- |------------------------------ |---------:|----------:|----------:|----------:|
- | RunOnPropertyChangedAnalyzers | 2.955 ms | 0.0731 ms | 0.2155 ms |  27.88 KB |
+|                        Method |     Mean |     Error |    StdDev | Allocated |
+|------------------------------ |---------:|----------:|----------:|----------:|
+| RunOnPropertyChangedAnalyzers | 2.696 ms | 0.0531 ms | 0.0745 ms |  28.51 KB |
