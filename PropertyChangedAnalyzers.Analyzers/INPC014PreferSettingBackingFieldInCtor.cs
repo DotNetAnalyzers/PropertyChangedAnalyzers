@@ -44,9 +44,49 @@ namespace PropertyChangedAnalyzers
                 IsInConstructor(assignment) &&
                 Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                 propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
-                Property.TryGetSingleAssignmentInSetter(setter, out _) &&
+                (setter.Body != null || setter.ExpressionBody != null) &&
                 !ThrowWalker.Throws(setter))
             {
+                using (var mutations = MutationWalker.Borrow(setter))
+                {
+                    if (mutations.Count > 1)
+                    {
+                        return;
+                    }
+
+                    if (mutations.TryGetSingle(out var mutation) &&
+                        mutation is AssignmentExpressionSyntax setAssignment &&
+                        setAssignment.Right is IdentifierNameSyntax identifierName &&
+                        identifierName.Identifier.ValueText != "value")
+                    {
+                        return;
+                    }
+                }
+
+                using (var walker = InvocationWalker.Borrow(setter))
+                {
+                    foreach (var invocation in walker.Invocations)
+                    {
+                        if (invocation.TryGetInvokedMethodName(out var name) &&
+                            (name == "Equals" || name == "nameof"))
+                        {
+                            continue;
+                        }
+
+                        if (PropertyChanged.IsSetAndRaiseCall(invocation, context.SemanticModel, context.CancellationToken))
+                        {
+                            continue;
+                        }
+
+                        if (PropertyChanged.IsNotifyPropertyChanged(invocation, context.SemanticModel, context.CancellationToken))
+                        {
+                            continue;
+                        }
+
+                        return;
+                    }
+                }
+
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation()));
             }
         }

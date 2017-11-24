@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers
     internal static class KnownSymbol
     {
         internal static readonly ObjectType Object = new ObjectType();
-        internal static readonly QualifiedType String = Create("System.String");
+        internal static readonly StringType String = new StringType();
         internal static readonly QualifiedType Boolean = Create("System.Boolean");
         internal static readonly NullableType Nullable = new NullableType();
         internal static readonly NullableOfTType NullableOfT = new NullableOfTType();

@@ -3,6 +3,7 @@
     using System;
     using System.Threading;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class PropertyChanged
@@ -475,9 +476,27 @@
                 return false;
             }
 
-            var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-            return method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
-                             IsInvoker(method, semanticModel, cancellationToken) != AnalysisResult.No;
+            if (invocation.ArgumentList == null ||
+                invocation.ArgumentList.Arguments.Count <= 1)
+            {
+                if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                    !(memberAccess.Expression is InstanceExpressionSyntax))
+                {
+                    return false;
+                }
+
+                var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                return IsInvoker(method, semanticModel, cancellationToken) != AnalysisResult.No;
+            }
+
+            if (invocation.ArgumentList?.Arguments.Count == 2 &&
+                invocation.ArgumentList.Arguments[0].Expression is ThisExpressionSyntax)
+            {
+                var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                return method == KnownSymbol.PropertyChangedEventHandler.Invoke;
+            }
+
+            return false;
         }
 
         internal static bool TryGetSetAndRaiseMethod(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
@@ -508,6 +527,19 @@
 
         internal static bool IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
         {
+            if (candidate?.ArgumentList == null ||
+                candidate.ArgumentList.Arguments.Count < 2 ||
+                candidate.ArgumentList.Arguments.Count > 3)
+            {
+                return false;
+            }
+
+            if (!candidate.ArgumentList.Arguments[0]
+                          .RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword))
+            {
+                return false;
+            }
+
             return IsSetAndRaiseMethod(
                 semanticModel.GetSymbolSafe(candidate, cancellationToken) as IMethodSymbol,
                 semanticModel,

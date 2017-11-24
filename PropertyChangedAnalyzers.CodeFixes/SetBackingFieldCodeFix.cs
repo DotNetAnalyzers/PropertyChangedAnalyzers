@@ -5,6 +5,7 @@ namespace PropertyChangedAnalyzers
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
 
@@ -23,6 +24,8 @@ namespace PropertyChangedAnalyzers
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
 
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                             .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -31,29 +34,36 @@ namespace PropertyChangedAnalyzers
                     continue;
                 }
 
-                var assignment = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                      .FirstAncestorOrSelf<AssignmentExpressionSyntax>();
-                if (assignment != null)
+                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                if (node is AssignmentExpressionSyntax assignment &&
+                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
+                    Property.TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, context.CancellationToken, out var field))
                 {
                     context.RegisterDocumentEditorFix(
                         "Set backing field.",
-                        (e, _) => SetBackingField(e, assignment),
+                        (e, cancellationToken) => SetBackingField(e, assignment, field),
                         diagnostic);
                 }
             }
         }
 
-        private static void SetBackingField(DocumentEditor editor, AssignmentExpressionSyntax assignment)
+        private static void SetBackingField(DocumentEditor editor, AssignmentExpressionSyntax oldAssignment, IFieldSymbol field)
         {
             editor.ReplaceNode(
-                assignment.Left,
+                oldAssignment.Left,
                 (x, _) =>
                 {
-                    if (Property.TryGetAssignedProperty((AssignmentExpressionSyntax)x.Parent, out var propertyDeclaration) &&
-                        propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
-                        Property.TryGetSingleAssignmentInSetter(setter, out var fieldAssignment))
+                    if (x is IdentifierNameSyntax identifierName)
                     {
-                        return fieldAssignment.Left.WithLeadingTriviaFrom(x);
+                        return identifierName.WithIdentifier(SyntaxFactory.Identifier(field.Name));
+                    }
+
+                    if (x is MemberAccessExpressionSyntax memberAccess &&
+                        memberAccess.Name is IdentifierNameSyntax name)
+                    {
+                        return memberAccess.ReplaceNode(
+                            name,
+                            name.WithIdentifier(SyntaxFactory.Identifier(field.Name)));
                     }
 
                     return x;
