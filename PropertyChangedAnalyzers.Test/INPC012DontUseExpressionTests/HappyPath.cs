@@ -5,6 +5,8 @@
 
     internal class HappyPath
     {
+        private static readonly INPC012DontUseExpression Analyzer = new INPC012DontUseExpression();
+
         [Test]
         public void NoBaseClass()
         {
@@ -46,7 +48,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC012DontUseExpression>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -103,7 +105,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC012DontUseExpression>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

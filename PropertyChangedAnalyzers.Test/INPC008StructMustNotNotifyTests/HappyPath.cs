@@ -5,6 +5,8 @@ namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
 
     public class HappyPath
     {
+        private static readonly INPC008StructMustNotNotify Analyzer = new INPC008StructMustNotNotify();
+
         [Test]
         public void SimpleStruct()
         {
@@ -15,7 +17,7 @@ namespace RoslynSandbox
     {
     }
 }";
-            AnalyzerAssert.Valid<INPC008StructMustNotNotify>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }
 }

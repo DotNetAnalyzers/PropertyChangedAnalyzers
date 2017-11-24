@@ -6,6 +6,8 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
 
     internal class HappyPath
     {
+        private static readonly INPC006UseReferenceEquals Analyzer = new INPC006UseReferenceEquals();
+
         private static readonly IReadOnlyList<TestCase> TestCases = new[]
         {
             new TestCase("string", "Equals(value, this.bar)"),
@@ -71,7 +73,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -106,7 +108,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(FooCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, FooCode, testCode);
         }
 
         [Test]
@@ -142,7 +144,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -180,7 +182,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -216,7 +218,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -248,7 +250,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -281,7 +283,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -322,7 +324,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -361,7 +363,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         [Test]
@@ -393,7 +395,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid<INPC006UseReferenceEquals>(testCode);
+            AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
         public class TestCase
