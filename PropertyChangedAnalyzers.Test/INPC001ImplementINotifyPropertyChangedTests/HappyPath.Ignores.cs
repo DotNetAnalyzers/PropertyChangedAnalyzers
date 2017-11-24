@@ -216,6 +216,23 @@ namespace RoslynSandBox
             }
 
             [Test]
+            public void Attribute()
+            {
+                var testCode = @"
+namespace RoslynSandBox
+{
+    using System;
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class FooAttribute : Attribute
+    {
+        public string Name { get; set; }
+    }
+}";
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
+
+            [Test]
             public void DataTemplateSelector()
             {
                 var testCode = @"

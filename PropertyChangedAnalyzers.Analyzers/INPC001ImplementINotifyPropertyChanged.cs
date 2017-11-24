@@ -43,6 +43,7 @@
             var type = (ITypeSymbol)context.ContainingSymbol;
             if (type.Is(KnownSymbol.INotifyPropertyChanged) ||
                 type.Is(KnownSymbol.MarkupExtension) ||
+                type.Is(KnownSymbol.Attribute) ||
                 type.Is(KnownSymbol.IValueConverter) ||
                 type.Is(KnownSymbol.IMultiValueConverter) ||
                 type.Is(KnownSymbol.DataTemplateSelector) ||
