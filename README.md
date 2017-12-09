@@ -6,8 +6,10 @@
 [![NuGet](https://img.shields.io/nuget/v/PropertyChangedAnalyzers.svg)](https://www.nuget.org/packages/PropertyChangedAnalyzers/)
 
 Roslyn analyzers for WPF.
-1.x versions are for Visual Studio 2015.
-2.x versions are for Visual Studio 2017.
+* 1.x versions are for Visual Studio 2015.
+* 2.x versions are for Visual Studio 2017.
+
+![inpc](https://user-images.githubusercontent.com/1640096/33793418-2345625c-dcb8-11e7-9170-a5c0e778abc9.gif)
 
 <!-- start generated table -->
 <table>
