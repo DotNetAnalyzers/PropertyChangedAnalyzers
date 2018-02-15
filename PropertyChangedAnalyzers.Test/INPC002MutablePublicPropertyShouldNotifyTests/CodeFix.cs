@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -110,6 +110,83 @@ namespace RoslynSandBox
 }";
 
             AnalyzerAssert.NoFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode);
+        }
+
+        [TestCase("this.Value = 1;")]
+        [TestCase("this.Value++")]
+        [TestCase("this.Value--")]
+        public void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        public Foo()
+        {
+            Bar += (_, __) => this.Value = 1;
+        }
+
+        public event EventHandler Bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value { get; private set; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("this.Value = 1", assignCode);
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public Foo()
+        {
+            Bar += (_, __) => this.Value = 1;
+        }
+
+        public event EventHandler Bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get => this.value;
+            private set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            fixedCode = fixedCode.AssertReplace("this.Value = 1", assignCode);
+            AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
         }
     }
 }
