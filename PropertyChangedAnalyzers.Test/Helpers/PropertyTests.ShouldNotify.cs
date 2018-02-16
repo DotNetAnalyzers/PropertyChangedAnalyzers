@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -17,7 +17,8 @@
             [TestCase("Value6", true)]
             [TestCase("Value7", false)]
             [TestCase("Value8", true)]
-            [TestCase("Value9", false)]
+            [TestCase("Value9", true)]
+            [TestCase("Value10", true)]
             public void MiscProperties(string propertyName, bool expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
@@ -27,6 +28,7 @@
         {
             this.Value4 = value4;
             this.Value5 = value5;
+            this.Value10 = 1;
         }
 
         public int Value1 { get; }
@@ -47,10 +49,13 @@
 
         internal int Value9 { get; private set; }
 
+        internal int Value10 { get; private set; }
+
         public void Mutate()
         {
             this.Value5++;
-            this.Value6++;
+            this.Value6--;
+            this.Value10 = 2;
         }
     }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
@@ -68,7 +73,8 @@
             [TestCase("Value6", true)]
             [TestCase("Value7", false)]
             [TestCase("Value8", true)]
-            [TestCase("Value9", false)]
+            [TestCase("Value9", true)]
+            [TestCase("Value10", true)]
             public void MiscPropertiesUnderscoreNames(string propertyName, bool expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
@@ -80,6 +86,7 @@ namespace RoslynSandbox
         {
             Value4 = value4;
             Value5 = value5;
+            Value10 = 1;
         }
 
         public int Value1 { get; }
@@ -100,10 +107,13 @@ namespace RoslynSandbox
 
         internal int Value9 { get; private set; }
 
+        internal int Value10 { get; private set; }
+
         public void Mutate()
         {
             Value5++;
-            Value6++;
+            Value6--;
+            Value10 = 1;
         }
     }
 }");
@@ -112,6 +122,37 @@ namespace RoslynSandbox
                 var propertyDeclaration = syntaxTree.FindPropertyDeclaration(propertyName);
                 var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration);
                 Assert.AreEqual(expected, Property.ShouldNotify(propertyDeclaration, propertySymbol, semanticModel, CancellationToken.None));
+            }
+
+            [TestCase("this.Value = 1;")]
+            [TestCase("this.Value++")]
+            [TestCase("this.Value--")]
+            public void PrivateSetAssignedInLambdaInCtor(string assignCode)
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+
+    public class Foo
+    {
+        public Foo()
+        {
+            Bar += (_, __) => this.Value = 1;
+        }
+
+        public event EventHandler Bar;
+
+        public int Value { get; private set; }
+    }
+}";
+                testCode = testCode.AssertReplace("this.Value = 1", assignCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var propertyDeclaration = syntaxTree.FindPropertyDeclaration("Value");
+                var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration);
+                Assert.AreEqual(true, Property.ShouldNotify(propertyDeclaration, propertySymbol, semanticModel, CancellationToken.None));
             }
         }
     }

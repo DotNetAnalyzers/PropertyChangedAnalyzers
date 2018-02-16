@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Threading;
     using Microsoft.CodeAnalysis;
@@ -426,6 +426,45 @@
 
         private static bool IsAutoPropertyOnlyAssignedInCtor(PropertyDeclarationSyntax propertyDeclaration)
         {
+            bool IsAssigned(IdentifierNameSyntax identifierName)
+            {
+                var parent = identifierName.Parent;
+                if (parent is MemberAccessExpressionSyntax memberAccess)
+                {
+                    if (memberAccess.Expression is ThisExpressionSyntax)
+                    {
+                        parent = memberAccess.Parent;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                switch (parent)
+                {
+                    case AssignmentExpressionSyntax a:
+                        return a.Left.Contains(identifierName);
+                    case PostfixUnaryExpressionSyntax _:
+                        return true;
+                    case PrefixUnaryExpressionSyntax p:
+                        return !p.IsKind(SyntaxKind.LogicalNotExpression);
+                    default:
+                        return false;
+                }
+            }
+
+            bool IsInConstructor(SyntaxNode node)
+            {
+                if (node.FirstAncestor<ConstructorDeclarationSyntax>() == null)
+                {
+                    return false;
+                }
+
+                // Could be in an event handler in ctor.
+                return node.FirstAncestor<AnonymousFunctionExpressionSyntax>() == null;
+            }
+
             if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
                 setter.Body == null)
             {
@@ -438,45 +477,22 @@
                 var name = propertyDeclaration.Identifier.ValueText;
                 using (var walker = IdentifierNameWalker.Borrow(propertyDeclaration.FirstAncestor<TypeDeclarationSyntax>()))
                 {
+                    var isAssigned = false;
                     foreach (var identifierName in walker.IdentifierNames)
                     {
-                        if (identifierName.Identifier.ValueText == name)
+                        if (identifierName.Identifier.ValueText == name &&
+                            IsAssigned(identifierName))
                         {
-                            var parent = identifierName.Parent;
-                            if (parent is MemberAccessExpressionSyntax memberAccess)
-                            {
-                                if (memberAccess.Expression is ThisExpressionSyntax)
-                                {
-                                    parent = memberAccess.Parent;
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-
-                            switch (parent)
-                            {
-                                case AssignmentExpressionSyntax a when a.Right.Contains(identifierName):
-                                    continue;
-                                case PostfixUnaryExpressionSyntax _:
-                                    break;
-                                case PrefixUnaryExpressionSyntax p when p.IsKind(SyntaxKind.LogicalNotExpression):
-                                    continue;
-                                default:
-                                    continue;
-                            }
-
-                            if (identifierName.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() == null ||
-                                identifierName.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
+                            isAssigned = true;
+                            if (!IsInConstructor(identifierName))
                             {
                                 return false;
                             }
                         }
                     }
-                }
 
-                return true;
+                    return isAssigned;
+                }
             }
 
             return false;

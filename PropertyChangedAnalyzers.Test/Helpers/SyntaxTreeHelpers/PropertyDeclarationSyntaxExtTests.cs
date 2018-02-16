@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.SyntaxTreeHelpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers.SyntaxTreeHelpers
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;

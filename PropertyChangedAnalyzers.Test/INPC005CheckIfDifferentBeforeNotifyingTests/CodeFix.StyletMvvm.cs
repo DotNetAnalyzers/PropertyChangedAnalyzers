@@ -2,6 +2,7 @@
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     internal partial class CodeFix
     {

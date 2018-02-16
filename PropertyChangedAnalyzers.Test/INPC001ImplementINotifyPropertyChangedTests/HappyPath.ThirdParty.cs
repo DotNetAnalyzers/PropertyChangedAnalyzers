@@ -3,6 +3,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     internal partial class HappyPath
     {
