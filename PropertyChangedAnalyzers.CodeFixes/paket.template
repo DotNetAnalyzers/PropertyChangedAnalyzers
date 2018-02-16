@@ -1,5 +1,5 @@
 ﻿type file
-version 2.5.1.0
+version 2.5.2.0
 title PropertyChangedAnalyzers
 id PropertyChangedAnalyzers
 authors Johan Larsson
@@ -13,8 +13,9 @@ projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  BUGFIX: INPC014 igore when setter has validation.
-  BUGFIX: INPC001 ignore attribute
+  BUGFIX: Handle check in lock INPC005.
+  FEATURE: Codefix INPC007, seal class.
+  BUGFIX: handle property only assigned in ctor.
 
 files
   bin/Release/netstandard1.3/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs

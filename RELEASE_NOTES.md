@@ -1,3 +1,8 @@
+#### 2.5.2
+* BUGFIX: Handle check in lock INPC005.
+* FEATURE: Codefix INPC007, seal class.
+* BUGFIX: handle property only assigned in ctor.
+
 #### 2.5.1
 * BUGFIX: INPC014 igore when setter has validation.
 * BUGFIX: INPC001 ignore attribute
