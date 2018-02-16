@@ -2,26 +2,26 @@
 
 BenchmarkDotNet=v0.10.10, OS=Windows 7 SP1 (6.1.7601.0)
 Processor=Intel Xeon CPU E5-2637 v4 3.50GHzIntel Xeon CPU E5-2637 v4 3.50GHz, ProcessorCount=16
-Frequency=3410126 Hz, Resolution=293.2443 ns, Timer=TSC
-  [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2117.0
-  DefaultJob : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2117.0
+Frequency=3410107 Hz, Resolution=293.2459 ns, Timer=TSC
+  [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2558.0
+  DefaultJob : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2558.0
 
 
 ```
-|                                   Method |           Mean |         Error |         StdDev |         Median |   Gen 0 | Allocated |
-|----------------------------------------- |---------------:|--------------:|---------------:|---------------:|--------:|----------:|
-|   INPC001ImplementINotifyPropertyChanged |   223,193.1 ns |  4,437.640 ns |  10,717.399 ns |   220,787.9 ns |  3.1738 |   21560 B |
-| INPC002MutablePublicPropertyShouldNotify |    34,367.6 ns |    717.070 ns |   1,718.053 ns |    34,181.9 ns |  0.1221 |     960 B |
-|         INPC003NotifyWhenPropertyChanges | 2,771,216.7 ns | 55,348.266 ns | 134,725.328 ns | 2,752,811.3 ns |       - |   29223 B |
-|               INPC004UseCallerMemberName | 1,342,290.1 ns | 27,635.605 ns |  62,378.166 ns | 1,335,719.5 ns |       - |     544 B |
-|   INPC005CheckIfDifferentBeforeNotifying | 1,289,471.3 ns | 25,742.803 ns |  53,163.353 ns | 1,270,596.8 ns |       - |     448 B |
-|  INPC006UseObjectEqualsForReferenceTypes |       240.4 ns |      4.949 ns |      14.591 ns |       240.0 ns |  0.0699 |     440 B |
-|                INPC006UseReferenceEquals |   655,551.2 ns | 14,818.027 ns |  42,753.395 ns |   652,556.1 ns |       - |     448 B |
-|                    INPC007MissingInvoker |       216.7 ns |      4.313 ns |       6.455 ns |       214.9 ns |  0.0699 |     440 B |
-|               INPC008StructMustNotNotify |       210.6 ns |      4.679 ns |       4.376 ns |       208.5 ns |  0.0699 |     440 B |
-| INPC009DontRaiseChangeForMissingProperty | 2,557,204.3 ns | 28,636.828 ns |  23,913.046 ns | 2,555,890.4 ns | 31.2500 |  216386 B |
-|             INPC010SetAndReturnSameField |    44,005.1 ns |    862.217 ns |   1,316.697 ns |    43,204.9 ns |  0.5493 |    3744 B |
-|                        INPC011DontShadow |       212.3 ns |      4.161 ns |       4.086 ns |       209.7 ns |  0.0699 |     440 B |
-|                 INPC012DontUseExpression | 1,742,134.4 ns | 43,131.672 ns |  47,940.735 ns | 1,715,166.4 ns |       - |     880 B |
-|                         INPC013UseNameof | 1,839,511.3 ns | 35,514.798 ns |  43,615.361 ns | 1,826,182.8 ns |  5.8594 |   41792 B |
-|   INPC014PreferSettingBackingFieldInCtor |   305,210.6 ns |  6,072.830 ns |   8,312.558 ns |   303,066.7 ns |       - |     444 B |
+|                                   Method |           Mean |         Error |        StdDev |   Gen 0 | Allocated |
+|----------------------------------------- |---------------:|--------------:|--------------:|--------:|----------:|
+|   INPC001ImplementINotifyPropertyChanged |   265,932.6 ns | 16,380.858 ns |  48,299.33 ns |  3.1738 |   21560 B |
+| INPC002MutablePublicPropertyShouldNotify |    36,342.7 ns |  1,014.855 ns |   2,960.38 ns |  0.1221 |     960 B |
+|         INPC003NotifyWhenPropertyChanges | 3,001,409.2 ns | 66,535.303 ns | 191,969.56 ns |       - |   29294 B |
+|               INPC004UseCallerMemberName | 1,423,406.0 ns | 34,841.289 ns | 102,183.47 ns |       - |     544 B |
+|   INPC005CheckIfDifferentBeforeNotifying | 1,421,906.6 ns | 34,579.949 ns | 101,959.76 ns |       - |     448 B |
+|  INPC006UseObjectEqualsForReferenceTypes |       236.9 ns |      6.420 ns |      18.93 ns |  0.0699 |     440 B |
+|                INPC006UseReferenceEquals |   673,814.3 ns | 13,386.842 ns |  37,094.87 ns |       - |     448 B |
+|                    INPC007MissingInvoker |       243.1 ns |      4.882 ns |      11.41 ns |  0.0696 |     440 B |
+|               INPC008StructMustNotNotify |       240.9 ns |      5.551 ns |      16.37 ns |  0.0696 |     440 B |
+| INPC009DontRaiseChangeForMissingProperty | 2,841,454.8 ns | 64,961.190 ns | 188,464.19 ns | 31.2500 |  218211 B |
+|             INPC010SetAndReturnSameField |    49,058.8 ns |  1,096.588 ns |   3,181.40 ns |  0.5493 |    3744 B |
+|                        INPC011DontShadow |       237.2 ns |      7.517 ns |      22.16 ns |  0.0696 |     440 B |
+|                 INPC012DontUseExpression | 2,122,602.7 ns | 65,073.181 ns | 190,848.38 ns |       - |     880 B |
+|                         INPC013UseNameof | 2,097,013.7 ns | 55,446.276 ns | 162,614.33 ns |  3.9063 |   41888 B |
+|   INPC014PreferSettingBackingFieldInCtor |   349,553.1 ns |  8,530.822 ns |  25,153.32 ns |       - |     444 B |
