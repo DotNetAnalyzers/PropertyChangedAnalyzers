@@ -13,9 +13,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddInvokerCodeFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MissingInvokerCodeFix))]
     [Shared]
-    internal class AddInvokerCodeFix : CodeFixProvider
+    internal class MissingInvokerCodeFix : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC007MissingInvoker.DiagnosticId);
@@ -28,6 +28,8 @@ namespace PropertyChangedAnalyzers
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
 
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                             .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -45,8 +47,23 @@ namespace PropertyChangedAnalyzers
                         CodeAction.Create(
                             "Add OnPropertyChanged invoker.",
                             cancellationToken => AddInvokerAsync(context.Document, classDeclaration, cancellationToken),
-                            this.GetType().FullName),
+                            "Add OnPropertyChanged invoker."),
                         diagnostic);
+
+                    if (!classDeclaration.Modifiers.Any(SyntaxKind.AbstractKeyword) &&
+                        !classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword) &&
+                        NoPropertyShouldNotify(classDeclaration, semanticModel, context.CancellationToken))
+                    {
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Seal class.",
+                                _ => Task.FromResult(context.Document.WithSyntaxRoot(
+                                        syntaxRoot.ReplaceNode(
+                                            classDeclaration,
+                                            MakeSealedRewriter.Default.Visit(classDeclaration, classDeclaration)))),
+                                "Seal class."),
+                            diagnostic);
+                    }
                 }
             }
         }
@@ -111,6 +128,20 @@ protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.Caller
                                                          .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
                                                          .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                          .WithAdditionalAnnotations(Formatter.Annotation);
+        }
+
+        private static bool NoPropertyShouldNotify(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            foreach (var member in classDeclaration.Members)
+            {
+                if (member is PropertyDeclarationSyntax property &&
+                    Property.ShouldNotify(property, semanticModel, cancellationToken))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
