@@ -470,6 +470,54 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [Test]
+        public void CheckInLock()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        private readonly object _busyLock = new object();
+        private bool _value;
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        public bool Value
+        {
+            get => _value;
+            private set
+            {
+                lock (_busyLock)
+                {
+                    if (value && _value)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    if (value == _value)
+                    {
+                        return;
+                    }
+
+                    _value = value;
+                }
+
+                OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
         public class TestCase
         {
             public TestCase(string type, string call)

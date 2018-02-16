@@ -139,7 +139,9 @@ namespace PropertyChangedAnalyzers
             if (node1?.FirstAncestor<BlockSyntax>() is BlockSyntax block1 &&
                 node2?.FirstAncestor<BlockSyntax>() is BlockSyntax block2)
             {
-                return block1 == block2;
+                return block1 == block2 ||
+                       block1.Contains(block2) ||
+                       block2.Contains(block1);
             }
 
             return false;
