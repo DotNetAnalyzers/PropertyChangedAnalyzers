@@ -255,7 +255,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value { get; private set; }
+        ↓public int Value { get; private set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -306,7 +306,7 @@ namespace RoslynSandbox
     }
 }";
             fixedCode = fixedCode.AssertReplace("this.Value = 1", assignCode);
-            AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;

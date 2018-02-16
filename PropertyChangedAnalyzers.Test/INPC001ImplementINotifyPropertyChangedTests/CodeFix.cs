@@ -359,10 +359,8 @@ namespace RoslynSandbox
 namespace RoslynSandbox
 {
     using System;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
         public Foo()
         {
@@ -370,14 +368,13 @@ namespace RoslynSandbox
         }
 
         public event EventHandler Bar;
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
         public int Value { get; private set; }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
     }
 }";
