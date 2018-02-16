@@ -41,27 +41,6 @@ namespace RoslynSandbox
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
-            [Test]
-            public void SetExpressionBodies()
-            {
-                var testCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
-    {
-        private int value;
-
-        public int Value
-        {
-            get => return value;
-            set => this.SetProperty(ref this.value, value);
-        }
-    }
-}";
-
-                AnalyzerAssert.Valid(Analyzer, testCode);
-            }
-
             [TestCase("(string)null")]
             [TestCase("string.Empty")]
             [TestCase(@"""Bar""")]

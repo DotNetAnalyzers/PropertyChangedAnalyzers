@@ -40,27 +40,6 @@ namespace RoslynSandbox
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
-            [Test]
-            public void SetPropertyExpressionBodies()
-            {
-                var testCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
-    {
-        private int value;
-
-        public int Value
-        {
-            get => return value;
-            set => this.SetProperty(ref this.value, value);
-        }
-    }
-}";
-
-                AnalyzerAssert.Valid(Analyzer, testCode);
-            }
-
             [TestCase("null")]
             [TestCase("string.Empty")]
             [TestCase(@"""Bar""")]

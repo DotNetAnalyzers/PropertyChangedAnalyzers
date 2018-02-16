@@ -166,7 +166,11 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get => this.value;
+            get
+            {
+                return this.value;
+            }
+
             private set
             {
                 if (value == this.value)

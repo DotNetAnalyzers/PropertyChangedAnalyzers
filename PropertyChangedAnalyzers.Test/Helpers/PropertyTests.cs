@@ -161,7 +161,6 @@ namespace RoslynSandBox
         [TestCase("Value3", false)]
         [TestCase("Value4", false)]
         [TestCase("Value5", false)]
-        [TestCase("Value6", false)]
         public void IsMutableAutoProperty(string propertyName, bool expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
@@ -196,12 +195,6 @@ namespace RoslynSandBox
         {
             get { return this.value5; }
             set { this.value5 = value; }
-        }
-
-        public int Value6
-        {
-            get => this.value6;
-            private set => this.value6 = value;
         }
     }
 }");
