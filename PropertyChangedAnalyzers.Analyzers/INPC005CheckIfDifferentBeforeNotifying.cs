@@ -83,9 +83,15 @@ namespace PropertyChangedAnalyzers
                             if (ifStatement.Statement.Span.Contains(invocation.Span))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
+                                return;
                             }
 
-                            return;
+                            if (ifStatement.IsReturnIfTrue())
+                            {
+                                return;
+                            }
+
+                            continue;
                         }
 
                         if (IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
