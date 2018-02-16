@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
+namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -6,7 +6,7 @@
     internal class CodeFix
     {
         [Test]
-        public void EventOnly()
+        public void EventOnlyAddInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -34,7 +34,34 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, AddInvokerCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Add OnPropertyChanged invoker.");
+        }
+
+        [Test]
+        public void EventOnlyMakeSealed()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        ↓public event PropertyChangedEventHandler PropertyChanged;
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public sealed class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+    }
+}";
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Seal class.");
         }
 
         [Test]
@@ -68,7 +95,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, AddInvokerCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Add OnPropertyChanged invoker.");
         }
 
         [Test]
@@ -104,7 +131,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, AddInvokerCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode);
         }
 
         [Test]
@@ -136,7 +163,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, AddInvokerCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode);
         }
 
         [Test]
@@ -186,11 +213,11 @@ namespace RoslynSandbox.Client
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, AddInvokerCodeFix>(new[] { viewModelBaseCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(new[] { viewModelBaseCode, testCode }, fixedCode, "Add OnPropertyChanged invoker.");
         }
 
         [Test]
-        public void WithNoMutableProperties()
+        public void WithNoMutablePropertiesAddInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -236,7 +263,52 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, AddInvokerCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Add OnPropertyChanged invoker.");
+        }
+
+        [Test]
+        public void WithNoMutablePropertiesSeal()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        public Foo(int value )
+        {
+            this.Value = value;
+        }
+
+        ↓public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value { get; }
+
+        public int Squared => this.Value * this.Value;
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public sealed class Foo : INotifyPropertyChanged
+    {
+        public Foo(int value )
+        {
+            this.Value = value;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value { get; }
+
+        public int Squared => this.Value * this.Value;
+    }
+}";
+
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Seal class.");
         }
     }
 }
