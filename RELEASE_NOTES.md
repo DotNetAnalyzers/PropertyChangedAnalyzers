@@ -1,3 +1,8 @@
+#### 1.2.1
+* BUGFIX: Handle check in lock INPC005.
+* FEATURE: Codefix INPC007, seal class.
+* BUGFIX: handle property only assigned in ctor.
+
 #### 1.2.0
 * FEATURE: Support MvvmCross.
 * BUGFIX: Handle side effect in if return.
