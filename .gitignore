@@ -53,3 +53,4 @@ publish/*
 PropertyChangedAnalyzers.Demo/*
 .vs/*
 /paket-files/*
+/PropertyChangedAnalyzers.Benchmarks/BenchmarkDotNet.Artifacts*
