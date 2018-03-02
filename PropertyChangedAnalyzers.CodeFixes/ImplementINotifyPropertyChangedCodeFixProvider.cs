@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -57,6 +57,8 @@
             INPC001ImplementINotifyPropertyChanged.DiagnosticId,
             "CS0535",
             "CS0246");
+
+        public override FixAllProvider GetFixAllProvider() => null;
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
