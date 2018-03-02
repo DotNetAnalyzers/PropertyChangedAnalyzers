@@ -1,10 +1,14 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
+namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal partial class Codefix
     {
+        private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
+        private static readonly RemoveExpressionCodeFix CodeFix = new RemoveExpressionCodeFix();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC012");
+
         [Test]
         public void ExpressionInvokerToCallerMemberName()
         {
@@ -98,7 +102,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -194,7 +198,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -296,7 +300,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -390,7 +394,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

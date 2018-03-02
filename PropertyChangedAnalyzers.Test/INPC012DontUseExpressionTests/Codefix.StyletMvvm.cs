@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
+namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -68,7 +68,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -119,7 +119,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC012DontUseExpression, RemoveExpressionCodeFix>(testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
             }
         }
     }

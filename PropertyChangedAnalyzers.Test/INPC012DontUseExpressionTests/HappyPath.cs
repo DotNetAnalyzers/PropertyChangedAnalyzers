@@ -1,11 +1,11 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
+namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class HappyPath
     {
-        private static readonly INPC012DontUseExpression Analyzer = new INPC012DontUseExpression();
+        private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
 
         [Test]
         public void NoBaseClass()

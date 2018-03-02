@@ -28,11 +28,9 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC011 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC011DontShadow());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC012 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC012DontUseExpression());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC013 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC013UseNameof());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC014 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC014PreferSettingBackingFieldInCtor());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC012 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.ArgumentAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC001ImplementINotifyPropertyChanged()
@@ -107,21 +105,15 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC012DontUseExpression()
-        {
-            INPC012.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC013UseNameof()
-        {
-            INPC013.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC014PreferSettingBackingFieldInCtor()
         {
             INPC014.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void ArgumentAnalyzer()
+        {
+            INPC012.Run();
         }
     }
 }
