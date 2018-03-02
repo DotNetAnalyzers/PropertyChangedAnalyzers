@@ -33,7 +33,7 @@ namespace PropertyChangedAnalyzers
         var genericArg = types.GenericArg;
         this.WriteLineIfNotFirst(types, typeNames);
 #>
-        internal static bool TryGetAtIndex<#= genericArg #>(this <#= colName #> source, int index, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryElementAt<#= genericArg #>(this <#= colName #> source, int index, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
 <# this.WriteLineIfNullReturnFalse(types); #>
@@ -46,7 +46,7 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool TryGetSingle<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
+        internal static bool TrySingle<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
 <# this.WriteLineIfNullReturnFalse(types); #>
@@ -59,7 +59,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetSingle<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
+        internal static bool TrySingle<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
 <# this.WriteLineIfNullReturnFalse(types); #>
@@ -75,7 +75,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetFirst<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryFirst<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
 <# this.WriteLineIfNullReturnFalse(types); #>
@@ -88,7 +88,7 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool TryGetFirst<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryFirst<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
 <# this.WriteLineIfNullReturnFalse(types); #>
@@ -104,7 +104,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetLast<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryLast<#= genericArg #>(this <#= colName #> source, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
 <# this.WriteLineIfNullReturnFalse(types); #>
@@ -117,7 +117,7 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool TryGetLast<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
+        internal static bool TryLast<#= genericArg #>(this <#= colName #> source, Func<<#= itemName #>, bool> selector, out <#= itemName #> result)<#= constraint #>
         {
             result = default(<#= itemName #>);
 <# this.WriteLineIfNullReturnFalse(types); #>

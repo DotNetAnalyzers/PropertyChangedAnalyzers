@@ -61,8 +61,7 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         {
             var fileName = Path.Combine(BenchmarksDirectory, "AllBenchmarks.cs");
             var builder = new StringBuilder();
-            builder.AppendLine("// ReSharper disable InconsistentNaming")
-                   .AppendLine("// ReSharper disable RedundantNameQualifier")
+            builder.AppendLine("// ReSharper disable RedundantNameQualifier")
                    .AppendLine($"namespace {this.GetType().Namespace}")
                    .AppendLine("{")
                    .AppendLine("    public class AllBenchmarks")
@@ -70,7 +69,7 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
             foreach (var analyzer in AllAnalyzers)
             {
                 builder.AppendLine(
-                           $"        private static readonly Gu.Roslyn.Asserts.Benchmark {analyzer.SupportedDiagnostics[0].Id.Replace("_", string.Empty)} = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
+                           $"        private static readonly Gu.Roslyn.Asserts.Benchmark {analyzer.GetType().Name}Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
                        .AppendLine();
             }
 
@@ -79,7 +78,7 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
                 builder.AppendLine($"        [BenchmarkDotNet.Attributes.Benchmark]")
                        .AppendLine($"        public void {analyzer.GetType().Name}()")
                        .AppendLine("        {")
-                       .AppendLine($"            {analyzer.SupportedDiagnostics[0].Id.Replace("_", string.Empty)}.Run();")
+                       .AppendLine($"            {analyzer.GetType().Name}Benchmark.Run();")
                        .AppendLine("        }");
                 if (!ReferenceEquals(analyzer, AllAnalyzers.Last()))
                 {
@@ -89,6 +88,7 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
             builder.AppendLine("    }")
                    .AppendLine("}");
+
             var code = builder.ToString();
             if (!File.Exists(fileName) ||
                 !CodeComparer.Equals(File.ReadAllText(fileName), code))

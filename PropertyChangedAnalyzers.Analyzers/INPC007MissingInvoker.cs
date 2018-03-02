@@ -50,7 +50,7 @@ namespace PropertyChangedAnalyzers
                         var containingType = context.ContainingSymbol.ContainingType;
                         if (containingType.IsSealed &&
                             !containingType.GetMembers()
-                                           .TryGetFirst(
+                                           .TryFirst(
                                                x => x is IPropertySymbol p &&
                                                     p.SetMethod != null,
                                                out _))

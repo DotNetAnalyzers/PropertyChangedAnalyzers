@@ -213,7 +213,7 @@ namespace RoslynSandBox
         [TestCase("Value12", "this.value1")]
         [TestCase("Value1", "this.value1")]
         [TestCase("Value2", "this.value2")]
-        public void TryGetSingleReturnedInGetter(string propertyName, string expected)
+        public void TrySingleReturnedInGetter(string propertyName, string expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(
                 @"
@@ -245,7 +245,7 @@ namespace RoslynSandbox
     }
 }");
             var declaration = syntaxTree.FindPropertyDeclaration(propertyName);
-            Assert.AreEqual(true, Property.TryGetSingleReturnedInGetter(declaration, out var expression));
+            Assert.AreEqual(true, Property.TrySingleReturnedInGetter(declaration, out var expression));
             Assert.AreEqual(expected, expression.ToString());
         }
     }

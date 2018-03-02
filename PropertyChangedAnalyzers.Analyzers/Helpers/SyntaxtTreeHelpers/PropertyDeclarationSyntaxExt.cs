@@ -46,7 +46,7 @@
                 return false;
             }
 
-            return accessorList.Accessors.TryGetSingle(x => x.IsKind(kind), out result);
+            return accessorList.Accessors.TrySingle(x => x.IsKind(kind), out result);
         }
     }
 }

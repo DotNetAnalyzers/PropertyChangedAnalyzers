@@ -49,7 +49,7 @@ namespace PropertyChangedAnalyzers
         private static void ApplyFix(DocumentEditor editor, ArgumentSyntax argument, string name, CancellationToken cancellationToken)
         {
             if (!IsStaticContext(argument, editor.SemanticModel, cancellationToken) &&
-                editor.SemanticModel.LookupSymbols(argument.SpanStart, name: name).TryGetSingle(out var member) &&
+                editor.SemanticModel.LookupSymbols(argument.SpanStart, name: name).TrySingle(out var member) &&
                 (member is IFieldSymbol || member is IPropertySymbol || member is IMethodSymbol) &&
                 !member.IsStatic &&
                 !argument.UsesUnderscore(editor.SemanticModel, cancellationToken))

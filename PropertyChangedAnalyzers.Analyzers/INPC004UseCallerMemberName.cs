@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers
     {
         public const string DiagnosticId = "INPC004";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Use [CallerMemberName]",
             messageFormat: "Use [CallerMemberName]",
@@ -29,7 +29,6 @@ namespace PropertyChangedAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(HandleInvocation, SyntaxKind.InvocationExpression);
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -51,39 +50,6 @@ namespace PropertyChangedAnalyzers
             {
                 var methodDeclaration = (MethodDeclarationSyntax)context.Node;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.ParameterList.Parameters[0].GetLocation()));
-            }
-        }
-
-        private static void HandleInvocation(SyntaxNodeAnalysisContext context)
-        {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            var property = (context.ContainingSymbol as IMethodSymbol)?.AssociatedSymbol as IPropertySymbol;
-            if (property == null)
-            {
-                return;
-            }
-
-            var invocation = (InvocationExpressionSyntax)context.Node;
-            if (invocation.ArgumentList?.Arguments.Count != 1)
-            {
-                return;
-            }
-
-            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.Yes)
-            {
-                return;
-            }
-
-            var argument = invocation.ArgumentList.Arguments[0];
-            if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var text) &&
-                text == property.Name)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
             }
         }
     }

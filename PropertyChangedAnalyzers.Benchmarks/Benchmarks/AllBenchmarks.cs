@@ -1,119 +1,118 @@
-// ReSharper disable InconsistentNaming
 // ReSharper disable RedundantNameQualifier
 namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
     public class AllBenchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC001 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC001ImplementINotifyPropertyChanged());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC001ImplementINotifyPropertyChangedBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC001ImplementINotifyPropertyChanged());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC002 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC002MutablePublicPropertyShouldNotify());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC002MutablePublicPropertyShouldNotifyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC002MutablePublicPropertyShouldNotify());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC003 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC003NotifyWhenPropertyChanges());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC003NotifyWhenPropertyChangesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC003NotifyWhenPropertyChanges());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC004 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC004UseCallerMemberName());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC004UseCallerMemberNameBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC004UseCallerMemberName());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC005 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC005CheckIfDifferentBeforeNotifying());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC005CheckIfDifferentBeforeNotifyingBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC005CheckIfDifferentBeforeNotifying());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC006b = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC006UseObjectEqualsForReferenceTypes());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC006UseObjectEqualsForReferenceTypesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC006UseObjectEqualsForReferenceTypes());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC006a = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC006UseReferenceEquals());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC006UseReferenceEqualsBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC006UseReferenceEquals());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC007 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC007MissingInvoker());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC007MissingInvokerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC007MissingInvoker());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC008 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC008StructMustNotNotify());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC008StructMustNotNotifyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC008StructMustNotNotify());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC009 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC009DontRaiseChangeForMissingProperty());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC009DontRaiseChangeForMissingPropertyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC009DontRaiseChangeForMissingProperty());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC010 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC010SetAndReturnSameField());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC010SetAndReturnSameFieldBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC010SetAndReturnSameField());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC011 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC011DontShadow());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC011DontShadowBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC011DontShadow());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC014 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC014PreferSettingBackingFieldInCtor());
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC014PreferSettingBackingFieldInCtorBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC014PreferSettingBackingFieldInCtor());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC012 = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.ArgumentAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark ArgumentAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.ArgumentAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC001ImplementINotifyPropertyChanged()
         {
-            INPC001.Run();
+            INPC001ImplementINotifyPropertyChangedBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC002MutablePublicPropertyShouldNotify()
         {
-            INPC002.Run();
+            INPC002MutablePublicPropertyShouldNotifyBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC003NotifyWhenPropertyChanges()
         {
-            INPC003.Run();
+            INPC003NotifyWhenPropertyChangesBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC004UseCallerMemberName()
         {
-            INPC004.Run();
+            INPC004UseCallerMemberNameBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC005CheckIfDifferentBeforeNotifying()
         {
-            INPC005.Run();
+            INPC005CheckIfDifferentBeforeNotifyingBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC006UseObjectEqualsForReferenceTypes()
         {
-            INPC006b.Run();
+            INPC006UseObjectEqualsForReferenceTypesBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC006UseReferenceEquals()
         {
-            INPC006a.Run();
+            INPC006UseReferenceEqualsBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC007MissingInvoker()
         {
-            INPC007.Run();
+            INPC007MissingInvokerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC008StructMustNotNotify()
         {
-            INPC008.Run();
+            INPC008StructMustNotNotifyBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC009DontRaiseChangeForMissingProperty()
         {
-            INPC009.Run();
+            INPC009DontRaiseChangeForMissingPropertyBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC010SetAndReturnSameField()
         {
-            INPC010.Run();
+            INPC010SetAndReturnSameFieldBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC011DontShadow()
         {
-            INPC011.Run();
+            INPC011DontShadowBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC014PreferSettingBackingFieldInCtor()
         {
-            INPC014.Run();
+            INPC014PreferSettingBackingFieldInCtorBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void ArgumentAnalyzer()
         {
-            INPC012.Run();
+            ArgumentAnalyzerBenchmark.Run();
         }
     }
 }

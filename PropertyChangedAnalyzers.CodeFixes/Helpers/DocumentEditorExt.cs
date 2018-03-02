@@ -110,7 +110,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (type.Members[i] is PropertyDeclarationSyntax other)
                     {
-                        if (Property.TryGetSingleReturnedInGetter(other, out var expression) &&
+                        if (Property.TrySingleReturnedInGetter(other, out var expression) &&
                             TryGetFieldName(expression, out var fieldName) &&
                             type.TryFindField(fieldName, out var otherField))
                         {
@@ -127,7 +127,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (type.Members[i] is PropertyDeclarationSyntax other)
                     {
-                        if (Property.TryGetSingleReturnedInGetter(other, out var expression) &&
+                        if (Property.TrySingleReturnedInGetter(other, out var expression) &&
                             TryGetFieldName(expression, out var fieldName) &&
                             type.TryFindField(fieldName, out var otherField))
                         {

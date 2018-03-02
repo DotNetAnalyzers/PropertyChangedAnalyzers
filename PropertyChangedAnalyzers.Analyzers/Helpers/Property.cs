@@ -187,8 +187,8 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            if (property.TryGetSingleDeclaration(cancellationToken, out var propertyDeclaration) &&
-                TryGetSingleReturnedInGetter(propertyDeclaration, out var expression))
+            if (property.TrySingleDeclaration(cancellationToken, out var propertyDeclaration) &&
+                TrySingleReturnedInGetter(propertyDeclaration, out var expression))
             {
                 field = semanticModel.GetSymbolSafe(expression, cancellationToken) as IFieldSymbol;
                 return field != null;
@@ -197,7 +197,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetSingleReturnedInGetter(PropertyDeclarationSyntax property, out ExpressionSyntax result)
+        internal static bool TrySingleReturnedInGetter(PropertyDeclarationSyntax property, out ExpressionSyntax result)
         {
             result = null;
             if (property == null)
@@ -228,7 +228,7 @@ namespace PropertyChangedAnalyzers
                     return false;
                 }
 
-                if (body.Statements.TryGetSingle(out var statement) &&
+                if (body.Statements.TrySingle(out var statement) &&
                     statement is ReturnStatementSyntax returnStatement)
                 {
                     result = returnStatement.Expression;
@@ -271,12 +271,12 @@ namespace PropertyChangedAnalyzers
 
             if (property.TryGetSetAccessorDeclaration(out var setter))
             {
-                if (TryGetSingleSetAndRaiseInSetter(setter, semanticModel, cancellationToken, out var invocation))
+                if (TrySingleSetAndRaiseInSetter(setter, semanticModel, cancellationToken, out var invocation))
                 {
                     return TryGetBackingField(invocation.ArgumentList.Arguments[0].Expression, semanticModel, cancellationToken, out field);
                 }
 
-                if (TryGetSingleAssignmentInSetter(setter, out var assignment))
+                if (TrySingleAssignmentInSetter(setter, out var assignment))
                 {
                     return TryGetBackingField(assignment.Left, semanticModel, cancellationToken, out field);
                 }
@@ -285,7 +285,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetSingleSetAndRaiseInSetter(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax invocation)
+        internal static bool TrySingleSetAndRaiseInSetter(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax invocation)
         {
             invocation = null;
             if (setter == null)
@@ -295,21 +295,21 @@ namespace PropertyChangedAnalyzers
 
             using (var walker = InvocationWalker.Borrow(setter))
             {
-                return walker.Invocations.TryGetSingle(
+                return walker.Invocations.TrySingle(
                     x => PropertyChanged.IsSetAndRaiseCall(
                         x, semanticModel, cancellationToken),
                     out invocation);
             }
         }
 
-        internal static bool TryGetSingleAssignmentInSetter(PropertyDeclarationSyntax propertyDeclaration, out AssignmentExpressionSyntax assignment)
+        internal static bool TrySingleAssignmentInSetter(PropertyDeclarationSyntax propertyDeclaration, out AssignmentExpressionSyntax assignment)
         {
             assignment = null;
             return propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
-                   TryGetSingleAssignmentInSetter(setter, out assignment);
+                   TrySingleAssignmentInSetter(setter, out assignment);
         }
 
-        internal static bool TryGetSingleAssignmentInSetter(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
+        internal static bool TrySingleAssignmentInSetter(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
         {
             assignment = null;
             if (setter == null)
@@ -319,7 +319,7 @@ namespace PropertyChangedAnalyzers
 
             using (var walker = AssignmentWalker.Borrow(setter))
             {
-                if (walker.Assignments.TryGetSingle(out assignment) &&
+                if (walker.Assignments.TrySingle(out assignment) &&
                     assignment.Right is IdentifierNameSyntax identifierName &&
                     identifierName.Identifier.ValueText == "value")
                 {

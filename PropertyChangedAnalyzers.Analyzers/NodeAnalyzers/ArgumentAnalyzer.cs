@@ -11,6 +11,7 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            INPC004UseCallerMemberName.Descriptor,
             INPC012DontUseExpression.Descriptor,
             INPC013UseNameof.Descriptor);
 
@@ -31,17 +32,28 @@ namespace PropertyChangedAnalyzers
 
             if (context.Node is ArgumentSyntax argument)
             {
-                if (argument.Expression.IsKind(SyntaxKind.ParenthesizedLambdaExpression))
+                if (argument.Parent?.Parent is InvocationExpressionSyntax invocation &&
+                    invocation.ArgumentList is ArgumentListSyntax argumentList)
                 {
-                    var invocation = argument.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-                    if (invocation != null &&
-                        invocation.ArgumentList.Arguments.Count == 1)
+                    if (argument.Expression.IsKind(SyntaxKind.ParenthesizedLambdaExpression))
                     {
-                        var method = (IMethodSymbol)context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                        if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                        if (argumentList.Arguments.Count == 1)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC012DontUseExpression.Descriptor, context.Node.GetLocation()));
+                            var method = (IMethodSymbol)context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken);
+                            if (PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC012DontUseExpression.Descriptor, context.Node.GetLocation()));
+                            }
                         }
+                    }
+
+                    if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var text) &&
+                        text == ContainingSymbolName(context.ContainingSymbol) &&
+                        context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol invokedMethod &&
+                        invokedMethod.TryGetMatchingParameter(argument, out var parameter) &&
+                        parameter.IsCallerMemberName())
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, argument.GetLocation()));
                     }
                 }
 
@@ -50,7 +62,7 @@ namespace PropertyChangedAnalyzers
                     SyntaxFacts.IsValidIdentifier(literal.Token.ValueText))
                 {
                     if (context.ContainingSymbol is IMethodSymbol method &&
-                        method.Parameters.TryGetSingle(x => x.Name == literal.Token.ValueText, out _))
+                        method.Parameters.TrySingle(x => x.Name == literal.Token.ValueText, out _))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(INPC013UseNameof.Descriptor, argument.GetLocation()));
                     }
@@ -61,6 +73,17 @@ namespace PropertyChangedAnalyzers
                     }
                 }
             }
+        }
+
+        private static string ContainingSymbolName(ISymbol symbol)
+        {
+            if (symbol is IMethodSymbol method &&
+                method.AssociatedSymbol is ISymbol associated)
+            {
+                return associated.Name;
+            }
+
+            return symbol.Name;
         }
     }
 }

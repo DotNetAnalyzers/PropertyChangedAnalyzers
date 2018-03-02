@@ -58,7 +58,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (Property.TryGetSingleAssignmentInSetter(setter, out var assignment) &&
+            if (Property.TrySingleAssignmentInSetter(setter, out var assignment) &&
                 Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
             {
                 if (!AreInSameBlock(assignment, invocation) ||
@@ -120,7 +120,7 @@ namespace PropertyChangedAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                 }
             }
-            else if (Property.TryGetSingleSetAndRaiseInSetter(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
+            else if (Property.TrySingleSetAndRaiseInSetter(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
             {
                 if (setAndRaise.Parent is IfStatementSyntax ifStatement1 &&
                     ifStatement1.Span.Contains(invocation.Span))

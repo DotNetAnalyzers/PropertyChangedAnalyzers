@@ -198,7 +198,7 @@
             if (!type.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 if (classDeclaration.BaseList != null &&
-                    classDeclaration.BaseList.Types.TryGetFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out var baseType) &&
+                    classDeclaration.BaseList.Types.TryFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out var baseType) &&
                     context.Diagnostics.Any(IsINotifyPropertyChangedMissing))
                 {
                     editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(INotifyPropertyChangedType));
@@ -219,7 +219,7 @@
                         Accessibility.Public));
             }
 
-            if (!type.TryGetFirstMethod(
+            if (!type.TryFirstMethod(
                 "OnPropertyChanged",
                 m => m.Parameters.Length == 1 &&
                      m.Parameters[0].Type == KnownSymbol.String,
@@ -257,7 +257,7 @@
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
             if (classDeclaration.BaseList != null &&
-                classDeclaration.BaseList.Types.TryGetFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out var baseType) &&
+                classDeclaration.BaseList.Types.TryFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out var baseType) &&
                 context.Diagnostics.Any(IsINotifyPropertyChangedMissing))
             {
                 editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(viewModelBaseType));

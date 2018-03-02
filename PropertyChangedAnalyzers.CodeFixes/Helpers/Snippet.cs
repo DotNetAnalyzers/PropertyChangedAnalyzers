@@ -27,7 +27,7 @@ namespace PropertyChangedAnalyzers
 
                 if (type.GetMembers(nameof(Equals))
                         .OfType<IMethodSymbol>()
-                        .TryGetSingle(
+                        .TrySingle(
                             m => m.Parameters.Length == 1 &&
                                  ReferenceEquals(type, m.Parameters[0].Type), out _))
                 {
@@ -66,7 +66,7 @@ namespace PropertyChangedAnalyzers
                     : $"this.PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})));";
             }
 
-            if (invoker.Parameters.TryGetSingle(out var parameter))
+            if (invoker.Parameters.TrySingle(out var parameter))
             {
                 if (parameter.Type == KnownSymbol.String)
                 {

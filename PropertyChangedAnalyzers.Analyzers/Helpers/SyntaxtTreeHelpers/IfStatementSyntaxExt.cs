@@ -17,7 +17,7 @@
             }
 
             if (ifStatement.Statement is BlockSyntax block &&
-                block.Statements.TryGetSingle(out var statement) &&
+                block.Statements.TrySingle(out var statement) &&
                 statement is ReturnStatementSyntax)
             {
                 return true;

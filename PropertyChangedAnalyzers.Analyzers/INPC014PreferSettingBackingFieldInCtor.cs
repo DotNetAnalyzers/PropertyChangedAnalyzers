@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
                         return;
                     }
 
-                    if (mutations.TryGetSingle(out var mutation) &&
+                    if (mutations.TrySingle(out var mutation) &&
                         mutation is AssignmentExpressionSyntax setAssignment &&
                         setAssignment.Right is IdentifierNameSyntax identifierName &&
                         identifierName.Identifier.ValueText != "value")

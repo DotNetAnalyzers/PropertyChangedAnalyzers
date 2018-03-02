@@ -8,17 +8,17 @@
 
     internal static class SymbolExt
     {
-        internal static bool TryGetSingleDeclaration(this IPropertySymbol property, CancellationToken cancellationToken, out PropertyDeclarationSyntax declaration)
+        internal static bool TrySingleDeclaration(this IPropertySymbol property, CancellationToken cancellationToken, out PropertyDeclarationSyntax declaration)
         {
-            return TryGetSingleDeclaration<PropertyDeclarationSyntax>(property, cancellationToken, out declaration);
+            return TrySingleDeclaration<PropertyDeclarationSyntax>(property, cancellationToken, out declaration);
         }
 
-        internal static bool TryGetSingleDeclaration(this IMethodSymbol method, CancellationToken cancellationToken, out MethodDeclarationSyntax declaration)
+        internal static bool TrySingleDeclaration(this IMethodSymbol method, CancellationToken cancellationToken, out MethodDeclarationSyntax declaration)
         {
-            return TryGetSingleDeclaration<MethodDeclarationSyntax>(method, cancellationToken, out declaration);
+            return TrySingleDeclaration<MethodDeclarationSyntax>(method, cancellationToken, out declaration);
         }
 
-        internal static bool TryGetSingleDeclaration<T>(this ISymbol symbol, CancellationToken cancellationToken, out T declaration)
+        internal static bool TrySingleDeclaration<T>(this ISymbol symbol, CancellationToken cancellationToken, out T declaration)
             where T : SyntaxNode
         {
             declaration = null;
@@ -27,7 +27,7 @@
                 return false;
             }
 
-            if (symbol.DeclaringSyntaxReferences.TryGetSingle(out var syntaxReference))
+            if (symbol.DeclaringSyntaxReferences.TrySingle(out var syntaxReference))
             {
                 declaration = syntaxReference.GetSyntax(cancellationToken) as T;
                 return declaration != null;

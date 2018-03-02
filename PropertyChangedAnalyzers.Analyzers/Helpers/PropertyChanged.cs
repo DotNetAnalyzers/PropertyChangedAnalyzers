@@ -81,7 +81,7 @@
 
             if (method == KnownSymbol.PropertyChangedEventHandler.Invoke)
             {
-                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out var propertyChangedArg))
+                if (invocation.ArgumentList.Arguments.TryElementAt(1, out var propertyChangedArg))
                 {
                     if (TryGetCreatePropertyChangedEventArgsFor(propertyChangedArg.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
                     {
@@ -122,7 +122,7 @@
                 }
             }
 
-            if (invocation.ArgumentList.Arguments.TryGetSingle(out var argument))
+            if (invocation.ArgumentList.Arguments.TrySingle(out var argument))
             {
                 if (TryGetCreatePropertyChangedEventArgsFor(argument.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
                 {
@@ -359,7 +359,7 @@
                         {
                             if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
                             {
-                                if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out var argument))
+                                if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument))
                                 {
                                     var identifier = argument.Expression as IdentifierNameSyntax;
                                     if (identifier?.Identifier.ValueText == parameter.Name)
@@ -384,7 +384,7 @@
 
                         if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
                         {
-                            if (invocation.ArgumentList.Arguments.TryGetAtIndex(1, out var argument))
+                            if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument))
                             {
                                 var identifier = argument.Expression as IdentifierNameSyntax;
                                 if (identifier?.Identifier.ValueText == parameter.Name)
@@ -501,14 +501,14 @@
 
         internal static bool TryGetSetAndRaiseMethod(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            if (type.TryGetFirstMethod(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method))
+            if (type.TryFirstMethod(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method))
             {
                 return true;
             }
 
             if (type.Is(KnownSymbol.MvvmLightViewModelBase))
             {
-                return type.TryGetFirstMember(
+                return type.TryFirstMember(
                     "Set",
                     x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken),
                     out method);
@@ -516,7 +516,7 @@
 
             if (type.Is(KnownSymbol.CaliburnMicroPropertyChangedBase))
             {
-                return type.TryGetFirstMember(
+                return type.TryFirstMember(
                     "Set",
                     x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken),
                     out method);
@@ -586,19 +586,19 @@
                 return false;
             }
 
-            if (candidate.DeclaringSyntaxReferences.TryGetSingle(out var reference))
+            if (candidate.DeclaringSyntaxReferences.TrySingle(out var reference))
             {
                 var syntaxNode = (MethodDeclarationSyntax)reference.GetSyntax();
                 using (var walker = InvocationWalker.Borrow(syntaxNode))
                 {
-                    if (!walker.Invocations.TryGetSingle(
+                    if (!walker.Invocations.TrySingle(
                         x => IsNotifyPropertyChanged(x, semanticModel, cancellationToken),
                         out _))
                     {
                         using (var set = PooledHashSet<IMethodSymbol>.Borrow(@checked))
                         {
                             // ReSharper disable once AccessToDisposedClosure R# does not figure things out here.
-                            return walker.Invocations.TryGetSingle(
+                            return walker.Invocations.TrySingle(
                                 x => IsSetAndRaiseCall(x, semanticModel, cancellationToken, set),
                                 out _);
                         }
@@ -607,7 +607,7 @@
 
                 using (var walker = AssignmentWalker.Borrow(syntaxNode))
                 {
-                    if (!walker.Assignments.TryGetSingle(
+                    if (!walker.Assignments.TrySingle(
                         x => semanticModel.GetSymbolSafe(x.Left, cancellationToken)?.Name == candidate.Parameters[0].Name &&
                              semanticModel.GetSymbolSafe(x.Right, cancellationToken)?.Name == candidate.Parameters[1].Name,
                         out _))
@@ -688,7 +688,7 @@
                 return false;
             }
 
-            if (objectCreation.ArgumentList?.Arguments.TryGetSingle(out nameArg) == true)
+            if (objectCreation.ArgumentList?.Arguments.TrySingle(out nameArg) == true)
             {
                 return nameArg.TryGetStringValue(semanticModel, cancellationToken, out propertyName);
             }

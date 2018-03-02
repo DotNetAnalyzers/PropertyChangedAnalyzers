@@ -53,7 +53,7 @@
             }
 
             var declaration = (ClassDeclarationSyntax)context.Node;
-            if (declaration.Members.TryGetFirst(
+            if (declaration.Members.TryFirst(
                 x => Property.ShouldNotify(x as PropertyDeclarationSyntax, context.SemanticModel, context.CancellationToken),
                 out _))
             {

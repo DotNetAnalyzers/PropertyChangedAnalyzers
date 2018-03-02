@@ -69,6 +69,11 @@ namespace PropertyChangedAnalyzers.Test.Documentation
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void Table(DescriptorInfo descriptorInfo)
         {
+            if (descriptorInfo.Analyzer is INPC004UseCallerMemberName)
+            {
+                return;
+            }
+
             var expected = GetTable(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
             var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName));

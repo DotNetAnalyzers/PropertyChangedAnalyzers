@@ -1,11 +1,15 @@
 namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class HappyPath
+    [TestFixture(typeof(ArgumentAnalyzer))]
+    [TestFixture(typeof(INPC004UseCallerMemberName))]
+    internal class HappyPath<T>
+        where T : DiagnosticAnalyzer, new()
     {
-        private static readonly INPC004UseCallerMemberName Analyzer = new INPC004UseCallerMemberName();
+        private static readonly T Analyzer = new T();
 
         [TestCase("null")]
         [TestCase("string.Empty")]
@@ -34,7 +38,9 @@ namespace RoslynSandbox
             {
                 if (value == this.bar) return;
                 this.bar = value;
+#pragma warning disable INPC013
                 this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+#pragma warning restore INPC013
             }
         }
 
@@ -114,7 +120,9 @@ namespace RoslynSandbox
                 }
 
                 this.bar = value;
+#pragma warning disable INPC013
                 this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar))));
+#pragma warning restore INPC013
             }
         }
     }

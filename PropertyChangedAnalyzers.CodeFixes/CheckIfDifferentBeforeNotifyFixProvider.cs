@@ -46,7 +46,7 @@ namespace PropertyChangedAnalyzers
                     continue;
                 }
 
-                if (Property.TryGetSingleAssignmentInSetter(setter, out var assignment))
+                if (Property.TrySingleAssignmentInSetter(setter, out var assignment))
                 {
                     var statementSyntax = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
                     if (setter.Body.Statements.First() != statementSyntax)
@@ -75,7 +75,7 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                if (Property.TryGetSingleSetAndRaiseInSetter(setter, semanticModel, context.CancellationToken, out var setAndRaise))
+                if (Property.TrySingleSetAndRaiseInSetter(setter, semanticModel, context.CancellationToken, out var setAndRaise))
                 {
                     if (setAndRaise.Parent is ExpressionStatementSyntax setAndRaiseStatement)
                     {
