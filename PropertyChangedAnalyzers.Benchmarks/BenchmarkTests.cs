@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Benchmarks
+namespace PropertyChangedAnalyzers.Benchmarks
 {
     using System;
     using System.Collections.Generic;
@@ -33,12 +33,6 @@
         public void Run(Gu.Roslyn.Asserts.Benchmark benchmark)
         {
             benchmark.Run();
-        }
-
-        [Test]
-        public void BenchmarksDirectoryExists()
-        {
-            Assert.AreEqual(true, Directory.Exists(Program.BenchmarksDirectory), Program.BenchmarksDirectory);
         }
     }
 }

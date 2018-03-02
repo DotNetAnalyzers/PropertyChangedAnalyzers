@@ -518,7 +518,6 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
-        
         [Test]
         public void CheckLockCheck()
         {
