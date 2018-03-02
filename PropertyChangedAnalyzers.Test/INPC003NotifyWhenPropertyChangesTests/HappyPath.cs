@@ -664,5 +664,41 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [TestCase("\"\"")]
+        [TestCase("string.Empty")]
+        [TestCase("null")]
+        public void NotifyThatAllPropertiesChanges(string arg)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    public class Foo : INotifyPropertyChanged
+    {
+        private Dictionary<int, int> map;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value1 => map?[1] ?? 0;
+
+        public int Value2 => map?[2] ?? 0;
+
+        public void Update(Dictionary<int, int> newMap)
+        {
+            this.map = newMap;
+            this.OnPropertyChanged(string.Empty);
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("string.Empty", arg);
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
