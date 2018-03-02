@@ -312,5 +312,64 @@ namespace RoslynSandbox
             fixedCode = fixedCode.AssertReplace("this.Value = 1", assignCode);
             AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
         }
+
+        [Test]
+        public void WhenBackingFieldExpressionBodyAccessors()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int value;
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Value
+        {
+            get => this.value;
+            set => this.value = value;
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int value;
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get => this.value;
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+        }
     }
 }
