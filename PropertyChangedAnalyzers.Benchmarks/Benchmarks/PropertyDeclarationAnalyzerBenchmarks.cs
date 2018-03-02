@@ -2,7 +2,7 @@
 // ReSharper disable InconsistentNaming
 namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
-    public class INPC010SetAndReturnSameFieldBenchmarks
+    public class PropertyDeclarationAnalyzerBenchmarks
     {
         private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.PropertyDeclarationAnalyzer());
 

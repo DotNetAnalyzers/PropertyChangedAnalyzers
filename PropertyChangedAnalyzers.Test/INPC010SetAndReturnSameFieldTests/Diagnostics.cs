@@ -1,11 +1,11 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC010SetAndReturnSameFieldTests
+namespace PropertyChangedAnalyzers.Test.INPC010SetAndReturnSameFieldTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class Diagnostics
     {
-        private static readonly INPC010SetAndReturnSameField Analyzer = new INPC010SetAndReturnSameField();
+        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
 
         [Test]
         public void GetterReturnsOtherThanSetterAssigns()

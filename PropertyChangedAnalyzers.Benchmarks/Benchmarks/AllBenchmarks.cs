@@ -23,13 +23,13 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC009DontRaiseChangeForMissingPropertyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC009DontRaiseChangeForMissingProperty());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC010SetAndReturnSameFieldBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC010SetAndReturnSameField());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC011DontShadowBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC011DontShadow());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC014PreferSettingBackingFieldInCtorBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC014PreferSettingBackingFieldInCtor());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark ArgumentAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.ArgumentAnalyzer());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark PropertyDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.PropertyDeclarationAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC001ImplementINotifyPropertyChanged()
@@ -92,12 +92,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC010SetAndReturnSameField()
-        {
-            INPC010SetAndReturnSameFieldBenchmark.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
         public void INPC011DontShadow()
         {
             INPC011DontShadowBenchmark.Run();
@@ -113,6 +107,12 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void ArgumentAnalyzer()
         {
             ArgumentAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void PropertyDeclarationAnalyzer()
+        {
+            PropertyDeclarationAnalyzerBenchmark.Run();
         }
     }
 }

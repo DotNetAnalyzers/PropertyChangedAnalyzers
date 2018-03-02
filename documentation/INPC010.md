@@ -21,7 +21,7 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC010SetAndReturnSameField.cs">INPC010SetAndReturnSameField</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/NodeAnalyzers/PropertyDeclarationAnalyzer.cs">PropertyDeclarationAnalyzer</a></td>
 </tr>
 </table>
 <!-- end generated table -->
