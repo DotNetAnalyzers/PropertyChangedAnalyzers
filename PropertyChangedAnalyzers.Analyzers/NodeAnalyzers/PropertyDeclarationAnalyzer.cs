@@ -51,6 +51,17 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
+                if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter))
+                {
+                    using (var assignmentWalker = AssignmentWalker.Borrow(setter))
+                    {
+                        if (assignmentWalker.Assignments.TryFirst(x => IsProperty(x.Left, property), out var recursiveAssignment))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
+                        }
+                    }
+                }
+
                 if (Property.TrySingleReturnedInGetter(propertyDeclaration, out var returnValue) &&
                     Property.TryGetBackingFieldFromSetter(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var assigned) &&
                     context.SemanticModel.GetSymbolSafe(returnValue, context.CancellationToken) is ISymbol returned &&
