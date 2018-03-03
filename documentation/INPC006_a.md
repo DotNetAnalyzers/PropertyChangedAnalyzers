@@ -21,7 +21,7 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC006UseReferenceEquals.cs">INPC006UseReferenceEquals</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/NodeAnalyzers/IfStatementAnalyzer.cs">IfStatementAnalyzer</a></td>
 </tr>
 </table>
 <!-- end generated table -->

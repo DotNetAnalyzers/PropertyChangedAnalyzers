@@ -11,8 +11,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC005CheckIfDifferentBeforeNotifyingBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC005CheckIfDifferentBeforeNotifying());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC006UseReferenceEqualsBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC006UseReferenceEquals());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC007MissingInvokerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC007MissingInvoker());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC008StructMustNotNotifyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC008StructMustNotNotify());
@@ -51,12 +49,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void INPC005CheckIfDifferentBeforeNotifying()
         {
             INPC005CheckIfDifferentBeforeNotifyingBenchmark.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC006UseReferenceEquals()
-        {
-            INPC006UseReferenceEqualsBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

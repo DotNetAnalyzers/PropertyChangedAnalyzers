@@ -1,11 +1,15 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
+namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class CodeFix
+    internal class Codefix
     {
+        private static readonly IfStatementAnalyzer Analyzer = new IfStatementAnalyzer();
+        private static readonly UseCorrectEqualityCodeFixProvider CodeFix = new UseCorrectEqualityCodeFixProvider();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC006_a");
+
         private static readonly IReadOnlyList<TestCase> TestCases = new[]
             {
                 new TestCase("Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
@@ -102,8 +106,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
-            AnalyzerAssert.FixAll<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -176,8 +180,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
-            AnalyzerAssert.FixAll<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -250,8 +254,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
-            AnalyzerAssert.FixAll<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -289,7 +293,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.NoFix<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
+            AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode });
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -366,8 +370,8 @@ namespace RoslynSandbox
             fixedCode = check.FixedCall == null
                             ? fixedCode.AssertReplace("Equals(value, this.bar)", check.Call)
                             : fixedCode.AssertReplace("Equals(value, this.bar)", check.FixedCall);
-            AnalyzerAssert.CodeFix<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
-            AnalyzerAssert.FixAll<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -406,7 +410,7 @@ namespace RoslynSandbox
     }
 }";
             testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call);
-            AnalyzerAssert.NoFix<INPC006UseReferenceEquals, UseCorrectEqualityCodeFixProvider>(FooCode, testCode);
+            AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { FooCode, testCode });
         }
 
         public class TestCase

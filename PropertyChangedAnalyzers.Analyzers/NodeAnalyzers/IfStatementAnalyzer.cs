@@ -12,6 +12,7 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            INPC006UseReferenceEquals.Descriptor,
             INPC006UseObjectEqualsForReferenceTypes.Descriptor);
 
         /// <inheritdoc/>
@@ -30,7 +31,7 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node is IfStatementSyntax ifStatement &&
-                ifStatement.Condition is ExpressionSyntax condition)
+                ifStatement.Condition != null)
             {
                 if (ifStatement.FirstAncestorOrSelf<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
                     setter.IsKind(SyntaxKind.SetAccessorDeclaration) &&
@@ -41,32 +42,26 @@ namespace PropertyChangedAnalyzers
                     context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken) is ISymbol backingField)
                 {
                     if (property.Type.IsReferenceType &&
-                        property.Type != KnownSymbol.String &&
-                        !IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
-                        !IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property) &&
-                        !IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
-                        !IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property))
+                        property.Type != KnownSymbol.String)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(INPC006UseObjectEqualsForReferenceTypes.Descriptor, ifStatement.GetLocation()));
+                        if (!IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
+                            !IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property) &&
+                            !IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
+                            !IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC006UseObjectEqualsForReferenceTypes.Descriptor, ifStatement.GetLocation()));
+                        }
+
+                        if (!Equality.IsReferenceEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) &&
+                            !Equality.IsReferenceEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property) &&
+                            !IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) &&
+                            !IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC006UseReferenceEquals.Descriptor, ifStatement.GetLocation()));
+                        }
                     }
                 }
             }
-        }
-
-        private static bool Notifies(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            using (var walker = InvocationWalker.Borrow(setter))
-            {
-                foreach (var invocation in walker.Invocations)
-                {
-                    if (PropertyChanged.IsNotifyPropertyChanged(invocation, semanticModel, cancellationToken))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
 
         private static bool IsObjectEqualsOrNegated(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
@@ -97,6 +92,17 @@ namespace PropertyChangedAnalyzers
                 unary.IsKind(SyntaxKind.LogicalNotExpression))
             {
                 return Equality.IsEqualityComparerEquals(unary.Operand, semanticModel, cancellationToken, value, member);
+            }
+
+            return false;
+        }
+
+        private static bool IsNegatedReferenceEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
+        {
+            var unaryExpression = expression as PrefixUnaryExpressionSyntax;
+            if (unaryExpression?.IsKind(SyntaxKind.LogicalNotExpression) == true)
+            {
+                return Equality.IsReferenceEquals(unaryExpression.Operand, semanticModel, cancellationToken, value, member);
             }
 
             return false;

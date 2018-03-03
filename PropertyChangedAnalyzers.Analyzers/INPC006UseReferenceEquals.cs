@@ -1,18 +1,12 @@
 namespace PropertyChangedAnalyzers
 {
-    using System.Collections.Immutable;
-    using System.Threading;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class INPC006UseReferenceEquals : DiagnosticAnalyzer
+    internal class INPC006UseReferenceEquals
     {
         public const string DiagnosticId = "INPC006_a";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Check if value is different using ReferenceEquals before notifying.",
             messageFormat: "Check if value is different using ReferenceEquals before notifying.",
@@ -21,100 +15,5 @@ namespace PropertyChangedAnalyzers
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
             description: "Check if value is different using ReferenceEquals before notifying.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
-
-        /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
-
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
-        {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleInvocation, SyntaxKind.IfStatement);
-        }
-
-        private static void HandleInvocation(SyntaxNodeAnalysisContext context)
-        {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            var ifStatement = (IfStatementSyntax)context.Node;
-            if (ifStatement?.Condition == null)
-            {
-                return;
-            }
-
-            var setter = ifStatement.FirstAncestorOrSelf<AccessorDeclarationSyntax>();
-            if (setter?.IsKind(SyntaxKind.SetAccessorDeclaration) != true)
-            {
-                return;
-            }
-
-            if (!Notifies(setter, context.SemanticModel, context.CancellationToken))
-            {
-                return;
-            }
-
-            var propertyDeclaration = setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-            var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
-
-            if (property == null ||
-                !property.Type.IsReferenceType ||
-                property.Type == KnownSymbol.String)
-            {
-                return;
-            }
-
-            if (!Property.TryGetBackingFieldFromSetter(property, context.SemanticModel, context.CancellationToken, out var backingField))
-            {
-                return;
-            }
-
-            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
-            {
-                foreach (var member in new ISymbol[] { backingField, property })
-                {
-                    if (Equality.IsReferenceEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member) ||
-                        IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, member))
-                    {
-                        if (Equality.UsesObjectOrNone(ifStatement.Condition))
-                        {
-                            return;
-                        }
-                    }
-                }
-            }
-
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, ifStatement.GetLocation()));
-        }
-
-        private static bool Notifies(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            using (var walker = InvocationWalker.Borrow(setter))
-            {
-                foreach (var invocation in walker.Invocations)
-                {
-                    if (PropertyChanged.IsNotifyPropertyChanged(invocation, semanticModel, cancellationToken))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private static bool IsNegatedReferenceEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
-        {
-            var unaryExpression = expression as PrefixUnaryExpressionSyntax;
-            if (unaryExpression?.IsKind(SyntaxKind.LogicalNotExpression) == true)
-            {
-                return Equality.IsReferenceEquals(unaryExpression.Operand, semanticModel, cancellationToken, value, member);
-            }
-
-            return false;
-        }
     }
 }

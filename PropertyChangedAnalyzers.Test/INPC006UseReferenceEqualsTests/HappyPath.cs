@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
 
     internal class HappyPath
     {
-        private static readonly INPC006UseReferenceEquals Analyzer = new INPC006UseReferenceEquals();
+        private static readonly IfStatementAnalyzer Analyzer = new IfStatementAnalyzer();
 
         private static readonly IReadOnlyList<TestCase> TestCases = new[]
         {
