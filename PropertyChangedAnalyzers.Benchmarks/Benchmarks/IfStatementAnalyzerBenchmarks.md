@@ -12,4 +12,4 @@ Frequency=3410087 Hz, Resolution=293.2477 ns, Timer=TSC
 | RunOnPropertyChangedAnalyzers |   NA |    NA |       N/A |
 
 Benchmarks with issues:
-  INPC001ImplementINotifyPropertyChangedBenchmarks.RunOnPropertyChangedAnalyzers: DefaultJob
+  IfStatementAnalyzerBenchmarks.RunOnPropertyChangedAnalyzers: DefaultJob
