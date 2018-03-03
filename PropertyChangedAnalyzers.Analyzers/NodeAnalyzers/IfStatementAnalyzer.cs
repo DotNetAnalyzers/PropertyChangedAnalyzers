@@ -44,7 +44,8 @@ namespace PropertyChangedAnalyzers
                     if (property.Type.IsReferenceType &&
                         property.Type != KnownSymbol.String)
                     {
-                        if (!IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
+                        if (INPC006UseReferenceEquals.Descriptor.IsSuppressed(context.SemanticModel) &&
+                            !IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property) &&
                             !IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property))
@@ -52,7 +53,8 @@ namespace PropertyChangedAnalyzers
                             context.ReportDiagnostic(Diagnostic.Create(INPC006UseObjectEqualsForReferenceTypes.Descriptor, ifStatement.GetLocation()));
                         }
 
-                        if (!Equality.IsReferenceEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) &&
+                        if (INPC006UseObjectEqualsForReferenceTypes.Descriptor.IsSuppressed(context.SemanticModel) &&
+                            !Equality.IsReferenceEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !Equality.IsReferenceEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property) &&
                             !IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))

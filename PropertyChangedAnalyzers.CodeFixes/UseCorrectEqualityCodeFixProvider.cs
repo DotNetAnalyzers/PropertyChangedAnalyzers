@@ -109,7 +109,7 @@ namespace PropertyChangedAnalyzers
 
         private static bool CanFix(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
-            if (!semanticModel.IsUseReferenceEqualsSuppressed() &&
+            if (!INPC006UseReferenceEquals.Descriptor.IsSuppressed(semanticModel) &&
                 Equality.IsEqualityComparerEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member))
             {
                 return true;

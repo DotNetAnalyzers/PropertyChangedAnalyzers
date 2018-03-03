@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Threading;
@@ -8,12 +8,6 @@
 
     internal static class Equality
     {
-        internal static bool IsUseReferenceEqualsSuppressed(this SemanticModel semanticModel)
-        {
-            return semanticModel.Compilation.Options.SpecificDiagnosticOptions.TryGetValue(INPC006UseReferenceEquals.DiagnosticId, out var report) &&
-                   report == ReportDiagnostic.Suppress;
-        }
-
         internal static bool HasEqualityOperator(ITypeSymbol type)
         {
             switch (type.SpecialType)

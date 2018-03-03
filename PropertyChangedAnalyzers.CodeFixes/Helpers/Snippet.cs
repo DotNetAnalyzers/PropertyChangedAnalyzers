@@ -37,7 +37,7 @@ namespace PropertyChangedAnalyzers
                 return $"System.Collections.Generic.EqualityComparer<{type.ToDisplayString()}>.Default.Equals({x}, {y})";
             }
 
-            if (semanticModel.IsUseReferenceEqualsSuppressed())
+            if (INPC006UseReferenceEquals.Descriptor.IsSuppressed(semanticModel))
             {
                 return $"Equals({x}, {y})";
             }
