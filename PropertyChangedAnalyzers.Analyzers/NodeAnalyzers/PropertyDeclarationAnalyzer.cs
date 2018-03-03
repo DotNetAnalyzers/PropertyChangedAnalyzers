@@ -60,22 +60,24 @@ namespace PropertyChangedAnalyzers
                             context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
                         }
 
-                        if (getter != null &&
-                            assignmentWalker.Assignments.TrySingle(out var singleAssignment) &&
-                            TryGetMemberName(singleAssignment.Left, out var assignedName) &&
-                            ReturnExpressionsWalker.TryGetSingle(getter, out var singleReturnValue) &&
-                            TryGetMemberName(singleReturnValue, out var singleReturnName) &&
-                            assignedName != singleReturnName)
+                        if (getter != null)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC010GetAndSetSame.Descriptor, propertyDeclaration.GetLocation()));
+                            if (property.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) &&
+                                Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC002MutablePublicPropertyShouldNotify.Descriptor, propertyDeclaration.GetLocation(), property.Name));
+                            }
+
+                            if (assignmentWalker.Assignments.TrySingle(out var singleAssignment) &&
+                                TryGetMemberName(singleAssignment.Left, out var assignedName) &&
+                                ReturnExpressionsWalker.TryGetSingle(getter, out var singleReturnValue) &&
+                                TryGetMemberName(singleReturnValue, out var singleReturnName) &&
+                                assignedName != singleReturnName)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC010GetAndSetSame.Descriptor, propertyDeclaration.GetLocation()));
+                            }
                         }
                     }
-                }
-
-                if (property.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) &&
-                    Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(INPC002MutablePublicPropertyShouldNotify.Descriptor, propertyDeclaration.GetLocation(), property.Name));
                 }
             }
         }
