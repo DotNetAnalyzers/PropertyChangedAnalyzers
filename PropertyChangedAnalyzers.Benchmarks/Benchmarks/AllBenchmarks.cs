@@ -15,8 +15,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC008StructMustNotNotifyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC008StructMustNotNotify());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC009DontRaiseChangeForMissingPropertyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC009DontRaiseChangeForMissingProperty());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC011DontShadowBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC011DontShadow());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC014PreferSettingBackingFieldInCtorBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC014PreferSettingBackingFieldInCtor());
@@ -61,12 +59,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void INPC008StructMustNotNotify()
         {
             INPC008StructMustNotNotifyBenchmark.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC009DontRaiseChangeForMissingProperty()
-        {
-            INPC009DontRaiseChangeForMissingPropertyBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

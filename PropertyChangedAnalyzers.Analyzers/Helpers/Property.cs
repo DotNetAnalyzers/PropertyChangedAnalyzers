@@ -194,24 +194,6 @@ namespace PropertyChangedAnalyzers
             return assignedField.Equals(returnedField) && assignedField.ContainingType == propertySymbol?.ContainingType;
         }
 
-        internal static bool TryGetBackingFieldReturnedInGetter(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
-        {
-            field = null;
-            if (property == null)
-            {
-                return false;
-            }
-
-            if (property.TrySingleDeclaration(cancellationToken, out var propertyDeclaration) &&
-                TrySingleReturnedInGetter(propertyDeclaration, out var expression))
-            {
-                field = semanticModel.GetSymbolSafe(expression, cancellationToken) as IFieldSymbol;
-                return field != null;
-            }
-
-            return false;
-        }
-
         internal static bool TrySingleReturnedInGetter(PropertyDeclarationSyntax property, out ExpressionSyntax result)
         {
             result = null;
@@ -315,13 +297,6 @@ namespace PropertyChangedAnalyzers
                         x, semanticModel, cancellationToken),
                     out invocation);
             }
-        }
-
-        internal static bool TrySingleAssignmentInSetter(PropertyDeclarationSyntax propertyDeclaration, out AssignmentExpressionSyntax assignment)
-        {
-            assignment = null;
-            return propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
-                   TrySingleAssignmentInSetter(setter, out assignment);
         }
 
         internal static bool TrySingleAssignmentInSetter(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)

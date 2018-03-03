@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
 
     internal class HappyPath
     {
-        private static readonly INPC009DontRaiseChangeForMissingProperty Analyzer = new INPC009DontRaiseChangeForMissingProperty();
+        private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
 
         [TestCase("null")]
         [TestCase("string.Empty")]
@@ -34,7 +34,9 @@ namespace RoslynSandbox
             {
                 if (value == this.bar) return;
                 this.bar = value;
+#pragma warning disable INPC013
                 this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+#pragma warning restore INPC013
             }
         }
 
@@ -194,7 +196,9 @@ namespace RoslynSandbox
                 }
 
                 this.bar = value;
+#pragma warning disable INPC013
                 this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar))));
+#pragma warning restore INPC013
             }
         }
     }
