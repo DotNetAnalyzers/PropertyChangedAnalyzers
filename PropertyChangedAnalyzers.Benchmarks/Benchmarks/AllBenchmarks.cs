@@ -5,8 +5,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
     {
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC001ImplementINotifyPropertyChangedBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC001ImplementINotifyPropertyChanged());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC002MutablePublicPropertyShouldNotifyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC002MutablePublicPropertyShouldNotify());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC003NotifyWhenPropertyChangesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC003NotifyWhenPropertyChanges());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC004UseCallerMemberNameBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC004UseCallerMemberName());
@@ -35,12 +33,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void INPC001ImplementINotifyPropertyChanged()
         {
             INPC001ImplementINotifyPropertyChangedBenchmark.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC002MutablePublicPropertyShouldNotify()
-        {
-            INPC002MutablePublicPropertyShouldNotifyBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

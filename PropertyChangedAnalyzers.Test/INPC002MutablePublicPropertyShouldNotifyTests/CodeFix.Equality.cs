@@ -1,9 +1,9 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    internal partial class Codefix
     {
         internal class CodeFixEquality
         {
@@ -68,8 +68,8 @@ namespace RoslynSandbox
     }
 }";
                 fixedCode = fixedCode.AssertReplace("int", typeCode);
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -132,8 +132,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { refTypeCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { refTypeCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { refTypeCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { refTypeCode, testCode }, fixedCode);
             }
 
             [Test]
@@ -221,8 +221,8 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
             }
 
             [Test]
@@ -309,8 +309,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
             }
 
             [Test]
@@ -408,8 +408,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
             }
 
             [Test]
@@ -506,8 +506,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
             }
 
             [Test]
@@ -576,8 +576,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
             }
 
             [Test]
@@ -646,8 +646,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, fixedCode);
             }
         }
     }

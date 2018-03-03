@@ -6,6 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC010SetAndReturnSameFieldTests
     internal class Diagnostics
     {
         private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC010");
 
         [Test]
         public void GetterReturnsOtherThanSetterAssigns()
@@ -49,7 +50,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -94,7 +95,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, testCode);
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
     }
 }

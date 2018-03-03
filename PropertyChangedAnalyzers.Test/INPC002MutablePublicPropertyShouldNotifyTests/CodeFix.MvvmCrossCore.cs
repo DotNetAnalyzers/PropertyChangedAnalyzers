@@ -1,10 +1,10 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    internal partial class CodeFix
+    internal partial class Codefix
     {
         internal class MvvmCrossCore
         {
@@ -55,8 +55,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify when value changes.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "Notify when value changes.");
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Notify when value changes.");
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Notify when value changes.");
             }
 
             [Test]
@@ -85,8 +85,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
@@ -115,8 +115,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
@@ -145,8 +145,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
@@ -175,8 +175,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
@@ -215,8 +215,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
@@ -255,8 +255,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
@@ -291,8 +291,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
@@ -327,8 +327,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
-                AnalyzerAssert.FixAll<INPC002MutablePublicPropertyShouldNotify, MakePropertyNotifyCodeFixProvider>(testCode, fixedCode, "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
         }
     }

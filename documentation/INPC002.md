@@ -21,7 +21,7 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC002MutablePublicPropertyShouldNotify.cs">INPC002MutablePublicPropertyShouldNotify</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/NodeAnalyzers/PropertyDeclarationAnalyzer.cs">PropertyDeclarationAnalyzer</a></td>
 </tr>
 </table>
 <!-- end generated table -->

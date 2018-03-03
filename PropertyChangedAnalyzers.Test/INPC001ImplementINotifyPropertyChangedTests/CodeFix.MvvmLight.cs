@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
+namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass GalaSoft.MvvmLight.ViewModelBase");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass GalaSoft.MvvmLight.ViewModelBase");
             }
 
             [Test]
@@ -69,7 +69,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Implement INotifyPropertyChanged.");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Implement INotifyPropertyChanged.");
             }
         }
     }

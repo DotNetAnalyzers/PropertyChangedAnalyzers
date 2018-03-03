@@ -34,7 +34,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Add OnPropertyChanged invoker.");
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace RoslynSandbox
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Seal class.");
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Seal class.");
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Add OnPropertyChanged invoker.");
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
         }
 
         [Test]
@@ -213,7 +213,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(new[] { viewModelBaseCode, testCode }, fixedCode, "Add OnPropertyChanged invoker.");
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(new[] { viewModelBaseCode, testCode }, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
         }
 
         [Test]
@@ -263,7 +263,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Add OnPropertyChanged invoker.");
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
         }
 
         [Test]
@@ -308,7 +308,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, "Seal class.");
+            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Seal class.");
         }
     }
 }

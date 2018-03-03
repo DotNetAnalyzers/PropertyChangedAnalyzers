@@ -11,6 +11,7 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            INPC002MutablePublicPropertyShouldNotify.Descriptor,
             INPC010SetAndReturnSameField.Descriptor);
 
         /// <inheritdoc/>
@@ -28,14 +29,21 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (context.Node is PropertyDeclarationSyntax propertyDeclaration)
+            if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+                context.ContainingSymbol is IPropertySymbol propertySymbol)
             {
                 if (Property.TrySingleReturnedInGetter(propertyDeclaration, out var returnValue) &&
                     Property.TryGetBackingFieldFromSetter(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var assigned) &&
                     context.SemanticModel.GetSymbolSafe(returnValue, context.CancellationToken) is ISymbol returned &&
                     !ReferenceEquals(returned, assigned))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(INPC010SetAndReturnSameField.Descriptor, context.Node.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(INPC010SetAndReturnSameField.Descriptor, propertyDeclaration.GetLocation()));
+                }
+
+                if (propertySymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) &&
+                    Property.ShouldNotify(propertyDeclaration, propertySymbol, context.SemanticModel, context.CancellationToken))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(INPC002MutablePublicPropertyShouldNotify.Descriptor, propertyDeclaration.GetLocation(), propertySymbol.Name));
                 }
             }
         }

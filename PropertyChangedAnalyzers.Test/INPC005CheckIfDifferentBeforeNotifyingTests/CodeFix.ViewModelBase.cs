@@ -89,8 +89,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Check that value is different before notifying.");
-                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Check that value is different before notifying.");
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Check that value is different before notifying.");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Check that value is different before notifying.");
             }
 
             [Test]
@@ -129,8 +129,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Use ViewModelBase.SetValue");
-                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Use ViewModelBase.SetValue");
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Use ViewModelBase.SetValue");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Use ViewModelBase.SetValue");
             }
 
             [Test]
@@ -169,8 +169,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Use ViewModelBase.SetValue");
-                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, "Use ViewModelBase.SetValue");
+                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Use ViewModelBase.SetValue");
+                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Use ViewModelBase.SetValue");
             }
 
             [Test]

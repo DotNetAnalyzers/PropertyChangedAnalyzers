@@ -1,11 +1,11 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal partial class HappyPath
     {
-        private static readonly INPC002MutablePublicPropertyShouldNotify Analyzer = new INPC002MutablePublicPropertyShouldNotify();
+        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
 
         [TestCase("null")]
         [TestCase("string.Empty")]

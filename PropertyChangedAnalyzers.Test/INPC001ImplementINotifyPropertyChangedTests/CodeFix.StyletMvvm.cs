@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
+namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -40,7 +40,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Subclass Stylet.PropertyChangedBase");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass Stylet.PropertyChangedBase");
             }
 
             [Test]
@@ -70,7 +70,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, "Implement INotifyPropertyChanged.");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Implement INotifyPropertyChanged.");
             }
         }
     }
