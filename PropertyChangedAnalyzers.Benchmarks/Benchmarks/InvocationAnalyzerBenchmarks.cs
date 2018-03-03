@@ -2,9 +2,9 @@
 // ReSharper disable InconsistentNaming
 namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
-    public class INPC009DontRaiseChangeForMissingPropertyBenchmarks
+    public class InvocationAnalyzerBenchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC009DontRaiseChangeForMissingProperty());
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.InvocationAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RunOnPropertyChangedAnalyzers()

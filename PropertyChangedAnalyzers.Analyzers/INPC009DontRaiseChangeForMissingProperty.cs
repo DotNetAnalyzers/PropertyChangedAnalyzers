@@ -1,17 +1,12 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
-    using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class INPC009DontRaiseChangeForMissingProperty : DiagnosticAnalyzer
+    internal static class INPC009DontRaiseChangeForMissingProperty
     {
         public const string DiagnosticId = "INPC009";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Don't raise PropertyChanged for missing property.",
             messageFormat: "Don't raise PropertyChanged for missing property.",
@@ -20,131 +15,5 @@
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
             description: "Don't raise PropertyChanged for missing property.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
-
-        /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
-
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
-        {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleInvocation, SyntaxKind.InvocationExpression);
-        }
-
-        private static void HandleInvocation(SyntaxNodeAnalysisContext context)
-        {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.ContainingSymbol is IFieldSymbol)
-            {
-                return;
-            }
-
-            var invocation = (InvocationExpressionSyntax)context.Node;
-            if (!IsPotentialInvocation(invocation))
-            {
-                return;
-            }
-
-            var method = context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol;
-            if (method == KnownSymbol.PropertyChangedEventHandler.Invoke ||
-                PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
-            {
-                if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, context.SemanticModel, context.CancellationToken, out var nameArg, out var propertyName) == AnalysisResult.Yes)
-                {
-                    var type = invocation.Expression is IdentifierNameSyntax ||
-                               (invocation.Expression as MemberAccessExpressionSyntax)?.Expression is ThisExpressionSyntax ||
-                               (invocation.Expression as MemberAccessExpressionSyntax)?.Expression is BaseExpressionSyntax ||
-                               context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) as IMethodSymbol == KnownSymbol.PropertyChangedEventHandler.Invoke
-                        ? context.ContainingSymbol.ContainingType
-                        : context.SemanticModel.GetTypeInfoSafe((invocation.Expression as MemberAccessExpressionSyntax)?.Expression, context.CancellationToken)
-                                 .Type;
-                    if (string.IsNullOrWhiteSpace(propertyName) ||
-                        type.TryGetProperty(propertyName, out _))
-                    {
-                        return;
-                    }
-
-                    if (nameArg == null)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation()));
-                        return;
-                    }
-
-                    if (invocation.Span.Contains(nameArg.Span))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameArg.GetLocation()));
-                        return;
-                    }
-
-                    if (method == KnownSymbol.PropertyChangedEventHandler.Invoke)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.ArgumentList.Arguments[1].GetLocation()));
-                        return;
-                    }
-
-                    if (invocation.ArgumentList.Arguments.Count == 1)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.ArgumentList.Arguments[0].GetLocation()));
-                        return;
-                    }
-
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.GetLocation()));
-                }
-            }
-        }
-
-        /// <summary>
-        /// This is an optimization for exiting early.
-        /// </summary>
-        private static bool IsPotentialInvocation(InvocationExpressionSyntax invocation)
-        {
-            if (invocation == null)
-            {
-                return false;
-            }
-
-            var argumentList = invocation.ArgumentList;
-            if (argumentList == null ||
-                argumentList.Arguments.Count == 0)
-            {
-                // Zero arguments can be [CallerMemberName]
-                return true;
-            }
-
-            if (argumentList.Arguments.Count > 2)
-            {
-                return false;
-            }
-
-            if (argumentList.Arguments.Count == 2 &&
-                !(argumentList.Arguments[0]
-                              .Expression is InstanceExpressionSyntax))
-            {
-                return false;
-            }
-
-            var argument = argumentList.Arguments.Last();
-            switch (argument.Kind())
-            {
-                case SyntaxKind.NumericLiteralExpression:
-                case SyntaxKind.NullLiteralExpression:
-                case SyntaxKind.TrueLiteralExpression:
-                case SyntaxKind.FalseLiteralExpression:
-                    return false;
-            }
-
-            if (argument.Expression is LiteralExpressionSyntax literal &&
-                literal.IsKind(SyntaxKind.StringLiteralExpression))
-            {
-                return SyntaxFacts.IsValidIdentifier(literal.Token.ValueText);
-            }
-
-            return true;
-        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test
+namespace PropertyChangedAnalyzers.Test
 {
     using System;
     using System.Collections.Generic;
@@ -132,9 +132,7 @@ internal static class BooleanBoxes
         private static object CoerceOther(DependencyObject d, object basevalue)
         {
             // very strange stuff here, tests things.
-#pragma warning disable WPF0041
             d.SetValue(OtherProperty, basevalue);
-#pragma warning restore WPF0041
             return d.GetValue(BarProperty);
         }
 
@@ -223,9 +221,7 @@ internal static class BooleanBoxes
         public void UpdateBrush(Brush brush)
         {
             this.SetCurrentValue(BrushProperty, brush?.GetAsFrozen());
-#pragma warning disable WPF0041
             this.SetValue(BrushProperty, brush?.GetAsFrozen());
-#pragma warning restore WPF0041
         }
 
         public void Meh(DependencyProperty property, object value)
@@ -243,9 +239,7 @@ internal static class BooleanBoxes
         private static object CoerceIntValue(DependencyObject d, object basevalue)
         {
             // very strange stuff here, tests things.
-#pragma warning disable WPF0041
             d.SetValue(BarProperty, basevalue);
-#pragma warning restore WPF0041
             return d.GetValue(BarProperty);
         }
 
