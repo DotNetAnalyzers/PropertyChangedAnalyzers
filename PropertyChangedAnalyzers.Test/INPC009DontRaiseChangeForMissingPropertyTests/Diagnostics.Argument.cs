@@ -3,17 +3,19 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class Diagnostics
+    internal partial class Diagnostics
     {
-        private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC009");
-
-        [TestCase(@"""Missing""")]
-        [TestCase(@"nameof(PropertyChanged)")]
-        [TestCase(@"nameof(this.PropertyChanged)")]
-        public void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
+        internal class Argument
         {
-            var testCode = @"
+            private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC009");
+
+            [TestCase(@"""Missing""")]
+            [TestCase(@"nameof(PropertyChanged)")]
+            [TestCase(@"nameof(this.PropertyChanged)")]
+            public void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -51,16 +53,16 @@ namespace RoslynSandbox
     }
 }";
 
-            testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
+                testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            }
 
-        [TestCase(@"""Missing""")]
-        [TestCase(@"nameof(PropertyChanged)")]
-        [TestCase(@"nameof(this.PropertyChanged)")]
-        public void CallsRaisePropertyChangedWithEventArgs(string propertyName)
-        {
-            var testCode = @"
+            [TestCase(@"""Missing""")]
+            [TestCase(@"nameof(PropertyChanged)")]
+            [TestCase(@"nameof(this.PropertyChanged)")]
+            public void CallsRaisePropertyChangedWithEventArgs(string propertyName)
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -90,16 +92,16 @@ namespace RoslynSandbox
     }
 }";
 
-            testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
+                testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            }
 
-        [TestCase(@"""Missing""")]
-        [TestCase(@"nameof(PropertyChanged)")]
-        [TestCase(@"nameof(this.PropertyChanged)")]
-        public void Invokes(string propertyName)
-        {
-            var testCode = @"
+            [TestCase(@"""Missing""")]
+            [TestCase(@"nameof(PropertyChanged)")]
+            [TestCase(@"nameof(this.PropertyChanged)")]
+            public void Invokes(string propertyName)
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -137,14 +139,14 @@ namespace RoslynSandbox
     }
 }";
 
-            testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
+                testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            }
 
-        [Test]
-        public void InvokesSimple()
-        {
-            var testCode = @"
+            [Test]
+            public void InvokesSimple()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -176,121 +178,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
-
-        [Test]
-        public void InvokesCached()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(""Missing"");
-        private int value;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int Value
-        {
-            get
-            {
-                return this.value;
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
             }
 
-            set
+            [Test]
+            public void ExpressionInvokerWithMethod()
             {
-                if (value == this.value)
-                {
-                    return;
-                }
-
-                this.value = value;
-                this.PropertyChanged?.Invoke(this, ↓CachedArgs);
-            }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
-
-        [Test]
-        public void CallsOnPropertyChangedWithCachedEventArgs()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(""Missing"");
-        private int bar;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int Bar
-        {
-            get { return this.bar; }
-            set
-            {
-                if (value == this.bar) return;
-                this.bar = value;
-                this.OnPropertyChanged(↓CachedArgs);
-            }
-        }
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
-    }
-}";
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
-
-        [Test]
-        public void CallsCallerMemberNameFromMethod()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void Foo()
-        {
-            ↓this.OnPropertyChanged();
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
-
-        [Test]
-        public void ExpressionInvokerWithMethod()
-        {
-            var testCode = @"
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System;
@@ -337,13 +231,13 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            }
 
-        [Test]
-        public void ExpressionInvokerWithThisEvent()
-        {
-            var testCode = @"
+            [Test]
+            public void ExpressionInvokerWithThisEvent()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System;
@@ -388,13 +282,13 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            }
 
-        [Test]
-        public void ExpressionInvokerWithEvent()
-        {
-            var testCode = @"
+            [Test]
+            public void ExpressionInvokerWithEvent()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System;
@@ -439,13 +333,13 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
-        }
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            }
 
-        [Test]
-        public void ExpressionInvokerWithStringEmpty()
-        {
-            var testCode = @"
+            [Test]
+            public void ExpressionInvokerWithStringEmpty()
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     using System;
@@ -490,7 +384,88 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            }
+
+            [Test]
+            public void PropertyChangedInvokeWithCachedEventArgs()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(""Missing"");
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.PropertyChanged?.Invoke(this, ↓CachedArgs);
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            }
+
+            [Test]
+            public void CallsOnPropertyChangedWithCachedEventArgs()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(""Missing"");
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.bar) return;
+                this.bar = value;
+                this.OnPropertyChanged(↓CachedArgs);
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+                AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            }
         }
     }
 }

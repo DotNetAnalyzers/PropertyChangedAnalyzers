@@ -74,6 +74,12 @@ namespace PropertyChangedAnalyzers.Test.Documentation
                 return;
             }
 
+            if (descriptorInfo.Descriptor.Id == INPC009DontRaiseChangeForMissingProperty.DiagnosticId &&
+                descriptorInfo.Analyzer is InvocationAnalyzer)
+            {
+                return;
+            }
+
             var expected = GetTable(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
             var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName));

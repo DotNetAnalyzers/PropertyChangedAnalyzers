@@ -111,6 +111,18 @@ namespace PropertyChangedAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(INPC013UseNameof.Descriptor, argument.GetLocation()));
                     }
                 }
+
+                //if (argumentList.Parent is InvocationExpressionSyntax invokeCandidate &&
+                //    invokeCandidate.TryGetInvokedMethodName(out var name) &&
+                //    name == "Invoke" &&
+                //    invokeCandidate.ArgumentList?.Arguments.Count == 2 &&
+                //    context.SemanticModel.GetSymbolSafe(invokeCandidate, context.CancellationToken) is IMethodSymbol &&
+                //    PropertyChanged.TryGetInvokedPropertyChangedName(invokeCandidate, context.SemanticModel, context.CancellationToken, out _, out var propertyName) == AnalysisResult.Yes &&
+                //    !string.IsNullOrEmpty(propertyName) &&
+                //    !context.ContainingSymbol.ContainingType.TryGetProperty(propertyName, out _))
+                //{
+                //    context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, invokeCandidate.ArgumentList.Arguments[1].GetLocation()));
+                //}
             }
         }
 

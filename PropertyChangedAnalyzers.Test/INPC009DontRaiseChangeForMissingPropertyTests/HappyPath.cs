@@ -1,11 +1,15 @@
 namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingPropertyTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class HappyPath
+    [TestFixture(typeof(ArgumentAnalyzer))]
+    [TestFixture(typeof(InvocationAnalyzer))]
+    internal class HappyPath<T>
+        where T : DiagnosticAnalyzer, new()
     {
-        private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
+        private static readonly T Analyzer = new T();
 
         [TestCase("null")]
         [TestCase("string.Empty")]
