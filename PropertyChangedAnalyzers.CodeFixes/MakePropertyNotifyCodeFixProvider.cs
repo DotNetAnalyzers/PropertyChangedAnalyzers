@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -230,42 +230,72 @@
                 return;
             }
 
-            if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter) &&
-                propertyDeclaration.TryGetSetAccessorDeclaration(out var setter))
+            if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter))
             {
-                if (getter.Body?.Statements.Count != 1 ||
-                    setter.Body?.Statements.Count != 1)
-                {
-                    return;
-                }
-
-                if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out var assignment, out _))
+                if (setter.ExpressionBody != null &&
+                    IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
                 {
                     var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                    {
-                        var code = StringBuilderPool.Borrow().AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
-                                         .AppendLine("        {")
-                                         .AppendLine($"           return;")
-                                         .AppendLine("        }")
-                                         .AppendLine()
-                                         .Return();
-                        var ifStatement = SyntaxFactory.ParseStatement(code)
-                                                       .WithSimplifiedNames()
-                                                       .WithLeadingElasticLineFeed()
-                                                       .WithTrailingElasticLineFeed()
-                                                       .WithAdditionalAnnotations(Formatter.Annotation);
-                        editor.InsertBefore(
-                            statement,
-                            ifStatement);
-                        var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
-                        var notifyStatement = SyntaxFactory.ParseStatement(Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames))
-                                                                     .WithSimplifiedNames()
-                                                                     .WithLeadingElasticLineFeed()
-                                                                     .WithTrailingElasticLineFeed()
-                                                                     .WithAdditionalAnnotations(Formatter.Annotation);
-                        editor.InsertAfter(statement, notifyStatement);
-                        editor.FormatNode(propertyDeclaration);
-                    }
+                    var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
+                    var code = StringBuilderPool.Borrow()
+                                                .AppendLine($"public Type PropertyName")
+                                                .AppendLine("{")
+                                                .AppendLine($"    get => {assignment.Left};")
+                                                .AppendLine()
+                                                .AppendLine("    set")
+                                                .AppendLine("    {")
+                                                .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
+                                                .AppendLine("        {")
+                                                .AppendLine($"           return;")
+                                                .AppendLine("        }")
+                                                .AppendLine()
+                                                .AppendLine($"        {assignment};")
+                                                .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)}")
+                                                .AppendLine("    }")
+                                                .AppendLine("}")
+                                                .Return();
+                    var template = ParseProperty(code);
+                    editor.ReplaceNode(
+                        setter,
+                        (x, _) =>
+                        {
+                            var old = (AccessorDeclarationSyntax)x;
+                            return old.WithBody(template.Setter().Body)
+                                      .WithExpressionBody(null)
+                                      .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
+                        });
+                    editor.FormatNode(propertyDeclaration);
+                }
+
+                if (setter.Body?.Statements.Count == 1 &&
+                    IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out assignment, out _))
+                {
+                    var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                    var code = StringBuilderPool.Borrow()
+                                                .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
+                                                .AppendLine("        {")
+                                                .AppendLine($"           return;")
+                                                .AppendLine("        }")
+                                                .AppendLine()
+                                                .Return();
+                    var ifStatement = SyntaxFactory.ParseStatement(code)
+                                                   .WithSimplifiedNames()
+                                                   .WithLeadingElasticLineFeed()
+                                                   .WithTrailingElasticLineFeed()
+                                                   .WithAdditionalAnnotations(Formatter.Annotation);
+                    editor.InsertBefore(
+                        statement,
+                        ifStatement);
+                    var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
+                    var notifyStatement = SyntaxFactory
+                                          .ParseStatement(
+                                              Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames))
+                                          .WithSimplifiedNames()
+                                          .WithLeadingElasticLineFeed()
+                                          .WithTrailingElasticLineFeed()
+                                          .WithAdditionalAnnotations(Formatter.Annotation);
+                    editor.InsertAfter(statement, notifyStatement);
+                    editor.FormatNode(propertyDeclaration);
                 }
             }
         }
@@ -278,7 +308,7 @@
                 return;
             }
 
-            if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out _, out _))
+            if (IsSimpleAssignmentOnly(propertyDeclaration, out var setter, out var statement, out var assignment, out _))
             {
                 var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
@@ -288,8 +318,27 @@
                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                     .WithSimplifiedNames()
                     .WithAdditionalAnnotations(Formatter.Annotation);
-                editor.InsertAfter(statement, notifyStatement);
-                editor.FormatNode(propertyDeclaration);
+                if (setter.ExpressionBody != null)
+                {
+                    editor.ReplaceNode(
+                        setter,
+                        (x, _) =>
+                        {
+                            var old = (AccessorDeclarationSyntax)x;
+                            return old.WithBody(
+                                          SyntaxFactory.Block(
+                                              SyntaxFactory.ExpressionStatement(assignment),
+                                              notifyStatement))
+                                      .WithExpressionBody(null)
+                                      .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
+                        });
+                    editor.FormatNode(propertyDeclaration);
+                }
+                else if (setter.Body != null)
+                {
+                    editor.InsertAfter(statement, notifyStatement);
+                    editor.FormatNode(propertyDeclaration);
+                }
             }
         }
 
@@ -325,22 +374,27 @@
 
         private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)
         {
-            if (!propertyDeclaration.TryGetSetAccessorDeclaration(out setter) ||
-                setter.Body == null ||
-                setter.Body.Statements.Count != 1)
+            if (propertyDeclaration.TryGetSetAccessorDeclaration(out setter))
             {
-                setter = null;
-                fieldAccess = null;
-                statement = null;
-                assignment = null;
-                return false;
-            }
+                if (setter.Body?.Statements.Count == 1)
+                {
+                    if (Property.AssignsValueToBackingField(setter, out assignment))
+                    {
+                        statement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
+                        fieldAccess = assignment.Left;
+                        return statement != null;
+                    }
+                }
 
-            if (Property.AssignsValueToBackingField(setter, out assignment))
-            {
-                statement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
-                fieldAccess = assignment.Left;
-                return statement != null;
+                if (setter.ExpressionBody != null)
+                {
+                    if (Property.AssignsValueToBackingField(setter, out assignment))
+                    {
+                        statement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
+                        fieldAccess = assignment.Left;
+                        return true;
+                    }
+                }
             }
 
             setter = null;
