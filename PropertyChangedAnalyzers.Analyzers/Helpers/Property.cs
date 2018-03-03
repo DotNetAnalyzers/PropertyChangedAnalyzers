@@ -7,6 +7,21 @@ namespace PropertyChangedAnalyzers
 
     internal static class Property
     {
+        internal static bool TryGetContainingProperty(ISymbol symbol, out IPropertySymbol property)
+        {
+            if (symbol is IMethodSymbol method &&
+                method.AssociatedSymbol is ISymbol associated)
+            {
+                property = associated as IPropertySymbol;
+            }
+            else
+            {
+                property = symbol.ContainingSymbol as IPropertySymbol;
+            }
+
+            return property != null;
+        }
+
         internal static bool IsLazy(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertyDeclaration.TryGetSetAccessorDeclaration(out _))

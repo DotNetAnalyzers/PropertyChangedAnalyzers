@@ -11,8 +11,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC005CheckIfDifferentBeforeNotifyingBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC005CheckIfDifferentBeforeNotifying());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC006UseObjectEqualsForReferenceTypesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC006UseObjectEqualsForReferenceTypes());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC006UseReferenceEqualsBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC006UseReferenceEquals());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC007MissingInvokerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC007MissingInvoker());
@@ -26,6 +24,8 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC014PreferSettingBackingFieldInCtorBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC014PreferSettingBackingFieldInCtor());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark ArgumentAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.ArgumentAnalyzer());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark IfStatementAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.IfStatementAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark PropertyDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.PropertyDeclarationAnalyzer());
 
@@ -51,12 +51,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void INPC005CheckIfDifferentBeforeNotifying()
         {
             INPC005CheckIfDifferentBeforeNotifyingBenchmark.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC006UseObjectEqualsForReferenceTypes()
-        {
-            INPC006UseObjectEqualsForReferenceTypesBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
@@ -99,6 +93,12 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void ArgumentAnalyzer()
         {
             ArgumentAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void IfStatementAnalyzer()
+        {
+            IfStatementAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
