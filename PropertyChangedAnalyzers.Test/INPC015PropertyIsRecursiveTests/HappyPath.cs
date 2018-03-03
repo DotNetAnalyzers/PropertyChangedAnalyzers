@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC010SetAndReturnSameFieldTests
+namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC010SetAndReturnSameFieldTests
         private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
 
         [Test]
-        public void GetterReturnsWhatSetterAssigns()
+        public void NotifyingProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -52,7 +52,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void GetterReturnsWhatSetterAssignsExpressionBodies()
+        public void GetSetExpressionBodyAccessors()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -68,6 +68,60 @@ namespace RoslynSandbox
         {
             get => this.value;
             set => this.value = value;
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void BaseCall()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class A
+    {
+        public virtual int Value => 1;
+    }
+
+    public class B : A
+    {
+        public override int Value => base.Value;
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void ExplicitInterfaceImplementation()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Collections;
+    using System.Collections.Generic;
+
+    public class Foo : IReadOnlyList<int>
+    {
+        private readonly List<int> ints;
+        
+        public int Count => ints.Count;
+
+        int IReadOnlyCollection<int>.Count => this.Count;
+
+        public int this[int index] => ints[index];
+
+        public IEnumerator<int> GetEnumerator()
+        {
+            return ints.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable) ints).GetEnumerator();
         }
     }
 }";

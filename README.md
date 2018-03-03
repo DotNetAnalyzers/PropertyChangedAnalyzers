@@ -73,6 +73,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC014.md">INPC014</a></td>
   <td>Prefer setting backing field in constructor.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC015.md">INPC015</a></td>
+  <td>Property is recursive.</td>
+</tr>
 <table>
 <!-- end generated table -->
 
