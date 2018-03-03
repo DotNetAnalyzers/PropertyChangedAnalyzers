@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             INPC002MutablePublicPropertyShouldNotify.Descriptor,
-            INPC010SetAndReturnSameField.Descriptor,
+            INPC010GetAndSetSame.Descriptor,
             INPC015PropertyIsRecursive.Descriptor);
 
         /// <inheritdoc/>
@@ -59,15 +59,17 @@ namespace PropertyChangedAnalyzers
                         {
                             context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
                         }
-                    }
-                }
 
-                if (Property.TrySingleReturnedInGetter(propertyDeclaration, out var returnValue) &&
-                    Property.TryGetBackingFieldFromSetter(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var assigned) &&
-                    context.SemanticModel.GetSymbolSafe(returnValue, context.CancellationToken) is ISymbol returned &&
-                    !ReferenceEquals(returned, assigned))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(INPC010SetAndReturnSameField.Descriptor, propertyDeclaration.GetLocation()));
+                        if (getter != null &&
+                            assignmentWalker.Assignments.TrySingle(out var singleAssignment) &&
+                            TryGetMemberName(singleAssignment.Left, out var assignedName) &&
+                            ReturnExpressionsWalker.TryGetSingle(getter, out var singleReturnValue) &&
+                            TryGetMemberName(singleReturnValue, out var singleReturnName) &&
+                            assignedName != singleReturnName)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC010GetAndSetSame.Descriptor, propertyDeclaration.GetLocation()));
+                        }
+                    }
                 }
 
                 if (property.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) &&
@@ -80,23 +82,42 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsProperty(ExpressionSyntax expression, IPropertySymbol property)
         {
+            if (expression is MemberAccessExpressionSyntax memberAccess &&
+                !(memberAccess.Expression is ThisExpressionSyntax))
+            {
+                return false;
+            }
+
             if (property.ExplicitInterfaceImplementations.Any())
             {
                 return false;
             }
 
+            if (TryGetMemberName(expression, out var name))
+            {
+                return name == property.Name;
+            }
+
+            return false;
+        }
+
+        private static bool TryGetMemberName(ExpressionSyntax expression, out string name)
+        {
             if (expression is IdentifierNameSyntax identifierName)
             {
-                return identifierName.Identifier.ValueText == property.Name;
+                name = identifierName.Identifier.ValueText;
+                return true;
             }
 
             if (expression is MemberAccessExpressionSyntax memberAccess &&
-                memberAccess.Expression is ThisExpressionSyntax &&
-                memberAccess.Name is IdentifierNameSyntax name)
+                memberAccess.Expression is InstanceExpressionSyntax &&
+                memberAccess.Name is IdentifierNameSyntax nameIdentifier)
             {
-                return name.Identifier.ValueText == property.Name;
+                name = nameIdentifier.Identifier.ValueText;
+                return true;
             }
 
+            name = null;
             return false;
         }
     }

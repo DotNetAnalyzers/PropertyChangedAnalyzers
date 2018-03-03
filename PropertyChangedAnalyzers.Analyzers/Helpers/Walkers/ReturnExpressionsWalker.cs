@@ -16,6 +16,14 @@ namespace PropertyChangedAnalyzers
 
         public static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
 
+        public static bool TryGetSingle(SyntaxNode node, out ExpressionSyntax returnValue)
+        {
+            using (var walker = Borrow(node))
+            {
+                return walker.returnValues.TrySingle(out returnValue);
+            }
+        }
+
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {
             this.returnValues.Add(node.Expression);

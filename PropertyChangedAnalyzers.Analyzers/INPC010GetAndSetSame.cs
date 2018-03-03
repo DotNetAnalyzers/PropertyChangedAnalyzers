@@ -2,7 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
-    internal static class INPC010SetAndReturnSameField
+    internal static class INPC010GetAndSetSame
     {
         public const string DiagnosticId = "INPC010";
 

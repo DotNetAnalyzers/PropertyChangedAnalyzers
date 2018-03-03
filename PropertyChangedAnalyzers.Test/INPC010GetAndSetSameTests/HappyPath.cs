@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC010SetAndReturnSameFieldTests
+namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
