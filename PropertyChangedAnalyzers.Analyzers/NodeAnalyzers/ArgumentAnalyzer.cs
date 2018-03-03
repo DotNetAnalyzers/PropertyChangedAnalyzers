@@ -112,17 +112,32 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                //if (argumentList.Parent is InvocationExpressionSyntax invokeCandidate &&
-                //    invokeCandidate.TryGetInvokedMethodName(out var name) &&
-                //    name == "Invoke" &&
-                //    invokeCandidate.ArgumentList?.Arguments.Count == 2 &&
-                //    context.SemanticModel.GetSymbolSafe(invokeCandidate, context.CancellationToken) is IMethodSymbol &&
-                //    PropertyChanged.TryGetInvokedPropertyChangedName(invokeCandidate, context.SemanticModel, context.CancellationToken, out _, out var propertyName) == AnalysisResult.Yes &&
-                //    !string.IsNullOrEmpty(propertyName) &&
-                //    !context.ContainingSymbol.ContainingType.TryGetProperty(propertyName, out _))
-                //{
-                //    context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, invokeCandidate.ArgumentList.Arguments[1].GetLocation()));
-                //}
+                if ((argument.Expression is IdentifierNameSyntax ||
+                    argument.Expression is MemberAccessExpressionSyntax) &&
+                    argumentList.Parent is InvocationExpressionSyntax invokeCandidate)
+                {
+                    if (invokeCandidate.ArgumentList?.Arguments.Count == 1 &&
+                        context.SemanticModel.GetSymbolSafe(invokeCandidate, context.CancellationToken) is IMethodSymbol invoker &&
+                        PropertyChanged.IsInvoker(invoker, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes &&
+                        PropertyChanged.TryGetInvokedPropertyChangedName(invokeCandidate, context.SemanticModel, context.CancellationToken, out _, out var propertyName) == AnalysisResult.Yes &&
+                        !string.IsNullOrEmpty(propertyName) &&
+                        !context.ContainingSymbol.ContainingType.TryGetProperty(propertyName, out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
+                    }
+
+                    if (invokeCandidate.TryGetInvokedMethodName(out var name) &&
+                         name == "Invoke" &&
+                         invokeCandidate.ArgumentList?.Arguments.Count == 2 &&
+                         argumentList.Arguments[1] == argument &&
+                         context.SemanticModel.GetSymbolSafe(invokeCandidate, context.CancellationToken) is IMethodSymbol &&
+                         PropertyChanged.TryGetInvokedPropertyChangedName(invokeCandidate, context.SemanticModel, context.CancellationToken, out _, out propertyName) == AnalysisResult.Yes &&
+                         !string.IsNullOrEmpty(propertyName) &&
+                         !context.ContainingSymbol.ContainingType.TryGetProperty(propertyName, out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
+                    }
+                }
             }
         }
 
