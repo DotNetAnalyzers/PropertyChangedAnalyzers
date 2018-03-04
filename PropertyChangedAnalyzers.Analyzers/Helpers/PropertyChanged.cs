@@ -285,7 +285,10 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsInvoker(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation == null)
+            if (invocation == null ||
+                invocation.ArgumentList?.Arguments.Count > 1 ||
+                invocation.Parent is ArgumentSyntax ||
+                invocation.Parent is EqualsValueClauseSyntax)
             {
                 return false;
             }

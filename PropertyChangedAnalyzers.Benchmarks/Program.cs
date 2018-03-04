@@ -57,7 +57,9 @@ namespace PropertyChangedAnalyzers.Benchmarks
 
         private static void CopyResult(Summary summary)
         {
-            var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath, $"*.{summary.Title}-report-github.md")
+            var fileName = $"{summary.Title}-report-github.md";
+            Console.WriteLine(fileName);
+            var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath, fileName)
                                           .Single();
             var destinationFileName = Path.Combine(summary.ResultsDirectoryPath, "..\\..\\Benchmarks", summary.Title + ".md");
             Console.WriteLine($"Copy: {sourceFileName} -> {destinationFileName}");

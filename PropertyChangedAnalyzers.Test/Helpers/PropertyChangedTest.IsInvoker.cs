@@ -123,7 +123,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenNotINotifyPropertyChanged()
+            public void WhenNotInvoker()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -147,8 +147,11 @@ namespace RoslynSandbox
                 Assert.AreEqual(false, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
             }
 
-            [Test]
-            public void WhenNotINotifyPropertyChangedFullyQualified()
+            [TestCase("Bar();", false)]
+            [TestCase("Bar1();", false)]
+            [TestCase("Bar2();", false)]
+            [TestCase("OnPropertyChanged();", true)]
+            public void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, bool expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -159,6 +162,9 @@ namespace RoslynSandbox
         public Foo()
         {
             Bar();
+            OnPropertyChanged();
+            var a = Bar1();
+            a = Bar2();
         }
         
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
@@ -171,12 +177,16 @@ namespace RoslynSandbox
         private void Bar()
         {
         }
+
+        private int Bar1() => 1;
+
+        private int Bar2() => 2;
     }
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("Bar();");
-                Assert.AreEqual(false, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
+                var invocation = syntaxTree.FindInvocation(call);
+                Assert.AreEqual(expected, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
             }
 
             [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
