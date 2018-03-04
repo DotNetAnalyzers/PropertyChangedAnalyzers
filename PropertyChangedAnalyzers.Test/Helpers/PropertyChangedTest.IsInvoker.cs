@@ -144,7 +144,7 @@ namespace RoslynSandbox
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Bar();");
-                Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
+                Assert.AreEqual(false, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -176,7 +176,7 @@ namespace RoslynSandbox
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Bar();");
-                Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
+                Assert.AreEqual(false, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
             }
 
             [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
