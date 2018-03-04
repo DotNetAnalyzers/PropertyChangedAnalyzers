@@ -288,7 +288,8 @@ namespace PropertyChangedAnalyzers
             if (invocation == null ||
                 invocation.ArgumentList?.Arguments.Count > 1 ||
                 invocation.Parent is ArgumentSyntax ||
-                invocation.Parent is EqualsValueClauseSyntax)
+                invocation.Parent is EqualsValueClauseSyntax ||
+                invocation.Parent is AssignmentExpressionSyntax)
             {
                 return false;
             }
