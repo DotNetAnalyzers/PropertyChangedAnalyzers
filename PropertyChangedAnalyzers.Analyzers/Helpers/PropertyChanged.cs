@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Threading;
@@ -281,6 +281,35 @@
             }
 
             return true;
+        }
+
+        internal static bool IsInvoker(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (invocation == null)
+            {
+                return false;
+            }
+
+            if (invocation.Expression is IdentifierNameSyntax ||
+               (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                memberAccess.Name is IdentifierNameSyntax &&
+                memberAccess.Expression is ThisExpressionSyntax))
+            {
+                if (invocation.FirstAncestor<ClassDeclarationSyntax>() is ClassDeclarationSyntax containingClass)
+                {
+                    if (containingClass.BaseList?.Types == null ||
+                        containingClass.BaseList.Types.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    return IsInvoker(semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol, semanticModel, cancellationToken) == AnalysisResult.Yes;
+                }
+
+                return false;
+            }
+
+            return false;
         }
 
         internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)

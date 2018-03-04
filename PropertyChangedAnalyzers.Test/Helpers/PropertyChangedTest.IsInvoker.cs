@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Linq;
     using System.Threading;
@@ -120,6 +120,63 @@ namespace RoslynSandbox
                 var invocation = syntaxTree.FindInvocation("RaisePropertyChanged");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsInvoker(method, semanticModel, CancellationToken.None));
+            }
+
+            [Test]
+            public void WhenNotINotifyPropertyChanged()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        public Foo()
+        {
+            Bar();
+        }
+
+        private void Bar()
+        {
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var invocation = syntaxTree.FindInvocation("Bar();");
+                Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
+            }
+
+            [Test]
+            public void WhenNotINotifyPropertyChangedFullyQualified()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        public Foo()
+        {
+            Bar();
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+
+        private void Bar()
+        {
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var invocation = syntaxTree.FindInvocation("Bar();");
+                Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
             }
 
             [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
