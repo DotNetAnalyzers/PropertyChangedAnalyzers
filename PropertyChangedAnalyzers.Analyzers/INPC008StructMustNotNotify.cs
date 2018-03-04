@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Linq;
@@ -41,11 +41,22 @@
                 return;
             }
 
-            var structDeclaration = (StructDeclarationSyntax)context.Node;
-            if (structDeclaration.ImplementsINotifyPropertyChanged())
+            if (context.Node is StructDeclarationSyntax structDeclaration &&
+                context.ContainingSymbol is INamedTypeSymbol type &&
+                type.Is(KnownSymbol.INotifyPropertyChanged))
             {
-                var type = structDeclaration?.BaseList?.Types.First(x => x.IsINotifyPropertyChanged());
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, type?.GetLocation() ?? structDeclaration?.GetLocation(), context.ContainingSymbol.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetNode().GetLocation(), context.ContainingSymbol.Name));
+            }
+
+            SyntaxNode GetNode()
+            {
+                if (structDeclaration.BaseList != null &&
+                    structDeclaration.BaseList.Types.TryFirst(x => x == KnownSymbol.INotifyPropertyChanged, out var inpc))
+                {
+                    return inpc;
+                }
+
+                return structDeclaration;
             }
         }
     }

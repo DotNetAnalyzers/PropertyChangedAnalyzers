@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -14,7 +14,7 @@
 
             foreach (var type in types.Value)
             {
-                if (type.IsINotifyPropertyChanged())
+                if (type == KnownSymbol.INotifyPropertyChanged)
                 {
                     return true;
                 }

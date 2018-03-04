@@ -32,7 +32,7 @@ namespace PropertyChangedAnalyzers
             {
                 if ((invocation.ArgumentList == null ||
                      invocation.ArgumentList.Arguments.Count == 0) &&
-                    invocation.FirstAncestor<PropertyDeclarationSyntax>() == null &&
+                    invocation.FirstAncestor<AccessorDeclarationSyntax>() == null &&
                     context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
                     PropertyChanged.IsInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
                 {

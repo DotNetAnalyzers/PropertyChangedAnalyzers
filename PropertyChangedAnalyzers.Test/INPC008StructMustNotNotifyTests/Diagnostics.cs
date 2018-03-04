@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
+namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -18,6 +18,20 @@ namespace RoslynSandbox
     public struct Foo : ↓INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+    }
+}";
+            AnalyzerAssert.Diagnostics(Analyzer, testCode);
+        }
+
+        [Test]
+        public void WhenNotifyingFullyQualified()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public struct Foo : ↓System.ComponentModel.INotifyPropertyChanged
+    {
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
     }
 }";
             AnalyzerAssert.Diagnostics(Analyzer, testCode);
