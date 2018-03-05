@@ -1,9 +1,9 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    internal partial class Codefix
     {
         internal class WhenNoCheck
         {
@@ -80,8 +80,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -157,8 +157,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -224,16 +224,77 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
-                    testCode,
-                    fixedCode);
-                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
-                    testCode,
-                    fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
-            public void Invokes()
+            public void PropertyChangedInvokeElvis()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                this.value = value;
+                ↓this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+            }
+
+            [Test]
+            public void PropertyChangedInvoke()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -257,13 +318,8 @@ namespace RoslynSandbox
             set
             {
                 this.value = value;
-                ↓this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                ↓this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
             }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
@@ -295,18 +351,80 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
             }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
-                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+            }
+
+            [Test]
+            public void PropertyChangedInvokeNoNullCheck()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                this.value = value;
+                ↓this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -388,12 +506,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
-                    testCode,
-                    fixedCode);
-                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(
-                    testCode,
-                    fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
             }
         }
     }

@@ -48,7 +48,7 @@ namespace PropertyChangedAnalyzers
                     {
                         if (argumentList.Parent is InvocationExpressionSyntax &&
                             !method.ContainingType.TryGetProperty(text, out _) &&
-                            PropertyChanged.IsPropertyChangedInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                            PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
                         }
@@ -60,7 +60,7 @@ namespace PropertyChangedAnalyzers
                             context.SemanticModel.GetSymbolSafe(parentArg.FirstAncestor<InvocationExpressionSyntax>(), context.CancellationToken) is IMethodSymbol parentMethod)
                         {
                             if (!parentMethod.ContainingType.TryGetProperty(text, out _) &&
-                                PropertyChanged.IsPropertyChangedInvoker(parentMethod, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                                PropertyChanged.IsOnPropertyChanged(parentMethod, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
                             }
@@ -79,7 +79,7 @@ namespace PropertyChangedAnalyzers
                     argumentList.Arguments.Count == 1 &&
                     context.SemanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol candidate)
                 {
-                    if (PropertyChanged.IsPropertyChangedInvoker(candidate, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                    if (PropertyChanged.IsOnPropertyChanged(candidate, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(INPC012DontUseExpression.Descriptor, argument.GetLocation()));
                         if (TryGetNameFromLambda(lambda, out var lambdaName))
@@ -118,7 +118,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (invokeCandidate.ArgumentList?.Arguments.Count == 1 &&
                         context.SemanticModel.GetSymbolSafe(invokeCandidate, context.CancellationToken) is IMethodSymbol invoker &&
-                        PropertyChanged.IsPropertyChangedInvoker(invoker, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes &&
+                        PropertyChanged.IsOnPropertyChanged(invoker, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes &&
                         PropertyChanged.TryGetInvokedPropertyChangedName(invokeCandidate, context.SemanticModel, context.CancellationToken, out _, out var propertyName) == AnalysisResult.Yes &&
                         !string.IsNullOrEmpty(propertyName) &&
                         !context.ContainingSymbol.ContainingType.TryGetProperty(propertyName, out _))
@@ -126,8 +126,7 @@ namespace PropertyChangedAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
                     }
 
-                    if (invokeCandidate.TryGetInvokedMethodName(out var name) &&
-                         name == "Invoke" &&
+                    if (PropertyChanged.IsPropertyChangedInvoke(invokeCandidate, context.SemanticModel, context.CancellationToken) &&
                          invokeCandidate.ArgumentList?.Arguments.Count == 2 &&
                          argumentList.Arguments[1] == argument &&
                          context.SemanticModel.GetSymbolSafe(invokeCandidate, context.CancellationToken) is IMethodSymbol &&

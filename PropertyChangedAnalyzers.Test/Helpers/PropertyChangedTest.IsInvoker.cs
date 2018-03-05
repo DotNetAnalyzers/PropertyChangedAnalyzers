@@ -45,7 +45,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsPropertyChangedInvoker(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsOnPropertyChanged(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -82,7 +82,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsPropertyChangedInvoker(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsOnPropertyChanged(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -119,7 +119,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RaisePropertyChanged");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsPropertyChangedInvoker(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsOnPropertyChanged(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -144,7 +144,7 @@ namespace RoslynSandbox
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Bar();");
-                Assert.AreEqual(false, PropertyChanged.IsPropertyChangedInvoker(invocation, semanticModel, CancellationToken.None));
+                Assert.AreEqual(false, PropertyChanged.IsOnPropertyChanged(invocation, semanticModel, CancellationToken.None));
             }
 
             [TestCase("Bar1()", false)]
@@ -193,7 +193,7 @@ namespace RoslynSandbox
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation(call);
-                Assert.AreEqual(expected, PropertyChanged.IsPropertyChangedInvoker(invocation, semanticModel, CancellationToken.None));
+                Assert.AreEqual(expected, PropertyChanged.IsOnPropertyChanged(invocation, semanticModel, CancellationToken.None));
             }
 
             [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
@@ -234,7 +234,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsPropertyChangedInvoker(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsOnPropertyChanged(method, semanticModel, CancellationToken.None));
             }
 
             [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
@@ -275,7 +275,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsPropertyChangedInvoker(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsOnPropertyChanged(method, semanticModel, CancellationToken.None));
             }
         }
     }

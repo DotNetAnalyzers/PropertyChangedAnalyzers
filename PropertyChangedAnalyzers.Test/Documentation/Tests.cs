@@ -80,11 +80,6 @@ namespace PropertyChangedAnalyzers.Test.Documentation
                 return;
             }
 
-            if (descriptorInfo.Analyzer is INPC005CheckIfDifferentBeforeNotifying)
-            {
-                return;
-            }
-
             var expected = GetTable(CreateStub(descriptorInfo));
             DumpIfDebug(expected);
             var actual = GetTable(File.ReadAllText(descriptorInfo.DocFileName));

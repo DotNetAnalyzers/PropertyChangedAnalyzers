@@ -46,7 +46,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (PropertyChanged.IsPropertyChangedInvoker(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+            if (PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
             {
                 var methodDeclaration = (MethodDeclarationSyntax)context.Node;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.ParameterList.Parameters[0].GetLocation()));

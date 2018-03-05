@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    internal partial class Codefix
     {
         internal class WhenError
         {
@@ -62,7 +62,7 @@ namespace RoslynSandbox
 }";
                 testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
                                    .AssertReplace("string", check.Type);
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
+                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
             }
 
             [TestCaseSource(nameof(TestCases))]
@@ -104,7 +104,7 @@ namespace RoslynSandbox
 }";
                 testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
                                    .AssertReplace("string", check.Type);
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
+                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -144,7 +144,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
+                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -184,7 +184,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
+                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -222,7 +222,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
+                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -261,7 +261,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
+                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
             }
 
             public class TestCase

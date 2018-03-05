@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
 
     internal partial class HappyPath
     {
-        private static readonly INPC005CheckIfDifferentBeforeNotifying Analyzer = new INPC005CheckIfDifferentBeforeNotifying();
+        private static readonly InvocationAnalyzer Analyzer = new InvocationAnalyzer();
 
         private static readonly IReadOnlyList<TestCase> TestCases = new[]
         {
