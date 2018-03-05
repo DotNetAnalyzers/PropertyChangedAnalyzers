@@ -172,7 +172,7 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
-            if (type.TryGetEvent("PropertyChanged", out var @event))
+            if (type.TryGetEventRecursive("PropertyChanged", out var @event))
             {
                 return TryGetInvoker(@event, semanticModel, cancellationToken, out invoker);
             }
@@ -526,14 +526,14 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryGetSetAndRaiseMethod(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            if (type.TryFirstMethod(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method))
+            if (type.TryFirstMethodRecursive(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method))
             {
                 return true;
             }
 
             if (type.Is(KnownSymbol.MvvmLightViewModelBase))
             {
-                return type.TryFirstMember(
+                return type.TryFirstMemberRecursive(
                     "Set",
                     x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken),
                     out method);
@@ -541,7 +541,7 @@ namespace PropertyChangedAnalyzers
 
             if (type.Is(KnownSymbol.CaliburnMicroPropertyChangedBase))
             {
-                return type.TryFirstMember(
+                return type.TryFirstMemberRecursive(
                     "Set",
                     x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken),
                     out method);

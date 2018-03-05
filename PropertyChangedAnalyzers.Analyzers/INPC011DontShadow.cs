@@ -46,7 +46,7 @@ namespace PropertyChangedAnalyzers
                 while (baseType != null &&
                       baseType != KnownSymbol.Object)
                 {
-                    if (baseType.TryGetEvent("PropertyChanged", out _))
+                    if (baseType.TryGetEventRecursive("PropertyChanged", out _))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
                     }

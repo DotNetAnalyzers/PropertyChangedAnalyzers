@@ -65,7 +65,7 @@
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
             }
 
-            if (type.TryGetEvent("PropertyChanged", out var eventSymbol))
+            if (type.TryGetEventRecursive("PropertyChanged", out var eventSymbol))
             {
                 if (eventSymbol.Name != KnownSymbol.INotifyPropertyChanged.PropertyChanged.Name ||
                     eventSymbol.Type != KnownSymbol.PropertyChangedEventHandler ||

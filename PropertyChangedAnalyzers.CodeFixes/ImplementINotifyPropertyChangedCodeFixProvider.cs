@@ -81,7 +81,7 @@ namespace PropertyChangedAnalyzers
                 }
 
                 var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
-                if (type.BaseType.TryGetEvent("PropertyChanged", out _))
+                if (type.BaseType.TryGetEventRecursive("PropertyChanged", out _))
                 {
                     continue;
                 }
@@ -211,7 +211,7 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            if (!type.TryGetEvent("PropertyChanged", out _))
+            if (!type.TryGetEventRecursive("PropertyChanged", out _))
             {
                 editor.AddEvent(
                     classDeclaration,
@@ -221,7 +221,7 @@ namespace PropertyChangedAnalyzers
                         Accessibility.Public));
             }
 
-            if (!type.TryFirstMethod(
+            if (!type.TryFirstMethodRecursive(
                 "OnPropertyChanged",
                 m => m.Parameters.Length == 1 &&
                      m.Parameters[0].Type == KnownSymbol.String,

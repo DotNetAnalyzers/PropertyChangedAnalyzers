@@ -624,5 +624,86 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("string.Empty", arg);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void WithViewModelBase()
+        {
+            var viewModelBaseCode = @"
+namespace RoslynSandbox.Core
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class ViewModelBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var viewModelCode = @"
+namespace RoslynSandbox.Client
+{
+    using RoslynSandbox.Core;
+
+    public class ViewModel : ViewModelBase
+    {
+        private int value;
+        private int value2;
+
+        public int Sum => this.Value + this.Value2;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(Sum));
+            }
+        }
+
+        public int Value2
+        {
+            get => this.value2;
+            set
+            {
+                if (this.TrySet(ref this.value2, value))
+                {
+                    this.OnPropertyChanged(nameof(this.Sum));
+                }
+            }
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, viewModelBaseCode, viewModelCode);
+        }
     }
 }
