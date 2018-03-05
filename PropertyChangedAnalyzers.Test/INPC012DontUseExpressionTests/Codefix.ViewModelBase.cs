@@ -20,7 +20,7 @@ namespace RoslynSandbox.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -61,7 +61,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(↓() => this.Greeting);
                 }
@@ -84,7 +84,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }
@@ -112,7 +112,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(↓() => this.Greeting);
                 }
@@ -135,7 +135,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }

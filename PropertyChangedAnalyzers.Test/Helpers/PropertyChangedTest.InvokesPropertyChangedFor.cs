@@ -73,10 +73,10 @@ namespace RoslynSandbox
         public int Value3
         {
             get { return _value3; }
-            set { SetValue(ref _value3, value); }
+            set { TrySet(ref _value3, value); }
         }
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -113,7 +113,7 @@ namespace RoslynSandbox
 
             [TestCase("_value1 = value", "Value1")]
             [TestCase("_value2 = value", "Value2")]
-            [TestCase("SetValue(ref _value3, value);", "Value3")]
+            [TestCase("TrySet(ref _value3, value);", "Value3")]
             public void WhenRecursive(string signature, string propertyName)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
@@ -174,12 +174,12 @@ namespace RoslynSandbox
         public int Value3
         {
             get { return _value3; }
-            set { SetValue(ref _value3, value); }
+            set { TrySet(ref _value3, value); }
         }
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
-            if (SetValue<T>(ref field, newValue, propertyName))
+            if (TrySet<T>(ref field, newValue, propertyName))
             {
                 return false;
             }

@@ -55,10 +55,10 @@ namespace RoslynSandbox
         public int Bar
         {
             get { return this.bar; }
-            set { this.SetValue(ref bar, value); }
+            set { this.TrySet(ref bar, value); }
         }
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -104,12 +104,12 @@ namespace RoslynSandbox
         public int Bar
         {
             get { return this.bar; }
-            set { this.SetValue(ref bar, value); }
+            set { this.TrySet(ref bar, value); }
         }
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
-            if (this.SetValue(ref field, newValue, propertyName))
+            if (this.TrySet(ref field, newValue, propertyName))
             {
                 this.OnPropertyChanged(propertyName);
             }

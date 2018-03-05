@@ -18,7 +18,7 @@ namespace RoslynSandbox.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -52,7 +52,7 @@ namespace RoslynSandbox.Client
         public string Name
         {
             get { return this.name; }
-            set { this.SetValue(↓ref this.name, value); }
+            set { this.TrySet(↓ref this.name, value); }
         }
     }
 }";
@@ -71,7 +71,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }
@@ -101,7 +101,7 @@ namespace RoslynSandbox.Client
         public string Name
         {
             get { return this.name; }
-            set { this.SetValue(↓ref this.name, value); }
+            set { this.TrySet(↓ref this.name, value); }
         }
     }
 }";
@@ -123,7 +123,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }
@@ -150,7 +150,7 @@ namespace RoslynSandbox.Client
         public string Name
         {
             get => this.name;
-            set => this.SetValue(↓ref this.name, value);
+            set => this.TrySet(↓ref this.name, value);
         }
     }
 }";
@@ -169,7 +169,7 @@ namespace RoslynSandbox.Client
             get => this.name;
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }
@@ -198,7 +198,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(↓ref this.name, value))
+                if (this.TrySet(↓ref this.name, value))
                 {
                 }
             }
@@ -220,7 +220,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }
@@ -251,7 +251,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(↓ref this.name, value))
+                if (this.TrySet(↓ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting1));
                 }
@@ -276,7 +276,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting1));
                     this.OnPropertyChanged(nameof(this.Greeting2));
@@ -308,7 +308,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(↓ref this.name, value))
+                if (this.TrySet(↓ref this.name, value))
                     this.OnPropertyChanged(nameof(this.Greeting1));
             }
         }
@@ -331,7 +331,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (this.SetValue(ref this.name, value))
+                if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting1));
                     this.OnPropertyChanged(nameof(this.Greeting2));
@@ -472,7 +472,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (!this.SetValue(↓ref this.name, value))
+                if (!this.TrySet(↓ref this.name, value))
                 {
                     return;
                 }
@@ -499,7 +499,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (!this.SetValue(ref this.name, value))
+                if (!this.TrySet(ref this.name, value))
                 {
                     return;
                 }
@@ -533,7 +533,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (!this.SetValue(↓ref this.name, value))
+                if (!this.TrySet(↓ref this.name, value))
                     return;
                 
                 this.OnPropertyChanged(nameof(this.Greeting1));
@@ -558,7 +558,7 @@ namespace RoslynSandbox.Client
             get { return this.name; }
             set
             {
-                if (!this.SetValue(ref this.name, value))
+                if (!this.TrySet(ref this.name, value))
                     return;
                 
                 this.OnPropertyChanged(nameof(this.Greeting1));

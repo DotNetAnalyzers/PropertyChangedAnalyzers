@@ -50,205 +50,77 @@ namespace PropertyChangedAnalyzers.Test
         [TestCaseSource(nameof(AllAnalyzers))]
         public void SomewhatRealisticSample(DiagnosticAnalyzer analyzer)
         {
-            // this test just throws some random code at all analyzers
-            var booleanBoxesCode = @"
-internal static class BooleanBoxes
+            var viewModelBaseCode = @"
+namespace RoslynSandbox.Core
 {
-    internal static readonly object True = true;
-    internal static readonly object False = false;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    internal static object Box(bool value)
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        return value
-                    ? True
-                    : False;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
-            var fooCode = @"
-    using System.Windows;
-    using System.Windows.Controls;
+            var viewModelCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
-    public static class Foo
+    public class ViewModel : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.RegisterAttached(
-            ""Bar"",
-            typeof(bool),
-            typeof(Foo),
-            new PropertyMetadata(default(bool)));
+        private int value;
 
-        public static readonly DependencyProperty OtherProperty = DependencyProperty.RegisterAttached(
-            ""Other"",
-            typeof(string),
-            typeof(Foo),
-            new FrameworkPropertyMetadata(
-                ""abc"", 
-                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsArrange, 
-                OnOtherChanged, 
-                CoerceOther));
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        private static readonly DependencyPropertyKey ReadOnlyPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
-            ""ReadOnly"",
-            typeof(bool),
-            typeof(Foo),
-            new PropertyMetadata(default(bool)));
+        public int Squared => this.Value * this.Value;
 
-        public static readonly DependencyProperty ReadOnlyProperty = ReadOnlyPropertyKey.DependencyProperty;
-
-        public static void SetBar(FrameworkElement element, bool value)
-        {
-            element.SetValue(BarProperty, BooleanBoxes.Box(value));
-        }
-
-        public static bool GetBar(FrameworkElement element)
-        {
-            return (bool)element.GetValue(BarProperty);
-        }
-
-        public static void SetOther(this DependencyObject element, string value)
-        {
-            element.SetValue(OtherProperty, value);
-        }
-
-        [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
-        [AttachedPropertyBrowsableForType(typeof(DependencyObject))]
-        public static string GetOther(this DependencyObject element)
-        {
-            return (string)element.GetValue(OtherProperty);
-        }
-
-        private static void SetReadOnly(this Control element, bool value)
-        {
-            element.SetValue(ReadOnlyPropertyKey, value);
-        }
-
-        [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
-        [AttachedPropertyBrowsableForType(typeof(Control))]
-        public static bool GetReadOnly(this Control element)
-        {
-            return (bool)element.GetValue(ReadOnlyProperty);
-        }
-
-        private static object CoerceOther(DependencyObject d, object basevalue)
-        {
-            // very strange stuff here, tests things.
-            d.SetValue(OtherProperty, basevalue);
-            return d.GetValue(BarProperty);
-        }
-
-        private static void OnOtherChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            d.SetCurrentValue(BarProperty, true);
-            d.SetValue(ReadOnlyPropertyKey, true);
-        }
-    }";
-
-            var fooControlCode = @"
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Media;
-
-    public class FooControl : FrameworkElement
-    {
-        public static readonly DependencyProperty DoubleValueProperty = DependencyProperty.Register(
-            nameof(DoubleValue),
-            typeof(double),
-            typeof(FooControl));
-
-        public static readonly DependencyProperty IntValueProperty = DependencyProperty.Register(
-            nameof(IntValue),
-            typeof(int),
-            typeof(FooControl),
-            new FrameworkPropertyMetadata(
-                default(int),
-                FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure,
-                OnIntValueChanged,
-                CoerceIntValue),
-            IntValueValidateValue);
-
-        public static readonly DependencyProperty BarProperty = Foo.BarProperty.AddOwner(typeof(FooControl));
-
-        private static readonly DependencyPropertyKey ReadOnlyValuePropertyKey = DependencyProperty.RegisterReadOnly(
-            nameof(ReadOnlyValue),
-            typeof(string),
-            typeof(FooControl),
-            new PropertyMetadata(default(string)));
-
-        public static readonly DependencyProperty ReadOnlyValueProperty = ReadOnlyValuePropertyKey.DependencyProperty;
-
-        public static readonly DependencyProperty BrushProperty = DependencyProperty.Register(
-            nameof(Brush),
-            typeof(Brush),
-            typeof(FooControl),
-            new PropertyMetadata(default(Brush)));
-
-        public double DoubleValue
-        {
-            get { return (double)this.GetValue(DoubleValueProperty); }
-            set { this.SetValue(DoubleValueProperty, value); }
-        }
-
-        public int IntValue
-        {
-            get { return (int)this.GetValue(IntValueProperty); }
-            set { this.SetValue(IntValueProperty, value); }
-        }
-
-        public bool Bar
-        {
-            get { return (bool)this.GetValue(BarProperty); }
-            set { this.SetValue(BarProperty, value); }
-        }
-
-        public string ReadOnlyValue
+        public int Value
         {
             get
             {
-                return (string)this.GetValue(ReadOnlyValueProperty);
+                return this.value;
             }
-            protected set
+
+            set
             {
-                this.SetValue(ReadOnlyValuePropertyKey, value);
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(Squared));
             }
         }
 
-        public Brush Brush
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            get { return (Brush)this.GetValue(BrushProperty); }
-            set { this.SetValue(BrushProperty, value); }
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        public void UpdateBrush(Brush brush)
-        {
-            this.SetCurrentValue(BrushProperty, brush?.GetAsFrozen());
-            this.SetValue(BrushProperty, brush?.GetAsFrozen());
-        }
-
-        public void Meh(DependencyProperty property, object value)
-        {
-            this.SetValue(property, value);
-            this.SetCurrentValue(property, value);
-        }
-
-        private static void OnIntValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            d.SetCurrentValue(BarProperty, true);
-            d.SetValue(ReadOnlyValuePropertyKey, ""abc"");
-        }
-
-        private static object CoerceIntValue(DependencyObject d, object basevalue)
-        {
-            // very strange stuff here, tests things.
-            d.SetValue(BarProperty, basevalue);
-            return d.GetValue(BarProperty);
-        }
-
-        private static bool IntValueValidateValue(object value)
-        {
-            return true;
-        }
-    }";
-            AnalyzerAssert.Valid(analyzer, fooCode, fooControlCode, booleanBoxesCode);
+    }
+}";
+            AnalyzerAssert.Valid(analyzer, viewModelBaseCode, viewModelCode);
         }
     }
 }

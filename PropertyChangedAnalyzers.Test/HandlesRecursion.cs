@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test
+namespace PropertyChangedAnalyzers.Test
 {
     using System;
     using System.Collections.Generic;
@@ -37,9 +37,9 @@ namespace RoslynSandbox.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
-            return this.SetValue(ref field, newValue, propertyName);
+            return this.TrySet(ref field, newValue, propertyName);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -61,7 +61,7 @@ namespace RoslynSandbox.Client
         public int Value2
         {
             get { return this.value2; }
-            set { this.SetValue(ref this.value2, value); }
+            set { this.TrySet(ref this.value2, value); }
         }
     }
 }";

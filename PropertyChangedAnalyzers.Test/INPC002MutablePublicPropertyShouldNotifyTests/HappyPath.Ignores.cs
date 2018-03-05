@@ -183,7 +183,7 @@ namespace RoslynSandbox
         public int Bar
         {
             get { return (int) this.GetValue(BarProperty); }
-            set { this.SetValue(BarProperty, value); }
+            set { this.TrySet(BarProperty, value); }
         }
     }
 }";

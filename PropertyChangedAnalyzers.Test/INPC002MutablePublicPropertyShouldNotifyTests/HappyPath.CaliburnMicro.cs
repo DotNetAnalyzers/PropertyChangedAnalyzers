@@ -53,7 +53,7 @@ namespace RoslynSandbox
         public int Value
         {
             get => return value;
-            set => this.SetValue(ref this.value, value);
+            set => this.TrySet(ref this.value, value);
         }
     }
 }";

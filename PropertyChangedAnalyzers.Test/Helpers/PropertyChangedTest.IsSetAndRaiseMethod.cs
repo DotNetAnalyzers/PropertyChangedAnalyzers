@@ -110,7 +110,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -133,7 +133,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("SetValue");
+                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
             }
@@ -170,7 +170,7 @@ namespace RoslynSandbox
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected virtual bool SetValue<T>(ref T field, T value, Action OnChanging = null, Action OnChanged = null, [CallerMemberName]string propertyName = null)
+        protected virtual bool TrySet<T>(ref T field, T value, Action OnChanging = null, Action OnChanged = null, [CallerMemberName]string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
                 return false;
@@ -191,7 +191,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("SetValue");
+                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
             }
@@ -230,7 +230,7 @@ namespace RoslynSandbox
 {
     public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
     {
-        public bool SetValue<T>(ref T oldValue, T newValue, string propertyName = null)
+        public bool TrySet<T>(ref T oldValue, T newValue, string propertyName = null)
         {
             return base.Set(ref oldValue, newValue, propertyName);
         }
@@ -241,7 +241,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("SetValue");
+                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
             }
@@ -260,9 +260,9 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
-            if (this.SetValue(ref field, newValue, propertyName))
+            if (this.TrySet(ref field, newValue, propertyName))
             {
                 this.OnPropertyChanged(propertyName);
             }
@@ -281,7 +281,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("SetValue");
+                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(false, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
             }
@@ -300,9 +300,9 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
-            return this.SetValue(ref field, newValue, propertyName);
+            return this.TrySet(ref field, newValue, propertyName);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -316,7 +316,7 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("SetValue");
+                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(false, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
             }

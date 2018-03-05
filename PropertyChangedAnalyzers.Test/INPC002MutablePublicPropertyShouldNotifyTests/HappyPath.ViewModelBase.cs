@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -18,7 +18,7 @@ namespace RoslynSandbox.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -50,7 +50,7 @@ namespace RoslynSandbox.Client
         public int Value
         {
             get { return value; }
-            set { this.SetValue(ref this.value, value); }
+            set { this.TrySet(ref this.value, value); }
         }
     }
 }";
@@ -71,7 +71,7 @@ namespace RoslynSandbox
         public int Value
         {
             get => return value;
-            set => this.SetValue(ref this.value, value);
+            set => this.TrySet(ref this.value, value);
         }
     }
 }";

@@ -22,7 +22,7 @@ namespace RoslynSandbox.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -168,7 +168,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void BeforeSetValue()
+        public void BeforeTrySet()
         {
             var testCode = @"
 namespace RoslynSandbox.Client
@@ -185,7 +185,7 @@ namespace RoslynSandbox.Client
             set
             {
                 ↓this.OnPropertyChanged(nameof(this.Greeting));
-                this.SetValue(ref this.name, value)
+                this.TrySet(ref this.name, value)
             }
         }
     }

@@ -25,7 +25,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -51,7 +51,7 @@ namespace RoslynSandbox
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
                 Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
-                Assert.AreEqual("SetValue", method.Name);
+                Assert.AreEqual("TrySet", method.Name);
             }
 
             [Test]
@@ -86,7 +86,7 @@ namespace RoslynSandbox
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected virtual bool SetValue<T>(ref T field, T value, Action OnChanging = null, Action OnChanged = null, [CallerMemberName]string propertyName = null)
+        protected virtual bool TrySet<T>(ref T field, T value, Action OnChanging = null, Action OnChanged = null, [CallerMemberName]string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
                 return false;
@@ -110,7 +110,7 @@ namespace RoslynSandbox
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ObservableObject");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
                 Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
-                Assert.AreEqual("SetValue", method.Name);
+                Assert.AreEqual("TrySet", method.Name);
             }
 
             [Test]
@@ -148,7 +148,7 @@ namespace RoslynSandbox
 {
     public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
     {
-        public bool SetValue<T>(ref T oldValue, T newValue, string propertyName = null)
+        public bool TrySet<T>(ref T oldValue, T newValue, string propertyName = null)
         {
             return base.Set(ref oldValue, newValue, propertyName);
         }
@@ -162,7 +162,7 @@ namespace RoslynSandbox
                 var typeDeclaration = syntaxTree.FindClassDeclaration("FooBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
                 Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
-                Assert.AreEqual("SetValue", method.Name);
+                Assert.AreEqual("TrySet", method.Name);
             }
 
             [Test]
@@ -179,9 +179,9 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
-            if (this.SetValue(ref field, newValue, propertyName))
+            if (this.TrySet(ref field, newValue, propertyName))
             {
                 this.OnPropertyChanged(propertyName);
             }
@@ -219,9 +219,9 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
-            return this.SetValue(ref field, newValue, propertyName);
+            return this.TrySet(ref field, newValue, propertyName);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
