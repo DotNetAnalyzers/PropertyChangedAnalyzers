@@ -2,7 +2,7 @@
 
 BenchmarkDotNet=v0.10.13, OS=Windows 7 SP1 (6.1.7601.0)
 Intel Xeon CPU E5-2637 v4 3.50GHz, 2 CPU, 16 logical cores and 8 physical cores
-Frequency=3410117 Hz, Resolution=293.2451 ns, Timer=TSC
+Frequency=3410087 Hz, Resolution=293.2477 ns, Timer=TSC
   [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2558.0
   DefaultJob : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2558.0
 
@@ -10,4 +10,4 @@ Frequency=3410117 Hz, Resolution=293.2451 ns, Timer=TSC
 ```
 |                        Method |     Mean |    Error |   StdDev |  Gen 0 | Allocated |
 |------------------------------ |---------:|---------:|---------:|-------:|----------:|
-| RunOnPropertyChangedAnalyzers | 220.5 ns | 4.374 ns | 9.227 ns | 0.0699 |     440 B |
+| RunOnPropertyChangedAnalyzers | 219.7 ns | 4.083 ns | 3.619 ns | 0.0699 |     440 B |
