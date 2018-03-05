@@ -75,7 +75,7 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                if (Property.TrySingleSetAndRaiseInSetter(setter, semanticModel, context.CancellationToken, out var setAndRaise))
+                if (Property.TryFindSingleSetAndRaise(setter, semanticModel, context.CancellationToken, out var setAndRaise))
                 {
                     if (setAndRaise.Parent is ExpressionStatementSyntax setAndRaiseStatement)
                     {

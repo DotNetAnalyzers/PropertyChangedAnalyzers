@@ -11,6 +11,7 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            INPC005CheckIfDifferentBeforeNotifying.Descriptor,
             INPC009DontRaiseChangeForMissingProperty.Descriptor,
             INPC016NotifyAfterUpdate.Descriptor);
 
@@ -41,13 +42,40 @@ namespace PropertyChangedAnalyzers
                     }
 
                     if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
-                        setter.IsKind(SyntaxKind.SetAccessorDeclaration) &&
-                        Property.TrySingleAssignmentInSetter(setter, out var assignment))
+                        setter.IsKind(SyntaxKind.SetAccessorDeclaration))
                     {
-                        if (!AreInSameBlock(assignment, invocation) ||
-                            assignment.SpanStart > invocation.SpanStart)
+                        if (Property.TrySingleAssignmentInSetter(setter, out var assignment))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, invocation.GetLocation()));
+                            if (!AreInSameBlock(assignment, invocation) ||
+                                assignment.SpanStart > invocation.SpanStart)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, invocation.GetLocation()));
+                            }
+                        }
+                        else if (Property.TryFindSingleSetAndRaise(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
+                        {
+                            if (!AreInSameBlock(setAndRaise, invocation) ||
+                                setAndRaise.SpanStart > invocation.SpanStart)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, invocation.GetLocation()));
+                            }
+
+                            if (setAndRaise.Parent is IfStatementSyntax ifStatement &&
+                                !ifStatement.Statement.Contains(invocation))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, invocation.GetLocation()));
+                            }
+                            else if (setAndRaise.Parent is PrefixUnaryExpressionSyntax unary &&
+                                unary.IsKind(SyntaxKind.LogicalNotExpression) &&
+                                unary.Parent is IfStatementSyntax ifNegated &&
+                                ifNegated.Span.Contains(invocation.Span))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, invocation.GetLocation()));
+                            }
+                            else if (invocation.FirstAncestor<IfStatementSyntax>() == null)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, invocation.GetLocation()));
+                            }
                         }
                     }
                 }

@@ -268,7 +268,7 @@ namespace PropertyChangedAnalyzers
 
             if (property.TryGetSetAccessorDeclaration(out var setter))
             {
-                if (TrySingleSetAndRaiseInSetter(setter, semanticModel, cancellationToken, out var invocation))
+                if (TryFindSingleSetAndRaise(setter, semanticModel, cancellationToken, out var invocation))
                 {
                     return TryGetBackingField(invocation.ArgumentList.Arguments[0].Expression, semanticModel, cancellationToken, out field);
                 }
@@ -282,7 +282,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TrySingleSetAndRaiseInSetter(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax invocation)
+        internal static bool TryFindSingleSetAndRaise(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax invocation)
         {
             invocation = null;
             if (setter == null)

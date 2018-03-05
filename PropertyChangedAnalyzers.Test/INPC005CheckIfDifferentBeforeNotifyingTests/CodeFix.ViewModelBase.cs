@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -7,6 +7,8 @@
     {
         internal class ViewModelBase
         {
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC005");
+
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
 {
@@ -174,7 +176,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedProperty()
+            public void NoIfForSetValue()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -219,8 +221,91 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+            }
+
+            [Test]
+            public void OutsideIfSetValue()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.SetValue(ref this.name, value))
+                {
+                }
+
+                ↓this.OnPropertyChanged(nameof(this.Greeting));
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.SetValue(ref this.name, value))
+                {
+                    this.OnPropertyChanged(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+
+                AnalyzerAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+            }
+
+            [Test]
+            public void InsideIfNegatedSetValue()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (!this.SetValue(ref this.name, value))
+                {
+                    ↓this.OnPropertyChanged(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+
+                AnalyzerAssert.NoFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode });
             }
 
             [Test]

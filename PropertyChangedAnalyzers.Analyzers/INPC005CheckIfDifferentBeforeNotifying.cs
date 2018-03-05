@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers
     {
         public const string DiagnosticId = "INPC005";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Check if value is different before notifying.",
             messageFormat: "Check if value is different before notifying.",
@@ -111,24 +111,6 @@ namespace PropertyChangedAnalyzers
 
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
                 }
-            }
-            else if (Property.TrySingleSetAndRaiseInSetter(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
-            {
-                if (setAndRaise.Parent is IfStatementSyntax ifStatement1 &&
-                    ifStatement1.Span.Contains(invocation.Span))
-                {
-                    return;
-                }
-
-                if (setAndRaise.Parent is PrefixUnaryExpressionSyntax unary &&
-                    unary.IsKind(SyntaxKind.LogicalNotExpression) &&
-                    unary.Parent is IfStatementSyntax ifStatement2 &&
-                    !ifStatement2.Span.Contains(invocation.Span))
-                {
-                    return;
-                }
-
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
             }
         }
 

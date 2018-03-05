@@ -8,6 +8,43 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
         private static readonly InvocationAnalyzer Analyzer = new InvocationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC016");
 
+        private const string ViewModelBaseCode = @"
+namespace RoslynSandbox.Core
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq.Expressions;
+    using System.Runtime.CompilerServices;
+
+    public abstract class ViewModelBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+        {
+            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
         [Test]
         public void NotifiesBeforeAssign()
         {
@@ -86,6 +123,33 @@ namespace RoslynSandbox
 }";
 
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+        }
+
+        [Test]
+        public void BeforeSetValue()
+        {
+            var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                ↓this.OnPropertyChanged(nameof(this.Greeting));
+                this.SetValue(ref this.name, value)
+            }
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, ViewModelBaseCode, testCode);
         }
     }
 }

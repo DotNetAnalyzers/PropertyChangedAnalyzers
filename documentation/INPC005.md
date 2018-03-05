@@ -21,7 +21,7 @@
 </tr>
 <tr>
   <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC005CheckIfDifferentBeforeNotifying.cs">INPC005CheckIfDifferentBeforeNotifying</a></td>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/NodeAnalyzers/InvocationAnalyzer.cs">InvocationAnalyzer</a></td>
 </tr>
 </table>
 <!-- end generated table -->
