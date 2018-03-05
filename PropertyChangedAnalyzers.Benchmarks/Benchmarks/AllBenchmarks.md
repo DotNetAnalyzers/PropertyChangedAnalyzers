@@ -8,16 +8,16 @@ Frequency=3410087 Hz, Resolution=293.2477 ns, Timer=TSC
 
 
 ```
-|                                 Method |           Mean |          Error |         StdDev |         Median |   Gen 0 |  Gen 1 | Allocated |
-|--------------------------------------- |---------------:|---------------:|---------------:|---------------:|--------:|-------:|----------:|
-| INPC001ImplementINotifyPropertyChanged |   218,477.0 ns |   4,324.154 ns |   4,979.702 ns |   217,967.3 ns |  3.4180 |      - |   22026 B |
-|       INPC003NotifyWhenPropertyChanges | 2,631,209.6 ns |  51,928.661 ns |  93,638.088 ns | 2,594,859.0 ns |       - |      - |   29881 B |
-|             INPC004UseCallerMemberName |   299,446.3 ns |   5,889.234 ns |   6,782.050 ns |   298,723.8 ns |       - |      - |     540 B |
-|                  INPC007MissingInvoker |       214.3 ns |       4.280 ns |       7.827 ns |       213.1 ns |  0.0699 |      - |     440 B |
-|             INPC008StructMustNotNotify |       217.2 ns |       4.163 ns |       5.113 ns |       217.6 ns |  0.0699 |      - |     440 B |
-|                      INPC011DontShadow |       224.1 ns |       4.501 ns |       8.116 ns |       224.1 ns |  0.0699 |      - |     440 B |
-| INPC014PreferSettingBackingFieldInCtor |   316,963.9 ns |   6,259.119 ns |   9,927.626 ns |   315,165.5 ns |       - |      - |     444 B |
-|                       ArgumentAnalyzer | 7,844,487.9 ns | 262,584.973 ns | 770,116.271 ns | 7,546,467.3 ns | 46.8750 |      - |  344938 B |
-|                    IfStatementAnalyzer |   975,980.1 ns |   8,632.159 ns |  18,395.834 ns |   976,249.4 ns |       - |      - |     448 B |
-|                     InvocationAnalyzer | 1,126,546.5 ns |  19,670.516 ns |  17,437.399 ns | 1,118,427.9 ns |       - |      - |    2224 B |
-|            PropertyDeclarationAnalyzer |    30,515.1 ns |     605.425 ns |   1,594.931 ns |    29,699.7 ns |  0.7324 | 0.0610 |    4886 B |
+|                                 Method |           Mean |           Error |          StdDev |         Median |   Gen 0 |  Gen 1 | Allocated |
+|--------------------------------------- |---------------:|----------------:|----------------:|---------------:|--------:|-------:|----------:|
+| INPC001ImplementINotifyPropertyChanged |   311,891.5 ns |   9,768.6048 ns |  28,649.6269 ns |   310,244.6 ns |  4.3945 |      - |   28748 B |
+|       INPC003NotifyWhenPropertyChanges | 3,734,101.8 ns | 208,670.4805 ns | 615,269.6197 ns | 3,521,620.5 ns |       - |      - |   30070 B |
+|             INPC004UseCallerMemberName |   408,991.2 ns |   9,724.7468 ns |  27,902.1217 ns |   409,926.7 ns |       - |      - |     540 B |
+|                  INPC007MissingInvoker |       260.2 ns |       8.4639 ns |      24.5552 ns |       261.3 ns |  0.0696 |      - |     440 B |
+|             INPC008StructMustNotNotify |       359.6 ns |       0.3593 ns |       0.2377 ns |       359.5 ns |  0.0699 |      - |     440 B |
+|                      INPC011DontShadow |       240.9 ns |       6.9438 ns |      20.4740 ns |       241.2 ns |  0.0699 |      - |     440 B |
+| INPC014PreferSettingBackingFieldInCtor |   367,947.1 ns |  10,146.7161 ns |  29,758.5618 ns |   366,897.0 ns |       - |      - |     444 B |
+|                       ArgumentAnalyzer | 7,116,075.5 ns | 250,500.8566 ns | 738,607.4277 ns | 7,075,075.2 ns | 23.4375 |      - |  170229 B |
+|                    IfStatementAnalyzer |   777,693.6 ns |  21,504.2387 ns |  63,068.2095 ns |   767,919.2 ns |       - |      - |     448 B |
+|                     InvocationAnalyzer | 1,360,934.1 ns |  39,253.9898 ns | 115,125.1570 ns | 1,358,831.1 ns |       - |      - |    2320 B |
+|            PropertyDeclarationAnalyzer |    36,393.1 ns |   1,026.5145 ns |   3,026.7011 ns |    36,146.1 ns |  0.7324 | 0.0610 |    4958 B |
