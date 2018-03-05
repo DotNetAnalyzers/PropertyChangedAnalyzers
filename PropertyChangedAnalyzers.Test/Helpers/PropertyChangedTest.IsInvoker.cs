@@ -147,9 +147,10 @@ namespace RoslynSandbox
                 Assert.AreEqual(false, PropertyChanged.IsInvoker(invocation, semanticModel, CancellationToken.None));
             }
 
-            [TestCase("Bar();", false)]
-            [TestCase("Bar1();", false)]
-            [TestCase("Bar2();", false)]
+            [TestCase("Bar1()", false)]
+            [TestCase("Bar2()", false)]
+            [TestCase("Bar3()", false)]
+            [TestCase("Bar4()", false)]
             [TestCase("OnPropertyChanged();", true)]
             public void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, bool expected)
             {
@@ -161,10 +162,14 @@ namespace RoslynSandbox
     {
         public Foo()
         {
-            Bar();
+            Bar1();
+            var a = Bar2();
+            a = Bar3();
+            if (Bar4())
+            {
+            }
+
             OnPropertyChanged();
-            var a = Bar1();
-            a = Bar2();
         }
         
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
@@ -174,13 +179,15 @@ namespace RoslynSandbox
             PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
 
-        private void Bar()
+        private void Bar1()
         {
         }
 
-        private int Bar1() => 1;
+        private int Bar2() => 1;
 
-        private int Bar2() => 2;
+        private int Bar3() => 2;
+
+        private bool Bar4() => true;
     }
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());

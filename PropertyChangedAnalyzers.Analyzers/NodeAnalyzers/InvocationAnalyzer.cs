@@ -32,10 +32,12 @@ namespace PropertyChangedAnalyzers
             {
                 if ((invocation.ArgumentList == null ||
                      invocation.ArgumentList.Arguments.Count == 0) &&
-                    invocation.FirstAncestor<AccessorDeclarationSyntax>() == null &&
                     PropertyChanged.IsInvoker(invocation, context.SemanticModel, context.CancellationToken))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, invocation.GetLocation()));
+                    if (invocation.FirstAncestor<AccessorDeclarationSyntax>() == null)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, invocation.GetLocation()));
+                    }
                 }
             }
         }

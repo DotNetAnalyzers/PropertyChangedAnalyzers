@@ -294,6 +294,12 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
+            if (invocation.Parent is IfStatementSyntax ifStatement &&
+                ifStatement.Condition.Contains(invocation))
+            {
+                return false;
+            }
+
             if (invocation.Expression is IdentifierNameSyntax ||
                (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 memberAccess.Name is IdentifierNameSyntax &&
