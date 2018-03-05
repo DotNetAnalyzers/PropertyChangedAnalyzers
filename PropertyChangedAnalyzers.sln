@@ -44,6 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916
 		documentation\INPC013.md = documentation\INPC013.md
 		documentation\INPC014.md = documentation\INPC014.md
 		documentation\INPC015.md = documentation\INPC015.md
+		documentation\INPC016.md = documentation\INPC016.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers.Test", "PropertyChangedAnalyzers.Test\PropertyChangedAnalyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"

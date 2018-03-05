@@ -58,16 +58,8 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (Property.TrySingleAssignmentInSetter(setter, out var assignment) &&
-                Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
+            if (Property.TryFindValue(setter, context.SemanticModel, context.CancellationToken, out var value))
             {
-                if (!AreInSameBlock(assignment, invocation) ||
-                    assignment.SpanStart > invocation.SpanStart)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
-                    return;
-                }
-
                 using (var walker = IfStatementWalker.Borrow(setter))
                 {
                     foreach (var ifStatement in walker.IfStatements)
@@ -138,19 +130,6 @@ namespace PropertyChangedAnalyzers
 
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, invocation.FirstAncestorOrSelf<StatementSyntax>()?.GetLocation() ?? invocation.GetLocation()));
             }
-        }
-
-        private static bool AreInSameBlock(SyntaxNode node1, SyntaxNode node2)
-        {
-            if (node1?.FirstAncestor<BlockSyntax>() is BlockSyntax block1 &&
-                node2?.FirstAncestor<BlockSyntax>() is BlockSyntax block2)
-            {
-                return block1 == block2 ||
-                       block1.Contains(block2) ||
-                       block2.Contains(block1);
-            }
-
-            return false;
         }
 
         private static bool IsFirstNotifyPropertyChange(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)

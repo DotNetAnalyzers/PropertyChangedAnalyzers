@@ -11,7 +11,8 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            INPC009DontRaiseChangeForMissingProperty.Descriptor);
+            INPC009DontRaiseChangeForMissingProperty.Descriptor,
+            INPC016NotifyAfterUpdate.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -30,16 +31,40 @@ namespace PropertyChangedAnalyzers
 
             if (context.Node is InvocationExpressionSyntax invocation)
             {
-                if ((invocation.ArgumentList == null ||
-                     invocation.ArgumentList.Arguments.Count == 0) &&
-                    PropertyChanged.IsPropertyChangedInvoker(invocation, context.SemanticModel, context.CancellationToken))
+                if (PropertyChanged.IsPropertyChangedInvoker(invocation, context.SemanticModel, context.CancellationToken))
                 {
-                    if (invocation.FirstAncestor<AccessorDeclarationSyntax>() == null)
+                    if ((invocation.ArgumentList == null ||
+                         invocation.ArgumentList.Arguments.Count == 0) &&
+                        invocation.FirstAncestor<AccessorDeclarationSyntax>() == null)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, invocation.GetLocation()));
                     }
+
+                    if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
+                        setter.IsKind(SyntaxKind.SetAccessorDeclaration) &&
+                        Property.TrySingleAssignmentInSetter(setter, out var assignment))
+                    {
+                        if (!AreInSameBlock(assignment, invocation) ||
+                            assignment.SpanStart > invocation.SpanStart)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, invocation.GetLocation()));
+                        }
+                    }
                 }
             }
+        }
+
+        private static bool AreInSameBlock(SyntaxNode node1, SyntaxNode node2)
+        {
+            if (node1?.FirstAncestor<BlockSyntax>() is BlockSyntax block1 &&
+                node2?.FirstAncestor<BlockSyntax>() is BlockSyntax block2)
+            {
+                return block1 == block2 ||
+                       block1.Contains(block2) ||
+                       block2.Contains(block1);
+            }
+
+            return false;
         }
     }
 }

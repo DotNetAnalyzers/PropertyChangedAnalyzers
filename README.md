@@ -77,6 +77,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC015.md">INPC015</a></td>
   <td>Property is recursive.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC016.md">INPC016</a></td>
+  <td>Notify after update.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

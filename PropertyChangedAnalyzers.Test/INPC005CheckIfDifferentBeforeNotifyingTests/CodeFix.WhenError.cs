@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
@@ -251,46 +251,6 @@ namespace RoslynSandbox
                 }
 
                 ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-            }
-        }
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
-    }
-}";
-
-                AnalyzerAssert.NoFix<INPC005CheckIfDifferentBeforeNotifying, CheckIfDifferentBeforeNotifyFixProvider>(testCode);
-            }
-
-            [Test]
-            public void AssigningAfter()
-            {
-                var testCode = @"
-namespace RoslynSandbox
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private int bar;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int Bar
-        {
-            get { return this.bar; }
-            set
-            {
-                if (value == this.bar)
-                {
-                    return;
-                }
-
-                ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-                this.bar = value;
             }
         }
 

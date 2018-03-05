@@ -2,18 +2,18 @@ namespace PropertyChangedAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
-    internal static class INPC015PropertyIsRecursive
+    internal static class INPC016NotifyAfterUpdate
     {
-        public const string DiagnosticId = "INPC015";
+        public const string DiagnosticId = "INPC016";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
-            title: "Property is recursive.",
-            messageFormat: "Property is recursive {0}.",
+            title: "Notify after update.",
+            messageFormat: "Notify after updating the backing field.",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
-            description: "Property is recursive.",
+            description: "Notify after updating the backing field.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
     }
 }
