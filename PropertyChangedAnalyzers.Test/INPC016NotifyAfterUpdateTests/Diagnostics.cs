@@ -48,7 +48,7 @@ namespace RoslynSandbox.Core
 #pragma warning restore SA1203 // Constants must appear before fields
 
         [Test]
-        public void NotifiesBeforeAssign()
+        public void OnPropertyChangedBeforeAssign()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -88,7 +88,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void NotifiesBeforeAssignPropertyChangedEventArgs()
+        public void OnPropertyChangedPropertyChangedEventArgsBeforeAssign()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -113,6 +113,46 @@ namespace RoslynSandbox
                 }
 
                 ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.bar = value;
+            }
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+        }
+
+        [Test]
+        public void PropertyChangedInvokeBeforeAssign()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                ↓this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Bar)));
                 this.bar = value;
             }
         }
