@@ -1,14 +1,15 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using Microsoft.CodeAnalysis;
 
     internal sealed class PooledHashSet<T> : IDisposable
     {
         private static readonly ConcurrentQueue<PooledHashSet<T>> Cache = new ConcurrentQueue<PooledHashSet<T>>();
-        private readonly HashSet<T> inner = new HashSet<T>();
+        private readonly HashSet<T> inner = new HashSet<T>(GetComparer());
 
         private int refCount;
 
@@ -53,6 +54,66 @@
 
             set.refCount++;
             return set;
+        }
+
+        private static IEqualityComparer<T> GetComparer()
+        {
+            if (typeof(T) == typeof(IAssemblySymbol))
+            {
+                return (IEqualityComparer<T>)AssemblySymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(IEventSymbol))
+            {
+                return (IEqualityComparer<T>)EventSymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(IFieldSymbol))
+            {
+                return (IEqualityComparer<T>)FieldSymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(ILocalSymbol))
+            {
+                return (IEqualityComparer<T>)LocalSymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(IMethodSymbol))
+            {
+                return (IEqualityComparer<T>)MethodSymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(INamedTypeSymbol))
+            {
+                return (IEqualityComparer<T>)NamedTypeSymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(INamespaceSymbol))
+            {
+                return (IEqualityComparer<T>)NamespaceSymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(IParameterSymbol))
+            {
+                return (IEqualityComparer<T>)ParameterSymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(IPropertySymbol))
+            {
+                return (IEqualityComparer<T>)PropertySymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(ISymbol))
+            {
+                return (IEqualityComparer<T>)SymbolComparer.Default;
+            }
+
+            if (typeof(T) == typeof(ITypeSymbol))
+            {
+                return (IEqualityComparer<T>)TypeSymbolComparer.Default;
+            }
+
+            return EqualityComparer<T>.Default;
         }
 
         [Conditional("DEBUG")]
