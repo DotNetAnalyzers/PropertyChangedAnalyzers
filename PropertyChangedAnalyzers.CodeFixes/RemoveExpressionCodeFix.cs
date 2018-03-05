@@ -61,7 +61,7 @@ namespace PropertyChangedAnalyzers
                 {
                     editor.ReplaceNode(
                         invocation,
-                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, property.Name, usesUnderscoreNames).TrimEnd(';'))
+                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, property?.Name, usesUnderscoreNames).TrimEnd(';'))
                                      .WithSimplifiedNames()
                                      .WithLeadingElasticLineFeed()
                                      .WithTrailingElasticLineFeed()

@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Threading;
 
@@ -8,14 +8,6 @@
 
     internal static class ArgumentSyntaxExt
     {
-        internal static bool TryGetSymbol<T>(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out T result)
-            where T : class, ISymbol
-        {
-            result = semanticModel.GetSymbolSafe(argument.Expression, cancellationToken) as T;
-
-            return result != null;
-        }
-
         internal static bool TryGetStringValue(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
@@ -55,26 +47,6 @@
             {
                 result = string.Empty;
                 return true;
-            }
-
-            return false;
-        }
-
-        internal static bool TryGetTypeofValue(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out ITypeSymbol result)
-        {
-            result = null;
-            if (argument?.Expression == null || semanticModel == null)
-            {
-                return false;
-            }
-
-            if (argument.Expression is TypeOfExpressionSyntax typeOf)
-            {
-                var typeSyntax = typeOf.Type;
-                var typeInfo = semanticModel.SemanticModelFor(typeSyntax)
-                                            .GetTypeInfo(typeSyntax, cancellationToken);
-                result = typeInfo.Type;
-                return result != null;
             }
 
             return false;
