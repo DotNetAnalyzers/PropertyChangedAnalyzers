@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers
     {
         internal static readonly ObjectType Object = new ObjectType();
         internal static readonly StringType String = new StringType();
-        internal static readonly QualifiedType Boolean = Create("System.Boolean");
+        internal static readonly QualifiedType Boolean = Create("System.Boolean", "bool");
         internal static readonly QualifiedType Attribute = Create("System.Attribute");
         internal static readonly NullableType Nullable = new NullableType();
         internal static readonly NullableOfTType NullableOfT = new NullableOfTType();
@@ -46,9 +46,9 @@ namespace PropertyChangedAnalyzers
         internal static readonly MvvmCrossCoreMvxNotifyPropertyChanged MvvmCrossCoreMvxNotifyPropertyChanged = new MvvmCrossCoreMvxNotifyPropertyChanged();
         internal static readonly MicrosoftPracticesPrismMvvmBindableBase MicrosoftPracticesPrismMvvmBindableBase = new MicrosoftPracticesPrismMvvmBindableBase();
 
-        private static QualifiedType Create(string qualifiedName)
+        private static QualifiedType Create(string qualifiedName, string alias = null)
         {
-            return new QualifiedType(qualifiedName);
+            return new QualifiedType(qualifiedName, alias);
         }
     }
 }
