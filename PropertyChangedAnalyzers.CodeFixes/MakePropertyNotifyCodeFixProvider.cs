@@ -143,7 +143,7 @@ namespace PropertyChangedAnalyzers
                                             .AppendLine("        }")
                                             .AppendLine()
                                             .AppendLine($"        {fieldAccess} = value;")
-                                            .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)}")
+                                            .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property.Name, usesUnderscoreNames)}")
                                             .AppendLine("    }")
                                             .AppendLine("}")
                                             .Return();
@@ -250,7 +250,7 @@ namespace PropertyChangedAnalyzers
                                                 .AppendLine("        }")
                                                 .AppendLine()
                                                 .AppendLine($"        {assignment};")
-                                                .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames)}")
+                                                .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property.Name, usesUnderscoreNames)}")
                                                 .AppendLine("    }")
                                                 .AppendLine("}")
                                                 .Return();
@@ -289,7 +289,7 @@ namespace PropertyChangedAnalyzers
                     var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
                     var notifyStatement = SyntaxFactory
                                           .ParseStatement(
-                                              Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames))
+                                              Snippet.OnPropertyChanged(invoker, property.Name, usesUnderscoreNames))
                                           .WithSimplifiedNames()
                                           .WithLeadingElasticLineFeed()
                                           .WithTrailingElasticLineFeed()
@@ -313,7 +313,7 @@ namespace PropertyChangedAnalyzers
                 var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var notifyStatement = SyntaxFactory
-                    .ParseStatement(Snippet.OnPropertyChanged(invoker, property, usesUnderscoreNames))
+                    .ParseStatement(Snippet.OnPropertyChanged(invoker, property.Name, usesUnderscoreNames))
                     .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                     .WithSimplifiedNames()

@@ -56,12 +56,12 @@ namespace PropertyChangedAnalyzers
             var invocation = argument.FirstAncestorOrSelf<InvocationExpressionSyntax>();
             if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, editor.SemanticModel, cancellationToken, out _, out var name) == AnalysisResult.Yes)
             {
-                var propertySymbol = editor.SemanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
-                if (propertySymbol?.Name == name)
+                var property = editor.SemanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
+                if (property?.Name == name)
                 {
                     editor.ReplaceNode(
                         invocation,
-                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, propertySymbol, usesUnderscoreNames).TrimEnd(';'))
+                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, property.Name, usesUnderscoreNames).TrimEnd(';'))
                                      .WithSimplifiedNames()
                                      .WithLeadingElasticLineFeed()
                                      .WithTrailingElasticLineFeed()

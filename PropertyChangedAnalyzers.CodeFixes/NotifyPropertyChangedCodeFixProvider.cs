@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -111,7 +111,13 @@
 
         private static void MakeNotify(DocumentEditor editor, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
         {
-            var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
+            var snippet =
+                assignment.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax
+                    propertyDeclaration &&
+                propertyDeclaration.Identifier.ValueText == propertyName
+                    ? Snippet.OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)
+                    : Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames);
+            var onPropertyChanged = SyntaxFactory.ParseStatement(snippet)
                                                  .WithSimplifiedNames()
                                                  .WithLeadingElasticLineFeed()
                                                  .WithTrailingElasticLineFeed()

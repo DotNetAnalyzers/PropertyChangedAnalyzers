@@ -45,7 +45,7 @@ namespace PropertyChangedAnalyzers
             return $"ReferenceEquals({x}, {y})";
         }
 
-        internal static string OnPropertyChanged(IMethodSymbol invoker, IPropertySymbol property, bool usesUnderscoreNames)
+        internal static string OnPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
         {
             if (invoker.IsCallerMemberName())
             {
@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
                     : $"this.{invoker.Name}();";
             }
 
-            return OnOtherPropertyChanged(invoker, property.Name, usesUnderscoreNames);
+            return OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames);
         }
 
         internal static string OnOtherPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
