@@ -97,7 +97,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.Maybe;
             }
 
-            if (IsInvoker(method, semanticModel, cancellationToken) == AnalysisResult.No)
+            if (IsPropertyChangedInvoker(method, semanticModel, cancellationToken) == AnalysisResult.No)
             {
                 return AnalysisResult.No;
             }
@@ -197,7 +197,7 @@ namespace PropertyChangedAnalyzers
                     if (member is IMethodSymbol candidate &&
                         candidate.IsStatic)
                     {
-                        switch (IsInvoker(candidate, semanticModel, cancellationToken))
+                        switch (IsPropertyChangedInvoker(candidate, semanticModel, cancellationToken))
                         {
                             case AnalysisResult.No:
                                 continue;
@@ -238,7 +238,7 @@ namespace PropertyChangedAnalyzers
                             continue;
                         }
 
-                        switch (IsInvoker(candidate, semanticModel, cancellationToken))
+                        switch (IsPropertyChangedInvoker(candidate, semanticModel, cancellationToken))
                         {
                             case AnalysisResult.No:
                                 continue;
@@ -283,7 +283,7 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool IsInvoker(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsPropertyChangedInvoker(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (invocation == null ||
                 invocation.ArgumentList?.Arguments.Count > 1 ||
@@ -313,7 +313,7 @@ namespace PropertyChangedAnalyzers
                         return false;
                     }
 
-                    return IsInvoker(semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol, semanticModel, cancellationToken) == AnalysisResult.Yes;
+                    return IsPropertyChangedInvoker(semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol, semanticModel, cancellationToken) == AnalysisResult.Yes;
                 }
 
                 return false;
@@ -322,7 +322,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static AnalysisResult IsInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
+        internal static AnalysisResult IsPropertyChangedInvoker(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
         {
             if (@checked?.Add(method) == false)
             {
@@ -456,7 +456,7 @@ namespace PropertyChangedAnalyzers
                             {
                                 using (var set = PooledHashSet<IMethodSymbol>.Borrow(@checked))
                                 {
-                                    return IsInvoker(invokedMethod, semanticModel, cancellationToken, set);
+                                    return IsPropertyChangedInvoker(invokedMethod, semanticModel, cancellationToken, set);
                                 }
                             }
                         }
@@ -525,7 +525,7 @@ namespace PropertyChangedAnalyzers
                 }
 
                 var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-                return IsInvoker(method, semanticModel, cancellationToken) != AnalysisResult.No;
+                return IsPropertyChangedInvoker(method, semanticModel, cancellationToken) != AnalysisResult.No;
             }
 
             if (invocation.ArgumentList?.Arguments.Count == 2 &&

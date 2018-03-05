@@ -32,7 +32,7 @@ namespace PropertyChangedAnalyzers
             {
                 if ((invocation.ArgumentList == null ||
                      invocation.ArgumentList.Arguments.Count == 0) &&
-                    PropertyChanged.IsInvoker(invocation, context.SemanticModel, context.CancellationToken))
+                    PropertyChanged.IsPropertyChangedInvoker(invocation, context.SemanticModel, context.CancellationToken))
                 {
                     if (invocation.FirstAncestor<AccessorDeclarationSyntax>() == null)
                     {
