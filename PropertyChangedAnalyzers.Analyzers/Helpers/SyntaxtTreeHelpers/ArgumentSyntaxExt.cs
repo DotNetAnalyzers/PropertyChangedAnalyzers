@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers
         internal static bool TryGetStringValue(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
             result = null;
-            if (argument?.Expression == null || semanticModel == null)
+            if (argument?.Expression == null)
             {
                 return false;
             }
@@ -41,12 +41,19 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            var symbolInfo = semanticModel.GetSymbolSafe(argument.Expression, cancellationToken);
-            if (symbolInfo?.ContainingType?.Name == "String" &&
-                symbolInfo.Name == "Empty")
+            if (argument.Expression is MemberAccessExpressionSyntax memberAccess &&
+                memberAccess.Name.Identifier.ValueText == "Empty" &&
+                ((memberAccess.Expression is PredefinedTypeSyntax predefinedType &&
+                  predefinedType.Keyword.Text == "string") ||
+                  (memberAccess.Expression is IdentifierNameSyntax identifierName &&
+                   identifierName.Identifier.ValueText == "String")))
             {
-                result = string.Empty;
-                return true;
+                if (semanticModel.GetSymbolSafe(argument.Expression, cancellationToken) is IFieldSymbol field &&
+                    field == KnownSymbol.String.Empty)
+                {
+                    result = string.Empty;
+                    return true;
+                }
             }
 
             return false;
