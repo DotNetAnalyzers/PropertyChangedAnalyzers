@@ -60,21 +60,24 @@ namespace PropertyChangedAnalyzers
                                 context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, invocation.GetLocation()));
                             }
 
-                            if (setAndRaise.Parent is IfStatementSyntax ifStatement &&
-                                !ifStatement.Statement.Contains(invocation))
+                            if (IsFirstCall(invocation))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, invocation.GetLocation()));
-                            }
-                            else if (setAndRaise.Parent is PrefixUnaryExpressionSyntax unary &&
-                                unary.IsKind(SyntaxKind.LogicalNotExpression) &&
-                                unary.Parent is IfStatementSyntax ifNegated &&
-                                ifNegated.Span.Contains(invocation.Span))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, invocation.GetLocation()));
-                            }
-                            else if (invocation.FirstAncestor<IfStatementSyntax>() == null)
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, invocation.GetLocation()));
+                                if (setAndRaise.Parent is IfStatementSyntax ifStatement &&
+                                    !ifStatement.Statement.Contains(invocation))
+                                {
+                                    context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, invocation.GetLocation()));
+                                }
+                                else if (setAndRaise.Parent is PrefixUnaryExpressionSyntax unary &&
+                                         unary.IsKind(SyntaxKind.LogicalNotExpression) &&
+                                         unary.Parent is IfStatementSyntax ifNegated &&
+                                         ifNegated.Span.Contains(invocation.Span))
+                                {
+                                    context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, invocation.GetLocation()));
+                                }
+                                else if (invocation.FirstAncestor<IfStatementSyntax>() == null)
+                                {
+                                    context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, invocation.GetLocation()));
+                                }
                             }
                         }
                     }
@@ -93,6 +96,32 @@ namespace PropertyChangedAnalyzers
             }
 
             return false;
+        }
+
+        private static bool IsFirstCall(InvocationExpressionSyntax invocation)
+        {
+            if (invocation.FirstAncestorOrSelf<BlockSyntax>() is BlockSyntax block &&
+                invocation.TryGetInvokedMethodName(out var name))
+            {
+                using (var walker = InvocationWalker.Borrow(block))
+                {
+                    foreach (var other in walker.Invocations)
+                    {
+                        if (other.SpanStart >= invocation.SpanStart)
+                        {
+                            return true;
+                        }
+
+                        if (other.TryGetInvokedMethodName(out var otherName) &&
+                            name == otherName)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

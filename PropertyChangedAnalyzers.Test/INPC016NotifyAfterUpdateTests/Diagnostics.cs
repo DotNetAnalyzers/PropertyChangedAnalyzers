@@ -8,6 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
         private static readonly InvocationAnalyzer Analyzer = new InvocationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC016");
 
+#pragma warning disable SA1203 // Constants must appear before fields
         private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
 {
@@ -44,6 +45,7 @@ namespace RoslynSandbox.Core
         }
     }
 }";
+#pragma warning restore SA1203 // Constants must appear before fields
 
         [Test]
         public void NotifiesBeforeAssign()

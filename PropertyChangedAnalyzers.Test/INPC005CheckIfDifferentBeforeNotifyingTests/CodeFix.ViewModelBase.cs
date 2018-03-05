@@ -7,8 +7,6 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     {
         internal class ViewModelBase
         {
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC005");
-
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
 {
