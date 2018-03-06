@@ -78,13 +78,16 @@ namespace PropertyChangedAnalyzers
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
-                   invocation.TryGetInvokedSymbol(KnownSymbol.EqualityComparerOfT.EqualsMethod, semanticModel, cancellationToken, out _) &&
+                   invocation.TryGetInvokedSymbol(KnownSymbol.EqualityComparerOfT.EqualsMethod, semanticModel, cancellationToken, out var equalsMethod) &&
+
                    IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
         internal static bool IsStringEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
             return condition is InvocationExpressionSyntax invocation &&
+                   GetSymbolType(first) == KnownSymbol.String &&
+                   GetSymbolType(other) == KnownSymbol.String &&
                    invocation.TryGetInvokedSymbol(KnownSymbol.String.Equals, semanticModel, cancellationToken, out _) &&
                    IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
@@ -94,9 +97,13 @@ namespace PropertyChangedAnalyzers
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList != null &&
                    invocation.ArgumentList.Arguments.TrySingle(out var argument) &&
+                   TryGetName(argument.Expression, out var argName) &&
+                   argName == GetSymbolName(arg) &&
                    invocation.TryGetInvokedMethodName(out var name) &&
                    name == "Equals" &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                   TryGetName(memberAccess, out var instanceName) &&
+                   instanceName == GetSymbolName(instance) &&
                    SymbolComparer.Equals(instance, semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken)) &&
                    SymbolComparer.Equals(semanticModel.GetSymbolSafe(argument.Expression, cancellationToken), arg);
         }

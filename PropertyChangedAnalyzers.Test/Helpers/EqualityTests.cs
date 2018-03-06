@@ -193,5 +193,84 @@ namespace RoslynSandbox
             Assert.AreEqual(expected, Equality.IsObjectEquals(invocation, semanticModel, CancellationToken.None, arg0, arg1));
             Assert.AreEqual(expected, Equality.IsObjectEquals(invocation, semanticModel, CancellationToken.None, arg1, arg0));
         }
+
+        [TestCase("ReferenceEquals(this.bar1, this.bar1)", true)]
+        [TestCase("ReferenceEquals(this.bar1, this.Bar1)", true)]
+        [TestCase("object.ReferenceEquals(this.bar1, this.bar1)", true)]
+        [TestCase("Object.ReferenceEquals(this.bar1, this.bar1)", true)]
+        [TestCase("System.Object.ReferenceEquals(this.bar1, this.bar1)", true)]
+        [TestCase("ReferenceEquals(this.bar1, missing)", false)]
+        [TestCase("object.ReferenceEquals(this.bar1, missing)", false)]
+        [TestCase("Object.ReferenceEquals(this.bar1, missing)", false)]
+        public void IsReferenceEquals(string check, bool expected)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+
+    public class Foo
+    {
+        private string bar1;
+        private string bar2;
+
+        public Foo()
+        {
+            ReferenceEquals(this.bar1, this.bar1);
+        }
+
+        public string Bar1 => this.bar1;
+    }
+}";
+
+            testCode = testCode.AssertReplace("ReferenceEquals(this.bar1, this.bar1)", check);
+            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation(check);
+            var arg0 = semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, CancellationToken.None);
+            var arg1 = semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[1].Expression, CancellationToken.None);
+            Assert.AreEqual(expected, Equality.IsReferenceEquals(invocation, semanticModel, CancellationToken.None, arg0, arg1));
+            Assert.AreEqual(expected, Equality.IsReferenceEquals(invocation, semanticModel, CancellationToken.None, arg1, arg0));
+        }
+
+        [TestCase("string.Equals(this.bar1, this.bar1)", true)]
+        [TestCase("String.Equals(this.bar1, this.bar1)", true)]
+        [TestCase("System.String.Equals(this.bar1, this.bar1)", true)]
+        [TestCase("string.Equals(this.bar1, this.bar1, StringComparison.OrdinalIgnoreCase)", true)]
+        [TestCase("String.Equals(this.bar1, this.bar1, StringComparison.OrdinalIgnoreCase)", true)]
+        [TestCase("System.String.Equals(this.bar1, this.bar1, StringComparison.OrdinalIgnoreCase)", true)]
+        [TestCase("string.Equals(this.bar1, missing)", false)]
+        [TestCase("string.Equals(this.bar1, this.bar3)", false)]
+        public void IsStringEquals(string check, bool expected)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+
+    public class Foo
+    {
+        private string bar1;
+        private string bar2;
+        private int bar3;
+
+        public Foo()
+        {
+            string.Equals(this.bar1, this.bar1);
+        }
+    }
+}";
+
+            testCode = testCode.AssertReplace("string.Equals(this.bar1, this.bar1)", check);
+            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation(check);
+            var arg0 = semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, CancellationToken.None);
+            var arg1 = semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[1].Expression, CancellationToken.None);
+            Assert.AreEqual(expected, Equality.IsStringEquals(invocation, semanticModel, CancellationToken.None, arg0, arg1));
+            Assert.AreEqual(expected, Equality.IsStringEquals(invocation, semanticModel, CancellationToken.None, arg1, arg0));
+        }
     }
 }
