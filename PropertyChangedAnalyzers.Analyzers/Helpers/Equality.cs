@@ -113,6 +113,7 @@ namespace PropertyChangedAnalyzers
                    TryGetName(memberAccess.Expression, out var className) &&
                    className == "Nullable" &&
                    IsMatchingNullable(GetSymbolType(first) as INamedTypeSymbol, GetSymbolType(other) as INamedTypeSymbol) &&
+                   semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol == KnownSymbol.Nullable.Equals &&
                    semanticModel.GetSymbolSafe(arg1.Expression, cancellationToken) is ISymbol symbol1 &&
                    semanticModel.GetSymbolSafe(arg2.Expression, cancellationToken) is ISymbol symbol2 &&
                    Equals(first, other, symbol1, symbol2);
@@ -230,7 +231,14 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsIdentifier(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol expected)
         {
-            if (expected == null)
+            if (expression == null ||
+                expected == null)
+            {
+                return false;
+            }
+
+            if (TryGetName(expression, out var name) &&
+                name != GetSymbolName(expected))
             {
                 return false;
             }
