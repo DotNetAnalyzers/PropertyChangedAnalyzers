@@ -102,7 +102,7 @@ namespace PropertyChangedAnalyzers
                    invocation.TryGetInvokedMethodName(out var name) &&
                    name == "Equals" &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                   TryGetName(memberAccess, out var instanceName) &&
+                   TryGetName(memberAccess.Expression, out var instanceName) &&
                    instanceName == GetSymbolName(instance) &&
                    SymbolComparer.Equals(instance, semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken)) &&
                    SymbolComparer.Equals(semanticModel.GetSymbolSafe(argument.Expression, cancellationToken), arg);
