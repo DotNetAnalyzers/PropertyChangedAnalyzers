@@ -2,6 +2,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     internal partial class CodeFix
     {
@@ -10,6 +11,18 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
             private static readonly UseCallerMemberNameCodeFixProvider CodeFix = new UseCallerMemberNameCodeFixProvider();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC004");
+
+            [OneTimeSetUp]
+            public void OneTimeSetUp()
+            {
+                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
+            }
+
+            [OneTimeTearDown]
+            public void TearDown()
+            {
+                AnalyzerAssert.ResetAll();
+            }
 
             [TestCase(@"""Value""")]
             [TestCase(@"nameof(Value)")]
@@ -97,7 +110,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InternalClassInternalPropertyProperty()
+            public void InternalClassInternalProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -171,6 +184,124 @@ namespace RoslynSandbox
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+            }
+
+            [Test]
+            public void SecondArgument()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(1, ↓nameof(Value));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(int i, [CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(1);
+            }
+        }
+
+        protected virtual void OnPropertyChanged(int i, [CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+            }
+
+            [Test]
+            public void StyletSetAndNotify()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : Stylet.PropertyChangedBase
+    {
+        private int bar;
+
+        public int Bar
+        {
+            get => this.bar;
+            set => this.SetAndNotify(ref this.bar, value, ↓nameof(this.Bar));
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : Stylet.PropertyChangedBase
+    {
+        private int bar;
+
+        public int Bar
+        {
+            get => this.bar;
+            set => this.SetAndNotify(ref this.bar, value);
         }
     }
 }";

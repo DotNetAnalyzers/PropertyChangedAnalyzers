@@ -33,9 +33,6 @@ namespace PropertyChangedAnalyzers
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
 
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
-                                             .ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -44,9 +41,8 @@ namespace PropertyChangedAnalyzers
                     continue;
                 }
 
-                var parameter = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                          .FirstAncestorOrSelf<ParameterSyntax>();
-                if (parameter != null)
+                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                if (node.FirstAncestorOrSelf<ParameterSyntax>() is ParameterSyntax parameter)
                 {
                     context.RegisterDocumentEditorFix(
                         "Use [CallerMemberName]",
@@ -56,40 +52,11 @@ namespace PropertyChangedAnalyzers
                     continue;
                 }
 
-                var invocation = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                           .FirstAncestorOrSelf<InvocationExpressionSyntax>();
-                if (invocation != null)
+                if (node.FirstAncestorOrSelf<ArgumentSyntax>() is ArgumentSyntax argument)
                 {
-                    if (semanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
-                        method.Parameters.Length == 1 &&
-                        !method.Parameters[0].IsCallerMemberName())
-                    {
-                        foreach (var declaration in method.Declarations(context.CancellationToken))
-                        {
-                            var methodDeclaration = declaration as MethodDeclarationSyntax;
-                            if (methodDeclaration == null)
-                            {
-                                continue;
-                            }
-
-                            var nameParameter = methodDeclaration.ParameterList.Parameters[0];
-
-                            context.RegisterDocumentEditorFix(
-                                    "Use [CallerMemberName]",
-                                    (editor, _) => MakeUseCallerMemberName(editor, nameParameter, AsCallerMemberName(nameParameter)),
-                                    this.GetType(),
-                                    diagnostic);
-                        }
-                    }
-
                     context.RegisterDocumentEditorFix(
                             "Use [CallerMemberName]",
-                            (editor, _) => MakeUseCallerMemberName(
-                                editor,
-                                invocation,
-                                invocation.RemoveNode(
-                                    invocation.ArgumentList.Arguments[0],
-                                    SyntaxRemoveOptions.AddElasticMarker)),
+                            (editor, _) => editor.RemoveNode(argument),
                             this.GetType(),
                             diagnostic);
                 }
