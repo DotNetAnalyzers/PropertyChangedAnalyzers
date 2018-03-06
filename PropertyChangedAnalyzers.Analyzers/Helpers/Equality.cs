@@ -104,19 +104,15 @@ namespace PropertyChangedAnalyzers
         internal static bool IsNullableEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
             return condition is InvocationExpressionSyntax invocation &&
-                   invocation.ArgumentList?.Arguments.Count == 2 &&
-                   invocation.ArgumentList.Arguments.TryFirst(x => TryGetName(x.Expression, out var name1) && name1 == GetSymbolName(first), out var arg1) &&
-                   invocation.ArgumentList.Arguments.TryFirst(x => TryGetName(x.Expression, out var name2) && name2 == GetSymbolName(other), out var arg2) &&
                    invocation.TryGetInvokedMethodName(out var methodName) &&
                    methodName == "Equals" &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                    TryGetName(memberAccess.Expression, out var className) &&
                    className == "Nullable" &&
+                   invocation.ArgumentList?.Arguments.Count == 2 &&
                    IsMatchingNullable(GetSymbolType(first) as INamedTypeSymbol, GetSymbolType(other) as INamedTypeSymbol) &&
-                   semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol == KnownSymbol.Nullable.Equals &&
-                   semanticModel.GetSymbolSafe(arg1.Expression, cancellationToken) is ISymbol symbol1 &&
-                   semanticModel.GetSymbolSafe(arg2.Expression, cancellationToken) is ISymbol symbol2 &&
-                   Equals(first, other, symbol1, symbol2);
+                   IsArguments(invocation, semanticModel, cancellationToken, first, other) &&
+                   semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol == KnownSymbol.Nullable.Equals;
 
             bool IsMatchingNullable(INamedTypeSymbol type1, INamedTypeSymbol type2)
             {
@@ -144,24 +140,13 @@ namespace PropertyChangedAnalyzers
 
                 return false;
             }
-
-            bool Equals(ISymbol e1, ISymbol e2, ISymbol a1, ISymbol a2)
-            {
-                return (SymbolComparer.Equals(e1, a1) &&
-                        SymbolComparer.Equals(e2, a2)) ||
-                       (SymbolComparer.Equals(e1, a2) &&
-                        SymbolComparer.Equals(e2, a1));
-            }
         }
 
         internal static bool IsReferenceEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
-                   invocation.TryGetInvokedMethodName(out var name) &&
-                   name == "ReferenceEquals" &&
-                   semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
-                   method == KnownSymbol.Object.ReferenceEquals &&
+                   invocation.TryGetInvokedSymbol(KnownSymbol.Object.ReferenceEquals, semanticModel, cancellationToken, out _) &&
                    IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
@@ -184,28 +169,31 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
-            if (invocation?.ArgumentList.Arguments.Count < 2)
+            if (invocation.ArgumentList == null ||
+                invocation.ArgumentList.Arguments.Count < 2)
             {
                 return false;
             }
 
-            return IsArgument(invocation, semanticModel, cancellationToken, first) &&
-                   IsArgument(invocation, semanticModel, cancellationToken, other);
-        }
-
-        private static bool IsArgument(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol expected)
-        {
-            if (invocation == null || invocation.ArgumentList.Arguments.Count < 1)
+            var e0 = invocation.ArgumentList.Arguments[0].Expression;
+            var e1 = invocation.ArgumentList.Arguments[1].Expression;
+            if (TryGetName(e0, out var name0) &&
+                TryGetName(e1, out var name1))
             {
-                return false;
-            }
-
-            foreach (var argument in invocation.ArgumentList.Arguments)
-            {
-                var symbol = semanticModel.GetSymbolSafe(argument.Expression, cancellationToken);
-                if (expected.Equals(symbol))
+                var firstName = GetSymbolName(first);
+                var otherName = GetSymbolName(other);
+                if (name0 == firstName &&
+                    name1 == otherName)
                 {
-                    return true;
+                    return SymbolComparer.Equals(semanticModel.GetSymbolSafe(e0, cancellationToken), first) &&
+                           SymbolComparer.Equals(semanticModel.GetSymbolSafe(e1, cancellationToken), other);
+                }
+
+                if (name0 == otherName &&
+                    name1 == firstName)
+                {
+                    return SymbolComparer.Equals(semanticModel.GetSymbolSafe(e0, cancellationToken), other) &&
+                           SymbolComparer.Equals(semanticModel.GetSymbolSafe(e1, cancellationToken), first);
                 }
             }
 

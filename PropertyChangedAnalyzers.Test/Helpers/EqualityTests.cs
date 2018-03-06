@@ -100,7 +100,8 @@ namespace RoslynSandbox
         [TestCase("Nullable.Equals(this.bar1, this.bar1)", true)]
         [TestCase("System.Nullable.Equals(this.bar1, this.bar2)", true)]
         [TestCase("Nullable.Equals(this.bar1, this.bar4)", false)]
-        [TestCase("System.Nullable.Equals(this.bar, this.bar4)", false)]
+        [TestCase("System.Nullable.Equals(this.bar1, this.bar4)", false)]
+        [TestCase("System.Nullable.Equals(this.bar1, this.bar5)", false)]
         [TestCase("System.Nullable.Equals(this.bar1, missing)", false)]
         public void IsNullableEquals(string check, bool expected)
         {
@@ -135,6 +136,62 @@ namespace RoslynSandbox
             var arg1 = semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[1].Expression, CancellationToken.None);
             Assert.AreEqual(expected, Equality.IsNullableEquals(invocation, semanticModel, CancellationToken.None, arg0, arg1));
             Assert.AreEqual(expected, Equality.IsNullableEquals(invocation, semanticModel, CancellationToken.None, arg1, arg0));
+        }
+
+        [TestCase("Equals(this.bar1, this.bar1)", true)]
+        [TestCase("object.Equals(this.bar1, this.bar1)", true)]
+        [TestCase("Object.Equals(this.bar1, this.bar1)", true)]
+        [TestCase("System.Object.Equals(this.bar1, this.bar1)", true)]
+        [TestCase("Equals(this.bar1, missing)", false)]
+        [TestCase("object.Equals(this.bar1, missing)", false)]
+        [TestCase("Object.Equals(this.bar1, missing)", false)]
+        [TestCase("Nullable.Equals(this.bar1, this.bar1)", false)]
+        [TestCase("Nullable.Equals(bar1, this.bar1)", false)]
+        [TestCase("Nullable.Equals(bar1, bar1)", false)]
+        [TestCase("Nullable.Equals(this.bar1, this.Bar1)", false)]
+        [TestCase("Nullable.Equals(this.bar1, this.bar3)", false)]
+        [TestCase("System.Nullable.Equals(this.bar1, this.bar1)", false)]
+        [TestCase("System.Nullable.Equals(bar1, this.bar1)", false)]
+        [TestCase("System.Nullable.Equals(this.bar1, this.Bar1)", false)]
+        [TestCase("Nullable.Equals(this.bar1, this.bar1)", false)]
+        [TestCase("System.Nullable.Equals(this.bar1, this.bar2)", false)]
+        [TestCase("Nullable.Equals(this.bar1, this.bar4)", false)]
+        [TestCase("System.Nullable.Equals(this.bar1, this.bar4)", false)]
+        [TestCase("System.Nullable.Equals(this.bar1, this.bar5)", true)]
+        [TestCase("System.Nullable.Equals(this.bar1, missing)", false)]
+        public void IsObjectEquals(string check, bool expected)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+
+    public class Foo
+    {
+        private int? bar1;
+        private Nullable<int> bar2;
+        private int bar3;
+        private double? bar4;
+        private string bar5;
+
+        public Foo()
+        {
+            Equals(this.bar1, this.bar1);
+        }
+
+        public int? Bar1 => this.bar1;
+    }
+}";
+
+            testCode = testCode.AssertReplace("Equals(this.bar1, this.bar1)", check);
+            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation(check);
+            var arg0 = semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[0].Expression, CancellationToken.None);
+            var arg1 = semanticModel.GetSymbolSafe(invocation.ArgumentList.Arguments[1].Expression, CancellationToken.None);
+            Assert.AreEqual(expected, Equality.IsObjectEquals(invocation, semanticModel, CancellationToken.None, arg0, arg1));
+            Assert.AreEqual(expected, Equality.IsObjectEquals(invocation, semanticModel, CancellationToken.None, arg1, arg0));
         }
     }
 }

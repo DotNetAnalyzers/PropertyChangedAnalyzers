@@ -27,6 +27,12 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
+            if (left.IsStatic)
+            {
+                return left.MetadataName == right.Name &&
+                       left.ContainingType == right.ContainingType;
+            }
+
             return left.MetadataName == right.Name &&
                    (left.ContainingType == right.ContainingType ||
                     left.ContainingType.Is(right.ContainingType));
