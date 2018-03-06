@@ -78,14 +78,22 @@ namespace PropertyChangedAnalyzers
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
-                   invocation.TryGetInvokedSymbol(KnownSymbol.EqualityComparerOfT.EqualsMethod, semanticModel, cancellationToken, out var equalsMethod) &&
-
+                   invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                   TryGetName(memberAccess.Expression, out var instance) &&
+                   !string.Equals(instance, "object", StringComparison.OrdinalIgnoreCase) &&
+                   !string.Equals(instance, "Nullable", StringComparison.OrdinalIgnoreCase) &&
+                   instance != GetSymbolName(first) &&
+                   instance != GetSymbolName(other) &&
+                   invocation.TryGetInvokedSymbol(KnownSymbol.EqualityComparerOfT.EqualsMethod, semanticModel, cancellationToken, out _) &&
                    IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
         internal static bool IsStringEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
             return condition is InvocationExpressionSyntax invocation &&
+                   invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                   TryGetName(memberAccess.Expression, out var className) &&
+                   string.Equals(className, "string", StringComparison.OrdinalIgnoreCase) &&
                    GetSymbolType(first) == KnownSymbol.String &&
                    GetSymbolType(other) == KnownSymbol.String &&
                    invocation.TryGetInvokedSymbol(KnownSymbol.String.Equals, semanticModel, cancellationToken, out _) &&
@@ -292,8 +300,11 @@ namespace PropertyChangedAnalyzers
             {
                 name = identifierName.Identifier.ValueText;
             }
-
-            if (expression is MemberAccessExpressionSyntax memberAccess)
+            else if (expression is PredefinedTypeSyntax predefinedType)
+            {
+                name = predefinedType.Keyword.ValueText;
+            }
+            else if (expression is MemberAccessExpressionSyntax memberAccess)
             {
                 name = memberAccess.Name.Identifier.ValueText;
             }
