@@ -287,7 +287,8 @@ namespace PropertyChangedAnalyzers
         {
             if (invocation.ArgumentList?.Arguments.Count == 2 &&
                 invocation.ArgumentList.Arguments[0].Expression is ThisExpressionSyntax &&
-                invocation.TryGetInvokedMethodName(out var name))
+                invocation.TryGetInvokedMethodName(out var name) &&
+                invocation.IsPotentialReturnVoid())
             {
                 if (name == "Invoke")
                 {
@@ -320,15 +321,7 @@ namespace PropertyChangedAnalyzers
         {
             if (invocation == null ||
                 invocation.ArgumentList?.Arguments.Count > 1 ||
-                invocation.Parent is ArgumentSyntax ||
-                invocation.Parent is EqualsValueClauseSyntax ||
-                invocation.Parent is AssignmentExpressionSyntax)
-            {
-                return false;
-            }
-
-            if (invocation.Parent is IfStatementSyntax ifStatement &&
-                ifStatement.Condition.Contains(invocation))
+                !invocation.IsPotentialReturnVoid())
             {
                 return false;
             }

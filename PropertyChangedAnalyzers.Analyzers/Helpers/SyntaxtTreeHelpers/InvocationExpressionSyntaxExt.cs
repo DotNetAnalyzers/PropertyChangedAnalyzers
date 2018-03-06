@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Threading;
     using Microsoft.CodeAnalysis;
@@ -7,6 +7,24 @@
 
     internal static class InvocationExpressionSyntaxExt
     {
+        internal static bool IsPotentialReturnVoid(this InvocationExpressionSyntax invocation)
+        {
+            if (invocation.Parent is ArgumentSyntax ||
+                invocation.Parent is EqualsValueClauseSyntax ||
+                invocation.Parent is AssignmentExpressionSyntax)
+            {
+                return false;
+            }
+
+            if (invocation.Parent is IfStatementSyntax ifStatement &&
+                ifStatement.Condition.Contains(invocation))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         internal static bool TryGetInvokedMethodName(this InvocationExpressionSyntax invocation, out string name)
         {
             name = null;
