@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -54,13 +54,14 @@
 
         private static void HandlePostfixUnaryExpression(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
+            if (context.IsExcludedFromAnalysis() ||
+                IsInIgnoredScope(context))
             {
                 return;
             }
 
-            var expression = (PostfixUnaryExpressionSyntax)context.Node;
-            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out var field))
+            if (context.Node is PostfixUnaryExpressionSyntax expression &&
+                TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out var field))
             {
                 Handle(context, field);
             }
@@ -68,13 +69,14 @@
 
         private static void HandlePrefixUnaryExpression(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
+            if (context.IsExcludedFromAnalysis() ||
+                IsInIgnoredScope(context))
             {
                 return;
             }
 
-            var expression = (PrefixUnaryExpressionSyntax)context.Node;
-            if (TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out var field))
+            if (context.Node is PrefixUnaryExpressionSyntax expression &&
+                TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out var field))
             {
                 Handle(context, field);
             }
@@ -82,13 +84,14 @@
 
         private static void HandleAssignmentExpression(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
+            if (context.IsExcludedFromAnalysis() ||
+                IsInIgnoredScope(context))
             {
                 return;
             }
 
-            var expression = (AssignmentExpressionSyntax)context.Node;
-            if (TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out var field))
+            if (context.Node is AssignmentExpressionSyntax expression &&
+                TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out var field))
             {
                 Handle(context, field);
             }
@@ -96,18 +99,17 @@
 
         private static void HandleArgument(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
+            if (context.IsExcludedFromAnalysis() ||
+                IsInIgnoredScope(context))
             {
                 return;
             }
 
-            var argument = (ArgumentSyntax)context.Node;
-            if (argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword))
+            if (context.Node is ArgumentSyntax argument &&
+                argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
+                TryGetAssignedField(argument.Expression, context.SemanticModel, context.CancellationToken, out var field))
             {
-                if (TryGetAssignedField(argument.Expression, context.SemanticModel, context.CancellationToken, out var field))
-                {
-                    Handle(context, field);
-                }
+                Handle(context, field);
             }
         }
 
@@ -151,8 +153,7 @@
                 return;
             }
 
-            var typeDeclaration = context.Node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-            var typeSymbol = context.SemanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
+            var typeSymbol = context.ContainingSymbol.ContainingType;
             if (!typeSymbol.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 return;
@@ -163,17 +164,15 @@
                 return;
             }
 
-            var inProperty = context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-            if (inProperty != null)
+            if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
+                Property.IsSimplePropertyWithBackingField(inProperty, context.SemanticModel, context.CancellationToken))
             {
-                if (Property.IsSimplePropertyWithBackingField(inProperty, context.SemanticModel, context.CancellationToken))
-                {
-                    return;
-                }
+                return;
             }
 
             using (var set = PooledHashSet<IPropertySymbol>.Borrow())
             {
+                var typeDeclaration = context.Node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
                 foreach (var member in typeDeclaration.Members)
                 {
                     var propertyDeclaration = member as PropertyDeclarationSyntax;
@@ -238,12 +237,8 @@
                 return true;
             }
 
-            if (context.Node.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null)
-            {
-                return true;
-            }
-
-            if (context.Node.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
+            if (context.Node.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null ||
+                context.Node.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
             {
                 if (context.Node.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
                 {
