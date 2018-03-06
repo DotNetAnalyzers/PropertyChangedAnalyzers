@@ -725,7 +725,7 @@ NUGET
       BenchmarkDotNet.Core (>= 0.10.13) - restriction: >= net46
       Microsoft.CodeAnalysis.CSharp (>= 2.6.1) - restriction: >= net46
       System.Threading.Tasks (>= 4.3) - restriction: >= net46
-    Gu.Roslyn.Asserts (2.2.2)
+    Gu.Roslyn.Asserts (2.2.3)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0 < 3.0) - restriction: >= net461
     Microsoft.CodeAnalysis.Analyzers (2.6) - restriction: >= netstandard1.3
     Microsoft.CodeAnalysis.Common (2.6.1)
