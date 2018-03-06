@@ -232,7 +232,7 @@ namespace PropertyChangedAnalyzers
         private static bool IsInIgnoredScope(SyntaxNodeAnalysisContext context)
         {
             if (context.ContainingSymbol is IMethodSymbol method &&
-                method?.Name == "Dispose")
+                method.Name == "Dispose")
             {
                 return true;
             }
