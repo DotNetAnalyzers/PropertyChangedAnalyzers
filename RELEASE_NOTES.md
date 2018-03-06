@@ -1,3 +1,6 @@
+#### 2.5.4
+* BUGFIX: Codegen for INPC004 use [CallerMemberName].
+
 #### 2.5.3
 * PERF: Avoid calls to SemantiModel and merge analyzers.
 * BUGFIX: Codegen for INPC009.
