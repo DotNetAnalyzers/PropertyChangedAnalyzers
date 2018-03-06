@@ -231,8 +231,13 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsInIgnoredScope(SyntaxNodeAnalysisContext context)
         {
-            var method = context.ContainingSymbol as IMethodSymbol;
-            if (method?.Name == "Dispose")
+            if (context.ContainingSymbol is IMethodSymbol method &&
+                method?.Name == "Dispose")
+            {
+                return true;
+            }
+
+            if (!context.ContainingSymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 return true;
             }
