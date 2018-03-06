@@ -15,8 +15,12 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
             new TestCase("string", "Equals(value, bar)"),
             new TestCase("string", "Equals(value, Bar)"),
             new TestCase("string", "Equals(Bar, value)"),
+            new TestCase("string", "object.Equals(Bar, value)"),
+            new TestCase("string", "Object.Equals(Bar, value)"),
+            new TestCase("string", "System.Object.Equals(Bar, value)"),
             new TestCase("string", "Nullable.Equals(value, this.bar)"),
             new TestCase("int?", "Nullable.Equals(value, this.bar)"),
+            new TestCase("int?", "System.Nullable.Equals(value, this.bar)"),
             new TestCase("string", "value.Equals(this.bar)"),
             new TestCase("string", "value.Equals(bar)"),
             new TestCase("string", "this.bar.Equals(value)"),
@@ -24,6 +28,9 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
             new TestCase("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
             new TestCase("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
             new TestCase("string", "ReferenceEquals(value, this.bar)"),
+            new TestCase("string", "object.ReferenceEquals(value, this.bar)"),
+            new TestCase("string", "Object.ReferenceEquals(value, this.bar)"),
+            new TestCase("string", "System.Object.ReferenceEquals(value, this.bar)"),
         };
 
         [TestCaseSource(nameof(TestCases))]

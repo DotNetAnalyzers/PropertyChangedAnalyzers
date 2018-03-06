@@ -54,24 +54,16 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsOperatorEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
-            var equals = condition as BinaryExpressionSyntax;
-            if (equals?.IsKind(SyntaxKind.EqualsExpression) == true)
-            {
-                return IsLeftAndRight(equals, semanticModel, cancellationToken, first, other);
-            }
-
-            return false;
+            return condition is BinaryExpressionSyntax binary &&
+                   binary.IsKind(SyntaxKind.EqualsExpression) &&
+                   IsLeftAndRight(binary, semanticModel, cancellationToken, first, other);
         }
 
         internal static bool IsOperatorNotEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
-            var equals = condition as BinaryExpressionSyntax;
-            if (equals?.IsKind(SyntaxKind.NotEqualsExpression) == true)
-            {
-                return IsLeftAndRight(equals, semanticModel, cancellationToken, first, other);
-            }
-
-            return false;
+            return condition is BinaryExpressionSyntax binary &&
+                   binary.IsKind(SyntaxKind.NotEqualsExpression) &&
+                   IsLeftAndRight(binary, semanticModel, cancellationToken, first, other);
         }
 
         internal static bool IsObjectEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
@@ -99,41 +91,74 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsInstanceEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol instance, ISymbol arg)
         {
-            var equals = condition as InvocationExpressionSyntax;
-            var memberAccess = equals?.Expression as MemberAccessExpressionSyntax;
-            if (memberAccess == null)
-            {
-                return false;
-            }
-
-            var method = semanticModel.GetSymbolSafe(equals, cancellationToken) as IMethodSymbol;
-            if (method?.Parameters.Length == 1 &&
-                method.Name == "Equals")
-            {
-                return instance.Equals(semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken)) &&
-                       IsArgument(equals, semanticModel, cancellationToken, arg);
-            }
-
-            return false;
+            return condition is InvocationExpressionSyntax invocation &&
+                   invocation.ArgumentList != null &&
+                   invocation.ArgumentList.Arguments.TrySingle(out var argument) &&
+                   invocation.TryGetInvokedMethodName(out var name) &&
+                   name == "Equals" &&
+                   invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                   SymbolComparer.Equals(instance, semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken)) &&
+                   SymbolComparer.Equals(semanticModel.GetSymbolSafe(argument.Expression, cancellationToken), arg);
         }
 
         internal static bool IsNullableEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
-            var equals = condition as InvocationExpressionSyntax;
-            var method = semanticModel.GetSymbolSafe(@equals, cancellationToken) as IMethodSymbol;
-            if (method?.Parameters.Length == 2 &&
-                method == KnownSymbol.Nullable.Equals)
+            return condition is InvocationExpressionSyntax invocation &&
+                   invocation.ArgumentList?.Arguments.Count == 2 &&
+                   invocation.ArgumentList.Arguments.TryFirst(x => TryGetName(x.Expression, out var name1) && name1 == GetSymbolName(first), out var arg1) &&
+                   invocation.ArgumentList.Arguments.TryFirst(x => TryGetName(x.Expression, out var name2) && name2 == GetSymbolName(other), out var arg2) &&
+                   invocation.TryGetInvokedMethodName(out var methodName) &&
+                   methodName == "Equals" &&
+                   invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                   TryGetName(memberAccess.Expression, out var className) &&
+                   className == "Nullable" &&
+                   IsMatchingNullable(GetSymbolType(first) as INamedTypeSymbol, GetSymbolType(other) as INamedTypeSymbol) &&
+                   semanticModel.GetSymbolSafe(arg1.Expression, cancellationToken) is ISymbol symbol1 &&
+                   semanticModel.GetSymbolSafe(arg2.Expression, cancellationToken) is ISymbol symbol2 &&
+                   Equals(first, other, symbol1, symbol2);
+
+            bool IsMatchingNullable(INamedTypeSymbol type1, INamedTypeSymbol type2)
             {
-                return IsArguments(equals, semanticModel, cancellationToken, first, other);
+                if (type1 == null ||
+                    type2 == null)
+                {
+                    return false;
+                }
+
+                if (type1 == KnownSymbol.NullableOfT &&
+                    type2 == KnownSymbol.NullableOfT)
+                {
+                    return TypeSymbolComparer.Equals(type1.TypeArguments[0], type2.TypeArguments[0]);
+                }
+
+                if (type1 == KnownSymbol.NullableOfT)
+                {
+                    return TypeSymbolComparer.Equals(type1.TypeArguments[0], type2);
+                }
+
+                if (type2 == KnownSymbol.NullableOfT)
+                {
+                    return TypeSymbolComparer.Equals(type2.TypeArguments[0], type1);
+                }
+
+                return false;
             }
 
-            return false;
+            bool Equals(ISymbol e1, ISymbol e2, ISymbol a1, ISymbol a2)
+            {
+                return (SymbolComparer.Equals(e1, a1) &&
+                        SymbolComparer.Equals(e2, a2)) ||
+                       (SymbolComparer.Equals(e1, a2) &&
+                        SymbolComparer.Equals(e2, a1));
+            }
         }
 
         internal static bool IsReferenceEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
+                   invocation.TryGetInvokedMethodName(out var name) &&
+                   name == "ReferenceEquals" &&
                    semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
                    method == KnownSymbol.Object.ReferenceEquals &&
                    IsArguments(invocation, semanticModel, cancellationToken, first, other);
@@ -211,6 +236,66 @@ namespace PropertyChangedAnalyzers
             }
 
             return expected.Equals(semanticModel.GetSymbolSafe(expression, cancellationToken));
+        }
+
+        private static ITypeSymbol GetSymbolType(ISymbol symbol)
+        {
+            switch (symbol)
+            {
+                case IEventSymbol @event:
+                    return @event.Type;
+                case IFieldSymbol field:
+                    return field.Type;
+                case ILocalSymbol local:
+                    return local.Type;
+                case IMethodSymbol method:
+                    return method.ReturnType;
+                case ITypeSymbol type:
+                    return type;
+                case IParameterSymbol parameter:
+                    return parameter.Type;
+                case IPropertySymbol property:
+                    return property.Type;
+                default:
+                    return null;
+            }
+        }
+
+        private static string GetSymbolName(ISymbol symbol)
+        {
+            switch (symbol)
+            {
+                case IEventSymbol @event:
+                    return @event.Name;
+                case IFieldSymbol field:
+                    return field.Name;
+                case ILocalSymbol local:
+                    return local.Name;
+                case IMethodSymbol method:
+                    return method.Name;
+                case IParameterSymbol parameter:
+                    return parameter.Name;
+                case IPropertySymbol property:
+                    return property.Name;
+                default:
+                    return null;
+            }
+        }
+
+        private static bool TryGetName(ExpressionSyntax expression, out string name)
+        {
+            name = null;
+            if (expression is IdentifierNameSyntax identifierName)
+            {
+                name = identifierName.Identifier.ValueText;
+            }
+
+            if (expression is MemberAccessExpressionSyntax memberAccess)
+            {
+                name = memberAccess.Name.Identifier.ValueText;
+            }
+
+            return name != null;
         }
     }
 }
