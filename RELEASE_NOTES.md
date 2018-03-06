@@ -1,3 +1,10 @@
+#### 2.5.3
+* PERF: Avoid calls to SemantiModel and merge analyzers.
+* BUGFIX: Codegen for INPC009.
+* BUGFIX: Codegen for INPC003.
+* FEATURE: New analyzer INPC015 check if property is recursive.
+* FEATURE: New analyzer INPC016 check that backing field is assigned before notifying.
+
 #### 2.5.2
 * BUGFIX: Handle check in lock INPC005.
 * FEATURE: Codefix INPC007, seal class.
