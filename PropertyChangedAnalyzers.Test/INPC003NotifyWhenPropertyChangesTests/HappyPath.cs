@@ -700,5 +700,46 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("string.Empty", arg);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void NoFieldTouched()
+        {
+            //// This test is mostly for debugging when optimizing avoiding using syntax model.
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private string name;
+
+        public void Bar(int a)
+        {
+            var temp = 1;
+            temp++;
+            for (var i = 0; i < 10; i++)
+            {
+                
+            }
+
+            temp = 2;
+            a = temp;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }

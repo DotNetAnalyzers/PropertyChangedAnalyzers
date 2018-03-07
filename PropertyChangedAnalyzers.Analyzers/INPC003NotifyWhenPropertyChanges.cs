@@ -40,7 +40,6 @@ namespace PropertyChangedAnalyzers
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.AndAssignmentExpression);
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.OrAssignmentExpression);
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.ExclusiveOrAssignmentExpression);
-
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.AddAssignmentExpression);
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.DivideAssignmentExpression);
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.LeftShiftAssignmentExpression);
@@ -49,6 +48,7 @@ namespace PropertyChangedAnalyzers
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.RightShiftAssignmentExpression);
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.SubtractAssignmentExpression);
             context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.SimpleAssignmentExpression);
+
             context.RegisterSyntaxNodeAction(HandleArgument, SyntaxKind.Argument);
         }
 
@@ -123,7 +123,11 @@ namespace PropertyChangedAnalyzers
 
             if (node is IdentifierNameSyntax identifierName)
             {
-                field = semanticModel.GetSymbolSafe(identifierName, cancellationToken) as IFieldSymbol;
+                if (!IdentifierTypeWalker.IsLocalOrParameter(identifierName))
+                {
+                    field = semanticModel.GetSymbolSafe(identifierName, cancellationToken) as IFieldSymbol;
+                }
+
                 return field != null;
             }
 

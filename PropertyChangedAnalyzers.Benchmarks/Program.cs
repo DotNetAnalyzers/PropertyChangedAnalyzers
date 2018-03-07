@@ -61,7 +61,7 @@ namespace PropertyChangedAnalyzers.Benchmarks
             Console.WriteLine(fileName);
             var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath, fileName)
                                           .Single();
-            var destinationFileName = Path.Combine(summary.ResultsDirectoryPath, "..\\..\\Benchmarks", summary.Title + ".md");
+            var destinationFileName = Path.Combine(summary.ResultsDirectoryPath, "..\\..\\..\\..\\..\\Benchmarks", summary.Title + ".md");
             Console.WriteLine($"Copy: {sourceFileName} -> {destinationFileName}");
             File.Copy(sourceFileName, destinationFileName, overwrite: true);
         }
