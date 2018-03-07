@@ -38,10 +38,17 @@ namespace PropertyChangedAnalyzers
                 {
                     if (text == ContainingSymbolName(context.ContainingSymbol) &&
                         context.SemanticModel.GetSymbolSafe(argumentList.Parent, context.CancellationToken) is IMethodSymbol method &&
-                        method.TryGetMatchingParameter(argument, out var parameter) &&
-                        parameter.IsCallerMemberName())
+                        method.TryGetMatchingParameter(argument, out var parameter))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, argument.GetLocation()));
+                        if (parameter.IsCallerMemberName())
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, argument.GetLocation()));
+                        }
+                        else if (parameter.TrySingleDeclaration<SyntaxNode>(context.CancellationToken, out _) &&
+                                 PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, argument.GetLocation()));
+                        }
                     }
 
                     if (SyntaxFacts.IsValidIdentifier(text))

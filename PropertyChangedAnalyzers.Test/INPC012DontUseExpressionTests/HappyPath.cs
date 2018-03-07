@@ -22,6 +22,8 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public int Square => this.Value * this.Value;
+
         public int Value
         {
             get
@@ -37,11 +39,12 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(nameof(Value));
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Square));
             }
         }
 
-        protected virtual void OnPropertyChanged(string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -113,6 +116,8 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public int Square => this.Value * this.Value;
+
         public int Value
         {
             get
@@ -128,7 +133,8 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(nameof(Value));
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(Square));
             }
         }
 
@@ -142,7 +148,7 @@ namespace RoslynSandbox
             return (PropertyInfo)((MemberExpression)expression.Body).Member;
         }
 
-        protected virtual void OnPropertyChanged(string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

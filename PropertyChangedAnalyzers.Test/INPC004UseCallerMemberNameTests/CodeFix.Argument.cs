@@ -27,7 +27,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             [TestCase(@"""Value""")]
             [TestCase(@"nameof(Value)")]
             [TestCase(@"nameof(this.Value)")]
-            public void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
+            public void CallsOnPropertyChangedWithExplicitNameOfCallerWhenParameterIsCallerMemberName(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -61,6 +61,91 @@ namespace RoslynSandbox
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
+                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+            }
+
+            [TestCase(@"""Value""")]
+            [TestCase(@"nameof(Value)")]
+            [TestCase(@"nameof(this.Value)")]
+            public void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(↓nameof(Value));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

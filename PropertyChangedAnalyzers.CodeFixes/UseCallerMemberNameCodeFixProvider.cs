@@ -8,7 +8,6 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Simplification;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCallerMemberNameCodeFixProvider))]
@@ -32,6 +31,8 @@ namespace PropertyChangedAnalyzers
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                             .ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -46,7 +47,9 @@ namespace PropertyChangedAnalyzers
                 {
                     context.RegisterDocumentEditorFix(
                         "Use [CallerMemberName]",
-                        (editor, _) => MakeUseCallerMemberName(editor, parameter, AsCallerMemberName(parameter)),
+                        (editor, x) => editor.ReplaceNode(
+                            parameter,
+                            AsCallerMemberName(parameter)),
                         this.GetType(),
                         diagnostic);
                     continue;
@@ -54,18 +57,36 @@ namespace PropertyChangedAnalyzers
 
                 if (node.FirstAncestorOrSelf<ArgumentSyntax>() is ArgumentSyntax argument)
                 {
-                    context.RegisterDocumentEditorFix(
+                    if (argument.Parent.Parent is InvocationExpressionSyntax invocation &&
+                        semanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
+                        method.TryGetMatchingParameter(argument, out var parameterSymbol))
+                    {
+                        if (parameterSymbol.IsCallerMemberName())
+                        {
+                            context.RegisterDocumentEditorFix(
                             "Use [CallerMemberName]",
                             (editor, _) => editor.RemoveNode(argument),
                             this.GetType(),
                             diagnostic);
+                        }
+                        else if(parameterSymbol.TrySingleDeclaration(context.CancellationToken, out ParameterSyntax parameterSyntax))
+                        {
+                            context.RegisterDocumentEditorFix(
+                                "Use [CallerMemberName]",
+                                (editor, x) =>
+                                {
+                                    editor.ReplaceNode(
+                                        parameterSyntax,
+                                        AsCallerMemberName(parameterSyntax));
+                                    editor.RemoveNode(argument);
+                                },
+                                this.GetType(),
+                                diagnostic);
+                        }
+                    }
+
                 }
             }
-        }
-
-        private static void MakeUseCallerMemberName(DocumentEditor editor, SyntaxNode oldNode, SyntaxNode newNode)
-        {
-            editor.ReplaceNode(oldNode, (_, __) => newNode);
         }
 
         private static ParameterSyntax AsCallerMemberName(ParameterSyntax parameter)

@@ -468,11 +468,11 @@ namespace RoslynSandBox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(nameof(this.Value));
+                this.OnPropertyChanged();
             }
         }
 
-        public void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public void OnPropertyChanged([CallerMemberName]string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
 
