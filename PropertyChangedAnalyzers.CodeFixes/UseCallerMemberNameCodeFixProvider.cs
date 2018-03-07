@@ -69,7 +69,7 @@ namespace PropertyChangedAnalyzers
                             this.GetType(),
                             diagnostic);
                         }
-                        else if(parameterSymbol.TrySingleDeclaration(context.CancellationToken, out ParameterSyntax parameterSyntax))
+                        else if (parameterSymbol.TrySingleDeclaration(context.CancellationToken, out ParameterSyntax parameterSyntax))
                         {
                             context.RegisterDocumentEditorFix(
                                 "Use [CallerMemberName]",
@@ -84,7 +84,6 @@ namespace PropertyChangedAnalyzers
                                 diagnostic);
                         }
                     }
-
                 }
             }
         }
