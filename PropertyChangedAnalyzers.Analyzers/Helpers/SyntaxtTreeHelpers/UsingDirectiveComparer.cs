@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    public class UsingDirectiveComparer : IComparer<UsingDirectiveSyntax>
+    internal class UsingDirectiveComparer : IComparer<UsingDirectiveSyntax>
     {
         public static readonly UsingDirectiveComparer Default = new UsingDirectiveComparer();
         private static readonly StringComparer OrdinalIgnoreCase = StringComparer.OrdinalIgnoreCase;

@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using Microsoft.CodeAnalysis;
@@ -80,6 +81,15 @@ namespace PropertyChangedAnalyzers
         internal static DocumentEditor AddMethod(this DocumentEditor editor, TypeDeclarationSyntax containingType, MethodDeclarationSyntax method)
         {
             editor.ReplaceNode(containingType, (node, generator) => AddSorted(generator, (TypeDeclarationSyntax)node, method));
+            return editor;
+        }
+
+        internal static DocumentEditor AddUsing(this DocumentEditor editor, UsingDirectiveSyntax usingDirective)
+        {
+            editor.ReplaceNode(
+                editor.OriginalRoot,
+                (root, _) => AddUsing(root as CompilationUnitSyntax, editor.SemanticModel, usingDirective));
+
             return editor;
         }
 
@@ -282,6 +292,90 @@ namespace PropertyChangedAnalyzers
                     return type.Modifiers;
                 default:
                     return default(SyntaxTokenList);
+            }
+        }
+
+        private static SyntaxNode AddUsing(CompilationUnitSyntax root, SemanticModel semanticModel, UsingDirectiveSyntax usingDirective)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            using (var walker = UsingDirectiveWalker.Borrow(root))
+            {
+                if (walker.UsingDirectives.Count == 0)
+                {
+                    if (walker.NamespaceDeclarations.TryFirst(out var namespaceDeclaration))
+                    {
+                        if (CodeStyle.UsingDirectivesInsideNamespace(semanticModel, CancellationToken.None))
+                        {
+                            return root.ReplaceNode(namespaceDeclaration, namespaceDeclaration.WithUsings(SyntaxFactory.SingletonList(usingDirective)));
+                        }
+
+                        return root.ReplaceNode(root, root.WithUsings(SyntaxFactory.SingletonList(usingDirective)));
+                    }
+
+                    return root;
+                }
+
+                UsingDirectiveSyntax previous = null;
+                foreach (var directive in walker.UsingDirectives)
+                {
+                    var compare = UsingDirectiveComparer.Compare(directive, usingDirective);
+                    if (compare == 0)
+                    {
+                        return root;
+                    }
+
+                    if (compare > 0)
+                    {
+                        return root.InsertNodesBefore(directive, new[] { usingDirective });
+                    }
+
+                    previous = directive;
+                }
+
+                return root.InsertNodesAfter(previous, new[] { usingDirective });
+            }
+        }
+
+        private sealed class UsingDirectiveWalker : PooledWalker<UsingDirectiveWalker>
+        {
+            private readonly List<UsingDirectiveSyntax> usingDirectives = new List<UsingDirectiveSyntax>();
+            private readonly List<NamespaceDeclarationSyntax> namespaceDeclarations = new List<NamespaceDeclarationSyntax>();
+
+            public IReadOnlyList<UsingDirectiveSyntax> UsingDirectives => this.usingDirectives;
+
+            public IReadOnlyList<NamespaceDeclarationSyntax> NamespaceDeclarations => this.namespaceDeclarations;
+
+            public static UsingDirectiveWalker Borrow(CompilationUnitSyntax compilationUnit) => BorrowAndVisit(compilationUnit, () => new UsingDirectiveWalker());
+
+            public override void VisitUsingDirective(UsingDirectiveSyntax node)
+            {
+                this.usingDirectives.Add(node);
+            }
+
+            public override void VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
+            {
+                this.namespaceDeclarations.Add(node);
+                base.VisitNamespaceDeclaration(node);
+            }
+
+            public override void VisitClassDeclaration(ClassDeclarationSyntax node)
+            {
+                // Stop walking here
+            }
+
+            public override void VisitStructDeclaration(StructDeclarationSyntax node)
+            {
+                // Stop walking here
+            }
+
+            protected override void Clear()
+            {
+                this.usingDirectives.Clear();
+                this.namespaceDeclarations.Clear();
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Linq;
     using System.Threading;
@@ -11,7 +11,7 @@
     using Microsoft.CodeAnalysis.Formatting;
     using NUnit.Framework;
 
-    public class DocumentEditorExtTests
+    public partial class DocumentEditorExtTests
     {
         [Test]
         public async Task AddBackingFieldWhenNoBackingFields()
