@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -9,7 +10,7 @@ namespace PropertyChangedAnalyzers
     /// <summary>
     /// Helper for figuring out if the code uses underscore prefix in field names.
     /// </summary>
-    public static class CodeStyle
+    internal static class CodeStyle
     {
         private enum Result
         {
@@ -25,11 +26,25 @@ namespace PropertyChangedAnalyzers
         /// <param name="semanticModel">The <see cref="SemanticModel"/></param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
         /// <returns>True if the code is found to prefix field names with underscore.</returns>
-        public static bool UnderscoreFields(this SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool UnderscoreFields(this SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             using (var walker = FieldWalker.Borrow())
             {
                 return UnderscoreFields(semanticModel, cancellationToken, walker);
+            }
+        }
+
+        /// <summary>
+        /// Figuring out if the code uses using directives inside namespaces.
+        /// </summary>
+        /// <param name="semanticModel">The <see cref="SemanticModel"/></param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        /// <returns>True if the code is found to prefix field names with underscore.</returns>
+        internal static bool UsingDirectivesInsideNamespace(SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            using (var walker = UsingDirectiveWalker.Borrow())
+            {
+                return UsingDirectivesInsideNamespace(semanticModel, cancellationToken, walker);
             }
         }
 
@@ -58,6 +73,34 @@ namespace PropertyChangedAnalyzers
             }
 
             return false;
+        }
+
+        private static bool UsingDirectivesInsideNamespace(SemanticModel semanticModel, CancellationToken cancellationToken, UsingDirectiveWalker walker)
+        {
+            foreach (var tree in semanticModel.Compilation.SyntaxTrees)
+            {
+                if (tree.FilePath.EndsWith(".g.i.cs") ||
+                    tree.FilePath.EndsWith(".g.cs"))
+                {
+                    continue;
+                }
+
+                walker.Visit(tree.GetRoot(cancellationToken));
+                switch (walker.UsingDirectivesInside())
+                {
+                    case Result.Unknown:
+                        continue;
+                    case Result.Yes:
+                    case Result.Maybe:
+                        return true;
+                    case Result.No:
+                        return false;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            return true;
         }
 
         private sealed class FieldWalker : PooledWalker<FieldWalker>
@@ -246,6 +289,51 @@ namespace PropertyChangedAnalyzers
                             throw new ArgumentOutOfRangeException();
                     }
                 }
+            }
+        }
+
+        private sealed class UsingDirectiveWalker : PooledWalker<UsingDirectiveWalker>
+        {
+            private readonly List<UsingDirectiveSyntax> usingDirectives = new List<UsingDirectiveSyntax>();
+
+            public static UsingDirectiveWalker Borrow() => Borrow(() => new UsingDirectiveWalker());
+
+            public override void VisitUsingDirective(UsingDirectiveSyntax node)
+            {
+                this.usingDirectives.Add(node);
+                base.VisitUsingDirective(node);
+            }
+
+            public override void VisitClassDeclaration(ClassDeclarationSyntax node)
+            {
+                // Stop walking here
+            }
+
+            public override void VisitStructDeclaration(StructDeclarationSyntax node)
+            {
+                // Stop walking here
+            }
+
+            internal Result UsingDirectivesInside()
+            {
+                if (this.usingDirectives.Count == 0)
+                {
+                    return Result.Unknown;
+                }
+
+                if (this.usingDirectives.TryFirst(x => x.FirstAncestor<NamespaceDeclarationSyntax>() != null, out _))
+                {
+                    return this.usingDirectives.TryFirst(x => x.FirstAncestor<NamespaceDeclarationSyntax>() == null, out _)
+                        ? Result.Maybe
+                        : Result.Yes;
+                }
+
+                return Result.No;
+            }
+
+            protected override void Clear()
+            {
+                this.usingDirectives.Clear();
             }
         }
     }
