@@ -197,7 +197,7 @@ namespace PropertyChangedAnalyzers
 
         private static void UseSetAndRaise(DocumentEditor editor, AccessorDeclarationSyntax setter, AssignmentExpressionSyntax assignment, IMethodSymbol setAndRaise, CancellationToken cancellationToken)
         {
-            var usesUnderscoreNames = assignment.UsesUnderscore(editor.SemanticModel, cancellationToken);
+            var usesUnderscoreNames = assignment.UnderscoreFields(editor.SemanticModel, cancellationToken);
             editor.ReplaceNode(
                 setter,
                 x => x.WithBody(null)

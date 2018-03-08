@@ -124,7 +124,7 @@ namespace PropertyChangedAnalyzers
                     return;
                 }
 
-                var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
+                var usesUnderscoreNames = propertyDeclaration.UnderscoreFields(semanticModel, cancellationToken);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var backingField = editor.AddBackingField(propertyDeclaration, usesUnderscoreNames, cancellationToken);
                 var fieldAccess = usesUnderscoreNames
@@ -187,7 +187,7 @@ namespace PropertyChangedAnalyzers
                     return;
                 }
 
-                var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
+                var usesUnderscoreNames = propertyDeclaration.UnderscoreFields(semanticModel, cancellationToken);
                 var backingField = editor.AddBackingField(propertyDeclaration, usesUnderscoreNames, cancellationToken);
                 var fieldAccess = usesUnderscoreNames
                     ? backingField.Name()
@@ -236,7 +236,7 @@ namespace PropertyChangedAnalyzers
                     IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
                 {
                     var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                    var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
+                    var usesUnderscoreNames = propertyDeclaration.UnderscoreFields(semanticModel, cancellationToken);
                     var code = StringBuilderPool.Borrow()
                                                 .AppendLine($"public Type PropertyName")
                                                 .AppendLine("{")
@@ -286,7 +286,7 @@ namespace PropertyChangedAnalyzers
                     editor.InsertBefore(
                         statement,
                         ifStatement);
-                    var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
+                    var usesUnderscoreNames = propertyDeclaration.UnderscoreFields(semanticModel, cancellationToken);
                     var notifyStatement = SyntaxFactory
                                           .ParseStatement(
                                               Snippet.OnPropertyChanged(invoker, property.Name, usesUnderscoreNames))
@@ -310,7 +310,7 @@ namespace PropertyChangedAnalyzers
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out var setter, out var statement, out var assignment, out _))
             {
-                var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
+                var usesUnderscoreNames = propertyDeclaration.UnderscoreFields(semanticModel, cancellationToken);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var notifyStatement = SyntaxFactory
                     .ParseStatement(Snippet.OnPropertyChanged(invoker, property.Name, usesUnderscoreNames))
@@ -352,7 +352,7 @@ namespace PropertyChangedAnalyzers
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
             {
-                var usesUnderscoreNames = propertyDeclaration.UsesUnderscore(semanticModel, cancellationToken);
+                var usesUnderscoreNames = propertyDeclaration.UnderscoreFields(semanticModel, cancellationToken);
                 var setExpression = SyntaxFactory.ParseExpression($"{(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                     .WithSimplifiedNames()

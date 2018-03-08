@@ -29,6 +29,12 @@ namespace PropertyChangedAnalyzers
             return editor;
         }
 
+        internal static DocumentEditor AddUsingStatement(this DocumentEditor editor, UsingDirectiveSyntax usingDirective)
+        {
+            editor.OriginalRoot.
+            return editor;
+        }
+
         internal static FieldDeclarationSyntax AddBackingField(this DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
             var property = editor.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);

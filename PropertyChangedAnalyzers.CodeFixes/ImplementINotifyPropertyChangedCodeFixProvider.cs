@@ -196,7 +196,7 @@ namespace PropertyChangedAnalyzers
             var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
-            var usesUnderscoreNames = classDeclaration.UsesUnderscore(semanticModel, cancellationToken);
+            var usesUnderscoreNames = classDeclaration.UnderscoreFields(semanticModel, cancellationToken);
             if (!type.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 if (classDeclaration.BaseList != null &&

@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Threading;
@@ -6,9 +6,9 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class Names
+    internal static class CodeStyle
     {
-        internal static bool UsesUnderscore(this SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool UnderscoreFields(this SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             using (var walker = Walker.Borrow(node))
             {
