@@ -69,15 +69,12 @@ namespace PropertyChangedAnalyzers.Test.Documentation
         [TestCaseSource(nameof(DescriptorsWithDocs))]
         public void Table(DescriptorInfo descriptorInfo)
         {
-            if (descriptorInfo.Analyzer is INPC004UseCallerMemberName)
+            switch (descriptorInfo.Descriptor.Id)
             {
-                return;
-            }
-
-            if (descriptorInfo.Descriptor.Id == INPC009DontRaiseChangeForMissingProperty.DiagnosticId &&
-                descriptorInfo.Analyzer is InvocationAnalyzer)
-            {
-                return;
+                case INPC004UseCallerMemberName.DiagnosticId when descriptorInfo.Analyzer is INPC004UseCallerMemberName:
+                    return;
+                case INPC009DontRaiseChangeForMissingProperty.DiagnosticId when descriptorInfo.Analyzer is InvocationAnalyzer:
+                    return;
             }
 
             var expected = GetTable(CreateStub(descriptorInfo));
