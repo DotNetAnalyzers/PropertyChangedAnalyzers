@@ -1,3 +1,6 @@
+#### 2.5.6
+* FEATURE: Alternative codefixes that adds usings.
+
 #### 2.5.4
 * BUGFIX: Codegen for INPC004 use [CallerMemberName].
 
