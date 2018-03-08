@@ -20,7 +20,32 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             }
 
             [Test]
-            public void SubclassViewModelBase()
+            public void SubclassViewModelBaseAddUsing()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ↓Foo
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using GalaSoft.MvvmLight;
+
+    public class Foo : ViewModelBase
+    {
+        public int Bar { get; set; }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass GalaSoft.MvvmLight.ViewModelBase and add using.");
+            }
+
+            [Test]
+            public void SubclassViewModelBaseFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +64,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass GalaSoft.MvvmLight.ViewModelBase");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass GalaSoft.MvvmLight.ViewModelBase fully qualified.");
             }
 
             [Test]

@@ -21,7 +21,32 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             }
 
             [Test]
-            public void SubclassMvxNotifyPropertyChanged()
+            public void SubclassMvxNotifyPropertyChangedAddUsing()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ↓Foo
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using MvvmCross.Core.ViewModels;
+
+    public class Foo : MvxNotifyPropertyChanged
+    {
+        public int Bar { get; set; }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged and add using.");
+            }
+
+            [Test]
+            public void SubclassMvxNotifyPropertyChangedFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -40,11 +65,36 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged fully qualified.");
             }
 
             [Test]
-            public void SubclassMvxViewModel()
+            public void SubclassMvxViewModelAddUsing()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ↓Foo
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using MvvmCross.Core.ViewModels;
+
+    public class Foo : MvxViewModel
+    {
+        public int Bar { get; set; }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxViewModel and add using.");
+            }
+
+            [Test]
+            public void SubclassMvxViewModelFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -63,7 +113,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxViewModel");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxViewModel fully qualified.");
             }
 
             [Test]

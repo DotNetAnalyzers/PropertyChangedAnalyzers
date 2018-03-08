@@ -64,7 +64,7 @@ namespace PropertyChangedAnalyzers
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
+                                           .ConfigureAwait(false);
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
@@ -91,89 +91,28 @@ namespace PropertyChangedAnalyzers
                 {
                     if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("GalaSoft.MvvmLight.dll") == true))
                     {
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                "Subclass GalaSoft.MvvmLight.ViewModelBase",
-                                cancellationToken =>
-                                    SubclassViewModelBaseAsync(
-                                        context,
-                                        classDeclaration,
-                                        MvvmLightViewModelBaseType,
-                                        cancellationToken),
-                                this.GetType().FullName + "Subclass GalaSoft.MvvmLight.ViewModelBase"),
-                            diagnostic);
+                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmLightViewModelBaseType);
                     }
 
                     if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Caliburn.Micro.dll") == true))
                     {
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                "Subclass Caliburn.Micro.PropertyChangedBase",
-                                cancellationToken =>
-                                    SubclassViewModelBaseAsync(
-                                        context,
-                                        classDeclaration,
-                                        CaliburnMicroPropertyChangedBase,
-                                        cancellationToken),
-                                this.GetType().FullName + "Subclass Caliburn.Micro.PropertyChangedBase"),
-                            diagnostic);
+                        RegisterSubclassFixes(diagnostic, classDeclaration, CaliburnMicroPropertyChangedBase);
                     }
 
                     if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Stylet.dll") == true))
                     {
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                "Subclass Stylet.PropertyChangedBase",
-                                cancellationToken =>
-                                    SubclassViewModelBaseAsync(
-                                        context,
-                                        classDeclaration,
-                                        StyletPropertyChangedBase,
-                                        cancellationToken),
-                                this.GetType().FullName + "Subclass Stylet.PropertyChangedBase"),
-                            diagnostic);
+                        RegisterSubclassFixes(diagnostic, classDeclaration, StyletPropertyChangedBase);
                     }
 
                     if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("MvvmCross.Core.dll") == true))
                     {
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged",
-                                cancellationToken =>
-                                    SubclassViewModelBaseAsync(
-                                        context,
-                                        classDeclaration,
-                                        MvxNotifyPropertyChanged,
-                                        cancellationToken),
-                                this.GetType().FullName + "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged"),
-                            diagnostic);
-
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                "Subclass MvvmCross.Core.ViewModels.MvxViewModel",
-                                cancellationToken =>
-                                    SubclassViewModelBaseAsync(
-                                        context,
-                                        classDeclaration,
-                                        MvxViewModel,
-                                        cancellationToken),
-                                this.GetType().FullName + "Subclass MvvmCross.Core.ViewModels.MvxViewModel"),
-                            diagnostic);
+                        RegisterSubclassFixes(diagnostic, classDeclaration, MvxNotifyPropertyChanged);
+                        RegisterSubclassFixes(diagnostic, classDeclaration, MvxViewModel);
                     }
 
                     if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Prism.Mvvm.dll") == true))
                     {
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                "Subclass Prism.Mvvm.BindableBase",
-                                cancellationToken =>
-                                    SubclassViewModelBaseAsync(
-                                        context,
-                                        classDeclaration,
-                                        PrismMvvmBindableBase,
-                                        cancellationToken),
-                                this.GetType().FullName + "Subclass Prism.Mvvm.BindableBase"),
-                            diagnostic);
+                        RegisterSubclassFixes(diagnostic, classDeclaration, PrismMvvmBindableBase);
                     }
                 }
 
@@ -187,6 +126,33 @@ namespace PropertyChangedAnalyzers
                                 classDeclaration,
                                 cancellationToken),
                         this.GetType().FullName),
+                    diagnostic);
+            }
+
+            void RegisterSubclassFixes(Diagnostic diagnostic, ClassDeclarationSyntax classDeclaration, TypeSyntax viewModelBasetype)
+            {
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        $"Subclass {viewModelBasetype} and add using.",
+                        cancellationToken =>
+                            SubclassViewModelBaseAndAddUsingAsync(
+                                context,
+                                classDeclaration,
+                                viewModelBasetype,
+                                cancellationToken),
+                        $"Subclass {viewModelBasetype} add usings."),
+                    diagnostic);
+
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        $"Subclass {viewModelBasetype} fully qualified.",
+                        cancellationToken =>
+                            SubclassViewModelBaseAsync(
+                                context,
+                                classDeclaration,
+                                viewModelBasetype,
+                                cancellationToken),
+                        $"Subclass {viewModelBasetype} fully qualified."),
                     diagnostic);
             }
         }
@@ -251,6 +217,25 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
+            return editor.GetChangedDocument();
+        }
+
+        private static async Task<Document> SubclassViewModelBaseAndAddUsingAsync(CodeFixContext context, ClassDeclarationSyntax classDeclaration, TypeSyntax viewModelBaseType, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
+                                             .ConfigureAwait(false);
+            if (classDeclaration.BaseList != null &&
+                classDeclaration.BaseList.Types.TryFirst(x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true, out var baseType) &&
+                context.Diagnostics.Any(IsINotifyPropertyChangedMissing))
+            {
+                editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(viewModelBaseType));
+            }
+            else
+            {
+                editor.AddBaseType(classDeclaration, viewModelBaseType);
+            }
+
+            editor.AddUsing(SyntaxFactory.UsingDirective(((QualifiedNameSyntax)viewModelBaseType).Left));
             return editor.GetChangedDocument();
         }
 

@@ -20,7 +20,32 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             }
 
             [Test]
-            public void SubclassPropertyChangedBase()
+            public void SubclassPropertyChangedBaseaAddUsing()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ↓Foo
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using Caliburn.Micro;
+
+    public class Foo : PropertyChangedBase
+    {
+        public int Bar { get; set; }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase and add using.");
+            }
+
+            [Test]
+            public void SubclassPropertyChangedBaseFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +64,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase fully qualified.");
             }
 
             [Test]

@@ -20,7 +20,32 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             }
 
             [Test]
-            public void SubclassBindableBase()
+            public void SubclassBindableBaseAddUsing()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ↓Foo
+    {
+        public int Bar { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using Microsoft.Practices.Prism.Mvvm;
+
+    public class Foo : BindableBase
+    {
+        public int Bar { get; set; }
+    }
+}";
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase and add using.");
+            }
+
+            [Test]
+            public void SubclassBindableBaseFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -39,7 +64,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass Prism.Mvvm.BindableBase");
+                AnalyzerAssert.CodeFix<INPC001ImplementINotifyPropertyChanged, ImplementINotifyPropertyChangedCodeFixProvider>(testCode, fixedCode, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase fully qualified.");
             }
 
             [Test]
