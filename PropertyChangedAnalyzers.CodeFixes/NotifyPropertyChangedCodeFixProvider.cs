@@ -28,7 +28,7 @@ namespace PropertyChangedAnalyzers
 
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
-            var usesUnderscoreNames = syntaxRoot.UnderscoreFields(semanticModel, context.CancellationToken);
+            var underscoreFields = CodeStyle.UnderscoreFields(semanticModel, context.CancellationToken);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.TryGetValue(INPC003NotifyWhenPropertyChanges.PropertyNameKey, out var property))
@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
                                         invocation,
                                         property,
                                         invoker,
-                                        usesUnderscoreNames),
+                                        underscoreFields),
                                     this.GetType(),
                                     diagnostic);
                                 continue;
@@ -69,7 +69,7 @@ namespace PropertyChangedAnalyzers
                                         ifStatement,
                                         property,
                                         invoker,
-                                        usesUnderscoreNames),
+                                        underscoreFields),
                                     this.GetType(),
                                     diagnostic);
                                 continue;
@@ -87,7 +87,7 @@ namespace PropertyChangedAnalyzers
                                         expression,
                                         property,
                                         invoker,
-                                        usesUnderscoreNames),
+                                        underscoreFields),
                                     this.GetType(),
                                     diagnostic);
                                 continue;
@@ -101,7 +101,7 @@ namespace PropertyChangedAnalyzers
                                 expression,
                                 property,
                                 invoker,
-                                usesUnderscoreNames),
+                                underscoreFields),
                             this.GetType(),
                             diagnostic);
                     }

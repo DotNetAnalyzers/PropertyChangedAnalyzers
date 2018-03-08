@@ -6,52 +6,63 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class CodeStyle
+    /// <summary>
+    /// Helper for figuring out if the code uses underscore prefix in field names.
+    /// </summary>
+    public static class CodeStyle
     {
-        internal static bool UnderscoreFields(this SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private enum Result
         {
-            using (var walker = Walker.Borrow(node))
+            Unknown,
+            Yes,
+            No,
+            Maybe
+        }
+
+        /// <summary>
+        /// Figuring out if the code uses underscore prefix in field names.
+        /// </summary>
+        /// <param name="semanticModel">The <see cref="SemanticModel"/></param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        /// <returns>True if the code is found to prefix field names with underscore.</returns>
+        public static bool UnderscoreFields(this SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            using (var walker = FieldWalker.Borrow())
             {
-                if (walker.UsesThis == Result.Yes ||
-                    walker.UsesUnderScore == Result.No)
+                return UnderscoreFields(semanticModel, cancellationToken, walker);
+            }
+        }
+
+        private static bool UnderscoreFields(this SemanticModel semanticModel, CancellationToken cancellationToken, FieldWalker fieldWalker)
+        {
+            foreach (var tree in semanticModel.Compilation.SyntaxTrees)
+            {
+                if (tree.FilePath.EndsWith(".g.i.cs") ||
+                    tree.FilePath.EndsWith(".g.cs"))
+                {
+                    continue;
+                }
+
+                fieldWalker.Visit(tree.GetRoot(cancellationToken));
+                if (fieldWalker.UsesThis == Result.Yes ||
+                    fieldWalker.UsesUnderScore == Result.No)
                 {
                     return false;
                 }
 
-                if (walker.UsesUnderScore == Result.Yes ||
-                    walker.UsesThis == Result.No)
+                if (fieldWalker.UsesUnderScore == Result.Yes ||
+                    fieldWalker.UsesThis == Result.No)
                 {
                     return true;
-                }
-
-                foreach (var tree in semanticModel.Compilation.SyntaxTrees)
-                {
-                    if (tree.FilePath.EndsWith(".g.i.cs"))
-                    {
-                        continue;
-                    }
-
-                    walker.Visit(tree.GetRoot(cancellationToken));
-                    if (walker.UsesThis == Result.Yes ||
-                        walker.UsesUnderScore == Result.No)
-                    {
-                        return false;
-                    }
-
-                    if (walker.UsesUnderScore == Result.Yes ||
-                        walker.UsesThis == Result.No)
-                    {
-                        return true;
-                    }
                 }
             }
 
             return false;
         }
 
-        private sealed class Walker : PooledWalker<Walker>
+        private sealed class FieldWalker : PooledWalker<FieldWalker>
         {
-            private Walker()
+            private FieldWalker()
             {
             }
 
@@ -59,17 +70,7 @@ namespace PropertyChangedAnalyzers
 
             public Result UsesUnderScore { get; private set; }
 
-            public static Walker Borrow(SyntaxNode node)
-            {
-                var walker = Borrow(() => new Walker());
-                while (node.Parent != null)
-                {
-                    node = node.Parent;
-                }
-
-                walker.Visit(node);
-                return walker;
-            }
+            public static FieldWalker Borrow() => Borrow(() => new FieldWalker());
 
             public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
             {

@@ -197,14 +197,14 @@ namespace PropertyChangedAnalyzers
 
         private static void UseSetAndRaise(DocumentEditor editor, AccessorDeclarationSyntax setter, AssignmentExpressionSyntax assignment, IMethodSymbol setAndRaise, CancellationToken cancellationToken)
         {
-            var usesUnderscoreNames = assignment.UnderscoreFields(editor.SemanticModel, cancellationToken);
+            var underscoreFields = CodeStyle.UnderscoreFields(editor.SemanticModel, cancellationToken);
             editor.ReplaceNode(
                 setter,
                 x => x.WithBody(null)
                       .WithExpressionBody(
                           SyntaxFactory.ArrowExpressionClause(
                               SyntaxFactory.ParseExpression(
-                                  $"{(usesUnderscoreNames ? string.Empty : "this.")}{setAndRaise.Name}(ref {assignment.Left}, value);")))
+                                  $"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {assignment.Left}, value);")))
                       .WithTrailingElasticLineFeed()
                       .WithAdditionalAnnotations(Formatter.Annotation));
         }

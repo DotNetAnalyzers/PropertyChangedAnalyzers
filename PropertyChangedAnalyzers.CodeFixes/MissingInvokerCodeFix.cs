@@ -73,7 +73,7 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
             var type = editor.SemanticModel.GetDeclaredSymbolSafe(classDeclaration, cancellationToken);
-            var usesUnderscoreNames = classDeclaration.UnderscoreFields(editor.SemanticModel, cancellationToken);
+            var underscoreFields = CodeStyle.UnderscoreFields(editor.SemanticModel, cancellationToken);
             if (type.IsSealed)
             {
                 editor.AddMethod(
@@ -84,7 +84,7 @@ private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName
 {
     this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
 }",
-                        usesUnderscoreNames));
+                        underscoreFields));
             }
             else if (type.IsStatic)
             {
@@ -96,7 +96,7 @@ private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMem
 {
     PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
 }",
-                        usesUnderscoreNames));
+                        underscoreFields));
             }
             else
             {
@@ -108,7 +108,7 @@ protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.Caller
 {
     this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
 }",
-                        usesUnderscoreNames));
+                        underscoreFields));
             }
 
             return editor.GetChangedDocument();

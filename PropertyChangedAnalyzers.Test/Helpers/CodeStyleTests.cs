@@ -1,11 +1,11 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    internal class NamesTests
+    internal class CodeStyleTests
     {
         [Test]
         public void DefaultsToStyleCop()
@@ -28,7 +28,7 @@ namespace RoslynSandbox
 
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            Assert.AreEqual(false, syntaxTree.GetRoot().UnderscoreFields(semanticModel, CancellationToken.None));
+            Assert.AreEqual(false, CodeStyle.UnderscoreFields(semanticModel, CancellationToken.None));
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace RoslynSandbox
 
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            Assert.AreEqual(true, syntaxTree.GetRoot().UnderscoreFields(semanticModel, CancellationToken.None));
+            Assert.AreEqual(true, CodeStyle.UnderscoreFields(semanticModel, CancellationToken.None));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace RoslynSandbox
 
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            Assert.AreEqual(true, syntaxTree.GetRoot().UnderscoreFields(semanticModel, CancellationToken.None));
+            Assert.AreEqual(true, CodeStyle.UnderscoreFields(semanticModel, CancellationToken.None));
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace RoslynSandbox
 
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            Assert.AreEqual(false, syntaxTree.GetRoot().UnderscoreFields(semanticModel, CancellationToken.None));
+            Assert.AreEqual(false, CodeStyle.UnderscoreFields(semanticModel, CancellationToken.None));
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace RoslynSandbox
 
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            Assert.AreEqual(false, syntaxTree.GetRoot().UnderscoreFields(semanticModel, CancellationToken.None));
+            Assert.AreEqual(false, CodeStyle.UnderscoreFields(semanticModel, CancellationToken.None));
         }
 
         [Test]
@@ -134,7 +134,7 @@ namespace RoslynSandbox
             foreach (var tree in compilation.SyntaxTrees)
             {
                 var semanticModel = compilation.GetSemanticModel(tree);
-                Assert.AreEqual(true, tree.GetRoot().UnderscoreFields(semanticModel, CancellationToken.None));
+                Assert.AreEqual(true, CodeStyle.UnderscoreFields(semanticModel, CancellationToken.None));
             }
         }
     }

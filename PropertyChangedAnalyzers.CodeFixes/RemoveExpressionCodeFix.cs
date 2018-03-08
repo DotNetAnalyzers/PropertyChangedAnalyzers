@@ -28,7 +28,7 @@ namespace PropertyChangedAnalyzers
             var semanticModel = await context.Document
                                              .GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
-            var usesUnderscoreNames = syntaxRoot.UnderscoreFields(semanticModel, context.CancellationToken);
+            var underscoreFields = CodeStyle.UnderscoreFields(semanticModel, context.CancellationToken);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -44,7 +44,7 @@ namespace PropertyChangedAnalyzers
                 {
                     context.RegisterDocumentEditorFix(
                         "Use overload that does not use expression.",
-                        (editor, cancellationToken) => RemoveExpression(editor, argument, invoker, usesUnderscoreNames, cancellationToken),
+                        (editor, cancellationToken) => RemoveExpression(editor, argument, invoker, underscoreFields, cancellationToken),
                         this.GetType(),
                         diagnostic);
                 }
