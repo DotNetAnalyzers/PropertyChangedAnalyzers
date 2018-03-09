@@ -25,36 +25,36 @@ namespace PropertyChangedAnalyzers
                                                                                                                    .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
         private static readonly QualifiedNameSyntax CallerMemberNameType = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("System.Runtime.CompilerServices.CallerMemberName")
+                                                                                                             .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                                             .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
+        private static readonly QualifiedNameSyntax PropertyChangedEventHandlerType = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("System.ComponentModel.PropertyChangedEventHandler")
+                                                                                                                        .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                                                        .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
+        private static readonly QualifiedNameSyntax MvvmLightViewModelBaseType = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("GalaSoft.MvvmLight.ViewModelBase")
                                                                                                                    .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                                                    .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
-        private static readonly QualifiedNameSyntax PropertyChangedEventHandlerType = (QualifiedNameSyntax) SyntaxFactory.ParseTypeName("System.ComponentModel.PropertyChangedEventHandler")
+        private static readonly QualifiedNameSyntax CaliburnMicroPropertyChangedBase = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("Caliburn.Micro.PropertyChangedBase")
                                                                                                                          .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                                                          .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
-        private static readonly QualifiedNameSyntax MvvmLightViewModelBaseType = (QualifiedNameSyntax) SyntaxFactory.ParseTypeName("GalaSoft.MvvmLight.ViewModelBase")
-                                                                                                                    .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                    .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax CaliburnMicroPropertyChangedBase = (QualifiedNameSyntax) SyntaxFactory.ParseTypeName("Caliburn.Micro.PropertyChangedBase")
-                                                                                                                          .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                          .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax StyletPropertyChangedBase = (QualifiedNameSyntax) SyntaxFactory.ParseTypeName("Stylet.PropertyChangedBase")
-                                                                                                                   .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                   .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax MvxNotifyPropertyChanged = (QualifiedNameSyntax) SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged")
+        private static readonly QualifiedNameSyntax StyletPropertyChangedBase = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("Stylet.PropertyChangedBase")
                                                                                                                   .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                                                   .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
-        private static readonly QualifiedNameSyntax MvxViewModel = (QualifiedNameSyntax) SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxViewModel")
-                                                                                                      .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                      .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+        private static readonly QualifiedNameSyntax MvxNotifyPropertyChanged = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged")
+                                                                                                                 .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                                                 .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
-        private static readonly QualifiedNameSyntax PrismMvvmBindableBase = (QualifiedNameSyntax) SyntaxFactory.ParseTypeName("Microsoft.Practices.Prism.Mvvm.BindableBase")
-                                                                                                               .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                               .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+        private static readonly QualifiedNameSyntax MvxViewModel = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxViewModel")
+                                                                                                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                                     .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
+        private static readonly QualifiedNameSyntax PrismMvvmBindableBase = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("Microsoft.Practices.Prism.Mvvm.BindableBase")
+                                                                                                              .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                                              .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
@@ -177,7 +177,7 @@ namespace PropertyChangedAnalyzers
         {
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
-            ImplementINotifyPropertyChanged(context, semanticModel, classDeclaration, cancellationToken, editor);
+            ImplementINotifyPropertyChanged(context, semanticModel, classDeclaration, editor);
             editor.AddUsing(SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left));
             editor.AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
             return editor.GetChangedDocument();
@@ -187,14 +187,14 @@ namespace PropertyChangedAnalyzers
         {
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
-            ImplementINotifyPropertyChanged(context, semanticModel, classDeclaration, cancellationToken, editor);
+            ImplementINotifyPropertyChanged(context, semanticModel, classDeclaration, editor);
             return editor.GetChangedDocument();
         }
 
-        private static void ImplementINotifyPropertyChanged(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken, DocumentEditor editor)
+        private static void ImplementINotifyPropertyChanged(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, DocumentEditor editor)
         {
             var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
-            var underscoreFields = CodeStyle.UnderscoreFields(semanticModel, cancellationToken);
+            var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
             if (!type.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 if (classDeclaration.BaseList != null &&

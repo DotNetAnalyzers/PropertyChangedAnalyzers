@@ -69,7 +69,7 @@ namespace PropertyChangedAnalyzers
                     {
                         context.RegisterDocumentEditorFix(
                             $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",
-                            (editor, cancellationToken) => UseSetAndRaise(editor, setter, assignment, setAndRaiseMethod, cancellationToken),
+                            (editor, cancellationToken) => UseSetAndRaise(editor, setter, assignment, setAndRaiseMethod),
                             $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",
                             diagnostic);
                     }
@@ -195,9 +195,9 @@ namespace PropertyChangedAnalyzers
             editor.FormatNode(ifSetAndRaise);
         }
 
-        private static void UseSetAndRaise(DocumentEditor editor, AccessorDeclarationSyntax setter, AssignmentExpressionSyntax assignment, IMethodSymbol setAndRaise, CancellationToken cancellationToken)
+        private static void UseSetAndRaise(DocumentEditor editor, AccessorDeclarationSyntax setter, AssignmentExpressionSyntax assignment, IMethodSymbol setAndRaise)
         {
-            var underscoreFields = CodeStyle.UnderscoreFields(editor.SemanticModel, cancellationToken);
+            var underscoreFields = CodeStyle.UnderscoreFields(editor.SemanticModel);
             editor.ReplaceNode(
                 setter,
                 x => x.WithBody(null)

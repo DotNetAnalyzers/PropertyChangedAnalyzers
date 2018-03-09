@@ -308,7 +308,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (walker.NamespaceDeclarations.TryFirst(out var namespaceDeclaration))
                     {
-                        if (CodeStyle.UsingDirectivesInsideNamespace(semanticModel, CancellationToken.None))
+                        if (CodeStyle.UsingDirectivesInsideNamespace(semanticModel))
                         {
                             return root.ReplaceNode(namespaceDeclaration, namespaceDeclaration.WithUsings(SyntaxFactory.SingletonList(usingDirective)));
                         }

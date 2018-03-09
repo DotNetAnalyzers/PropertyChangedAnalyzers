@@ -52,7 +52,7 @@ namespace PropertyChangedAnalyzers
                 editor.SemanticModel.LookupSymbols(argument.SpanStart, name: name).TrySingle(out var member) &&
                 (member is IFieldSymbol || member is IPropertySymbol || member is IMethodSymbol) &&
                 !member.IsStatic &&
-                !CodeStyle.UnderscoreFields(editor.SemanticModel, cancellationToken))
+                !CodeStyle.UnderscoreFields(editor.SemanticModel))
             {
                 editor.ReplaceNode(
                     argument.Expression,

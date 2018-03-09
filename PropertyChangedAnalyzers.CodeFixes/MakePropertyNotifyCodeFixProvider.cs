@@ -72,8 +72,7 @@ namespace PropertyChangedAnalyzers
                                 editor,
                                 propertyDeclaration,
                                 setAndRaiseMethod,
-                                semanticModel,
-                                cancellationToken),
+                                semanticModel),
                             key,
                             diagnostic);
                     }
@@ -124,7 +123,7 @@ namespace PropertyChangedAnalyzers
                     return;
                 }
 
-                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel, cancellationToken);
+                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var backingField = editor.AddBackingField(propertyDeclaration, underscoreFields, cancellationToken);
                 var fieldAccess = underscoreFields
@@ -187,7 +186,7 @@ namespace PropertyChangedAnalyzers
                     return;
                 }
 
-                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel, cancellationToken);
+                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
                 var backingField = editor.AddBackingField(propertyDeclaration, underscoreFields, cancellationToken);
                 var fieldAccess = underscoreFields
                     ? backingField.Name()
@@ -236,7 +235,7 @@ namespace PropertyChangedAnalyzers
                     IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
                 {
                     var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                    var underscoreFields = CodeStyle.UnderscoreFields(semanticModel, cancellationToken);
+                    var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
                     var code = StringBuilderPool.Borrow()
                                                 .AppendLine($"public Type PropertyName")
                                                 .AppendLine("{")
@@ -286,7 +285,7 @@ namespace PropertyChangedAnalyzers
                     editor.InsertBefore(
                         statement,
                         ifStatement);
-                    var underscoreFields = CodeStyle.UnderscoreFields(semanticModel, cancellationToken);
+                    var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
                     var notifyStatement = SyntaxFactory
                                           .ParseStatement(
                                               Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
@@ -310,7 +309,7 @@ namespace PropertyChangedAnalyzers
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out var setter, out var statement, out var assignment, out _))
             {
-                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel, cancellationToken);
+                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var notifyStatement = SyntaxFactory
                     .ParseStatement(Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
@@ -342,7 +341,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static void MakeWithBackingFieldSet(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static void MakeWithBackingFieldSet(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel)
         {
             var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration == null)
@@ -352,7 +351,7 @@ namespace PropertyChangedAnalyzers
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
             {
-                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel, cancellationToken);
+                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
                 var setExpression = SyntaxFactory.ParseExpression($"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                     .WithSimplifiedNames()
