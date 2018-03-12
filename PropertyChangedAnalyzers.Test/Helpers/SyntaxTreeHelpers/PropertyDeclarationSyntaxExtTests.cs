@@ -32,7 +32,7 @@ namespace RoslynSandBox
     }
 }");
             var property = syntaxTree.FindPropertyDeclaration(propertyName);
-            Assert.AreEqual(true, property.TryGetGetAccessorDeclaration(out var result));
+            Assert.AreEqual(true, property.TryGetGetter(out var result));
             Assert.AreEqual(getter, result.ToString());
         }
 
@@ -62,7 +62,7 @@ namespace RoslynSandBox
     }
 }");
             var property = syntaxTree.FindPropertyDeclaration(propertyName);
-            Assert.AreEqual(true, property.TryGetSetAccessorDeclaration(out var result));
+            Assert.AreEqual(true, property.TryGetSetter(out var result));
             Assert.AreEqual(setter, result.ToString());
         }
     }

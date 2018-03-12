@@ -229,7 +229,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter))
+            if (propertyDeclaration.TryGetSetter(out var setter))
             {
                 if (setter.ExpressionBody != null &&
                     IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
@@ -373,7 +373,7 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)
         {
-            if (propertyDeclaration.TryGetSetAccessorDeclaration(out setter))
+            if (propertyDeclaration.TryGetSetter(out setter))
             {
                 if (setter.Body?.Statements.Count == 1)
                 {

@@ -43,7 +43,7 @@ namespace PropertyChangedAnalyzers
                 !context.ContainingSymbol.IsStatic &&
                 IsInConstructor(assignment) &&
                 Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
-                propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
+                propertyDeclaration.TryGetSetter(out var setter) &&
                 (setter.Body != null || setter.ExpressionBody != null) &&
                 !ThrowWalker.Throws(setter))
             {

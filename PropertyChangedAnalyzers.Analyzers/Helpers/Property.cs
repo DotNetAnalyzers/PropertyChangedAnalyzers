@@ -24,13 +24,13 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsLazy(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (propertyDeclaration.TryGetSetAccessorDeclaration(out _))
+            if (propertyDeclaration.TryGetSetter(out _))
             {
                 return false;
             }
 
             IFieldSymbol returnedField = null;
-            if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter))
+            if (propertyDeclaration.TryGetGetter(out var getter))
             {
                 if (getter.Body == null)
                 {
@@ -84,7 +84,7 @@ namespace PropertyChangedAnalyzers
                 declaration.Modifiers.Any(SyntaxKind.ProtectedKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
-                !declaration.TryGetSetAccessorDeclaration(out _) ||
+                !declaration.TryGetSetter(out _) ||
                 IsAutoPropertyOnlyAssignedInCtor(declaration))
             {
                 return false;
@@ -120,7 +120,7 @@ namespace PropertyChangedAnalyzers
                 return true;
             }
 
-            if (declaration.TryGetSetAccessorDeclaration(out var setter))
+            if (declaration.TryGetSetter(out var setter))
             {
                 if (!AssignsValueToBackingField(setter, out var assignment))
                 {
@@ -145,10 +145,10 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsMutableAutoProperty(PropertyDeclarationSyntax property, out AccessorDeclarationSyntax getter, out AccessorDeclarationSyntax setter)
         {
-            if (property.TryGetGetAccessorDeclaration(out getter) &&
+            if (property.TryGetGetter(out getter) &&
                 getter.Body == null &&
                 getter.ExpressionBody == null &&
-                property.TryGetSetAccessorDeclaration(out setter) &&
+                property.TryGetSetter(out setter) &&
                 setter.Body == null &&
                 setter.ExpressionBody == null)
             {
@@ -162,8 +162,8 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsSimplePropertyWithBackingField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (!(property.TryGetGetAccessorDeclaration(out var getter) &&
-                property.TryGetSetAccessorDeclaration(out var setter)))
+            if (!(property.TryGetGetter(out var getter) &&
+                property.TryGetSetter(out var setter)))
             {
                 return false;
             }
@@ -209,7 +209,7 @@ namespace PropertyChangedAnalyzers
                 return result != null;
             }
 
-            if (property.TryGetGetAccessorDeclaration(out var getter))
+            if (property.TryGetGetter(out var getter))
             {
                 expressionBody = getter.ExpressionBody;
                 if (expressionBody != null)
@@ -266,7 +266,7 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            if (property.TryGetSetAccessorDeclaration(out var setter))
+            if (property.TryGetSetter(out var setter))
             {
                 if (TryFindSingleSetAndRaise(setter, semanticModel, cancellationToken, out var invocation))
                 {
@@ -464,7 +464,7 @@ namespace PropertyChangedAnalyzers
                 return node.FirstAncestor<AnonymousFunctionExpressionSyntax>() == null;
             }
 
-            if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter) &&
+            if (propertyDeclaration.TryGetSetter(out var setter) &&
                 setter.Body == null &&
                 setter.ExpressionBody == null)
             {

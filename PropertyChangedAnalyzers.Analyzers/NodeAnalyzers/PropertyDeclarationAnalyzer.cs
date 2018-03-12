@@ -40,7 +40,7 @@ namespace PropertyChangedAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, expressionBody.Expression.GetLocation(), "Expression body returns property, infinite recursion"));
                 }
 
-                if (propertyDeclaration.TryGetGetAccessorDeclaration(out var getter))
+                if (propertyDeclaration.TryGetGetter(out var getter))
                 {
                     using (var returnWalker = ReturnExpressionsWalker.Borrow(getter))
                     {
@@ -51,7 +51,7 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                if (propertyDeclaration.TryGetSetAccessorDeclaration(out var setter))
+                if (propertyDeclaration.TryGetSetter(out var setter))
                 {
                     using (var assignmentWalker = AssignmentWalker.Borrow(setter))
                     {

@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System;
     using Microsoft.CodeAnalysis;
@@ -9,32 +9,34 @@
     {
         internal static AccessorDeclarationSyntax Getter(this PropertyDeclarationSyntax property)
         {
-            if (property.TryGetGetAccessorDeclaration(out var getter))
+            if (property.TryGetGetter(out var getter))
             {
                 return getter;
             }
 
-            throw new InvalidOperationException("Could not find getter, use TryGetGetAccessorDeclaration if you are not sure there is a getter.");
+            throw new InvalidOperationException("Could not find getter, use TryGetGetter if you are not sure there is a getter.");
         }
 
-        internal static bool TryGetGetAccessorDeclaration(this PropertyDeclarationSyntax property, out AccessorDeclarationSyntax result)
+        internal static bool TryGetGetter(this PropertyDeclarationSyntax property, out AccessorDeclarationSyntax result)
         {
-            return TryGetAccessorDeclaration(property, SyntaxKind.GetAccessorDeclaration, out result);
+            result = null;
+            return property?.AccessorList?.Accessors.TryFirst(x => x.IsKind(SyntaxKind.GetAccessorDeclaration), out result) == true;
         }
 
         internal static AccessorDeclarationSyntax Setter(this PropertyDeclarationSyntax property)
         {
-            if (property.TryGetSetAccessorDeclaration(out var getter))
+            if (property.TryGetSetter(out var getter))
             {
                 return getter;
             }
 
-            throw new InvalidOperationException("Could not find getter, use TryGetGetAccessorDeclaration if you are not sure there is a getter.");
+            throw new InvalidOperationException("Could not find getter, use TryGetGetter if you are not sure there is a getter.");
         }
 
-        internal static bool TryGetSetAccessorDeclaration(this PropertyDeclarationSyntax property, out AccessorDeclarationSyntax result)
+        internal static bool TryGetSetter(this PropertyDeclarationSyntax property, out AccessorDeclarationSyntax result)
         {
-            return TryGetAccessorDeclaration(property, SyntaxKind.SetAccessorDeclaration, out result);
+            result = null;
+            return property?.AccessorList?.Accessors.TryFirst(x => x.IsKind(SyntaxKind.SetAccessorDeclaration), out result) == true;
         }
 
         internal static bool TryGetAccessorDeclaration(this PropertyDeclarationSyntax property, SyntaxKind kind, out AccessorDeclarationSyntax result)

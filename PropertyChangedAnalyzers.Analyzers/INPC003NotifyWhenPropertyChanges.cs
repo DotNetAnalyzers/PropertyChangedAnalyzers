@@ -267,7 +267,7 @@ namespace PropertyChangedAnalyzers
                 return property.ExpressionBody.Expression;
             }
 
-            if (property.TryGetGetAccessorDeclaration(out var getter))
+            if (property.TryGetGetter(out var getter))
             {
                 return (SyntaxNode)getter.Body ?? getter.ExpressionBody;
             }
