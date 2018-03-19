@@ -158,7 +158,7 @@ namespace RoslynSandbox
         public int Value
         {
             get => this.value;
-            private set =>this.value = value;
+            private set => this.value = value;
         }
     }
 }";
@@ -175,7 +175,7 @@ namespace RoslynSandbox
         public int Value
         {
             get => this.value;
-            private set =>this.value = value;
+            private set => this.value = value;
         }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)

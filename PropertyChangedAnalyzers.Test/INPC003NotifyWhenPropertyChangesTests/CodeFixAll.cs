@@ -1,10 +1,14 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
+namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class CodeFixAll
     {
+        private static readonly INPC003NotifyWhenPropertyChanges Analyzer = new INPC003NotifyWhenPropertyChanges();
+        private static readonly NotifyPropertyChangedCodeFixProvider Fix = new NotifyPropertyChangedCodeFixProvider();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC003");
+
         [Test]
         public void WhenUsingPropertiesExpressionBody()
         {
@@ -124,7 +128,7 @@ public class ViewModel : INotifyPropertyChanged
     }
 }";
 
-            AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -219,7 +223,7 @@ namespace RoslynSandbox
             // Nasty hack here as order of fixes is random. Not sure it is worth fixing.
             try
             {
-                AnalyzerAssert.FixAll<INPC003NotifyWhenPropertyChanges, NotifyPropertyChangedCodeFixProvider>(testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
             catch
             {
