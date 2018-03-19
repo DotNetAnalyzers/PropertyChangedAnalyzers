@@ -573,6 +573,52 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [Test]
+        public void WhenSettingNestedField()
+        {
+            var barCode = @"
+namespace RoslynSandbox
+{
+    public class Bar
+    {
+        public int BarValue;
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar bar = new Bar();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get => this.bar.BarValue;
+            set
+            {
+                if (value == this.bar.BarValue)
+                {
+                    return;
+                }
+
+                this.bar.BarValue = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, barCode, testCode);
+        }
+
         public class TestCase
         {
             public TestCase(string type, string call)
