@@ -5,6 +5,10 @@ namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
 
     internal class CodeFix
     {
+        private static readonly INPC007MissingInvoker Analyzer = new INPC007MissingInvoker();
+        private static readonly MissingInvokerCodeFix Fix = new MissingInvokerCodeFix();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC007");
+
         [Test]
         public void EventOnlyAddInvoker()
         {
@@ -34,7 +38,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
         }
 
         [Test]
@@ -61,7 +65,7 @@ namespace RoslynSandbox
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Seal class.");
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Seal class.");
         }
 
         [Test]
@@ -95,7 +99,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
         }
 
         [Test]
@@ -131,7 +135,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -163,7 +167,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -213,7 +217,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(new[] { viewModelBaseCode, testCode }, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
         }
 
         [Test]
@@ -263,7 +267,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
         }
 
         [Test]
@@ -308,7 +312,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC007MissingInvoker, MissingInvokerCodeFix>(testCode, fixedCode, fixTitle: "Seal class.");
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Seal class.");
         }
     }
 }

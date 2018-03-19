@@ -1,10 +1,14 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
+namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class Codefix
     {
+        private static readonly INPC011DontShadow Analyzer = new INPC011DontShadow();
+        private static readonly RemoveShadowingCodeFix Fix = new RemoveShadowingCodeFix();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC011");
+
         [Test]
         public void ShadowingEvent()
         {
@@ -46,7 +50,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-            AnalyzerAssert.CodeFix<INPC011DontShadow, RemoveShadowingCodeFix>(new[] { viewModelBaseCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, fixedCode);
         }
     }
 }

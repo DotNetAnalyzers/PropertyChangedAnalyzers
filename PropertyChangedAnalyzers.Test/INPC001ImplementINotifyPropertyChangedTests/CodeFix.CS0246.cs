@@ -7,6 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     {
         internal class CS0246
         {
+            // ReSharper disable once MemberHidesStaticFromOuterClass
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0246");
 
             [Test]

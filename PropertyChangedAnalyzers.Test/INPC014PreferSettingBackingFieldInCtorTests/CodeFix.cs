@@ -1,10 +1,15 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTests
+namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     internal class CodeFix
     {
+        private static readonly INPC014PreferSettingBackingFieldInCtor Analyzer = new INPC014PreferSettingBackingFieldInCtor();
+        private static readonly SetBackingFieldCodeFix Fix = new SetBackingFieldCodeFix();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC014");
+
+#pragma warning disable SA1203 // Constants must appear before fields
         private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
 {
@@ -34,6 +39,7 @@ namespace RoslynSandbox.Core
         }
     }
 }";
+#pragma warning restore SA1203 // Constants must appear before fields
 
         [Test]
         public void WhenSettingBackingField()
@@ -83,7 +89,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC014PreferSettingBackingFieldInCtor, SetBackingFieldCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -134,7 +140,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC014PreferSettingBackingFieldInCtor, SetBackingFieldCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -221,7 +227,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC014PreferSettingBackingFieldInCtor, SetBackingFieldCodeFix>(testCode, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [Test]
@@ -265,7 +271,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC014PreferSettingBackingFieldInCtor, SetBackingFieldCodeFix>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -325,7 +331,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            AnalyzerAssert.CodeFix<INPC014PreferSettingBackingFieldInCtor, SetBackingFieldCodeFix>(new[] { ViewModelBaseCode, testCode }, fixedCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         public class Method
         {
             private static readonly INPC004UseCallerMemberName Analyzer = new INPC004UseCallerMemberName();
-            private static readonly UseCallerMemberNameCodeFixProvider CodeFix = new UseCallerMemberNameCodeFixProvider();
+            private static readonly UseCallerMemberNameCodeFixProvider Fix = new UseCallerMemberNameCodeFixProvider();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC004");
 
             [TestCase("this.PropertyChanged")]
@@ -48,8 +48,8 @@ namespace RoslynSandbox
 }";
                 testCode = testCode.AssertReplace("this.PropertyChanged", member);
                 fixedCode = fixedCode.AssertReplace("this.PropertyChanged", member);
-                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
-                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [TestCase("this.OnPropertyChanged")]
@@ -99,8 +99,8 @@ namespace RoslynSandbox
 }";
                 testCode = testCode.AssertReplace("this.OnPropertyChanged", member);
                 fixedCode = fixedCode.AssertReplace("this.OnPropertyChanged", member);
-                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
-                AnalyzerAssert.FixAll(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
         }
     }

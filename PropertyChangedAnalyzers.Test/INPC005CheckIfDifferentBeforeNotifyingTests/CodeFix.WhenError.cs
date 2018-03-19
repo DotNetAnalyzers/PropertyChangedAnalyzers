@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal partial class Codefix
+    internal partial class CodeFix
     {
         internal class WhenError
         {
@@ -62,7 +62,7 @@ namespace RoslynSandbox
 }";
                 testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
                                    .AssertReplace("string", check.Type);
-                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
+                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [TestCaseSource(nameof(TestCases))]
@@ -104,7 +104,7 @@ namespace RoslynSandbox
 }";
                 testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
                                    .AssertReplace("string", check.Type);
-                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
+                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -144,7 +144,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
+                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -184,7 +184,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
+                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -222,7 +222,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
+                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -261,7 +261,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode);
+                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             public class TestCase
