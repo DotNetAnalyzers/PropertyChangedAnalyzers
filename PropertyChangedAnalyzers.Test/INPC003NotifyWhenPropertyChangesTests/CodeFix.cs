@@ -2992,5 +2992,71 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
+
+        [Test]
+        public void WhenAssigningNestedField()
+        {
+            var barCode = @"
+namespace RoslynSandbox
+{
+    public class Bar
+    {
+        public int BarValue;
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value => this.bar.BarValue;
+
+        public void Update(int value)
+        {
+            ↓this.bar.BarValue = value;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value => this.bar.BarValue;
+
+        public void Update(int value)
+        {
+            this.bar.BarValue = value;
+            this.OnPropertyChanged(nameof(this.Value));
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
+        }
     }
 }

@@ -61,7 +61,7 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node is PostfixUnaryExpressionSyntax expression &&
-                TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out var field))
+                TryGetAssignedExpression(expression.Operand, out var field))
             {
                 Handle(context, field);
             }
@@ -76,7 +76,7 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node is PrefixUnaryExpressionSyntax expression &&
-                TryGetAssignedField(expression.Operand, context.SemanticModel, context.CancellationToken, out var field))
+                TryGetAssignedExpression(expression.Operand, out var field))
             {
                 Handle(context, field);
             }
@@ -91,9 +91,9 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node is AssignmentExpressionSyntax expression &&
-                TryGetAssignedField(expression.Left, context.SemanticModel, context.CancellationToken, out var field))
+                TryGetAssignedExpression(expression.Left, out var backing))
             {
-                Handle(context, field);
+                Handle(context, backing);
             }
         }
 
@@ -107,45 +107,34 @@ namespace PropertyChangedAnalyzers
 
             if (context.Node is ArgumentSyntax argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
-                TryGetAssignedField(argument.Expression, context.SemanticModel, context.CancellationToken, out var field))
+                TryGetAssignedExpression(argument.Expression, out var field))
             {
                 Handle(context, field);
             }
         }
 
-        private static bool TryGetAssignedField(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        private static bool TryGetAssignedExpression(SyntaxNode node, out ExpressionSyntax backing)
         {
-            field = null;
+            backing = null;
             if (node.IsMissing)
             {
                 return false;
             }
 
-            if (node is IdentifierNameSyntax identifierName)
+            if (node is IdentifierNameSyntax identifierName &&
+                !IdentifierTypeWalker.IsLocalOrParameter(identifierName))
             {
-                if (!IdentifierTypeWalker.IsLocalOrParameter(identifierName))
-                {
-                    field = semanticModel.GetSymbolSafe(identifierName, cancellationToken) as IFieldSymbol;
-                }
-
-                return field != null;
+                backing = identifierName;
+            }
+            else if (node is MemberAccessExpressionSyntax memberAccess)
+            {
+                backing = memberAccess;
             }
 
-            if (node is MemberAccessExpressionSyntax memberAccess)
-            {
-                if (memberAccess.Expression is ThisExpressionSyntax &&
-                    memberAccess.Name is IdentifierNameSyntax)
-                {
-                    field = semanticModel.GetSymbolSafe(memberAccess.Name, cancellationToken) as IFieldSymbol;
-                }
-
-                return field != null;
-            }
-
-            return false;
+            return backing != null;
         }
 
-        private static void Handle(SyntaxNodeAnalysisContext context, IFieldSymbol assignedField)
+        private static void Handle(SyntaxNodeAnalysisContext context, ExpressionSyntax backingField)
         {
             if (context.IsExcludedFromAnalysis())
             {
@@ -163,11 +152,6 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (!typeSymbol.Equals(assignedField.ContainingType))
-            {
-                return;
-            }
-
             if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
                 Property.IsSimplePropertyWithBackingField(inProperty, context.SemanticModel, context.CancellationToken))
             {
@@ -181,23 +165,14 @@ namespace PropertyChangedAnalyzers
                 {
                     var propertyDeclaration = member as PropertyDeclarationSyntax;
                     if (propertyDeclaration == null ||
-                        propertyDeclaration.Modifiers.Any(SyntaxKind.PrivateKeyword) ||
-                        propertyDeclaration.Modifiers.Any(SyntaxKind.ProtectedKeyword) ||
+                        !propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) ||
                         Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken))
                     {
                         continue;
                     }
 
-                    var getter = GetterBody(propertyDeclaration);
+                    var getter = ExpressionBodyOrGetter(propertyDeclaration);
                     if (getter == null)
-                    {
-                        continue;
-                    }
-
-                    var property = context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken);
-                    if (property == null ||
-                        property.DeclaredAccessibility == Accessibility.Private ||
-                        property.DeclaredAccessibility == Accessibility.Protected)
                     {
                         continue;
                     }
@@ -217,9 +192,10 @@ namespace PropertyChangedAnalyzers
 
                     using (var walker = TouchedFieldsWalker.Borrow(getter, context.SemanticModel, context.CancellationToken))
                     {
-                        if (walker.Contains(assignedField))
+                        if (walker.Contains(backingField))
                         {
-                            if (PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
+                            if (context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
+                                PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                             {
                                 if (set.Add(property))
                                 {
@@ -260,7 +236,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        private static SyntaxNode GetterBody(PropertyDeclarationSyntax property)
+        private static SyntaxNode ExpressionBodyOrGetter(PropertyDeclarationSyntax property)
         {
             if (property.ExpressionBody != null)
             {
@@ -277,7 +253,7 @@ namespace PropertyChangedAnalyzers
 
         private sealed class TouchedFieldsWalker : PooledWalker<TouchedFieldsWalker>
         {
-            private readonly HashSet<IFieldSymbol> fields = new HashSet<IFieldSymbol>();
+            private readonly List<ExpressionSyntax> backings = new List<ExpressionSyntax>();
             private readonly HashSet<SyntaxNode> visited = new HashSet<SyntaxNode>();
 
             private SemanticModel semanticModel;
@@ -296,7 +272,45 @@ namespace PropertyChangedAnalyzers
                 return pooled;
             }
 
-            public bool Contains(IFieldSymbol field) => this.fields.Contains(field);
+            public bool Contains(ExpressionSyntax expression)
+            {
+                foreach (var backing in this.backings)
+                {
+                    if (IsMatch(backing, expression))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+
+                bool IsMatch(ExpressionSyntax x, ExpressionSyntax y)
+                {
+                    if (TryGetFieldName(x, out var xName))
+                    {
+                        return TryGetFieldName(y, out var yName) &&
+                               xName == yName;
+                    }
+
+                    return false;
+                }
+
+                bool TryGetFieldName(ExpressionSyntax ex, out string name)
+                {
+                    name = null;
+                    if (ex is IdentifierNameSyntax identifierName)
+                    {
+                        name = identifierName.Identifier.ValueText;
+                    }
+                    else if (ex is MemberAccessExpressionSyntax memberAccess &&
+                             memberAccess.Name is SimpleNameSyntax simpleName)
+                    {
+                        name = simpleName.Identifier.ValueText;
+                    }
+
+                    return name != null;
+                }
+            }
 
             public override void Visit(SyntaxNode node)
             {
@@ -308,28 +322,27 @@ namespace PropertyChangedAnalyzers
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
-                var symbol = this.semanticModel.GetSymbolSafe(node, this.cancellationToken);
-                if (symbol is IFieldSymbol field)
+                if (!IdentifierTypeWalker.IsLocalOrParameter(node))
                 {
-                    this.fields.Add(field);
-                }
-
-                if (symbol is IPropertySymbol property)
-                {
-                    if (property.GetMethod != null)
+                    this.backings.Add(node);
+                    var symbol = this.semanticModel.GetSymbolSafe(node, this.cancellationToken);
+                    if (symbol is IPropertySymbol property &&
+                        property.TrySingleDeclaration(this.cancellationToken, out var propertyDeclaration) &&
+                        ExpressionBodyOrGetter(propertyDeclaration) is SyntaxNode propertyBody)
                     {
-                        foreach (var getter in property.GetMethod.Declarations(this.cancellationToken))
-                        {
-                            this.Visit(getter);
-                        }
+                        this.Visit(propertyBody);
                     }
-                }
-
-                if (symbol is IMethodSymbol method)
-                {
-                    foreach (var declaration in method.Declarations(this.cancellationToken))
+                    else if (symbol is IMethodSymbol method &&
+                             method.TrySingleDeclaration(this.cancellationToken, out var methodDeclaration))
                     {
-                        this.Visit(declaration);
+                        if (methodDeclaration.Body is BlockSyntax body)
+                        {
+                            this.Visit(body);
+                        }
+                        else if (methodDeclaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
+                        {
+                            this.Visit(expressionBody);
+                        }
                     }
                 }
 
@@ -338,7 +351,7 @@ namespace PropertyChangedAnalyzers
 
             protected override void Clear()
             {
-                this.fields.Clear();
+                this.backings.Clear();
                 this.visited.Clear();
                 this.semanticModel = null;
                 this.cancellationToken = CancellationToken.None;
