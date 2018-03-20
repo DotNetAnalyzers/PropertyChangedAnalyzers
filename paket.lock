@@ -699,7 +699,7 @@ STORAGE: NONE
 NUGET
   remote: http://www.nuget.org/api/v2
     AsyncUsageAnalyzers (1.0.0-alpha003)
-    Gu.Analyzers (1.2.2-dev)
+    Gu.Analyzers (1.2.7-dev)
     IDisposableAnalyzers (0.1.4.5-dev)
     StyleCop.Analyzers (1.0.2)
 
@@ -1476,14 +1476,14 @@ NUGET
       Microsoft.NETCore.Targets (>= 1.1) - restriction: && (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
       System.Runtime (>= 4.3) - restriction: && (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)
     Microsoft.Xaml.Behaviors.Uwp.Managed (2.0) - restriction: >= uap10.0
-    MvvmCross (5.6.3)
-      MvvmCross.Binding (5.6.3)
-      MvvmCross.Core (5.6.3)
-    MvvmCross.Binding (5.6.3)
-      MvvmCross.Core (5.6.3)
-    MvvmCross.Core (5.6.3)
-      MvvmCross.Platform (5.6.3)
-    MvvmCross.Platform (5.6.3)
+    MvvmCross (5.7)
+      MvvmCross.Binding (5.7)
+      MvvmCross.Core (5.7)
+    MvvmCross.Binding (5.7)
+      MvvmCross.Core (5.7)
+    MvvmCross.Core (5.7)
+      MvvmCross.Platform (5.7)
+    MvvmCross.Platform (5.7)
     MvvmLight (5.4.1)
       MvvmLightLibs (>= 5.4.1) - restriction: || (>= monoandroid) (>= net35) (>= sl5) (>= win81) (>= wp8) (>= wpa81) (>= xamarinios)
     MvvmLightLibs (5.4.1) - restriction: || (>= monoandroid) (>= net35) (>= sl5) (>= win81) (>= wp8) (>= wpa81) (>= xamarinios)
