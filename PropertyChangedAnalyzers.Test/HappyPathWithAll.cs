@@ -79,6 +79,16 @@ namespace RoslynSandbox.Core
         }
     }
 }";
+
+            var barCode = @"
+namespace RoslynSandbox
+{
+    public class Bar
+    {
+        public int BarValue;
+    }
+}";
+
             var viewModelSubclassCode = @"
 namespace RoslynSandbox.Client
 {
@@ -134,6 +144,7 @@ namespace RoslynSandbox
     public class ViewModel : INotifyPropertyChanged
     {
         private int value;
+        private readonly Bar bar = new Bar();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -159,13 +170,28 @@ namespace RoslynSandbox
             }
         }
 
+        public int BarValue
+        {
+            get => this.bar.BarValue;
+            set
+            {
+                if (value == this.bar.BarValue)
+                {
+                    return;
+                }
+
+                this.bar.BarValue = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
-            AnalyzerAssert.Valid(analyzer, viewModelBaseCode, viewModelSubclassCode, viewModelCode);
+            AnalyzerAssert.Valid(analyzer, viewModelBaseCode, barCode, viewModelSubclassCode, viewModelCode);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]

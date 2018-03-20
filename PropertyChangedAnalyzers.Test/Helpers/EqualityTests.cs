@@ -88,7 +88,6 @@ namespace RoslynSandbox
             Assert.AreEqual(expected, Equality.IsOperatorNotEquals(binary, semanticModel, CancellationToken.None, arg1, arg0));
         }
 
-        [TestCase("Nullable.Equals(this.bar1, this.bar1)", true)]
         [TestCase("Nullable.Equals(bar1, this.bar1)", true)]
         [TestCase("Nullable.Equals(bar1, bar1)", true)]
         [TestCase("Nullable.Equals(this.bar1, this.Bar1)", true)]
@@ -145,7 +144,6 @@ namespace RoslynSandbox
         [TestCase("Equals(this.bar1, missing)", false)]
         [TestCase("object.Equals(this.bar1, missing)", false)]
         [TestCase("Object.Equals(this.bar1, missing)", false)]
-        [TestCase("Nullable.Equals(this.bar1, this.bar1)", false)]
         [TestCase("Nullable.Equals(bar1, this.bar1)", false)]
         [TestCase("Nullable.Equals(bar1, bar1)", false)]
         [TestCase("Nullable.Equals(this.bar1, this.Bar1)", false)]
