@@ -10,6 +10,10 @@ namespace PropertyChangedAnalyzers
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal static partial class TypeSymbolExt
     {
+        internal static bool IsEither(this ITypeSymbol type, QualifiedType q1, QualifiedType q2) => type == q1 || type == q2;
+
+        internal static bool IsEither(this ITypeSymbol type, QualifiedType q1, QualifiedType q2, QualifiedType q3) => type == q1 || type == q2 || type == q3;
+
         internal static bool IsSameType(this ITypeSymbol first, ITypeSymbol other)
         {
             if (ReferenceEquals(first, other) ||

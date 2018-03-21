@@ -2,6 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -195,6 +196,7 @@ namespace PropertyChangedAnalyzers
                 foreach (var member in @event.ContainingType.GetMembers())
                 {
                     if (member is IMethodSymbol candidate &&
+                        candidate.MethodKind == MethodKind.Ordinary &&
                         candidate.IsStatic)
                     {
                         switch (IsOnPropertyChanged(candidate, semanticModel, cancellationToken))
@@ -203,9 +205,8 @@ namespace PropertyChangedAnalyzers
                                 continue;
                             case AnalysisResult.Yes:
                                 invoker = candidate;
-                                if (invoker.Parameters.Length == 1 &&
-                                    invoker.Parameters[0]
-                                           .Type == KnownSymbol.String)
+                                if (invoker.Parameters.TrySingle(out var parameter) &&
+                                    parameter.Type == KnownSymbol.String)
                                 {
                                     return true;
                                 }
@@ -269,18 +270,22 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsPotentialInvoker(IMethodSymbol method)
         {
-            if (method == null ||
-                method.IsStatic ||
-                !method.ReturnsVoid ||
-                method.Parameters.Length != 1 ||
-                method.MethodKind != MethodKind.Ordinary ||
-                method.AssociatedSymbol != null ||
-                !method.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+            if (method != null &&
+                method.ReturnsVoid &&
+                method.MethodKind == MethodKind.Ordinary &&
+                method.Parameters.TrySingle(out var parameter) &&
+                parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs,KnownSymbol.LinqExpressionOfT))
             {
-                return false;
+                if (method.IsStatic)
+                {
+                    return method.ContainingType.TryFindEvent("PropertyChanged", out var @event) &&
+                           @event.IsStatic;
+                }
+
+                return method.ContainingType.Is(KnownSymbol.INotifyPropertyChanged);
             }
 
-            return true;
+            return false;
         }
 
         internal static bool IsPropertyChangedInvoke(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)

@@ -1,6 +1,5 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
-    using System.Linq;
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
@@ -42,8 +41,7 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("OnPropertyChanged", invoker.Name);
-                Assert.AreEqual("String", invoker.Parameters.Single().Type.MetadataName);
+                Assert.AreEqual("RoslynSandbox.Foo.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [Test]
@@ -78,8 +76,35 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("OnPropertyChanged", invoker.Name);
-                Assert.AreEqual("String", invoker.Parameters.Single().Type.MetadataName);
+                Assert.AreEqual("RoslynSandbox.Foo.OnPropertyChanged(string)", invoker.ToString());
+            }
+
+            [Test]
+            public void Static()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public static class Foo
+    {
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        private static void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
+                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+                Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
+                Assert.AreEqual("RoslynSandbox.Foo.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [Test]

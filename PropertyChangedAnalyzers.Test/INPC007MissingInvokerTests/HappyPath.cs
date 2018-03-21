@@ -250,5 +250,28 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void StaticWithInvoker()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public static class Foo
+    {
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        private static void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }

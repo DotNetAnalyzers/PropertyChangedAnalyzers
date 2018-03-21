@@ -61,15 +61,12 @@ namespace PropertyChangedAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
                     }
                 }
-
-                if (eventSymbol.ContainingType.IsStatic &&
-                    eventSymbol.Type == KnownSymbol.PropertyChangedEventHandler &&
-                    eventSymbol.Name == "PropertyChanged")
+                else if (eventSymbol.IsStatic &&
+                         eventSymbol.Type == KnownSymbol.PropertyChangedEventHandler &&
+                         eventSymbol.Name == "PropertyChanged" &&
+                         !PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                 {
-                    if (!PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
-                    }
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
                 }
             }
         }
