@@ -788,7 +788,6 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, barCode, testCode);
         }
 
-        
         [Test]
         public void WhenCreatingPropertyChangedEventArgsSeparately()
         {
@@ -834,6 +833,5 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
-
     }
 }
