@@ -83,24 +83,23 @@ namespace PropertyChangedAnalyzers
         internal static AnalysisResult TryGetInvokedPropertyChangedName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
         {
             propertyName = null;
+            if (IsPropertyChangedInvoke(invocation, semanticModel, cancellationToken))
+            {
+                if (invocation.ArgumentList.Arguments.TryElementAt(1, out var propertyChangedArg) &&
+                    PropertyChangedEventArgs.TryGetPropertyName(propertyChangedArg.Expression, semanticModel, cancellationToken, out propertyName))
+                {
+                    return AnalysisResult.Yes;
+                }
+
+                return AnalysisResult.No;
+            }
+
             var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
             if (method == null)
             {
                 return AnalysisResult.No;
             }
 
-            if (method == KnownSymbol.PropertyChangedEventHandler.Invoke)
-            {
-                if (invocation.ArgumentList.Arguments.TryElementAt(1, out var propertyChangedArg))
-                {
-                    if (PropertyChangedEventArgs.TryGetPropertyName(propertyChangedArg.Expression, semanticModel, cancellationToken, out propertyName))
-                    {
-                        return AnalysisResult.Yes;
-                    }
-                }
-
-                return AnalysisResult.Maybe;
-            }
 
             if (IsOnPropertyChanged(method, semanticModel, cancellationToken) == AnalysisResult.No)
             {
