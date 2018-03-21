@@ -42,16 +42,9 @@ namespace PropertyChangedAnalyzers
             if (@event == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
                !@event.IsOverride)
             {
-                var baseType = @event.ContainingType.BaseType;
-                while (baseType != null &&
-                      baseType != KnownSymbol.Object)
+                if (@event.ContainingType.BaseType.TryFindEventRecursive("PropertyChanged", out _))
                 {
-                    if (baseType.TryGetEventRecursive("PropertyChanged", out _))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
-                    }
-
-                    baseType = baseType.BaseType;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
                 }
             }
         }

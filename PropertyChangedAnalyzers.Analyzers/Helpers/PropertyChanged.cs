@@ -2,7 +2,6 @@ namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Threading;
-    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -173,7 +172,7 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
-            if (type.TryGetEventRecursive("PropertyChanged", out var @event))
+            if (type.TryFindEventRecursive("PropertyChanged", out var @event))
             {
                 return TryGetInvoker(@event, semanticModel, cancellationToken, out invoker);
             }
@@ -274,7 +273,7 @@ namespace PropertyChangedAnalyzers
                 method.ReturnsVoid &&
                 method.MethodKind == MethodKind.Ordinary &&
                 method.Parameters.TrySingle(out var parameter) &&
-                parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs,KnownSymbol.LinqExpressionOfT))
+                parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs, KnownSymbol.LinqExpressionOfT))
             {
                 if (method.IsStatic)
                 {
@@ -498,25 +497,9 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryGetSetAndRaise(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            if (type.TryFirstMethodRecursive(x => IsSetAndRaise(x, semanticModel, cancellationToken), out method))
+            if (type.TryFindFirstMethodRecursive(x => IsSetAndRaise(x, semanticModel, cancellationToken), out method))
             {
                 return true;
-            }
-
-            if (type.Is(KnownSymbol.MvvmLightViewModelBase))
-            {
-                return type.TryFirstMemberRecursive(
-                    "Set",
-                    x => IsSetAndRaise(x, semanticModel, cancellationToken),
-                    out method);
-            }
-
-            if (type.Is(KnownSymbol.CaliburnMicroPropertyChangedBase))
-            {
-                return type.TryFirstMemberRecursive(
-                    "Set",
-                    x => IsSetAndRaise(x, semanticModel, cancellationToken),
-                    out method);
             }
 
             return false;

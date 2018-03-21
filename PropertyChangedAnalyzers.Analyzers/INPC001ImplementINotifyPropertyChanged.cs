@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Collections.Immutable;
@@ -41,7 +41,8 @@
             }
 
             var type = (ITypeSymbol)context.ContainingSymbol;
-            if (type.Is(KnownSymbol.INotifyPropertyChanged) ||
+            if (type.IsStatic ||
+                type.Is(KnownSymbol.INotifyPropertyChanged) ||
                 type.Is(KnownSymbol.MarkupExtension) ||
                 type.Is(KnownSymbol.Attribute) ||
                 type.Is(KnownSymbol.IValueConverter) ||
@@ -65,7 +66,7 @@
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
             }
 
-            if (type.TryGetEventRecursive("PropertyChanged", out var eventSymbol))
+            if (type.TryFindEvent("PropertyChanged", out var eventSymbol))
             {
                 if (eventSymbol.Name != KnownSymbol.INotifyPropertyChanged.PropertyChanged.Name ||
                     eventSymbol.Type != KnownSymbol.PropertyChangedEventHandler ||

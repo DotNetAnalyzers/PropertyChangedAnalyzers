@@ -1,4 +1,4 @@
-namespace Gu.Roslyn.AnalyzerExtensions
+namespace PropertyChangedAnalyzers
 {
     using System;
     using Microsoft.CodeAnalysis;
