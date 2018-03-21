@@ -144,5 +144,52 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
         }
+
+        [Test]
+        public void WhenSettingNestedFieldRootLevel()
+        {
+            var barCode = @"
+namespace RoslynSandbox
+{
+    public class Bar
+    {
+        public int BarValue;
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar bar1 = new Bar();
+        private readonly Bar bar2 = new Bar();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Value
+        {
+            get => this.bar1.BarValue;
+            set
+            {
+                if (value == this.bar2.BarValue)
+                {
+                    return;
+                }
+
+                this.bar2.BarValue = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
+        }
     }
 }
