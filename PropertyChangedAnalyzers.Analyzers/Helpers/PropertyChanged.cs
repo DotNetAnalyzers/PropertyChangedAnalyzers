@@ -45,7 +45,7 @@ namespace PropertyChangedAnalyzers
                         continue;
                     }
 
-                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out ArgumentSyntax _, out var propertyName))
+                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out _, out var propertyName))
                     {
                         case AnalysisResult.No:
                             continue;
@@ -306,6 +306,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
+            var result = AnalysisResult.No;
             if (method.Parameters.TrySingle(out var parameter) &&
                 method.TrySingleDeclaration(cancellationToken, out var declaration))
             {
@@ -329,8 +330,8 @@ namespace PropertyChangedAnalyzers
                         {
                             if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument))
                             {
-                                var identifier = argument.Expression as IdentifierNameSyntax;
-                                if (identifier?.Identifier.ValueText == parameter.Name)
+                                if (argument.Expression is IdentifierNameSyntax identifierName &&
+                                    identifierName.Identifier.ValueText == parameter.Name)
                                 {
                                     return AnalysisResult.Yes;
                                 }
@@ -408,7 +409,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            return AnalysisResult.No;
+            return result;
         }
 
         internal static bool TryGetSetAndRaise(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
