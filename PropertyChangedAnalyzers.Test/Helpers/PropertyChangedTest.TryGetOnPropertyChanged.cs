@@ -7,8 +7,65 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 
     internal partial class PropertyChangedTest
     {
-        internal class TryGetInvoker
+        internal class TryGetOnPropertyChanged
         {
+            [Test]
+            public void ElvisCallerMemberName()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
+                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+                Assert.AreEqual(true, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out var invoker));
+                Assert.AreEqual("RoslynSandbox.Foo.OnPropertyChanged(string)", invoker.ToString());
+            }
+
+            [Test]
+            public void CopyLocalNullCheckCallerMemberName()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class Foo : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
+                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+                Assert.AreEqual(true, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out var invoker));
+                Assert.AreEqual("RoslynSandbox.Foo.OnPropertyChanged(string)", invoker.ToString());
+            }
+
             [Test]
             public void PropertyChangedEventArgsBeforeCallerMemberName()
             {

@@ -38,18 +38,16 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var method = (IMethodSymbol)context.ContainingSymbol;
-            if (method.Parameters.Length != 1 ||
-                method.Parameters[0].Type != KnownSymbol.String ||
-                method.Parameters[0].IsCallerMemberName())
+            if (context.ContainingSymbol is IMethodSymbol method &&
+                context.Node is MethodDeclarationSyntax methodDeclaration &&
+                methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
+                parameterList.Parameters.TrySingle(out var parameterSyntax) &&
+                method.Parameters.TrySingle(out var parameter) &&
+                parameter.Type == KnownSymbol.String &&
+                !parameter.IsCallerMemberName() &&
+                PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
             {
-                return;
-            }
-
-            if (PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
-            {
-                var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.ParameterList.Parameters[0].GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameterSyntax.GetLocation()));
             }
         }
     }

@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 
     internal partial class PropertyChangedTest
     {
-        internal class TryGetSetAndRaiseMethod
+        internal class TryGetSetAndRaise
         {
             [Test]
             public void CustomImplementation1()

@@ -230,7 +230,7 @@ namespace PropertyChangedAnalyzers
         internal static bool IsPropertyChangedInvoke(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (invocation.ArgumentList?.Arguments.Count == 2 &&
-                invocation.ArgumentList.Arguments[0].Expression is ThisExpressionSyntax &&
+                invocation.ArgumentList.Arguments[0].Expression.IsEitherKind(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
                 invocation.TryGetInvokedMethodName(out var name) &&
                 invocation.IsPotentialReturnVoid())
             {
@@ -248,11 +248,15 @@ namespace PropertyChangedAnalyzers
                         return invokeMethod == KnownSymbol.PropertyChangedEventHandler.Invoke;
                     }
                 }
-
-                if (name == "PropertyChanged" &&
-                    semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method)
+                else if (name == "PropertyChanged" &&
+                         semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method)
                 {
                     return method == KnownSymbol.PropertyChangedEventHandler.Invoke;
+                }
+                else if (invocation.Expression is IdentifierNameSyntax &&
+                         semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol handler)
+                {
+                    return handler == KnownSymbol.PropertyChangedEventHandler.Invoke;
                 }
             }
 
@@ -309,48 +313,19 @@ namespace PropertyChangedAnalyzers
                 {
                     foreach (var invocation in walker.Invocations)
                     {
+                        if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                            !(memberAccess.Expression is InstanceExpressionSyntax))
+                        {
+                            continue;
+                        }
+
                         if (invocation.ArgumentList == null ||
                             invocation.ArgumentList.Arguments.Count == 0)
                         {
                             continue;
                         }
 
-                        var invokedMethod = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-                        if (invokedMethod == null)
-                        {
-                            continue;
-                        }
-
-                        if ((invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                             !(memberAccess.Expression is ThisExpressionSyntax)) ||
-                            (invocation.Expression is MemberBindingExpressionSyntax))
-                        {
-                            if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
-                            {
-                                if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument))
-                                {
-                                    var identifier = argument.Expression as IdentifierNameSyntax;
-                                    if (identifier?.Identifier.ValueText == parameter.Name)
-                                    {
-                                        return AnalysisResult.Yes;
-                                    }
-
-                                    if (argument.Expression is ObjectCreationExpressionSyntax objectCreation)
-                                    {
-                                        var nameArgument = objectCreation.ArgumentList.Arguments[0];
-                                        if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText ==
-                                            parameter.Name)
-                                        {
-                                            return AnalysisResult.Yes;
-                                        }
-                                    }
-                                }
-                            }
-
-                            return AnalysisResult.No;
-                        }
-
-                        if (invokedMethod == KnownSymbol.PropertyChangedEventHandler.Invoke)
+                        if (IsPropertyChangedInvoke(invocation, semanticModel, cancellationToken))
                         {
                             if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument))
                             {
@@ -363,19 +338,13 @@ namespace PropertyChangedAnalyzers
                                 if (argument.Expression is ObjectCreationExpressionSyntax objectCreation)
                                 {
                                     var nameArgument = objectCreation.ArgumentList.Arguments[0];
-                                    if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText ==
-                                        parameter.Name)
+                                    if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
                                     {
                                         return AnalysisResult.Yes;
                                     }
                                 }
                             }
 
-                            return AnalysisResult.No;
-                        }
-
-                        if (!method.ContainingType.Is(invokedMethod.ContainingType))
-                        {
                             continue;
                         }
 
@@ -383,9 +352,13 @@ namespace PropertyChangedAnalyzers
                         {
                             if (argsWalker.Contains(parameter, semanticModel, cancellationToken))
                             {
-                                using (var set = PooledHashSet<IMethodSymbol>.Borrow(@checked))
+                                if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
+                                    method.ContainingType.Is(invokedMethod.ContainingType))
                                 {
-                                    return IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, set);
+                                    using (var set = PooledHashSet<IMethodSymbol>.Borrow(@checked))
+                                    {
+                                        return IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, set);
+                                    }
                                 }
                             }
                         }

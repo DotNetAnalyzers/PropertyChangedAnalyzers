@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 
     internal partial class PropertyChangedTest
     {
-        internal class IsSetAndRaiseMethod
+        internal class IsSetAndRaise
         {
             [Test]
             public void Stylet()
