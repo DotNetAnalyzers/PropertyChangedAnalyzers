@@ -337,49 +337,47 @@ namespace PropertyChangedAnalyzers
                             continue;
                         }
 
-                        if (IsPropertyChangedInvoke(invocation, semanticModel, cancellationToken))
+                        if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument) &&
+                            IsPropertyChangedInvoke(invocation, semanticModel, cancellationToken))
                         {
-                            if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument))
+                            if (argument.Expression is IdentifierNameSyntax identifierName &&
+                                identifierName.Identifier.ValueText == parameter.Name)
                             {
-                                if (argument.Expression is IdentifierNameSyntax identifierName &&
-                                    identifierName.Identifier.ValueText == parameter.Name)
-                                {
-                                    return AnalysisResult.Yes;
-                                }
-
-                                if (argument.Expression is ObjectCreationExpressionSyntax objectCreation)
-                                {
-                                    var nameArgument = objectCreation.ArgumentList.Arguments[0];
-                                    if ((nameArgument.Expression as IdentifierNameSyntax)?.Identifier.ValueText == parameter.Name)
-                                    {
-                                        return AnalysisResult.Yes;
-                                    }
-                                }
+                                return AnalysisResult.Yes;
                             }
 
-                            continue;
-                        }
-
-                        using (var argsWalker = IdentifierNameWalker.Borrow(invocation.ArgumentList))
-                        {
-                            if (argsWalker.Contains(parameter, semanticModel, cancellationToken))
+                            if (argument.Expression is ObjectCreationExpressionSyntax objectCreation &&
+                                objectCreation.ArgumentList is ArgumentListSyntax argumentList &&
+                                argumentList.Arguments.TrySingle(out argument) &&
+                                argument.Expression is IdentifierNameSyntax argIdentifier &&
+                                argIdentifier.Identifier.ValueText == parameter.Name)
                             {
-                                if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
-                                    method.ContainingType.Is(invokedMethod.ContainingType))
+                                return AnalysisResult.Yes;
+                            }
+                        }
+                        else
+                        {
+                            using (var argsWalker = IdentifierNameWalker.Borrow(invocation.ArgumentList))
+                            {
+                                if (argsWalker.Contains(parameter, semanticModel, cancellationToken))
                                 {
-                                    using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
+                                    if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
+                                        method.ContainingType.Is(invokedMethod.ContainingType))
                                     {
-                                        switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, visited))
+                                        using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
                                         {
-                                            case AnalysisResult.No:
-                                                break;
-                                            case AnalysisResult.Yes:
-                                                return AnalysisResult.Yes;
-                                            case AnalysisResult.Maybe:
-                                                result = AnalysisResult.Maybe;
-                                                break;
-                                            default:
-                                                throw new ArgumentOutOfRangeException();
+                                            switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, visited))
+                                            {
+                                                case AnalysisResult.No:
+                                                    break;
+                                                case AnalysisResult.Yes:
+                                                    return AnalysisResult.Yes;
+                                                case AnalysisResult.Maybe:
+                                                    result = AnalysisResult.Maybe;
+                                                    break;
+                                                default:
+                                                    throw new ArgumentOutOfRangeException();
+                                            }
                                         }
                                     }
                                 }
@@ -442,8 +440,7 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            if (!candidate.ArgumentList.Arguments[0]
-                          .RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword))
+            if (!candidate.ArgumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out _))
             {
                 return false;
             }
