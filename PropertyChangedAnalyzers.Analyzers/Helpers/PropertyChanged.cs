@@ -312,12 +312,6 @@ namespace PropertyChangedAnalyzers
                 {
                     foreach (var invocation in walker.Invocations)
                     {
-                        if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                            !(memberAccess.Expression is InstanceExpressionSyntax))
-                        {
-                            continue;
-                        }
-
                         if (invocation.ArgumentList == null ||
                             invocation.ArgumentList.Arguments.Count == 0)
                         {
@@ -333,34 +327,39 @@ namespace PropertyChangedAnalyzers
                                 return AnalysisResult.Yes;
                             }
 
-                            if (argument.Expression is ObjectCreationExpressionSyntax objectCreation &&
-                                objectCreation.ArgumentList is ArgumentListSyntax argumentList &&
-                                argumentList.Arguments.TrySingle(out argument) &&
-                                argument.Expression is IdentifierNameSyntax argIdentifier &&
-                                argIdentifier.Identifier.ValueText == parameter.Name)
+                            if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, semanticModel, cancellationToken))
                             {
                                 return AnalysisResult.Yes;
                             }
                         }
-                        else if (invocation.ArgumentList.Arguments.TrySingle(out argument) &&
-                                IdentifierNameWalker.Contains(argument.Expression, parameter, semanticModel, cancellationToken))
+                        else if (invocation.ArgumentList.Arguments.TrySingle(out argument))
                         {
-                            if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
-                                method.ContainingType.Is(invokedMethod.ContainingType))
+                            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                                !(memberAccess.Expression is InstanceExpressionSyntax))
                             {
-                                using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
+                                continue;
+                            }
+
+                            if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, semanticModel, cancellationToken) ||
+                                IdentifierNameWalker.Contains(argument.Expression, parameter, semanticModel, cancellationToken))
+                            {
+                                if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
+                                    method.ContainingType.Is(invokedMethod.ContainingType))
                                 {
-                                    switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, visited))
+                                    using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
                                     {
-                                        case AnalysisResult.No:
-                                            break;
-                                        case AnalysisResult.Yes:
-                                            return AnalysisResult.Yes;
-                                        case AnalysisResult.Maybe:
-                                            result = AnalysisResult.Maybe;
-                                            break;
-                                        default:
-                                            throw new ArgumentOutOfRangeException();
+                                        switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, visited))
+                                        {
+                                            case AnalysisResult.No:
+                                                break;
+                                            case AnalysisResult.Yes:
+                                                return AnalysisResult.Yes;
+                                            case AnalysisResult.Maybe:
+                                                result = AnalysisResult.Maybe;
+                                                break;
+                                            default:
+                                                throw new ArgumentOutOfRangeException();
+                                        }
                                     }
                                 }
                             }

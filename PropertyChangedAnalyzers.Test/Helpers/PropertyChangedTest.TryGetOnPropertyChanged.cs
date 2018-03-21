@@ -214,6 +214,57 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public void WhenCreatingPropertyChangedEventArgsSeparately()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get => this.bar;
+
+            set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null)
+            {
+                var args = new PropertyChangedEventArgs(propertyName);
+                handler.Invoke(this, args);
+            }
+        }
+    }
+}");
+
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
+                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+                Assert.AreEqual(true, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out var invoker));
+                Assert.AreEqual("RoslynSandbox.Foo.OnPropertyChanged(string)", invoker.ToString());
+            }
+
+            [Test]
             public void Static()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(

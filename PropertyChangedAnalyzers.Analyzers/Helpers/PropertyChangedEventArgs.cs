@@ -6,6 +6,25 @@ namespace PropertyChangedAnalyzers
 
     internal static class PropertyChangedEventArgs
     {
+        public static bool IsCreatedWith(ExpressionSyntax expression, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (TryGetCached(expression, semanticModel, cancellationToken, out var argument))
+            {
+                return argument.Expression is IdentifierNameSyntax identifierName &&
+                       identifierName.Identifier.ValueText == parameter.Name;
+            }
+
+            if (expression is ObjectCreationExpressionSyntax)
+            {
+                return parameter.Type == KnownSymbol.String &&
+                   TryGetCreation(expression, out argument) &&
+                   argument.Expression is IdentifierNameSyntax identifierName &&
+                   identifierName.Identifier.ValueText == parameter.Name;
+            }
+
+            return false;
+        }
+
         internal static bool TryGetPropertyName(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
         {
             if (TryGetCreation(expression, out var nameArgument) ||
@@ -38,7 +57,7 @@ namespace PropertyChangedAnalyzers
             if (cached is IPropertySymbol property &&
                 property.TrySingleDeclaration(cancellationToken, out var propertyDeclaration))
             {
-                return TryGetCreation(propertyDeclaration.Initializer?.Value,  out nameArg);
+                return TryGetCreation(propertyDeclaration.Initializer?.Value, out nameArg);
             }
 
             if (cached is ILocalSymbol local &&

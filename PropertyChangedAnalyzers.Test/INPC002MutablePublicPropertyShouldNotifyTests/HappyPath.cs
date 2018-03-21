@@ -452,6 +452,52 @@ namespace RoslynSandbox.Client
             AnalyzerAssert.Valid(Analyzer, baseCode, testCode);
         }
 
+        [Test]
+        public void WhenCreatingPropertyChangedEventArgsSeparately()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get => this.bar;
+
+            set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null)
+            {
+                var args = new PropertyChangedEventArgs(propertyName);
+                handler.Invoke(this, args);
+            }
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""""")]
