@@ -40,7 +40,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
+                Assert.AreEqual(true, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out var invoker));
                 Assert.AreEqual("RoslynSandbox.Foo.OnPropertyChanged(string)", invoker.ToString());
             }
 
@@ -75,7 +75,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
+                Assert.AreEqual(true, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out var invoker));
                 Assert.AreEqual("RoslynSandbox.Foo.OnPropertyChanged(string)", invoker.ToString());
             }
 
@@ -114,7 +114,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(testCode);
                 var classDeclaration = testCode.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
+                Assert.AreEqual(true, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out var invoker));
                 Assert.AreEqual("RoslynSandbox.ViewModelBase.OnPropertyChanged(string)", invoker.ToString());
             }
 
@@ -153,7 +153,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(testCode);
                 var classDeclaration = testCode.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(false, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(false, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -180,7 +180,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
+                Assert.AreEqual(true, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out var invoker));
                 Assert.AreEqual("RoslynSandbox.Foo.OnPropertyChanged(string)", invoker.ToString());
             }
 
@@ -215,7 +215,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("Foo");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(false, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(false, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out _));
             }
         }
     }

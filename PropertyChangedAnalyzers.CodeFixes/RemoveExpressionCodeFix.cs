@@ -40,7 +40,7 @@ namespace PropertyChangedAnalyzers
                 var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                          .FirstAncestorOrSelf<ArgumentSyntax>();
                 var type = semanticModel.GetDeclaredSymbolSafe(argument?.FirstAncestorOrSelf<ClassDeclarationSyntax>(), context.CancellationToken);
-                if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out var invoker))
+                if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker))
                 {
                     context.RegisterDocumentEditorFix(
                         "Use overload that does not use expression.",

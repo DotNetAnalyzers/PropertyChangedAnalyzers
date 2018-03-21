@@ -37,7 +37,7 @@ namespace PropertyChangedAnalyzers
                                                .FirstAncestorOrSelf<ExpressionSyntax>();
                     var typeDeclaration = expression.FirstAncestorOrSelf<TypeDeclarationSyntax>();
                     var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
-                    if (PropertyChanged.TryGetInvoker(type, semanticModel, context.CancellationToken, out var invoker) &&
+                    if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
                         invoker.Parameters[0].Type == KnownSymbol.String)
                     {
                         var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();

@@ -47,7 +47,7 @@ namespace PropertyChangedAnalyzers
                 if (!eventSymbol.IsStatic &&
                     !eventSymbol.ContainingType.IsInterface() &&
                     eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
-                    !PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
+                    !PropertyChanged.TryGetOnPropertyChanged(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                 {
                     if (eventSymbol.ContainingType.IsSealed &&
                         !eventSymbol.ContainingType.TryFindProperty(x => x.SetMethod != null, out _))
@@ -58,7 +58,7 @@ namespace PropertyChangedAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
                 }
                 else if (eventSymbol.IsStatic &&
-                         !PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
+                         !PropertyChanged.TryGetOnPropertyChanged(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
                 }

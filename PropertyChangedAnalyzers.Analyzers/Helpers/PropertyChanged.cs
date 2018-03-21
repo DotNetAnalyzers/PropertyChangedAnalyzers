@@ -170,18 +170,18 @@ namespace PropertyChangedAnalyzers
             return AnalysisResult.Maybe;
         }
 
-        internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
+        internal static bool TryGetOnPropertyChanged(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
             if (type.TryFindEventRecursive("PropertyChanged", out var propertyChangedEvent))
             {
-                return TryGetInvoker(propertyChangedEvent, semanticModel, cancellationToken, out invoker);
+                return TryGetOnPropertyChanged(propertyChangedEvent, semanticModel, cancellationToken, out invoker);
             }
 
             invoker = null;
             return false;
         }
 
-        internal static bool TryGetInvoker(IEventSymbol propertyChangedEvent, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
+        internal static bool TryGetOnPropertyChanged(IEventSymbol propertyChangedEvent, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
             invoker = null;
             var containingType = propertyChangedEvent.ContainingType;
@@ -297,7 +297,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (!IsPotentialInvoker(method))
+            if (!IsPotentialOnPropertyChanged(method))
             {
                 return AnalysisResult.No;
             }
@@ -548,7 +548,7 @@ namespace PropertyChangedAnalyzers
                    candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty;
         }
 
-        private static bool IsPotentialInvoker(IMethodSymbol method)
+        private static bool IsPotentialOnPropertyChanged(IMethodSymbol method)
         {
             if (method != null &&
                 method.ReturnsVoid &&
