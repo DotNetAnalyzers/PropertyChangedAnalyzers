@@ -294,9 +294,9 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static AnalysisResult IsOnPropertyChanged(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
+        internal static AnalysisResult IsOnPropertyChanged(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> visited = null)
         {
-            if (@checked?.Add(method) == false)
+            if (visited?.Add(method) == false)
             {
                 return AnalysisResult.No;
             }
@@ -355,9 +355,20 @@ namespace PropertyChangedAnalyzers
                                 if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
                                     method.ContainingType.Is(invokedMethod.ContainingType))
                                 {
-                                    using (var set = PooledHashSet<IMethodSymbol>.Borrow(@checked))
+                                    using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
                                     {
-                                        return IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, set);
+                                        switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, visited))
+                                        {
+                                            case AnalysisResult.No:
+                                                break;
+                                            case AnalysisResult.Yes:
+                                                return AnalysisResult.Yes;
+                                            case AnalysisResult.Maybe:
+                                                result = AnalysisResult.Maybe;
+                                                break;
+                                            default:
+                                                throw new ArgumentOutOfRangeException();
+                                        }
                                     }
                                 }
                             }
@@ -481,7 +492,7 @@ namespace PropertyChangedAnalyzers
                              IsPropertyChangedInvoke(x, semanticModel, cancellationToken),
                         out _))
                     {
-                        using (var set = PooledHashSet<IMethodSymbol>.Borrow(@checked))
+                        using (var set = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(@checked))
                         {
                             // ReSharper disable once AccessToDisposedClosure R# does not figure things out here.
                             return walker.Invocations.TrySingle(

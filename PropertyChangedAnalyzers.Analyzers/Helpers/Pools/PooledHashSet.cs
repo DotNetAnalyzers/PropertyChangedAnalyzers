@@ -45,7 +45,7 @@ namespace PropertyChangedAnalyzers
             return set;
         }
 
-        internal static PooledHashSet<T> Borrow(PooledHashSet<T> set)
+        internal static PooledHashSet<T> BorrowOrIncrementUsage(PooledHashSet<T> set)
         {
             if (set == null)
             {
