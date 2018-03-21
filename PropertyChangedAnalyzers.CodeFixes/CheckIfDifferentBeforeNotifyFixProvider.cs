@@ -65,7 +65,7 @@ namespace PropertyChangedAnalyzers
                         context.CancellationToken);
                     if (setter.Body.Statements.Count == 2 &&
                         ReferenceEquals(setter.Body.Statements[0], statementSyntax) &&
-                        PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
+                        PropertyChanged.TryGetSetAndRaise(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
                     {
                         context.RegisterDocumentEditorFix(
                             $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",

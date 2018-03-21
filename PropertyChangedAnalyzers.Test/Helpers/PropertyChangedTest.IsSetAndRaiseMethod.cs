@@ -36,7 +36,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("SetAndNotify");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -64,7 +64,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Set");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -92,7 +92,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Set");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -135,7 +135,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -193,7 +193,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -218,7 +218,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("Set");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -243,7 +243,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(true, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(true, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -283,7 +283,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(false, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(false, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -318,7 +318,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(false, PropertyChanged.IsSetAndRaiseMethod(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(false, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
         }
     }

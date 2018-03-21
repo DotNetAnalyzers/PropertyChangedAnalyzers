@@ -32,5 +32,12 @@ namespace PropertyChangedAnalyzers
             parameter = null;
             return false;
         }
+
+        internal static bool IsCallerMemberName(this IMethodSymbol invoker)
+        {
+            return invoker != null &&
+                   invoker.Parameters.TrySingle(out var parameter) &&
+                   parameter.IsCallerMemberName();
+        }
     }
 }

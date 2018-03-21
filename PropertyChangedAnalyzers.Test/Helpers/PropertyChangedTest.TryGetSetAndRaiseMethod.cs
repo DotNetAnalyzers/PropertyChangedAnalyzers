@@ -50,7 +50,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaise(type, semanticModel, CancellationToken.None, out var method));
                 Assert.AreEqual("TrySet", method.Name);
             }
 
@@ -109,7 +109,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ObservableObject");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaise(type, semanticModel, CancellationToken.None, out var method));
                 Assert.AreEqual("TrySet", method.Name);
             }
 
@@ -135,7 +135,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("FooBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaise(type, semanticModel, CancellationToken.None, out var method));
                 Assert.AreEqual("Set", method.Name);
             }
 
@@ -161,7 +161,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("FooBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual(true, PropertyChanged.TryGetSetAndRaise(type, semanticModel, CancellationToken.None, out var method));
                 Assert.AreEqual("TrySet", method.Name);
             }
 
@@ -202,7 +202,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(false, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(false, PropertyChanged.TryGetSetAndRaise(type, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -237,7 +237,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(false, PropertyChanged.TryGetSetAndRaiseMethod(type, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(false, PropertyChanged.TryGetSetAndRaise(type, semanticModel, CancellationToken.None, out _));
             }
         }
     }

@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers
                 var setMethod = (IMethodSymbol)semanticModel.GetSymbolSafe(
                     argument.FirstAncestorOrSelf<InvocationExpressionSyntax>(),
                     cancellationToken);
-                if (IsSetAndRaiseMethod(setMethod, semanticModel, cancellationToken) &&
+                if (IsSetAndRaise(setMethod, semanticModel, cancellationToken) &&
                     setMethod.Parameters[setMethod.Parameters.Length - 1].IsCallerMemberName())
                 {
                     var inProperty = semanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
@@ -292,13 +292,11 @@ namespace PropertyChangedAnalyzers
             {
                 if (name == "Invoke")
                 {
-                    if (invocation.Parent is ConditionalAccessExpressionSyntax conditionalAccess)
+                    if (invocation.Parent is ConditionalAccessExpressionSyntax conditionalAccess &&
+                        conditionalAccess.Expression is MemberAccessExpressionSyntax memberAccess &&
+                        memberAccess.Name.Identifier.ValueText != "PropertyChanged")
                     {
-                        if (conditionalAccess.Expression is MemberAccessExpressionSyntax memberAccess &&
-                            memberAccess.Name.Identifier.ValueText != "PropertyChanged")
-                        {
-                            return false;
-                        }
+                        return false;
                     }
 
                     if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokeMethod)
@@ -493,33 +491,9 @@ namespace PropertyChangedAnalyzers
             return AnalysisResult.No;
         }
 
-        internal static bool IsCallerMemberName(this IMethodSymbol invoker)
+        internal static bool TryGetSetAndRaise(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            return invoker != null &&
-                   invoker.Parameters.Length == 1 &&
-                   invoker.Parameters[0].Type == KnownSymbol.String &&
-                   invoker.Parameters[0].IsCallerMemberName();
-        }
-
-        internal static bool IsCallerMemberName(this IParameterSymbol parameter)
-        {
-            if (parameter.HasExplicitDefaultValue)
-            {
-                foreach (var attribute in parameter.GetAttributes())
-                {
-                    if (attribute.AttributeClass == KnownSymbol.CallerMemberNameAttribute)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        internal static bool TryGetSetAndRaiseMethod(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
-        {
-            if (type.TryFirstMethodRecursive(x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken), out method))
+            if (type.TryFirstMethodRecursive(x => IsSetAndRaise(x, semanticModel, cancellationToken), out method))
             {
                 return true;
             }
@@ -528,7 +502,7 @@ namespace PropertyChangedAnalyzers
             {
                 return type.TryFirstMemberRecursive(
                     "Set",
-                    x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken),
+                    x => IsSetAndRaise(x, semanticModel, cancellationToken),
                     out method);
             }
 
@@ -536,7 +510,7 @@ namespace PropertyChangedAnalyzers
             {
                 return type.TryFirstMemberRecursive(
                     "Set",
-                    x => IsSetAndRaiseMethod(x, semanticModel, cancellationToken),
+                    x => IsSetAndRaise(x, semanticModel, cancellationToken),
                     out method);
             }
 
@@ -558,14 +532,14 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            return IsSetAndRaiseMethod(
+            return IsSetAndRaise(
                 semanticModel.GetSymbolSafe(candidate, cancellationToken) as IMethodSymbol,
                 semanticModel,
                 cancellationToken,
                 @checked);
         }
 
-        internal static bool IsSetAndRaiseMethod(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
+        internal static bool IsSetAndRaise(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
         {
             if (@checked?.Add(candidate) == false)
             {
