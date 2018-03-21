@@ -94,8 +94,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (IsOnPropertyChanged(invocation, semanticModel, cancellationToken) &&
-                semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol onPropertyChanged &&
+            if (IsOnPropertyChanged(invocation, semanticModel, cancellationToken, out var onPropertyChanged) &&
                 onPropertyChanged.Parameters.TrySingle(out var parameter))
             {
                 if (invocation.ArgumentList.Arguments.Count == 0)
@@ -243,6 +242,12 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsOnPropertyChanged(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
+            return IsOnPropertyChanged(invocation, semanticModel, cancellationToken, out _);
+        }
+
+        internal static bool IsOnPropertyChanged(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        {
+            method = null;
             if (invocation == null ||
                 invocation.ArgumentList?.Arguments.Count > 1 ||
                 !invocation.IsPotentialReturnVoid())
@@ -263,7 +268,8 @@ namespace PropertyChangedAnalyzers
                         return false;
                     }
 
-                    return IsOnPropertyChanged(semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol, semanticModel, cancellationToken) == AnalysisResult.Yes;
+                    method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                    return IsOnPropertyChanged(method, semanticModel, cancellationToken) == AnalysisResult.Yes;
                 }
 
                 return false;
