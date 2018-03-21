@@ -19,6 +19,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar))")]
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar))")]
             [TestCase("this.OnPropertyChanged(Cached)")]
+            [TestCase("this.OnPropertyChanged(args)")]
             public void WhenTrue(string call)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(

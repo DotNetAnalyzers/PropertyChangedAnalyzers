@@ -44,7 +44,7 @@ namespace PropertyChangedAnalyzers
                         {
                             context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, argument.GetLocation()));
                         }
-                        else if (parameter.TryGetSingleDeclaration<SyntaxNode>(context.CancellationToken, out _) &&
+                        else if (parameter.TrySingleDeclaration<SyntaxNode>(context.CancellationToken, out _) &&
                                  PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, argument.GetLocation()));

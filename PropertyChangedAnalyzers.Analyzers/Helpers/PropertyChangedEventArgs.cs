@@ -8,45 +8,58 @@ namespace PropertyChangedAnalyzers
     {
         internal static bool TryGetPropertyName(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
         {
-            return TryGetCreation(expression, semanticModel, cancellationToken, out _, out propertyName) ||
-                   TryGetCached(expression, semanticModel, cancellationToken, out _, out propertyName);
+            if (TryGetCreation(expression, out var nameArgument) ||
+                TryGetCached(expression, semanticModel, cancellationToken, out nameArgument))
+            {
+                return nameArgument.TryGetStringValue(semanticModel, cancellationToken, out propertyName);
+            }
+
+            propertyName = null;
+            return false;
         }
 
-        private static bool TryGetCached(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string propertyName)
+        internal static bool TryGetPropertyNameArgument(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArgument)
+        {
+            return TryGetCreation(expression, out nameArgument) ||
+                   TryGetCached(expression, semanticModel, cancellationToken, out nameArgument);
+        }
+
+        private static bool TryGetCached(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg)
         {
             var cached = semanticModel.GetSymbolSafe(expression, cancellationToken);
             if (cached is IFieldSymbol field &&
-                field.TryGetSingleDeclaration(cancellationToken, out var fieldDeclaration) &&
+                field.TrySingleDeclaration(cancellationToken, out var fieldDeclaration) &&
                 fieldDeclaration.Declaration.Variables.TryLast(out var variable) &&
-                variable.Initializer is EqualsValueClauseSyntax initializer)
+                variable.Initializer is EqualsValueClauseSyntax fieldInitializer)
             {
-                return TryGetCreation(initializer.Value, semanticModel, cancellationToken, out nameArg, out propertyName);
+                return TryGetCreation(fieldInitializer.Value, out nameArg);
             }
 
             if (cached is IPropertySymbol property &&
                 property.TrySingleDeclaration(cancellationToken, out var propertyDeclaration))
             {
-                return TryGetCreation(propertyDeclaration.Initializer?.Value, semanticModel, cancellationToken, out nameArg, out propertyName);
+                return TryGetCreation(propertyDeclaration.Initializer?.Value,  out nameArg);
+            }
+
+            if (cached is ILocalSymbol local &&
+                local.TrySingleDeclaration(cancellationToken, out var variableDeclaration) &&
+                variableDeclaration.Variables.TryLast(out variable) &&
+                variable.Initializer is EqualsValueClauseSyntax initializer)
+            {
+                return TryGetCreation(initializer.Value, out nameArg);
             }
 
             nameArg = null;
-            propertyName = null;
             return false;
         }
 
-        private static bool TryGetCreation(this ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string propertyName)
+        private static bool TryGetCreation(this ExpressionSyntax expression, out ArgumentSyntax nameArg)
         {
             nameArg = null;
-            propertyName = null;
-            if (expression is ObjectCreationExpressionSyntax objectCreation &&
-                objectCreation.ArgumentList is ArgumentListSyntax argumentList &&
-                objectCreation.Type == KnownSymbol.PropertyChangedEventArgs &&
-                argumentList.Arguments.TrySingle(out nameArg))
-            {
-                return nameArg.TryGetStringValue(semanticModel, cancellationToken, out propertyName);
-            }
-
-            return false;
+            return expression is ObjectCreationExpressionSyntax objectCreation &&
+                   objectCreation.ArgumentList is ArgumentListSyntax argumentList &&
+                   objectCreation.Type == KnownSymbol.PropertyChangedEventArgs &&
+                   argumentList.Arguments.TrySingle(out nameArg);
         }
     }
 }

@@ -69,7 +69,7 @@ namespace PropertyChangedAnalyzers
                             this.GetType(),
                             diagnostic);
                         }
-                        else if (parameterSymbol.TryGetSingleDeclaration(context.CancellationToken, out ParameterSyntax parameterSyntax))
+                        else if (SymbolExt.TrySingleDeclaration((ISymbol) parameterSymbol, context.CancellationToken, out ParameterSyntax parameterSyntax))
                         {
                             context.RegisterDocumentEditorFix(
                                 "Use [CallerMemberName]",
