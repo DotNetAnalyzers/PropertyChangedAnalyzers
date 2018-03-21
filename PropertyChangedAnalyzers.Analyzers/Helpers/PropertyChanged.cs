@@ -302,47 +302,8 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            var parameter = method.Parameters[0];
-            if (method.DeclaringSyntaxReferences.Length == 0)
-            {
-                if (method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChanged ||
-                    method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChangedOfT ||
-                    method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChanged ||
-                    method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChangedOfT ||
-                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange ||
-                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChangeOfT ||
-                    method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChange ||
-                    method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChangeOfT ||
-                    method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChanged ||
-                    method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChangedOfT ||
-                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChanged ||
-                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChangedOfT)
-                {
-                    return AnalysisResult.Yes;
-                }
-
-                if (parameter.Type == KnownSymbol.String ||
-                    parameter.Type == KnownSymbol.PropertyChangedEventArgs)
-                {
-                    if (method.Name.Contains("PropertyChanged"))
-                    {
-                        // A bit speculative here
-                        // for handling the case when inheriting a ViewModelBase class from a binary reference.
-                        return AnalysisResult.Maybe;
-                    }
-                }
-
-                return AnalysisResult.No;
-            }
-
-            if (parameter.Type != KnownSymbol.String &&
-                parameter.Type != KnownSymbol.PropertyChangedEventArgs &&
-                parameter.Type != KnownSymbol.LinqExpressionOfT)
-            {
-                return AnalysisResult.No;
-            }
-
-            foreach (var declaration in method.Declarations(cancellationToken))
+            if (method.Parameters.TrySingle(out var parameter) &&
+                method.TrySingleDeclaration(cancellationToken, out var declaration))
             {
                 using (var walker = InvocationWalker.Borrow(declaration))
                 {
@@ -430,6 +391,37 @@ namespace PropertyChangedAnalyzers
                         }
                     }
                 }
+            }
+            else
+            {
+                if (method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChanged ||
+                    method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChangedOfT ||
+                    method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChanged ||
+                    method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChangedOfT ||
+                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange ||
+                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChangeOfT ||
+                    method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChange ||
+                    method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChangeOfT ||
+                    method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChanged ||
+                    method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChangedOfT ||
+                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChanged ||
+                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChangedOfT)
+                {
+                    return AnalysisResult.Yes;
+                }
+
+                if (parameter != null &&
+                    parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
+                {
+                    if (method.Name.Contains("PropertyChanged"))
+                    {
+                        // A bit speculative here
+                        // for handling the case when inheriting a ViewModelBase class from a binary reference.
+                        return AnalysisResult.Maybe;
+                    }
+                }
+
+                return AnalysisResult.No;
             }
 
             return AnalysisResult.No;
