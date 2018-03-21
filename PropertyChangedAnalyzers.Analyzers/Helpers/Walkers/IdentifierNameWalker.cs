@@ -17,6 +17,14 @@ namespace PropertyChangedAnalyzers
 
         public static IdentifierNameWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IdentifierNameWalker());
 
+        public static bool Contains(SyntaxNode node, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            using (var walker = Borrow(node))
+            {
+                return walker.Contains(parameter, semanticModel, cancellationToken);
+            }
+        }
+
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
             this.identifierNames.Add(node);
@@ -26,10 +34,15 @@ namespace PropertyChangedAnalyzers
         public bool Contains(IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             this.ThrowIfDisposed();
+            if (parameter is null)
+            {
+                return false;
+            }
+
             foreach (var identifierName in this.identifierNames)
             {
-                var symbol = semanticModel.GetSymbolSafe(identifierName, cancellationToken) as IParameterSymbol;
-                if (parameter.MetadataName == symbol?.MetadataName)
+                if (parameter.MetadataName == identifierName.Identifier.ValueText &&
+                    semanticModel.GetSymbolSafe(identifierName, cancellationToken) is IParameterSymbol)
                 {
                     return true;
                 }

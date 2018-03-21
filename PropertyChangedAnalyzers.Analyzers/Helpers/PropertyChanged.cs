@@ -355,30 +355,25 @@ namespace PropertyChangedAnalyzers
                                 return AnalysisResult.Yes;
                             }
                         }
-                        else
+                        else if (invocation.ArgumentList.Arguments.TrySingle(out argument) &&
+                                IdentifierNameWalker.Contains(argument.Expression, parameter, semanticModel, cancellationToken))
                         {
-                            using (var argsWalker = IdentifierNameWalker.Borrow(invocation.ArgumentList))
+                            if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
+                                method.ContainingType.Is(invokedMethod.ContainingType))
                             {
-                                if (argsWalker.Contains(parameter, semanticModel, cancellationToken))
+                                using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
                                 {
-                                    if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
-                                        method.ContainingType.Is(invokedMethod.ContainingType))
+                                    switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, visited))
                                     {
-                                        using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
-                                        {
-                                            switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, visited))
-                                            {
-                                                case AnalysisResult.No:
-                                                    break;
-                                                case AnalysisResult.Yes:
-                                                    return AnalysisResult.Yes;
-                                                case AnalysisResult.Maybe:
-                                                    result = AnalysisResult.Maybe;
-                                                    break;
-                                                default:
-                                                    throw new ArgumentOutOfRangeException();
-                                            }
-                                        }
+                                        case AnalysisResult.No:
+                                            break;
+                                        case AnalysisResult.Yes:
+                                            return AnalysisResult.Yes;
+                                        case AnalysisResult.Maybe:
+                                            result = AnalysisResult.Maybe;
+                                            break;
+                                        default:
+                                            throw new ArgumentOutOfRangeException();
                                     }
                                 }
                             }
