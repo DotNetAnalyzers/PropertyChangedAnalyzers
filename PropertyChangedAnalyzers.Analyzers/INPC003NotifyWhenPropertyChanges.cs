@@ -276,40 +276,13 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var backing in this.backings)
                 {
-                    if (IsMatch(backing, expression))
+                    if (Member.IsSame(backing, expression))
                     {
                         return true;
                     }
                 }
 
                 return false;
-
-                bool IsMatch(ExpressionSyntax x, ExpressionSyntax y)
-                {
-                    if (TryGetFieldName(x, out var xName))
-                    {
-                        return TryGetFieldName(y, out var yName) &&
-                               xName == yName;
-                    }
-
-                    return false;
-                }
-
-                bool TryGetFieldName(ExpressionSyntax ex, out string name)
-                {
-                    name = null;
-                    if (ex is IdentifierNameSyntax identifierName)
-                    {
-                        name = identifierName.Identifier.ValueText;
-                    }
-                    else if (ex is MemberAccessExpressionSyntax memberAccess &&
-                             memberAccess.Name is SimpleNameSyntax simpleName)
-                    {
-                        name = simpleName.Identifier.ValueText;
-                    }
-
-                    return name != null;
-                }
             }
 
             public override void Visit(SyntaxNode node)
@@ -322,7 +295,7 @@ namespace PropertyChangedAnalyzers
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
-                if (!IdentifierTypeWalker.IsLocalOrParameter(node))
+                if (Member.IsFieldOrProperty(node))
                 {
                     this.backings.Add(node);
                     var symbol = this.semanticModel.GetSymbolSafe(node, this.cancellationToken);
