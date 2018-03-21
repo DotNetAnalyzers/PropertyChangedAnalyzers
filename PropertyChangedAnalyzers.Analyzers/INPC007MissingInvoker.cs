@@ -41,29 +41,23 @@ namespace PropertyChangedAnalyzers
 
             if (context.Node is EventFieldDeclarationSyntax eventFieldDeclaration &&
                 context.ContainingSymbol is IEventSymbol eventSymbol &&
-                !eventSymbol.ContainingType.IsInterface())
+                eventSymbol.Type == KnownSymbol.PropertyChangedEventHandler &&
+                eventSymbol.Name == "PropertyChanged")
             {
-                if (eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged)
+                if (!eventSymbol.IsStatic &&
+                    !eventSymbol.ContainingType.IsInterface() &&
+                    eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
+                    !PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                 {
-                    if (!PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
+                    if (eventSymbol.ContainingType.IsSealed &&
+                        !eventSymbol.ContainingType.TryFindProperty(x => x.SetMethod != null, out _))
                     {
-                        var containingType = context.ContainingSymbol.ContainingType;
-                        if (containingType.IsSealed &&
-                            !containingType.GetMembers()
-                                           .TryFirst(
-                                               x => x is IPropertySymbol p &&
-                                                    p.SetMethod != null,
-                                               out _))
-                        {
-                            return;
-                        }
-
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
+                        return;
                     }
+
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
                 }
                 else if (eventSymbol.IsStatic &&
-                         eventSymbol.Type == KnownSymbol.PropertyChangedEventHandler &&
-                         eventSymbol.Name == "PropertyChanged" &&
                          !PropertyChanged.TryGetInvoker(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));

@@ -80,6 +80,83 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public void OverridingEvent()
+            {
+                var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModelBase : INotifyPropertyChanged
+    {
+        public virtual event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}");
+
+                var testCode = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : RoslynSandbox.ViewModelBase
+    {
+        public override event PropertyChangedEventHandler PropertyChanged;
+    }
+}");
+
+                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, testCode }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(testCode);
+                var classDeclaration = testCode.FindClassDeclaration("ViewModel");
+                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+                Assert.AreEqual(true, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out var invoker));
+                Assert.AreEqual("RoslynSandbox.ViewModelBase.OnPropertyChanged(string)", invoker.ToString());
+            }
+
+            [Test]
+            public void OverridingEventPrivateInvokerInBase()
+            {
+                var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModelBase : INotifyPropertyChanged
+    {
+        public virtual event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}");
+
+                var testCode = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : RoslynSandbox.ViewModelBase
+    {
+        public override event PropertyChangedEventHandler PropertyChanged;
+    }
+}");
+
+                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, testCode }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(testCode);
+                var classDeclaration = testCode.FindClassDeclaration("ViewModel");
+                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+                Assert.AreEqual(false, PropertyChanged.TryGetInvoker(type, semanticModel, CancellationToken.None, out _));
+            }
+
+            [Test]
             public void Static()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(

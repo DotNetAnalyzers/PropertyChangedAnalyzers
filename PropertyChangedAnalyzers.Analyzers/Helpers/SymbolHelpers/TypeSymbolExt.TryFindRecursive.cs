@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryFindEventRecursive(this ITypeSymbol type, string name, out IEventSymbol @event)
         {
-            return type.TryFindSingleMemberRecursive(name, out @event);
+            return type.TryFindFirstMemberRecursive(name, out @event);
         }
 
         internal static bool TryFindPropertyRecursive(this ITypeSymbol type, string name, out IPropertySymbol property)

@@ -12,17 +12,22 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryFindEvent(this ITypeSymbol type, string name, out IEventSymbol @event)
         {
-            return type.TryFindSingleMember(name, out @event);
+            return type.TryFindFirstMember(name, out @event);
         }
 
         internal static bool TryFindProperty(this ITypeSymbol type, string name, out IPropertySymbol property)
         {
             if (name == "Item[]")
             {
-                return type.TryFindSingleMember(x => x.IsIndexer, out property);
+                return type.TryFindFirstMember(x => x.IsIndexer, out property);
             }
 
-            return type.TryFindSingleMember(name, out property);
+            return type.TryFindFirstMember(name, out property);
+        }
+
+        internal static bool TryFindProperty(this ITypeSymbol type, Func<IPropertySymbol, bool> selector, out IPropertySymbol property)
+        {
+            return type.TryFindFirstMember(selector, out property);
         }
 
         internal static bool TryFindFirstMethod(this ITypeSymbol type, string name, out IMethodSymbol result)

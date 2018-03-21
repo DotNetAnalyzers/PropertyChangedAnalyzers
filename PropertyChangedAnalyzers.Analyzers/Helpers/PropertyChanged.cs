@@ -172,32 +172,33 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryGetInvoker(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
-            if (type.TryFindEventRecursive("PropertyChanged", out var @event))
+            if (type.TryFindEventRecursive("PropertyChanged", out var propertyChangedEvent))
             {
-                return TryGetInvoker(@event, semanticModel, cancellationToken, out invoker);
+                return TryGetInvoker(propertyChangedEvent, semanticModel, cancellationToken, out invoker);
             }
 
             invoker = null;
             return false;
         }
 
-        internal static bool TryGetInvoker(IEventSymbol @event, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
+        internal static bool TryGetInvoker(IEventSymbol propertyChangedEvent, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
-            if (@event == null)
-            {
-                invoker = null;
-                return false;
-            }
-
             invoker = null;
-            if (@event.IsStatic)
+            var containingType = propertyChangedEvent.ContainingType;
+            while (propertyChangedEvent != null)
             {
-                foreach (var member in @event.ContainingType.GetMembers())
+                foreach (var member in propertyChangedEvent.ContainingType.GetMembers())
                 {
                     if (member is IMethodSymbol candidate &&
                         candidate.MethodKind == MethodKind.Ordinary &&
-                        candidate.IsStatic)
+                        candidate.IsStatic == propertyChangedEvent.IsStatic)
                     {
+                        if (candidate.ContainingType != containingType &&
+                            candidate.DeclaredAccessibility == Accessibility.Private)
+                        {
+                            continue;
+                        }
+
                         switch (IsOnPropertyChanged(candidate, semanticModel, cancellationToken))
                         {
                             case AnalysisResult.No:
@@ -220,71 +221,10 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                return invoker != null;
-            }
-
-            var type = @event.ContainingType;
-            while (type != null)
-            {
-                foreach (var member in type.GetMembers())
-                {
-                    if (member is IMethodSymbol candidate &&
-                        !candidate.IsStatic &&
-                        candidate.MethodKind == MethodKind.Ordinary)
-                    {
-                        if (candidate.DeclaredAccessibility == Accessibility.Private &&
-                            candidate.ContainingType != @event.ContainingType)
-                        {
-                            continue;
-                        }
-
-                        switch (IsOnPropertyChanged(candidate, semanticModel, cancellationToken))
-                        {
-                            case AnalysisResult.No:
-                                continue;
-                            case AnalysisResult.Yes:
-                                invoker = candidate;
-                                if (invoker.Parameters.Length == 1 &&
-                                    invoker.Parameters[0]
-                                           .Type == KnownSymbol.String)
-                                {
-                                    return true;
-                                }
-
-                                break;
-                            case AnalysisResult.Maybe:
-                                invoker = candidate;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    }
-                }
-
-                type = type.BaseType;
+                propertyChangedEvent = propertyChangedEvent.OverriddenEvent;
             }
 
             return invoker != null;
-        }
-
-        internal static bool IsPotentialInvoker(IMethodSymbol method)
-        {
-            if (method != null &&
-                method.ReturnsVoid &&
-                method.MethodKind == MethodKind.Ordinary &&
-                method.Parameters.TrySingle(out var parameter) &&
-                parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs, KnownSymbol.LinqExpressionOfT))
-            {
-                if (method.IsStatic)
-                {
-                    return method.ContainingType.TryFindEvent("PropertyChanged", out var @event) &&
-                           @event.IsStatic;
-                }
-
-                return method.ContainingType.Is(KnownSymbol.INotifyPropertyChanged);
-            }
-
-            return false;
         }
 
         internal static bool IsPropertyChangedInvoke(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -606,6 +546,26 @@ namespace PropertyChangedAnalyzers
                    candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
                    candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
                    candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty;
+        }
+
+        private static bool IsPotentialInvoker(IMethodSymbol method)
+        {
+            if (method != null &&
+                method.ReturnsVoid &&
+                method.MethodKind == MethodKind.Ordinary &&
+                method.Parameters.TrySingle(out var parameter) &&
+                parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs, KnownSymbol.LinqExpressionOfT))
+            {
+                if (method.IsStatic)
+                {
+                    return method.ContainingType.TryFindEvent("PropertyChanged", out var @event) &&
+                           @event.IsStatic;
+                }
+
+                return method.ContainingType.Is(KnownSymbol.INotifyPropertyChanged);
+            }
+
+            return false;
         }
 
         private static bool TryGetCachedArgs(
