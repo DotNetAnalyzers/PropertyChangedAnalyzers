@@ -10,53 +10,61 @@ namespace PropertyChangedAnalyzers
     {
         internal static bool TryGetStringValue(this ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken, out string result)
         {
-            result = null;
-            if (argument?.Expression == null)
+            return TryGetStringValue(argument?.Expression, out result);
+
+            bool TryGetStringValue(ExpressionSyntax expression, out string text)
             {
+                text = null;
+                if (expression == null)
+                {
+                    return false;
+                }
+
+                if (expression is LiteralExpressionSyntax literal)
+                {
+                    switch (literal.Kind())
+                    {
+                        case SyntaxKind.NullLiteralExpression:
+                            return true;
+                        case SyntaxKind.StringLiteralExpression:
+                            text = literal.Token.ValueText;
+                            return true;
+                    }
+                }
+
+                if (expression.IsNameOf())
+                {
+                    var cv = semanticModel.GetConstantValueSafe(expression, cancellationToken);
+                    if (cv.HasValue &&
+                        cv.Value is string)
+                    {
+                        text = (string)cv.Value;
+                        return true;
+                    }
+                }
+
+                if (expression is MemberAccessExpressionSyntax memberAccess &&
+                    memberAccess.Name.Identifier.ValueText == "Empty" &&
+                    ((memberAccess.Expression is PredefinedTypeSyntax predefinedType &&
+                      predefinedType.Keyword.Text == "string") ||
+                     (memberAccess.Expression is IdentifierNameSyntax identifierName &&
+                      identifierName.Identifier.ValueText == "String")))
+                {
+                    if (semanticModel.GetSymbolSafe(expression, cancellationToken) is IFieldSymbol field &&
+                        field == KnownSymbol.String.Empty)
+                    {
+                        text = string.Empty;
+                        return true;
+                    }
+                }
+
+                if (expression is CastExpressionSyntax castExpression)
+                {
+                    return TryGetStringValue(castExpression.Expression, out text);
+                }
+
                 return false;
             }
-
-            if (argument.Expression.IsKind(SyntaxKind.NullLiteralExpression))
-            {
-                return true;
-            }
-
-            if (argument.Expression.IsKind(SyntaxKind.StringLiteralExpression))
-            {
-                var cv = semanticModel.GetConstantValueSafe(argument.Expression, cancellationToken);
-                if (cv.HasValue && cv.Value is string)
-                {
-                    result = (string)cv.Value;
-                    return true;
-                }
-            }
-
-            if (argument.Expression.IsNameOf())
-            {
-                var cv = semanticModel.GetConstantValueSafe(argument.Expression, cancellationToken);
-                if (cv.HasValue && cv.Value is string)
-                {
-                    result = (string)cv.Value;
-                    return true;
-                }
-            }
-
-            if (argument.Expression is MemberAccessExpressionSyntax memberAccess &&
-                memberAccess.Name.Identifier.ValueText == "Empty" &&
-                ((memberAccess.Expression is PredefinedTypeSyntax predefinedType &&
-                  predefinedType.Keyword.Text == "string") ||
-                  (memberAccess.Expression is IdentifierNameSyntax identifierName &&
-                   identifierName.Identifier.ValueText == "String")))
-            {
-                if (semanticModel.GetSymbolSafe(argument.Expression, cancellationToken) is IFieldSymbol field &&
-                    field == KnownSymbol.String.Empty)
-                {
-                    result = string.Empty;
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static bool IsNameOf(this ExpressionSyntax expression)

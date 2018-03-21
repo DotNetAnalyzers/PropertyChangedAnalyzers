@@ -11,6 +11,8 @@ namespace PropertyChangedAnalyzers.Test.Helpers.SyntaxTreeHelpers
         [TestCase("\"text\"", "text")]
         [TestCase("string.Empty", "")]
         [TestCase("String.Empty", "")]
+        [TestCase("null", null)]
+        [TestCase("(string)null", null)]
         public void TryGetStringValue(string code, string expected)
         {
             var testCode = @"
@@ -23,8 +25,6 @@ namespace RoslynSandbox
         public Foo()
         {
             Bar(""text"");
-            Bar(string.Empty);
-            Bar(String.Empty);
         }
 
         private void Bar(string arg)
@@ -32,6 +32,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            testCode = testCode.AssertReplace("\"text\"", code);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);

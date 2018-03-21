@@ -94,77 +94,58 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-            if (method == null)
+            if (IsOnPropertyChanged(invocation, semanticModel, cancellationToken) &&
+                semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol onPropertyChanged &&
+                onPropertyChanged.Parameters.TrySingle(out var parameter))
             {
-                return AnalysisResult.No;
-            }
-
-
-            if (IsOnPropertyChanged(method, semanticModel, cancellationToken) == AnalysisResult.No)
-            {
-                return AnalysisResult.No;
-            }
-
-            if (invocation.ArgumentList.Arguments.Count == 0)
-            {
-                if (method.Parameters[0].IsCallerMemberName())
+                if (invocation.ArgumentList.Arguments.Count == 0)
                 {
-                    var member = invocation.FirstAncestorOrSelf<MemberDeclarationSyntax>();
-                    if (member == null)
+                    if (parameter.IsCallerMemberName())
                     {
-                        return AnalysisResult.Maybe;
-                    }
-
-                    propertyName = semanticModel.GetDeclaredSymbolSafe(member, cancellationToken)?.Name;
-                    if (propertyName != null)
-                    {
-                        return AnalysisResult.Yes;
-                    }
-
-                    return AnalysisResult.Maybe;
-                }
-            }
-
-            if (invocation.ArgumentList.Arguments.TrySingle(out var argument))
-            {
-                if (PropertyChangedEventArgs.TryGetPropertyName(argument.Expression, semanticModel, cancellationToken, out propertyName))
-                {
-                    return AnalysisResult.Yes;
-                }
-
-                if (argument.Expression is ParenthesizedLambdaExpressionSyntax lambda)
-                {
-                    if (semanticModel.GetSymbolSafe(lambda.Body, cancellationToken) is ISymbol property)
-                    {
-                        propertyName = property.Name;
-                        return AnalysisResult.Yes;
+                        switch (invocation.FirstAncestorOrSelf<MemberDeclarationSyntax>())
+                        {
+                            case MethodDeclarationSyntax method:
+                                propertyName = method.Identifier.ValueText;
+                                return AnalysisResult.Yes;
+                            case PropertyDeclarationSyntax property:
+                                propertyName = property.Identifier.ValueText;
+                                return AnalysisResult.Yes;
+                        }
                     }
 
                     return AnalysisResult.No;
                 }
 
-                var symbol = semanticModel.GetTypeInfoSafe(argument.Expression, cancellationToken).Type;
-                if (symbol == KnownSymbol.String)
+                if (invocation.ArgumentList.Arguments.TrySingle(out var argument))
                 {
-                    if (argument.TryGetStringValue(semanticModel, cancellationToken, out propertyName))
+                    if (parameter.Type == KnownSymbol.String)
                     {
-                        return AnalysisResult.Yes;
+                        return argument.TryGetStringValue(semanticModel, cancellationToken, out propertyName)
+                            ? AnalysisResult.Yes
+                            : AnalysisResult.No;
                     }
 
-                    return AnalysisResult.Maybe;
-                }
-
-                if (symbol == KnownSymbol.PropertyChangedEventArgs)
-                {
-                    if (PropertyChangedEventArgs.TryGetPropertyName(argument.Expression, semanticModel, cancellationToken, out propertyName))
+                    if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
                     {
-                        return AnalysisResult.Yes;
+                        return PropertyChangedEventArgs.TryGetPropertyName(argument.Expression, semanticModel, cancellationToken, out propertyName)
+                            ? AnalysisResult.Yes
+                            : AnalysisResult.No;
+                    }
+
+                    if (argument.Expression is ParenthesizedLambdaExpressionSyntax lambda)
+                    {
+                        if (semanticModel.GetSymbolSafe(lambda.Body, cancellationToken) is ISymbol property)
+                        {
+                            propertyName = property.Name;
+                            return AnalysisResult.Yes;
+                        }
+
+                        return AnalysisResult.No;
                     }
                 }
             }
 
-            return AnalysisResult.Maybe;
+            return AnalysisResult.No;
         }
 
         internal static bool TryGetOnPropertyChanged(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
