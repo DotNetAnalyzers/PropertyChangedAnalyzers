@@ -1,9 +1,10 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using NUnit.Framework;
 
     internal partial class PropertyChangedTest
@@ -12,7 +13,7 @@
         {
             [TestCase("_value1 = value", "Value1")]
             [TestCase("_value2 = value", "Value2")]
-            public void WhenTrue(string signature, string propertyName)
+            public void Assignment(string signature, string propertyName)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -109,6 +110,115 @@ namespace RoslynSandbox
                 var node = syntaxTree.FindBestMatch<SyntaxNode>(signature);
                 var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration(propertyName));
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
+            }
+
+            [TestCase("this.TrySet(ref this.value, value)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, \"Value\")", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, nameof(this.Value))", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, nameof(Value))", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, null)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, string.Empty)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, \"Wrong\")", AnalysisResult.No)]
+            public void TrySetCallerMemberName(string trySetCode, AnalysisResult expected)
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get => this.value;
+            set => this.TrySet(ref this.value, value);
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                testCode = testCode.AssertReplace("this.TrySet(ref this.value, value)", trySetCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var node = syntaxTree.FindBestMatch<ArgumentSyntax>("ref this.value");
+                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("Value"));
+                Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
+            }
+
+            [TestCase("this.TrySet(ref this.value, value, \"Value\")", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, nameof(Value))", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, nameof(this.Value))", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, null)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, string.Empty)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.value, value, \"Wrong\")", AnalysisResult.No)]
+            public void TrySet(string trySetCode, AnalysisResult expected)
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get => this.value;
+            set => this.TrySet(ref this.value, value, nameof(Value));
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                testCode = testCode.AssertReplace("this.TrySet(ref this.value, value, nameof(Value))", trySetCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var node = syntaxTree.FindBestMatch<ArgumentSyntax>("ref this.value");
+                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("Value"));
+                Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
             }
 
             [TestCase("_value1 = value", "Value1")]
