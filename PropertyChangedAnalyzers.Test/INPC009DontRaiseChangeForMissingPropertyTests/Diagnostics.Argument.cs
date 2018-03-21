@@ -431,8 +431,9 @@ namespace RoslynSandbox
                 AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
             }
 
-            [Test]
-            public void CallsOnPropertyChangedWithCachedEventArgs()
+            [TestCase("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")")]
+            [TestCase("private static PropertyChangedEventArgs CachedArgs { get; } = new PropertyChangedEventArgs(\"Missing\")")]
+            public void CallsOnPropertyChangedWithCachedEventArgs(string cached)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -464,6 +465,7 @@ namespace RoslynSandbox
         }
     }
 }";
+                testCode = testCode.AssertReplace("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")", cached);
                 AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
             }
         }

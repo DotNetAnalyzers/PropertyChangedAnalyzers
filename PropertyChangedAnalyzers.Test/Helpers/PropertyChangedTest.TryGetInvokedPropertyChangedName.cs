@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -19,7 +19,7 @@
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar))")]
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar))")]
             [TestCase("this.OnPropertyChanged(Cached)")]
-            public void WhenTrue(string signature)
+            public void WhenTrue(string call)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -63,6 +63,8 @@ namespace RoslynSandbox
                 this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
                 this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)));
                 this.OnPropertyChanged(Cached);
+                var args = new PropertyChangedEventArgs(""Bar"");
+                this.OnPropertyChanged(args);
             }
         }
 
@@ -84,8 +86,8 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation(signature);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out _, out var name));
+                var invocation = syntaxTree.FindInvocation(call);
+                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out var name));
                 Assert.AreEqual("Bar", name);
             }
 
@@ -163,7 +165,7 @@ namespace RoslynSandbox
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation(signature);
-                Assert.AreEqual(AnalysisResult.No, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out _, out _));
+                Assert.AreEqual(AnalysisResult.No, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out _));
             }
         }
     }

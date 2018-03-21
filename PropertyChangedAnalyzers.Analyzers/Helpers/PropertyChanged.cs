@@ -56,7 +56,7 @@ namespace PropertyChangedAnalyzers
                         continue;
                     }
 
-                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out _, out var propertyName))
+                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out var propertyName))
                     {
                         case AnalysisResult.No:
                             continue;
@@ -80,9 +80,8 @@ namespace PropertyChangedAnalyzers
             return invokes;
         }
 
-        internal static AnalysisResult TryGetInvokedPropertyChangedName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string propertyName)
+        internal static AnalysisResult TryGetInvokedPropertyChangedName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
         {
-            nameArg = null;
             propertyName = null;
             var method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
             if (method == null)
@@ -94,12 +93,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (invocation.ArgumentList.Arguments.TryElementAt(1, out var propertyChangedArg))
                 {
-                    if (TryGetCreatePropertyChangedEventArgsFor(propertyChangedArg.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
-                    {
-                        return AnalysisResult.Yes;
-                    }
-
-                    if (TryGetCachedArgs(propertyChangedArg, semanticModel, cancellationToken, out nameArg, out propertyName))
+                    if (PropertyChangedEventArgs.TryGetPropertyName(propertyChangedArg.Expression, semanticModel, cancellationToken, out propertyName))
                     {
                         return AnalysisResult.Yes;
                     }
@@ -135,7 +129,7 @@ namespace PropertyChangedAnalyzers
 
             if (invocation.ArgumentList.Arguments.TrySingle(out var argument))
             {
-                if (TryGetCreatePropertyChangedEventArgsFor(argument.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
+                if (PropertyChangedEventArgs.TryGetPropertyName(argument.Expression, semanticModel, cancellationToken, out propertyName))
                 {
                     return AnalysisResult.Yes;
                 }
@@ -145,7 +139,6 @@ namespace PropertyChangedAnalyzers
                     if (semanticModel.GetSymbolSafe(lambda.Body, cancellationToken) is ISymbol property)
                     {
                         propertyName = property.Name;
-                        nameArg = argument;
                         return AnalysisResult.Yes;
                     }
 
@@ -157,7 +150,6 @@ namespace PropertyChangedAnalyzers
                 {
                     if (argument.TryGetStringValue(semanticModel, cancellationToken, out propertyName))
                     {
-                        nameArg = argument;
                         return AnalysisResult.Yes;
                     }
 
@@ -166,12 +158,7 @@ namespace PropertyChangedAnalyzers
 
                 if (symbol == KnownSymbol.PropertyChangedEventArgs)
                 {
-                    if (TryGetCreatePropertyChangedEventArgsFor(argument.Expression as ObjectCreationExpressionSyntax, semanticModel, cancellationToken, out nameArg, out propertyName))
-                    {
-                        return AnalysisResult.Yes;
-                    }
-
-                    if (TryGetCachedArgs(argument, semanticModel, cancellationToken, out nameArg, out propertyName))
+                    if (PropertyChangedEventArgs.TryGetPropertyName(argument.Expression, semanticModel, cancellationToken, out propertyName))
                     {
                         return AnalysisResult.Yes;
                     }
@@ -543,75 +530,6 @@ namespace PropertyChangedAnalyzers
                 }
 
                 return method.ContainingType.Is(KnownSymbol.INotifyPropertyChanged);
-            }
-
-            return false;
-        }
-
-        private static bool TryGetCachedArgs(
-            ArgumentSyntax propertyChangedArg,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken,
-            out ArgumentSyntax nameArg,
-            out string propertyName)
-        {
-            var cached = semanticModel.GetSymbolSafe(propertyChangedArg.Expression, cancellationToken);
-            if (cached is IFieldSymbol)
-            {
-                foreach (var syntaxReference in cached.DeclaringSyntaxReferences)
-                {
-                    var declarator = syntaxReference.GetSyntax(cancellationToken) as VariableDeclaratorSyntax;
-                    if (TryGetCreatePropertyChangedEventArgsFor(
-                        declarator?.Initializer?.Value as ObjectCreationExpressionSyntax,
-                        semanticModel,
-                        cancellationToken,
-                        out nameArg,
-                        out propertyName))
-                    {
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            if (cached is IPropertySymbol)
-            {
-                foreach (var syntaxReference in cached.DeclaringSyntaxReferences)
-                {
-                    var propertyDeclaration = syntaxReference.GetSyntax(cancellationToken) as PropertyDeclarationSyntax;
-                    if (TryGetCreatePropertyChangedEventArgsFor(
-                        propertyDeclaration?.Initializer?.Value as ObjectCreationExpressionSyntax,
-                        semanticModel,
-                        cancellationToken,
-                        out nameArg,
-                        out propertyName))
-                    {
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            nameArg = null;
-            propertyName = null;
-            return false;
-        }
-
-        private static bool TryGetCreatePropertyChangedEventArgsFor(this ExpressionSyntax newPropertyChangedEventArgs, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg, out string propertyName)
-        {
-            nameArg = null;
-            propertyName = null;
-            var objectCreation = newPropertyChangedEventArgs as ObjectCreationExpressionSyntax;
-            if (objectCreation == null)
-            {
-                return false;
-            }
-
-            if (objectCreation.ArgumentList?.Arguments.TrySingle(out nameArg) == true)
-            {
-                return nameArg.TryGetStringValue(semanticModel, cancellationToken, out propertyName);
             }
 
             return false;

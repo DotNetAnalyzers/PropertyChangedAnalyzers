@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
         private static void RemoveExpression(DocumentEditor editor, ArgumentSyntax argument, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
         {
             var invocation = argument.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-            if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, editor.SemanticModel, cancellationToken, out _, out var name) == AnalysisResult.Yes)
+            if (PropertyChanged.TryGetInvokedPropertyChangedName(invocation, editor.SemanticModel, cancellationToken, out var name) == AnalysisResult.Yes)
             {
                 var property = editor.SemanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
                 if (property?.Name == name)
