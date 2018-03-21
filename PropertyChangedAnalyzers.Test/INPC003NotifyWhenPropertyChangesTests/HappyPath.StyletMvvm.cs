@@ -89,6 +89,28 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public void SetAffectsCalculatedPropertyStringEmpty()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Stylet.PropertyChangedBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get => return this.name;
+            set => this.SetAndNotify(ref this.name, value, string.Empty);
+        }
+    }
+}";
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
+
+            [Test]
             public void SetAffectsCalculatedPropertyExpression()
             {
                 var testCode = @"

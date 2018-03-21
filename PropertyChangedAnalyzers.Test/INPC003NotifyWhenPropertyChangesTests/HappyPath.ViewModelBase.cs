@@ -135,6 +135,34 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
+            public void SetAffectsCalculatedPropertyExplicitNameOf()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.TrySet(ref this.name, value, nameof(Name)))
+                {
+                    this.OnPropertyChanged(nameof(Greeting));
+                }
+            }
+        }
+    }
+}";
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+            }
+
+            [Test]
             public void SetAffectsCalculatedPropertyNameOf()
             {
                 var testCode = @"
@@ -160,6 +188,28 @@ namespace RoslynSandbox.Client
     }
 }";
                 AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+            }
+
+            [Test]
+            public void SetAffectsCalculatedPropertyStringEmpty()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get => return this.name;
+            set => this.TrySet(ref this.name, value, string.Empty);
+        }
+    }
+}";
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
