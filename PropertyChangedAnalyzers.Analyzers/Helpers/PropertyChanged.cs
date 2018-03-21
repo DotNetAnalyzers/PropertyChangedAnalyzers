@@ -14,14 +14,25 @@ namespace PropertyChangedAnalyzers
             var argument = assignment.FirstAncestorOrSelf<ArgumentSyntax>();
             if (argument != null)
             {
-                var setMethod = (IMethodSymbol)semanticModel.GetSymbolSafe(
-                    argument.FirstAncestorOrSelf<InvocationExpressionSyntax>(),
-                    cancellationToken);
-                if (IsSetAndRaise(setMethod, semanticModel, cancellationToken) &&
-                    setMethod.Parameters[setMethod.Parameters.Length - 1].IsCallerMemberName())
+                if (argument.Parent is ArgumentListSyntax argumentList &&
+                    argumentList.Parent is InvocationExpressionSyntax invocation &&
+                    IsSetAndRaiseCall(invocation, semanticModel, cancellationToken) &&
+                    semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol setAndRaiseMethod &&
+                    setAndRaiseMethod.Parameters.TryLast(x => x.Type == KnownSymbol.String, out var nameParameter))
                 {
-                    var inProperty = semanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
-                    if (inProperty?.Name == property.Name)
+                    if (invocation.TryGetMatchingArgument(nameParameter, out var nameArg))
+                    {
+                        if (nameArg.TryGetStringValue(semanticModel, cancellationToken, out var name))
+                        {
+                            if (string.IsNullOrEmpty(name) ||
+                                name == property.Name)
+                            {
+                                return AnalysisResult.Yes;
+                            }
+                        }
+                    }
+                    else if (invocation.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax propertyDeclaration &&
+                             propertyDeclaration.Identifier.ValueText == property.Name)
                     {
                         return AnalysisResult.Yes;
                     }
