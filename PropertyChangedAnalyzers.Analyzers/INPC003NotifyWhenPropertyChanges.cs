@@ -61,9 +61,9 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node is PostfixUnaryExpressionSyntax expression &&
-                TryGetAssignedExpression(expression.Operand, out var field))
+                TryGetAssignedExpression(expression.Operand, out var backing))
             {
-                Handle(context, field);
+                Handle(context, backing);
             }
         }
 
@@ -76,9 +76,9 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node is PrefixUnaryExpressionSyntax expression &&
-                TryGetAssignedExpression(expression.Operand, out var field))
+                TryGetAssignedExpression(expression.Operand, out var backing))
             {
-                Handle(context, field);
+                Handle(context, backing);
             }
         }
 
@@ -107,9 +107,9 @@ namespace PropertyChangedAnalyzers
 
             if (context.Node is ArgumentSyntax argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
-                TryGetAssignedExpression(argument.Expression, out var field))
+                TryGetAssignedExpression(argument.Expression, out var backing))
             {
-                Handle(context, field);
+                Handle(context, backing);
             }
         }
 
@@ -158,9 +158,14 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            using (var set = PooledHashSet<IPropertySymbol>.Borrow())
+            var typeDeclaration = context.Node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+            using (var pathWalker = MemberPath.PathWalker.Borrow(backing))
             {
-                var typeDeclaration = context.Node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+                if (pathWalker.IdentifierNames.Count == 0)
+                {
+                    return;
+                }
+
                 foreach (var member in typeDeclaration.Members)
                 {
                     var propertyDeclaration = member as PropertyDeclarationSyntax;
@@ -197,11 +202,8 @@ namespace PropertyChangedAnalyzers
                             if (context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
                                 PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                             {
-                                if (set.Add(property))
-                                {
-                                    var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
-                                }
+                                var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
                             }
                         }
                     }
@@ -276,7 +278,7 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var backing in this.backings)
                 {
-                    if (Member.IsSame(backing, expression))
+                    if (MemberPath.Equals(backing, expression))
                     {
                         return true;
                     }
@@ -295,7 +297,7 @@ namespace PropertyChangedAnalyzers
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
-                if (Member.IsFieldOrProperty(node))
+                if (!IdentifierTypeWalker.IsLocalOrParameter(node))
                 {
                     this.backings.Add(node);
                     var symbol = this.semanticModel.GetSymbolSafe(node, this.cancellationToken);

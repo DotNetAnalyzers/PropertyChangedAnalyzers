@@ -198,8 +198,9 @@ namespace Vanguard_MVVM.ViewModels
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { childDataContext, testCode }, fixedCode);
         }
 
+        [Explicit("#49")]
         [Test]
-        public void UglyViewModelBase()
+        public void UglyViewModelBase(string text)
         {
             var barCode = @"
 namespace RoslynSandbox
