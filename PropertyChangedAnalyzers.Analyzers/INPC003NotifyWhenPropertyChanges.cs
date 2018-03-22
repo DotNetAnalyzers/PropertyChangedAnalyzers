@@ -134,7 +134,7 @@ namespace PropertyChangedAnalyzers
             return backing != null;
         }
 
-        private static void Handle(SyntaxNodeAnalysisContext context, ExpressionSyntax backingField)
+        private static void Handle(SyntaxNodeAnalysisContext context, ExpressionSyntax backing)
         {
             if (context.IsExcludedFromAnalysis())
             {
@@ -192,7 +192,7 @@ namespace PropertyChangedAnalyzers
 
                     using (var walker = TouchedFieldsWalker.Borrow(getter, context.SemanticModel, context.CancellationToken))
                     {
-                        if (walker.Contains(backingField))
+                        if (walker.Contains(backing))
                         {
                             if (context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
                                 PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)

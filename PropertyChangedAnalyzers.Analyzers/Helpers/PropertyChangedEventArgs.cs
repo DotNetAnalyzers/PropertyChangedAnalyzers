@@ -17,9 +17,9 @@ namespace PropertyChangedAnalyzers
             if (expression is ObjectCreationExpressionSyntax)
             {
                 return parameter.Type == KnownSymbol.String &&
-                   TryGetCreation(expression, out argument) &&
-                   argument.Expression is IdentifierNameSyntax identifierName &&
-                   identifierName.Identifier.ValueText == parameter.Name;
+                       TryGetCreation(expression, out argument) &&
+                       argument.Expression is IdentifierNameSyntax identifierName &&
+                       identifierName.Identifier.ValueText == parameter.Name;
             }
 
             return false;
