@@ -11,11 +11,21 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsSame(ExpressionSyntax x, ExpressionSyntax y)
         {
-            if (TryGetMemberName(x, out var xn))
+            if (TryGetMemberName(x, out var xn, out var subx))
             {
-                if (TryGetMemberName(y, out var yn))
+                if (TryGetMemberName(y, out var yn, out var suby))
                 {
-                    return xn == yn;
+                    if (xn != yn)
+                    {
+                        return false;
+                    }
+
+                    if (IsRoot(x))
+                    {
+                        return IsRoot(y);
+                    }
+
+                    return IsSame(subx, suby);
                 }
 
                 return false;
@@ -24,20 +34,42 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetMemberName(ExpressionSyntax ex, out string name)
+        private static bool TryGetMemberName(ExpressionSyntax expression, out string name, out ExpressionSyntax subExpression)
         {
             name = null;
-            if (ex is IdentifierNameSyntax identifierName)
+            subExpression = null;
+            switch (expression)
             {
-                name = identifierName.Identifier.ValueText;
-            }
-            else if (ex is MemberAccessExpressionSyntax memberAccess &&
-                     memberAccess.Name is SimpleNameSyntax simpleName)
-            {
-                name = simpleName.Identifier.ValueText;
+                case IdentifierNameSyntax identifierName:
+                    name = identifierName.Identifier.ValueText;
+                    break;
+                case MemberAccessExpressionSyntax memberAccess:
+                    name = memberAccess.Name.Identifier.ValueText;
+                    subExpression = memberAccess.Expression;
+                    break;
+                case MemberBindingExpressionSyntax memberBinding:
+                    name = memberBinding.Name.Identifier.ValueText;
+                    break;
+                case ConditionalAccessExpressionSyntax conditionalAccess:
+                    TryGetMemberName(conditionalAccess.WhenNotNull, out name, out _);
+                    subExpression = conditionalAccess.Expression;
+                    break;
             }
 
             return name != null;
+        }
+
+        private static bool IsRoot(ExpressionSyntax expression)
+        {
+            switch (expression)
+            {
+                case MemberAccessExpressionSyntax memberAccess:
+                    return memberAccess.Expression is InstanceExpressionSyntax;
+                case IdentifierNameSyntax identifierName:
+                    return IsFieldOrProperty(identifierName);
+                default:
+                    return false;
+            }
         }
     }
 }
