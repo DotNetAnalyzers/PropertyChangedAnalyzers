@@ -176,8 +176,7 @@ namespace PropertyChangedAnalyzers
                         continue;
                     }
 
-                    var getter = ExpressionBodyOrGetter(propertyDeclaration);
-                    if (getter == null)
+                    if (!TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter))
                     {
                         continue;
                     }
@@ -238,19 +237,19 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        private static SyntaxNode ExpressionBodyOrGetter(PropertyDeclarationSyntax property)
+        private static bool TryGeExpressionBodyOrGetter(PropertyDeclarationSyntax property, out SyntaxNode node)
         {
+            node = null;
             if (property.ExpressionBody != null)
             {
-                return property.ExpressionBody.Expression;
+                node = property.ExpressionBody.Expression;
             }
-
-            if (property.TryGetGetter(out var getter))
+            else if (property.TryGetGetter(out var getter))
             {
-                return (SyntaxNode)getter.Body ?? getter.ExpressionBody;
+                node = (SyntaxNode)getter.Body ?? getter.ExpressionBody;
             }
 
-            return null;
+            return node != null;
         }
 
         private sealed class TouchedFieldsWalker : PooledWalker<TouchedFieldsWalker>
@@ -303,7 +302,7 @@ namespace PropertyChangedAnalyzers
                     var symbol = this.semanticModel.GetSymbolSafe(node, this.cancellationToken);
                     if (symbol is IPropertySymbol property &&
                         property.TrySingleDeclaration(this.cancellationToken, out var propertyDeclaration) &&
-                        ExpressionBodyOrGetter(propertyDeclaration) is SyntaxNode propertyBody)
+                        TryGeExpressionBodyOrGetter(propertyDeclaration, out var propertyBody))
                     {
                         this.Visit(propertyBody);
                     }
