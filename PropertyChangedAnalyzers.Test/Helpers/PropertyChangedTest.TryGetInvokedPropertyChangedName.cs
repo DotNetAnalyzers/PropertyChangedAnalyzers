@@ -13,9 +13,9 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             [TestCase("this.OnPropertyChanged(\"Bar\")")]
             [TestCase("this.OnPropertyChanged(nameof(Bar))")]
             [TestCase("this.OnPropertyChanged(nameof(this.Bar))")]
-            [TestCase("this.OnPropertyChanged(() => Bar")]
-            [TestCase("this.OnPropertyChanged(() => this.Bar")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"Bar\")")]
+            [TestCase("this.OnPropertyChanged(() => Bar)")]
+            [TestCase("this.OnPropertyChanged(() => this.Bar)")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"Bar\"))")]
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)))")]
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)))")]
             [TestCase("this.OnPropertyChanged(Cached)")]
@@ -88,21 +88,22 @@ namespace RoslynSandbox
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation(call);
+                Assert.AreEqual(call, invocation.ToString());
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out var name));
                 Assert.AreEqual("Bar", name);
             }
 
             [TestCase("this.OnPropertyChanged()")]
-            [TestCase("this.OnPropertyChanged(\"Bar\"")]
-            [TestCase("this.OnPropertyChanged(nameof(Bar)")]
-            [TestCase("this.OnPropertyChanged(nameof(this.Bar)")]
-            [TestCase("this.OnPropertyChanged(() => Bar")]
-            [TestCase("this.OnPropertyChanged(() => this.Bar")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"Bar\")")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar))")]
+            [TestCase("this.OnPropertyChanged(\"Bar\")")]
+            [TestCase("this.OnPropertyChanged(nameof(Bar))")]
+            [TestCase("this.OnPropertyChanged(nameof(this.Bar))")]
+            [TestCase("this.OnPropertyChanged(() => Bar)")]
+            [TestCase("this.OnPropertyChanged(() => this.Bar)")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"Bar\"))")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)))")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)))")]
             [TestCase("this.OnPropertyChanged(Cached)")]
-            public void WhenRecursive(string signature)
+            public void WhenRecursive(string call)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -165,7 +166,8 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation(signature);
+                var invocation = syntaxTree.FindInvocation(call);
+                Assert.AreEqual(call, invocation.ToString());
                 Assert.AreEqual(AnalysisResult.No, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out _));
             }
         }

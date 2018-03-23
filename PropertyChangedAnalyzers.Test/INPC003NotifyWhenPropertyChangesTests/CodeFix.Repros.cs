@@ -200,7 +200,7 @@ namespace Vanguard_MVVM.ViewModels
 
         [Explicit("#49")]
         [Test]
-        public void UglyViewModelBase(string text)
+        public void UglyViewModelBase()
         {
             var barCode = @"
 namespace RoslynSandbox

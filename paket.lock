@@ -725,7 +725,7 @@ NUGET
       BenchmarkDotNet.Core (>= 0.10.13) - restriction: >= net46
       Microsoft.CodeAnalysis.CSharp (>= 2.6.1) - restriction: >= net46
       System.Threading.Tasks (>= 4.3) - restriction: >= net46
-    Gu.Roslyn.Asserts (2.2.8)
+    Gu.Roslyn.Asserts (2.2.9)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0 < 3.0) - restriction: >= net461
     Microsoft.CodeAnalysis.Analyzers (2.6) - restriction: >= netstandard1.3
     Microsoft.CodeAnalysis.Common (2.7)
@@ -1411,7 +1411,7 @@ NUGET
     CommonServiceLocator (2.0.3) - restriction: || (>= monoandroid) (&& (>= net35) (< net40) (< portable-net45+uap10.0+monoandroid+xamarinios+win8+wp81+wpa81)) (&& (>= net35) (< portable-net45+uap10.0+monoandroid+xamarinios+win8+wp81+wpa81) (>= wp8)) (&& (>= net35) (>= win81)) (&& (>= net35) (>= wpa81)) (&& (>= net40) (< portable-net45+uap10.0+monoandroid+xamarinios+win8+wp81+wpa81)) (>= net45) (&& (>= portable-net45+uap10.0+monoandroid+xamarinios+win8+wp81+wpa81) (>= wp8)) (>= sl5) (>= uap10.0) (&& (>= win81) (>= wp8)) (&& (>= win81) (< wpa81)) (&& (< win81) (>= wpa81)) (&& (>= wp8) (>= wpa81)) (>= wp81) (>= xamarinios)
       NETStandard.Library (>= 1.6.1) - restriction: && (< net40) (< netcoreapp1.0) (>= netstandard1.0) (< netstandard2.0)
       System.ComponentModel (>= 4.3) - restriction: && (< net40) (< netcoreapp1.0) (>= netstandard1.0) (< netstandard2.0)
-    Gu.Roslyn.Asserts (2.2.8)
+    Gu.Roslyn.Asserts (2.2.9)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0 < 3.0) - restriction: >= net461
     ManagedEsent (1.9.4) - restriction: >= net46
     Microsoft.CodeAnalysis.Analyzers (2.6) - restriction: >= netstandard1.3
