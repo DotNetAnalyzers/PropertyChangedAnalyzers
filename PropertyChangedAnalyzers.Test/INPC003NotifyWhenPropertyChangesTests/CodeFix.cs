@@ -1775,8 +1775,9 @@ namespace RoslynSandbox
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Test]
-        public void WhenUsingBackingFieldExpressionBodyStringToUpper()
+        [TestCase("this.name")]
+        [TestCase("name")]
+        public void WhenUsingBackingFieldExpressionBodyStringToUpper(string path)
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -1858,6 +1859,8 @@ namespace RoslynSandBox
         }
     }
 }";
+            testCode = testCode.AssertReplace("this.name", path);
+            fixedCode = fixedCode.AssertReplace("this.name", path);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
@@ -3080,8 +3083,9 @@ namespace RoslynSandbox
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Test]
-        public void WhenAssigningNestedField()
+        [TestCase("this.bar.BarValue")]
+        [TestCase("bar.BarValue")]
+        public void WhenAssigningNestedField(string path)
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -3142,6 +3146,8 @@ namespace RoslynSandbox
         }
     }
 }";
+            testCode = testCode.AssertReplace("this.bar.BarValue", path);
+            fixedCode = fixedCode.AssertReplace("this.bar.BarValue", path);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
         }
@@ -3256,7 +3262,7 @@ namespace RoslynSandbox
 
     public class Foo : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private Bar bar = new Bar();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

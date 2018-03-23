@@ -228,45 +228,43 @@ namespace PropertyChangedAnalyzers
 
         private static bool UsesBacking(SyntaxNode getter, MemberPath.PathWalker backing, SyntaxNodeAnalysisContext context)
         {
-            using (var walker = TouchedFieldsWalker.Borrow(getter, context))
+            using (var walker = UsedMemberWalker.Borrow(getter, context.ContainingSymbol.ContainingType, context.SemanticModel, context.CancellationToken))
             {
-                return walker.Contains(backing);
+                return walker.Uses(backing);
             }
         }
 
-        private sealed class TouchedFieldsWalker : PooledWalker<TouchedFieldsWalker>
+        private sealed class UsedMemberWalker : PooledWalker<UsedMemberWalker>
         {
-            private readonly List<ExpressionSyntax> toucheds = new List<ExpressionSyntax>();
+            private readonly List<ExpressionSyntax> useds = new List<ExpressionSyntax>();
             private readonly HashSet<SyntaxToken> localsAndParameters = new HashSet<SyntaxToken>(SyntaxTokenValueTextComparer.Default);
             private readonly HashSet<SyntaxNode> visited = new HashSet<SyntaxNode>();
 
             private SemanticModel semanticModel;
             private CancellationToken cancellationToken;
-            private INamedTypeSymbol containingType;
-            private SyntaxNode scope;
+            private ITypeSymbol containingType;
 
-            private TouchedFieldsWalker()
+            private UsedMemberWalker()
             {
             }
 
-            public static TouchedFieldsWalker Borrow(SyntaxNode scope, SyntaxNodeAnalysisContext context)
+            public static UsedMemberWalker Borrow(SyntaxNode scope, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                var pooled = Borrow(() => new TouchedFieldsWalker());
-                pooled.semanticModel = context.SemanticModel;
-                pooled.cancellationToken = context.CancellationToken;
-                pooled.containingType = context.ContainingSymbol.ContainingType;
-                pooled.scope = scope;
+                var pooled = Borrow(() => new UsedMemberWalker());
+                pooled.semanticModel = semanticModel;
+                pooled.cancellationToken = cancellationToken;
+                pooled.containingType = containingType;
                 pooled.Visit(scope);
                 return pooled;
             }
 
-            public bool Contains(MemberPath.PathWalker backing)
+            public bool Uses(MemberPath.PathWalker backing)
             {
-                foreach (var touched in this.toucheds)
+                foreach (var used in this.useds)
                 {
-                    using (var touchedWalker = MemberPath.PathWalker.Borrow(touched))
+                    using (var usedPath = MemberPath.PathWalker.Borrow(used))
                     {
-                        if (MemberPath.Equals(touchedWalker, backing))
+                        if (MemberPath.Equals(usedPath, backing))
                         {
                             return true;
                         }
@@ -286,19 +284,12 @@ namespace PropertyChangedAnalyzers
 
             public override void VisitParameter(ParameterSyntax node)
             {
-                if (this.scope.Contains(node))
-                {
-                    this.localsAndParameters.Add(node.Identifier);
-                }
+                this.localsAndParameters.Add(node.Identifier);
             }
 
             public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
             {
-                if (this.scope.Contains(node))
-                {
-                    this.localsAndParameters.Add(node.Identifier);
-                }
-
+                this.localsAndParameters.Add(node.Identifier);
                 base.Visit(node.Initializer);
             }
 
@@ -306,28 +297,21 @@ namespace PropertyChangedAnalyzers
             {
                 if (!this.localsAndParameters.Contains(node.Identifier))
                 {
-                    this.toucheds.Add(node);
-                    if (this.semanticModel.GetSymbolSafe(node, this.cancellationToken) is IPropertySymbol property &&
-                        Equals(this.containingType, property.ContainingType) &&
-                        property.TrySingleDeclaration(this.cancellationToken, out var propertyDeclaration) &&
-                        TryGeExpressionBodyOrGetter(propertyDeclaration, out var propertyBody))
-                    {
-                        this.Visit(propertyBody);
-                    }
+                    this.useds.Add(node);
+                    this.VisitRecursive(this.semanticModel.GetSymbolSafe(node, this.cancellationToken) as IPropertySymbol);
                 }
             }
 
             public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
             {
+                this.useds.Add(node);
                 if (node.Expression is InstanceExpressionSyntax)
                 {
-                    this.toucheds.Add(node);
-                    if (this.semanticModel.GetSymbolSafe(node, this.cancellationToken) is IPropertySymbol property &&
-                        property.TrySingleDeclaration(this.cancellationToken, out var propertyDeclaration) &&
-                        TryGeExpressionBodyOrGetter(propertyDeclaration, out var propertyBody))
-                    {
-                        this.Visit(propertyBody);
-                    }
+                    this.VisitRecursive(this.semanticModel.GetSymbolSafe(node, this.cancellationToken) as IPropertySymbol);
+                }
+                else
+                {
+                    base.VisitMemberAccessExpression(node);
                 }
             }
 
@@ -337,14 +321,7 @@ namespace PropertyChangedAnalyzers
                     Equals(this.containingType, method.ContainingType) &&
                     method.TrySingleDeclaration(this.cancellationToken, out var declaration))
                 {
-                    if (declaration.Body is BlockSyntax body)
-                    {
-                        this.Visit(body);
-                    }
-                    else if (declaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
-                    {
-                        this.Visit(expressionBody);
-                    }
+                    this.VisitRecursive((SyntaxNode)declaration.Body ?? declaration.ExpressionBody);
                 }
 
                 base.VisitInvocationExpression(node);
@@ -352,13 +329,37 @@ namespace PropertyChangedAnalyzers
 
             protected override void Clear()
             {
-                this.toucheds.Clear();
+                this.useds.Clear();
                 this.localsAndParameters.Clear();
                 this.visited.Clear();
                 this.semanticModel = null;
                 this.cancellationToken = CancellationToken.None;
                 this.containingType = null;
-                this.scope = null;
+            }
+
+            private void VisitRecursive(IPropertySymbol property)
+            {
+                if (property.TrySingleDeclaration(this.cancellationToken, out var propertyDeclaration) &&
+                    Equals(this.containingType, property.ContainingType) &&
+                    TryGeExpressionBodyOrGetter(propertyDeclaration, out var propertyBody))
+                {
+                    this.VisitRecursive(propertyBody);
+                }
+            }
+
+            private void VisitRecursive(SyntaxNode body)
+            {
+                if (body == null)
+                {
+                    return;
+                }
+
+                using (var walker = Borrow(body, this.containingType, this.semanticModel, this.cancellationToken))
+                {
+                    walker.visited.UnionWith(this.visited);
+                    walker.Visit(body);
+                    this.useds.AddRange(walker.useds);
+                }
             }
         }
     }

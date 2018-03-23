@@ -833,5 +833,79 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [TestCase("this.Value * this.Value")]
+        [TestCase("this.Value * Value")]
+        [TestCase("Value * this.Value")]
+        [TestCase("Value * Value")]
+        [TestCase("this.value * this.Value")]
+        [TestCase("this.value * Value")]
+        [TestCase("value * this.Value")]
+        [TestCase("value * Value")]
+        [TestCase("this.value * this.value")]
+        [TestCase("this.value * value")]
+        [TestCase("value * this.value")]
+        [TestCase("value * value")]
+        public void Squared(string square)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value;
+        private readonly Bar bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Squared => this.Value * this.Value;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(Squared));
+            }
+        }
+
+        public int BarValue
+        {
+            get => this.bar.BarValue;
+            set
+            {
+                if (value == this.bar.BarValue)
+                {
+                    return;
+                }
+
+                this.bar.BarValue = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            testCode = testCode.AssertReplace("this.Value * this.Value", square);
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
