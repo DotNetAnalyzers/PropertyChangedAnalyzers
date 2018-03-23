@@ -950,7 +950,8 @@ namespace RoslynSandbox
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [TestCase("CreateGreeting()")]
+        [TestCase("=> CreateGreeting()")]
+        [TestCase("=> this.CreateGreeting()")]
         public void WhenUsingPropertiesExpressionCallingMethod(string call)
         {
             var testCode = @"
@@ -1100,8 +1101,8 @@ namespace RoslynSandbox
     }
 }";
 
-            testCode = testCode.AssertReplace("CreateGreeting()", call);
-            fixedCode = fixedCode.AssertReplace("CreateGreeting()", call);
+            testCode = testCode.AssertReplace("=> CreateGreeting()", call);
+            fixedCode = fixedCode.AssertReplace("=> CreateGreeting()", call);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
