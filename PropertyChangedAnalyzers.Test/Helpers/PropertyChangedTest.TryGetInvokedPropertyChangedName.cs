@@ -10,14 +10,14 @@ namespace PropertyChangedAnalyzers.Test.Helpers
         internal class TryGetInvokedPropertyChangedName
         {
             [TestCase("this.OnPropertyChanged()")]
-            [TestCase("this.OnPropertyChanged(\"Bar\"")]
-            [TestCase("this.OnPropertyChanged(nameof(Bar)")]
-            [TestCase("this.OnPropertyChanged(nameof(this.Bar)")]
+            [TestCase("this.OnPropertyChanged(\"Bar\")")]
+            [TestCase("this.OnPropertyChanged(nameof(Bar))")]
+            [TestCase("this.OnPropertyChanged(nameof(this.Bar))")]
             [TestCase("this.OnPropertyChanged(() => Bar")]
             [TestCase("this.OnPropertyChanged(() => this.Bar")]
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"Bar\")")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar))")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)))")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)))")]
             [TestCase("this.OnPropertyChanged(Cached)")]
             [TestCase("this.OnPropertyChanged(args)")]
             public void WhenTrue(string call)
