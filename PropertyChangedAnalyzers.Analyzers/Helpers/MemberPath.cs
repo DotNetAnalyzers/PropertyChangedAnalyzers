@@ -158,11 +158,11 @@ namespace PropertyChangedAnalyzers
                 return pooled;
             }
 
-            public bool Uses(MemberPath.PathWalker backing)
+            public bool Uses(PathWalker backing)
             {
                 foreach (var used in this.useds)
                 {
-                    using (var usedPath = MemberPath.PathWalker.Borrow(used))
+                    using (var usedPath = PathWalker.Borrow(used))
                     {
                         if (MemberPath.Equals(usedPath, backing))
                         {
@@ -241,7 +241,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (property != null &&
                     Equals(this.containingType, property.ContainingType) &&
-                    property.GetMethod.TrySingleDeclaration(this.cancellationToken, out var getter))
+                    property.GetMethod.TrySingleDeclaration<AccessorDeclarationSyntax>(this.cancellationToken, out var getter))
                 {
                     this.VisitRecursive(getter);
                 }
