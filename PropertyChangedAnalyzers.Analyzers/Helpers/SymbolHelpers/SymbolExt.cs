@@ -2,6 +2,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Threading;
 
     using Microsoft.CodeAnalysis;
@@ -42,6 +43,7 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TrySingleDeclaration(this IMethodSymbol method, CancellationToken cancellationToken, out MethodDeclarationSyntax declaration)
         {
+            Debug.Assert(method.AssociatedSymbol == null, "method.AssociatedSymbol == null");
             declaration = null;
             if (method != null &&
                 method.DeclaringSyntaxReferences.TrySingle(out var reference))
