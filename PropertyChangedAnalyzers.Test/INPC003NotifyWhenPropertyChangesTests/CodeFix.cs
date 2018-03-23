@@ -1863,6 +1863,93 @@ namespace RoslynSandBox
         }
 
         [Test]
+        public void WhenUsingBackingFieldExpressionBodyStringElvisToUpper()
+        {
+            var testCode = @"
+namespace RoslynSandBox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string CapsName => this.name?.ToUpper();
+
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value == this.name)
+                {
+                    return;
+                }
+
+                ↓this.name = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandBox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string CapsName => this.name?.ToUpper();
+
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value == this.name)
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.CapsName));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
         public void WhenUsingBackingFieldsExpressionBodyReturningCreatedObject()
         {
             var personCode = @"
@@ -3110,6 +3197,72 @@ namespace RoslynSandbox
         public int Value => this.bar.BarValue;
 
         public void Update(int value)
+        {
+            this.bar = new Bar();
+            this.OnPropertyChanged(nameof(this.Value));
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
+        }
+
+        [Test]
+        public void WhenAssigningRootForNestedField()
+        {
+            var barCode = @"
+namespace RoslynSandbox
+{
+    public class Bar
+    {
+        public int BarValue;
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private Bar bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value => this.bar.BarValue;
+
+        public void Update()
+        {
+            ↓this.bar = new Bar();
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value => this.bar.BarValue;
+
+        public void Update()
         {
             this.bar = new Bar();
             this.OnPropertyChanged(nameof(this.Value));
