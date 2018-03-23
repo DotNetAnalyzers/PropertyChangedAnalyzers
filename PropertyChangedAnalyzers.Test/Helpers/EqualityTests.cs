@@ -41,7 +41,7 @@ namespace RoslynSandbox
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var binary = syntaxTree.FindBestMatch<BinaryExpressionSyntax>(check);
+            var binary = syntaxTree.FindBinaryExpression(check);
             var arg0 = semanticModel.GetSymbolSafe(binary.Left, CancellationToken.None);
             var arg1 = semanticModel.GetSymbolSafe(binary.Right, CancellationToken.None);
             Assert.AreEqual(expected, Equality.IsOperatorEquals(binary, semanticModel, CancellationToken.None, arg0, arg1));
@@ -81,7 +81,7 @@ namespace RoslynSandbox
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var binary = syntaxTree.FindBestMatch<BinaryExpressionSyntax>(check);
+            var binary = syntaxTree.FindBinaryExpression(check);
             var arg0 = semanticModel.GetSymbolSafe(binary.Left, CancellationToken.None);
             var arg1 = semanticModel.GetSymbolSafe(binary.Right, CancellationToken.None);
             Assert.AreEqual(expected, Equality.IsOperatorNotEquals(binary, semanticModel, CancellationToken.None, arg0, arg1));

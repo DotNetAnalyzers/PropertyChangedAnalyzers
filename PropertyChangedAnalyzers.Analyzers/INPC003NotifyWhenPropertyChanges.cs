@@ -2,7 +2,6 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -172,7 +171,7 @@ namespace PropertyChangedAnalyzers
                         propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) &&
                         TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter) &&
                         !getter.Contains(backing) &&
-                        UsesBacking(getter, pathWalker, context) &&
+                        MemberPath.Uses(getter, pathWalker, context) &&
                         !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
                         context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
                         PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
@@ -224,143 +223,6 @@ namespace PropertyChangedAnalyzers
             }
 
             return node != null;
-        }
-
-        private static bool UsesBacking(SyntaxNode getter, MemberPath.PathWalker backing, SyntaxNodeAnalysisContext context)
-        {
-            using (var walker = UsedMemberWalker.Borrow(getter, context.ContainingSymbol.ContainingType, context.SemanticModel, context.CancellationToken))
-            {
-                return walker.Uses(backing);
-            }
-        }
-
-        private sealed class UsedMemberWalker : PooledWalker<UsedMemberWalker>
-        {
-            private readonly List<ExpressionSyntax> useds = new List<ExpressionSyntax>();
-            private readonly HashSet<SyntaxToken> localsAndParameters = new HashSet<SyntaxToken>(SyntaxTokenValueTextComparer.Default);
-            private readonly HashSet<SyntaxNode> visited = new HashSet<SyntaxNode>();
-
-            private SemanticModel semanticModel;
-            private CancellationToken cancellationToken;
-            private ITypeSymbol containingType;
-
-            private UsedMemberWalker()
-            {
-            }
-
-            public static UsedMemberWalker Borrow(SyntaxNode scope, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
-            {
-                var pooled = Borrow(() => new UsedMemberWalker());
-                pooled.semanticModel = semanticModel;
-                pooled.cancellationToken = cancellationToken;
-                pooled.containingType = containingType;
-                pooled.Visit(scope);
-                return pooled;
-            }
-
-            public bool Uses(MemberPath.PathWalker backing)
-            {
-                foreach (var used in this.useds)
-                {
-                    using (var usedPath = MemberPath.PathWalker.Borrow(used))
-                    {
-                        if (MemberPath.Equals(usedPath, backing))
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
-
-            public override void Visit(SyntaxNode node)
-            {
-                if (this.visited.Add(node))
-                {
-                    base.Visit(node);
-                }
-            }
-
-            public override void VisitParameter(ParameterSyntax node)
-            {
-                this.localsAndParameters.Add(node.Identifier);
-            }
-
-            public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
-            {
-                this.localsAndParameters.Add(node.Identifier);
-                base.Visit(node.Initializer);
-            }
-
-            public override void VisitIdentifierName(IdentifierNameSyntax node)
-            {
-                if (!this.localsAndParameters.Contains(node.Identifier))
-                {
-                    this.useds.Add(node);
-                    this.VisitRecursive(this.semanticModel.GetSymbolSafe(node, this.cancellationToken) as IPropertySymbol);
-                }
-            }
-
-            public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
-            {
-                this.useds.Add(node);
-                if (node.Expression is InstanceExpressionSyntax)
-                {
-                    this.VisitRecursive(this.semanticModel.GetSymbolSafe(node, this.cancellationToken) as IPropertySymbol);
-                }
-                else
-                {
-                    base.VisitMemberAccessExpression(node);
-                }
-            }
-
-            public override void VisitInvocationExpression(InvocationExpressionSyntax node)
-            {
-                if (this.semanticModel.GetSymbolSafe(node, this.cancellationToken) is IMethodSymbol method &&
-                    Equals(this.containingType, method.ContainingType) &&
-                    method.TrySingleDeclaration(this.cancellationToken, out var declaration))
-                {
-                    this.VisitRecursive((SyntaxNode)declaration.Body ?? declaration.ExpressionBody);
-                }
-
-                base.VisitInvocationExpression(node);
-            }
-
-            protected override void Clear()
-            {
-                this.useds.Clear();
-                this.localsAndParameters.Clear();
-                this.visited.Clear();
-                this.semanticModel = null;
-                this.cancellationToken = CancellationToken.None;
-                this.containingType = null;
-            }
-
-            private void VisitRecursive(IPropertySymbol property)
-            {
-                if (property.TrySingleDeclaration(this.cancellationToken, out var propertyDeclaration) &&
-                    Equals(this.containingType, property.ContainingType) &&
-                    TryGeExpressionBodyOrGetter(propertyDeclaration, out var propertyBody))
-                {
-                    this.VisitRecursive(propertyBody);
-                }
-            }
-
-            private void VisitRecursive(SyntaxNode body)
-            {
-                if (body == null)
-                {
-                    return;
-                }
-
-                using (var walker = Borrow(body, this.containingType, this.semanticModel, this.cancellationToken))
-                {
-                    walker.visited.UnionWith(this.visited);
-                    walker.Visit(body);
-                    this.useds.AddRange(walker.useds);
-                }
-            }
         }
     }
 }
