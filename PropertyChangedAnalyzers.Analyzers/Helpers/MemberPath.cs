@@ -239,7 +239,8 @@ namespace PropertyChangedAnalyzers
 
             private void VisitRecursive(IPropertySymbol property)
             {
-                if (Equals(this.containingType, property.ContainingType) &&
+                if (property != null &&
+                    Equals(this.containingType, property.ContainingType) &&
                     property.GetMethod.TrySingleDeclaration(this.cancellationToken, out var getter))
                 {
                     this.VisitRecursive(getter);
