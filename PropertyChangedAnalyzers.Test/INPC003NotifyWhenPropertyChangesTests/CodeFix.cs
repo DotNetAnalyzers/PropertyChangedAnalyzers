@@ -3171,7 +3171,7 @@ namespace RoslynSandbox
 
     public class Foo : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private Bar bar = new Bar();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -3196,7 +3196,7 @@ namespace RoslynSandbox
 
     public class Foo : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private Bar bar = new Bar();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
