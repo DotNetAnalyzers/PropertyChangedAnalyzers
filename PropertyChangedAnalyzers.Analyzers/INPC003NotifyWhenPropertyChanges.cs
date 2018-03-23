@@ -168,41 +168,22 @@ namespace PropertyChangedAnalyzers
 
                 foreach (var member in typeDeclaration.Members)
                 {
-                    var propertyDeclaration = member as PropertyDeclarationSyntax;
-                    if (propertyDeclaration == null ||
-                        !propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) ||
-                        Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken))
+                    if (member is PropertyDeclarationSyntax propertyDeclaration &&
+                        propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) &&
+                        TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter) &&
+                        !getter.Contains(backing) &&
+                        !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken))
                     {
-                        continue;
-                    }
-
-                    if (!TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter))
-                    {
-                        continue;
-                    }
-
-                    var accessor = context.Node.FirstAncestorOrSelf<AccessorDeclarationSyntax>();
-                    if (accessor?.IsKind(SyntaxKind.GetAccessorDeclaration) == true &&
-                        accessor.FirstAncestorOrSelf<PropertyDeclarationSyntax>() == propertyDeclaration)
-                    {
-                        continue;
-                    }
-
-                    var expressionBody = context.Node.FirstAncestorOrSelf<ArrowExpressionClauseSyntax>();
-                    if (expressionBody?.FirstAncestorOrSelf<PropertyDeclarationSyntax>() == propertyDeclaration)
-                    {
-                        continue;
-                    }
-
-                    using (var walker = TouchedFieldsWalker.Borrow(getter, context.SemanticModel, context.CancellationToken))
-                    {
-                        if (walker.Contains(backing))
+                        using (var walker = TouchedFieldsWalker.Borrow(getter, context.SemanticModel, context.CancellationToken))
                         {
-                            if (context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
-                                PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
+                            if (walker.Contains(backing))
                             {
-                                var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
+                                if (context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
+                                    PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
+                                {
+                                    var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
+                                }
                             }
                         }
                     }
