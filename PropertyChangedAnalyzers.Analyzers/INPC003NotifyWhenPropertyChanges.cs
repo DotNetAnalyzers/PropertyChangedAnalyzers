@@ -172,20 +172,13 @@ namespace PropertyChangedAnalyzers
                         propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) &&
                         TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter) &&
                         !getter.Contains(backing) &&
-                        !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken))
+                        UsesBacking(getter, pathWalker, context) &&
+                        !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
+                        context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
+                        PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                     {
-                        using (var walker = TouchedFieldsWalker.Borrow(getter, context.SemanticModel, context.CancellationToken))
-                        {
-                            if (walker.Contains(backing))
-                            {
-                                if (context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
-                                    PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
-                                {
-                                    var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
-                                }
-                            }
-                        }
+                        var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
                     }
                 }
             }
@@ -233,34 +226,50 @@ namespace PropertyChangedAnalyzers
             return node != null;
         }
 
+        private static bool UsesBacking(SyntaxNode getter, MemberPath.PathWalker backing, SyntaxNodeAnalysisContext context)
+        {
+            using (var walker = TouchedFieldsWalker.Borrow(getter, context))
+            {
+                return walker.Contains(backing);
+            }
+        }
+
         private sealed class TouchedFieldsWalker : PooledWalker<TouchedFieldsWalker>
         {
-            private readonly List<ExpressionSyntax> backings = new List<ExpressionSyntax>();
+            private readonly List<ExpressionSyntax> toucheds = new List<ExpressionSyntax>();
+            private readonly HashSet<SyntaxToken> localsAndParameters = new HashSet<SyntaxToken>(SyntaxTokenValueTextComparer.Default);
             private readonly HashSet<SyntaxNode> visited = new HashSet<SyntaxNode>();
 
             private SemanticModel semanticModel;
             private CancellationToken cancellationToken;
+            private INamedTypeSymbol containingType;
+            private SyntaxNode scope;
 
             private TouchedFieldsWalker()
             {
             }
 
-            public static TouchedFieldsWalker Borrow(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public static TouchedFieldsWalker Borrow(SyntaxNode scope, SyntaxNodeAnalysisContext context)
             {
                 var pooled = Borrow(() => new TouchedFieldsWalker());
-                pooled.semanticModel = semanticModel;
-                pooled.cancellationToken = cancellationToken;
-                pooled.Visit(node);
+                pooled.semanticModel = context.SemanticModel;
+                pooled.cancellationToken = context.CancellationToken;
+                pooled.containingType = context.ContainingSymbol.ContainingType;
+                pooled.scope = scope;
+                pooled.Visit(scope);
                 return pooled;
             }
 
-            public bool Contains(ExpressionSyntax expression)
+            public bool Contains(MemberPath.PathWalker backing)
             {
-                foreach (var backing in this.backings)
+                foreach (var touched in this.toucheds)
                 {
-                    if (MemberPath.Equals(backing, expression))
+                    using (var touchedWalker = MemberPath.PathWalker.Borrow(touched))
                     {
-                        return true;
+                        if (MemberPath.Equals(touchedWalker, backing))
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -275,41 +284,81 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
+            public override void VisitParameter(ParameterSyntax node)
+            {
+                if (this.scope.Contains(node))
+                {
+                    this.localsAndParameters.Add(node.Identifier);
+                }
+            }
+
+            public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
+            {
+                if (this.scope.Contains(node))
+                {
+                    this.localsAndParameters.Add(node.Identifier);
+                }
+
+                base.Visit(node.Initializer);
+            }
+
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
-                if (!IdentifierTypeWalker.IsLocalOrParameter(node))
+                if (!this.localsAndParameters.Contains(node.Identifier))
                 {
-                    this.backings.Add(node);
-                    var symbol = this.semanticModel.GetSymbolSafe(node, this.cancellationToken);
-                    if (symbol is IPropertySymbol property &&
+                    this.toucheds.Add(node);
+                    if (this.semanticModel.GetSymbolSafe(node, this.cancellationToken) is IPropertySymbol property &&
+                        Equals(this.containingType, property.ContainingType) &&
                         property.TrySingleDeclaration(this.cancellationToken, out var propertyDeclaration) &&
                         TryGeExpressionBodyOrGetter(propertyDeclaration, out var propertyBody))
                     {
                         this.Visit(propertyBody);
                     }
-                    else if (symbol is IMethodSymbol method &&
-                             method.TrySingleDeclaration(this.cancellationToken, out var methodDeclaration))
+                }
+            }
+
+            public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+            {
+                if (node.Expression is InstanceExpressionSyntax)
+                {
+                    this.toucheds.Add(node);
+                    if (this.semanticModel.GetSymbolSafe(node, this.cancellationToken) is IPropertySymbol property &&
+                        property.TrySingleDeclaration(this.cancellationToken, out var propertyDeclaration) &&
+                        TryGeExpressionBodyOrGetter(propertyDeclaration, out var propertyBody))
                     {
-                        if (methodDeclaration.Body is BlockSyntax body)
-                        {
-                            this.Visit(body);
-                        }
-                        else if (methodDeclaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
-                        {
-                            this.Visit(expressionBody);
-                        }
+                        this.Visit(propertyBody);
+                    }
+                }
+            }
+
+            public override void VisitInvocationExpression(InvocationExpressionSyntax node)
+            {
+                if (this.semanticModel.GetSymbolSafe(node, this.cancellationToken) is IMethodSymbol method &&
+                    Equals(this.containingType, method.ContainingType) &&
+                    method.TrySingleDeclaration(this.cancellationToken, out var declaration))
+                {
+                    if (declaration.Body is BlockSyntax body)
+                    {
+                        this.Visit(body);
+                    }
+                    else if (declaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
+                    {
+                        this.Visit(expressionBody);
                     }
                 }
 
-                base.VisitIdentifierName(node);
+                base.VisitInvocationExpression(node);
             }
 
             protected override void Clear()
             {
-                this.backings.Clear();
+                this.toucheds.Clear();
+                this.localsAndParameters.Clear();
                 this.visited.Clear();
                 this.semanticModel = null;
                 this.cancellationToken = CancellationToken.None;
+                this.containingType = null;
+                this.scope = null;
             }
         }
     }

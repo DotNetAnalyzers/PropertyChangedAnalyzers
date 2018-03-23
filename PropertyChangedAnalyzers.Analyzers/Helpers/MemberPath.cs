@@ -1,12 +1,17 @@
 namespace PropertyChangedAnalyzers
 {
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class MemberPath
     {
+        [Obsolete("Don't use this.", error: true)]
+        public static new bool Equals(object x, object y) => throw new InvalidOperationException();
+
         internal static bool Equals(ExpressionSyntax x, ExpressionSyntax y)
         {
             if (ReferenceEquals(x, y))
@@ -23,20 +28,25 @@ namespace PropertyChangedAnalyzers
             using (var xWalker = PathWalker.Borrow(x))
             using (var yWalker = PathWalker.Borrow(y))
             {
-                var xPath = xWalker.IdentifierNames;
-                var yPath = yWalker.IdentifierNames;
-                if (xPath.Count == 0 ||
-                    xPath.Count != yPath.Count)
+                return Equals(xWalker, yWalker);
+            }
+        }
+
+        internal static bool Equals(PathWalker xWalker, PathWalker yWalker)
+        {
+            var xPath = xWalker.IdentifierNames;
+            var yPath = yWalker.IdentifierNames;
+            if (xPath.Count == 0 ||
+                xPath.Count != yPath.Count)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < xPath.Count; i++)
+            {
+                if (xPath[i].Identifier.ValueText != yPath[i].Identifier.ValueText)
                 {
                     return false;
-                }
-
-                for (var i = 0; i < xPath.Count; i++)
-                {
-                    if (xPath[i].Identifier.ValueText != yPath[i].Identifier.ValueText)
-                    {
-                        return false;
-                    }
                 }
             }
 
@@ -106,6 +116,8 @@ namespace PropertyChangedAnalyzers
             {
                 this.identifierNames.Add(node);
             }
+
+            public override string ToString() => string.Join(".", this.identifierNames);
 
             protected override void Clear()
             {

@@ -7,7 +7,9 @@ namespace PropertyChangedAnalyzers
     {
         public static readonly SyntaxTokenValueTextComparer Default = new SyntaxTokenValueTextComparer();
 
-        public bool Equals(SyntaxToken x, SyntaxToken y) => x.ValueText == y.ValueText;
+        public static bool Equals(SyntaxToken x, SyntaxToken y) => x.ValueText == y.ValueText;
+
+        bool IEqualityComparer<SyntaxToken>.Equals(SyntaxToken x, SyntaxToken y) => Equals(x, y);
 
         public int GetHashCode(SyntaxToken obj) => obj.ValueText.GetHashCode();
     }
