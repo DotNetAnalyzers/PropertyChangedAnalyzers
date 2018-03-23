@@ -24,6 +24,17 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsLocalOrParameter(IdentifierNameSyntax identifier)
         {
+            if (identifier == null)
+            {
+                return false;
+            }
+
+            if (identifier.Parent is MemberAccessExpressionSyntax memberAccess &&
+                memberAccess.Expression is InstanceExpressionSyntax)
+            {
+                return false;
+            }
+
             if (identifier.Identifier.ValueText == "value" &&
                 identifier.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax accessor &&
                 accessor.IsKind(SyntaxKind.SetAccessorDeclaration))

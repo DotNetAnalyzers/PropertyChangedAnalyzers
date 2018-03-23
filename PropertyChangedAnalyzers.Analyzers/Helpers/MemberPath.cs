@@ -80,11 +80,6 @@ namespace PropertyChangedAnalyzers
                 var walker = BorrowAndVisit(node, () => new PathWalker());
                 if (walker.identifierNames.TryFirst(out var first))
                 {
-                    if (first.Parent is InstanceExpressionSyntax)
-                    {
-                        return walker;
-                    }
-
                     if (IdentifierTypeWalker.IsLocalOrParameter(first))
                     {
                         walker.identifierNames.Clear();
