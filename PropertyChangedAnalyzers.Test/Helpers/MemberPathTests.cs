@@ -7,17 +7,19 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 
     internal class MemberPathTests
     {
-        [TestCase("get => this.value1;", "set => this.value1 = value;", true)]
-        [TestCase("get => this.value1;", "set => value1 = value;", true)]
-        [TestCase("get => value1;", "set => this.value1 = value;", true)]
-        [TestCase("get => value1;", "set => value1 = value;", true)]
-        [TestCase("get => this.value1;", "set => this.value2 = value;", false)]
-        [TestCase("get => this.value1;", "set => value2 = value;", false)]
-        [TestCase("get => value1;", "set => this.value2 = value;", false)]
-        [TestCase("get => value1;", "set => value2 = value;", false)]
-        public void EqualsSimple(string getter, string setter, bool expected)
+        internal new class Equals
         {
-            var testCode = @"
+            [TestCase("get => this.value1;", "set => this.value1 = value;", true)]
+            [TestCase("get => this.value1;", "set => value1 = value;", true)]
+            [TestCase("get => value1;", "set => this.value1 = value;", true)]
+            [TestCase("get => value1;", "set => value1 = value;", true)]
+            [TestCase("get => this.value1;", "set => this.value2 = value;", false)]
+            [TestCase("get => this.value1;", "set => value2 = value;", false)]
+            [TestCase("get => value1;", "set => this.value2 = value;", false)]
+            [TestCase("get => value1;", "set => value2 = value;", false)]
+            public void Simple(string getter, string setter, bool expected)
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -32,35 +34,35 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("get => this.value1;", getter)
-                               .AssertReplace("set => this.value1 = value;", setter);
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var propertyDeclaration = syntaxTree.FindPropertyDeclaration("Value");
-            var getExpression = propertyDeclaration.Getter().ExpressionBody.Expression;
-            var setExpression = ((AssignmentExpressionSyntax)propertyDeclaration.Setter().ExpressionBody.Expression).Left;
-            Assert.AreEqual(expected, MemberPath.Equals(getExpression, setExpression));
-        }
+                testCode = testCode.AssertReplace("get => this.value1;", getter)
+                                   .AssertReplace("set => this.value1 = value;", setter);
+                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var propertyDeclaration = syntaxTree.FindPropertyDeclaration("Value");
+                var getExpression = propertyDeclaration.Getter().ExpressionBody.Expression;
+                var setExpression = ((AssignmentExpressionSyntax)propertyDeclaration.Setter().ExpressionBody.Expression).Left;
+                Assert.AreEqual(expected, MemberPath.Equals(getExpression, setExpression));
+            }
 
-        [TestCase("get => this.bar1.Value1;", "set => this.bar1.Value1 = value;", true)]
-        [TestCase("get => this.bar1.Value1;", "set => bar1.Value1 = value;", true)]
-        [TestCase("get => bar1.Value1;", "set => this.bar1.Value1 = value;", true)]
-        [TestCase("get => bar1.Value1;", "set => bar1.Value1 = value;", true)]
-        [TestCase("get => this.bar1?.Value1;", "set => this.bar1.Value1 = value;", true)]
-        [TestCase("get => this.bar1.Value1;", "set => bar1?.Value1 = value;", true)]
-        [TestCase("get => bar1?.Value1;", "set => this.bar1?.Value1 = value;", true)]
-        [TestCase("get => this.bar1.Value1;", "set => this.bar2.Value1 = value;", false)]
-        [TestCase("get => this.bar1.Value1;", "set => bar2.Value1 = value;", false)]
-        [TestCase("get => bar1.Value1;", "set => this.bar2.Value1 = value;", false)]
-        [TestCase("get => bar1.Value1;", "set => bar2.Value1 = value;", false)]
-        [TestCase("get => this.bar1.Value1;", "set => this.bar1 = value;", false)]
-        [TestCase("get => this.bar1.Value1;", "set => this.bar2 = value;", false)]
-        [TestCase("get => this.bar1.Value1;", "set => bar1 = value;", false)]
-        [TestCase("get => this.bar1.Value1;", "set => bar2 = value;", false)]
-        [TestCase("get => bar1.Value1;", "set => this.bar1 = value;", false)]
-        [TestCase("get => bar1.Value1;", "set => this.bar2 = value;", false)]
-        public void EqualsNested(string getter, string setter, bool expected)
-        {
-            var testCode = @"
+            [TestCase("get => this.bar1.Value1;", "set => this.bar1.Value1 = value;", true)]
+            [TestCase("get => this.bar1.Value1;", "set => bar1.Value1 = value;", true)]
+            [TestCase("get => bar1.Value1;", "set => this.bar1.Value1 = value;", true)]
+            [TestCase("get => bar1.Value1;", "set => bar1.Value1 = value;", true)]
+            [TestCase("get => this.bar1?.Value1;", "set => this.bar1.Value1 = value;", true)]
+            [TestCase("get => this.bar1.Value1;", "set => bar1?.Value1 = value;", true)]
+            [TestCase("get => bar1?.Value1;", "set => this.bar1?.Value1 = value;", true)]
+            [TestCase("get => this.bar1.Value1;", "set => this.bar2.Value1 = value;", false)]
+            [TestCase("get => this.bar1.Value1;", "set => bar2.Value1 = value;", false)]
+            [TestCase("get => bar1.Value1;", "set => this.bar2.Value1 = value;", false)]
+            [TestCase("get => bar1.Value1;", "set => bar2.Value1 = value;", false)]
+            [TestCase("get => this.bar1.Value1;", "set => this.bar1 = value;", false)]
+            [TestCase("get => this.bar1.Value1;", "set => this.bar2 = value;", false)]
+            [TestCase("get => this.bar1.Value1;", "set => bar1 = value;", false)]
+            [TestCase("get => this.bar1.Value1;", "set => bar2 = value;", false)]
+            [TestCase("get => bar1.Value1;", "set => this.bar1 = value;", false)]
+            [TestCase("get => bar1.Value1;", "set => this.bar2 = value;", false)]
+            public void Nested(string getter, string setter, bool expected)
+            {
+                var testCode = @"
 namespace RoslynSandbox
 {
     public class Bar
@@ -81,13 +83,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("get => this.bar1.Value1;", getter)
-                               .AssertReplace("set => this.bar2.Value1 = value;", setter);
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var propertyDeclaration = syntaxTree.FindPropertyDeclaration("Value");
-            var getExpression = propertyDeclaration.Getter().ExpressionBody.Expression;
-            var setExpression = ((AssignmentExpressionSyntax)propertyDeclaration.Setter().ExpressionBody.Expression).Left;
-            Assert.AreEqual(expected, MemberPath.Equals(getExpression, setExpression));
+                testCode = testCode.AssertReplace("get => this.bar1.Value1;", getter)
+                                   .AssertReplace("set => this.bar2.Value1 = value;", setter);
+                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var propertyDeclaration = syntaxTree.FindPropertyDeclaration("Value");
+                var getExpression = propertyDeclaration.Getter().ExpressionBody.Expression;
+                var setExpression = ((AssignmentExpressionSyntax)propertyDeclaration.Setter().ExpressionBody.Expression).Left;
+                Assert.AreEqual(expected, MemberPath.Equals(getExpression, setExpression));
+            }
         }
     }
 }
