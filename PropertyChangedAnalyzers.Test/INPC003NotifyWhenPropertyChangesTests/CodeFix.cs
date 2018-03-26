@@ -3029,63 +3029,6 @@ namespace RoslynSandbox
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Test]
-        public void UsesCallerMemberName()
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
-    {
-        private int value;
-
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
-        public int Value
-        {
-            get => this.value;
-            set
-            {
-                ↓this.value = value;
-            }
-        }
-
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
-    {
-        private int value;
-
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
-        public int Value
-        {
-            get => this.value;
-            set
-            {
-                this.value = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
-            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
-        }
-
         [TestCase("this.bar.BarValue")]
         [TestCase("bar.BarValue")]
         public void WhenAssigningNestedField(string path)

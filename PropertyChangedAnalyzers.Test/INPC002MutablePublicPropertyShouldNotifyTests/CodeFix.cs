@@ -314,7 +314,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenBackingField()
+        public void WhenBackingFieldNotifyWhenValueChanged()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -373,6 +373,60 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Notify when value changes.");
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Notify when value changes.");
+        }
+
+        [Test]
+        public void WhenBackingFieldNotifyCallerMemberName()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int value;
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        ↓public int Value
+        {
+            get => this.value;
+            set => this.value = value;
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int value;
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get => this.value;
+            set
+            {
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Notify.");
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Notify.");
         }
 
         [Test]

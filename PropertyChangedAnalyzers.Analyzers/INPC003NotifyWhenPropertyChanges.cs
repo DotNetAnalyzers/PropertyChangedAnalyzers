@@ -158,13 +158,6 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            //if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
-            //    Property.TrySingleReturnedInGetter(inProperty, out var returned) &&
-            //    MemberPath.Equals(backing, returned))
-            //{
-            //    return;
-            //}
-
             var typeDeclaration = context.Node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
             using (var pathWalker = MemberPath.PathWalker.Borrow(backing))
             {
@@ -184,6 +177,15 @@ namespace PropertyChangedAnalyzers
                         context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
                         PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                     {
+                        if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
+                            ReferenceEquals(inProperty, propertyDeclaration) &&
+                            Property.TrySingleReturnedInGetter(inProperty, out var returned) &&
+                            MemberPath.Equals(backing, returned))
+                        {
+                            // We let INPC002 handle this
+                            continue;
+                        }
+
                         var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
                     }
