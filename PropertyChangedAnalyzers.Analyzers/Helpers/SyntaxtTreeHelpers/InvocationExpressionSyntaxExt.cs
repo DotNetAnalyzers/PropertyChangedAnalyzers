@@ -25,6 +25,32 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
+        internal static bool IsPotentialThis(this InvocationExpressionSyntax invocation)
+        {
+            switch (invocation.Expression)
+            {
+                case IdentifierNameSyntax _:
+                    return true;
+                case MemberAccessExpressionSyntax memberAccess when memberAccess.Expression is ThisExpressionSyntax:
+                    return true;
+            }
+
+            return false;
+        }
+
+        internal static bool IsPotentialThisOrBase(this InvocationExpressionSyntax invocation)
+        {
+            switch (invocation.Expression)
+            {
+                case IdentifierNameSyntax _:
+                    return true;
+                case MemberAccessExpressionSyntax memberAccess when memberAccess.Expression is InstanceExpressionSyntax:
+                    return true;
+            }
+
+            return false;
+        }
+
         internal static bool TryGetInvokedMethodName(this InvocationExpressionSyntax invocation, out string name)
         {
             name = null;
