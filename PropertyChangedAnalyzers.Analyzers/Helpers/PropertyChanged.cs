@@ -402,7 +402,8 @@ namespace PropertyChangedAnalyzers
         {
             if (candidate?.ArgumentList == null ||
                 candidate.ArgumentList.Arguments.Count < 2 ||
-                candidate.ArgumentList.Arguments.Count > 3)
+                candidate.ArgumentList.Arguments.Count > 3 ||
+                !candidate.IsPotentialThisOrBase())
             {
                 return false;
             }
