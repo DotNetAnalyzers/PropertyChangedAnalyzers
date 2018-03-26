@@ -10,13 +10,13 @@ namespace PropertyChangedAnalyzers
     {
         internal static AnalysisResult InvokesPropertyChangedFor(SyntaxNode assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var invokes = AnalysisResult.No;
-            if (assignment.FirstAncestorOrSelf<ArgumentSyntax>() is ArgumentSyntax argument)
+            if (assignment.FirstAncestorOrSelf<ArgumentSyntax>() is ArgumentSyntax argument &&
+                argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
+                argument.Parent is ArgumentListSyntax argumentList &&
+                argumentList.Parent is InvocationExpressionSyntax invocation &&
+                invocation.IsPotentialThisOrBase())
             {
-                if (argument.Parent is ArgumentListSyntax argumentList &&
-                    argumentList.Parent is InvocationExpressionSyntax invocation &&
-                    invocation.IsPotentialThisOrBase() &&
-                    IsSetAndRaiseCall(invocation, semanticModel, cancellationToken) &&
+                if (IsSetAndRaiseCall(invocation, semanticModel, cancellationToken) &&
                     semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol setAndRaiseMethod &&
                     setAndRaiseMethod.Parameters.TryLast(x => x.Type == KnownSymbol.String, out var nameParameter))
                 {
@@ -31,46 +31,23 @@ namespace PropertyChangedAnalyzers
                             }
                         }
                     }
-                    else if (invocation.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax propertyDeclaration &&
+                    else if (invocation.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax
+                                 propertyDeclaration &&
                              propertyDeclaration.Identifier.ValueText == property.Name)
                     {
                         return AnalysisResult.Yes;
                     }
                 }
-            }
-
-            var block = assignment.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Body ??
-                        assignment.FirstAncestorOrSelf<AccessorDeclarationSyntax>()?.Body ??
-                        assignment.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>()?.Body;
-            if (block == null)
-            {
-                return AnalysisResult.No;
-            }
-
-            using (var walker = InvocationWalker.Borrow(block))
-            {
-                foreach (var invocation in walker.Invocations)
+                else if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
+                         method.TrySingleDeclaration(cancellationToken, out var declaration))
                 {
-                    if (!invocation.Contains(assignment) &&
-                        invocation.IsBeforeInScope(assignment) == true)
-                    {
-                        continue;
-                    }
-
-                    switch (TryGetInvokedPropertyChangedName(invocation, semanticModel, cancellationToken, out var propertyName))
+                    switch (Invokes(declaration))
                     {
                         case AnalysisResult.No:
-                            continue;
+                            break;
                         case AnalysisResult.Yes:
-                            if (string.IsNullOrEmpty(propertyName) ||
-                                propertyName == property.Name)
-                            {
-                                return AnalysisResult.Yes;
-                            }
-
-                            continue;
+                            return AnalysisResult.Yes;
                         case AnalysisResult.Maybe:
-                            invokes = AnalysisResult.Maybe;
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -78,7 +55,57 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            return invokes;
+            var block = assignment.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Body ??
+                        assignment.FirstAncestorOrSelf<AccessorDeclarationSyntax>()?.Body ??
+                        assignment.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>()?.Body;
+
+            return Invokes(block);
+
+            AnalysisResult Invokes(SyntaxNode scope)
+            {
+                if (scope == null)
+                {
+                    return AnalysisResult.No;
+                }
+
+                var result = AnalysisResult.No;
+                using (var walker = InvocationWalker.Borrow(scope))
+                {
+                    foreach (var candidate in walker.Invocations)
+                    {
+                        if (!candidate.Contains(assignment) &&
+                            candidate.IsBeforeInScope(assignment) == true)
+                        {
+                            continue;
+                        }
+
+                        switch (TryGetInvokedPropertyChangedName(
+                            candidate,
+                            semanticModel,
+                            cancellationToken,
+                            out var propertyName))
+                        {
+                            case AnalysisResult.No:
+                                continue;
+                            case AnalysisResult.Yes:
+                                if (string.IsNullOrEmpty(propertyName) ||
+                                    propertyName == property.Name)
+                                {
+                                    return AnalysisResult.Yes;
+                                }
+
+                                continue;
+                            case AnalysisResult.Maybe:
+                                result = AnalysisResult.Maybe;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                }
+
+                return result;
+            }
         }
 
         internal static AnalysisResult TryGetInvokedPropertyChangedName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
