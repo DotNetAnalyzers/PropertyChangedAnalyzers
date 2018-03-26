@@ -169,7 +169,7 @@ namespace PropertyChangedAnalyzers
 
             public static bool Uses(SyntaxNode scope, PathWalker backing, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                using (var walker = UsedMemberWalker.Borrow(scope, Search.Recursive, containingType, semanticModel, cancellationToken))
+                using (var walker = Borrow(scope, Search.Recursive, containingType, semanticModel, cancellationToken))
                 {
                     foreach (var used in walker.usedMembers)
                     {

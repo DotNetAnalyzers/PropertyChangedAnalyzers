@@ -43,11 +43,11 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TrySingleDeclaration(this IMethodSymbol method, CancellationToken cancellationToken, out MethodDeclarationSyntax declaration)
         {
-            Debug.Assert(method.AssociatedSymbol == null, "method.AssociatedSymbol == null");
             declaration = null;
             if (method != null &&
                 method.DeclaringSyntaxReferences.TrySingle(out var reference))
             {
+                Debug.Assert(method.AssociatedSymbol == null, "method.AssociatedSymbol == null");
                 declaration = reference.GetSyntax(cancellationToken) as MethodDeclarationSyntax;
             }
 
