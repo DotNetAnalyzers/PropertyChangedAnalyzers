@@ -11,8 +11,7 @@ namespace PropertyChangedAnalyzers
         internal static AnalysisResult InvokesPropertyChangedFor(SyntaxNode assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var invokes = AnalysisResult.No;
-            var argument = assignment.FirstAncestorOrSelf<ArgumentSyntax>();
-            if (argument != null)
+            if (assignment.FirstAncestorOrSelf<ArgumentSyntax>() is ArgumentSyntax argument)
             {
                 if (argument.Parent is ArgumentListSyntax argumentList &&
                     argumentList.Parent is InvocationExpressionSyntax invocation &&
@@ -51,7 +50,8 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var invocation in walker.Invocations)
                 {
-                    if (invocation.IsBeforeInScope(assignment) == true)
+                    if (!invocation.Contains(assignment) &&
+                        invocation.IsBeforeInScope(assignment) == true)
                     {
                         continue;
                     }
@@ -83,6 +83,12 @@ namespace PropertyChangedAnalyzers
         internal static AnalysisResult TryGetInvokedPropertyChangedName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
         {
             propertyName = null;
+            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                !(memberAccess.Expression is InstanceExpressionSyntax))
+            {
+                return AnalysisResult.No;
+            }
+
             if (IsPropertyChangedInvoke(invocation, semanticModel, cancellationToken))
             {
                 if (invocation.ArgumentList.Arguments.TryElementAt(1, out var propertyChangedArg) &&
