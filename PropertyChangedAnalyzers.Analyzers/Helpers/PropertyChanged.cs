@@ -15,6 +15,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (argument.Parent is ArgumentListSyntax argumentList &&
                     argumentList.Parent is InvocationExpressionSyntax invocation &&
+                    invocation.IsPotentialThisOrBase() &&
                     IsSetAndRaiseCall(invocation, semanticModel, cancellationToken) &&
                     semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol setAndRaiseMethod &&
                     setAndRaiseMethod.Parameters.TryLast(x => x.Type == KnownSymbol.String, out var nameParameter))
@@ -256,29 +257,22 @@ namespace PropertyChangedAnalyzers
             method = null;
             if (invocation == null ||
                 invocation.ArgumentList?.Arguments.Count > 1 ||
-                !invocation.IsPotentialReturnVoid())
+                !invocation.IsPotentialReturnVoid() ||
+                !invocation.IsPotentialThisOrBase())
             {
                 return false;
             }
 
-            if (invocation.Expression is IdentifierNameSyntax ||
-               (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                memberAccess.Name is IdentifierNameSyntax &&
-                memberAccess.Expression is ThisExpressionSyntax))
+            if (invocation.FirstAncestor<ClassDeclarationSyntax>() is ClassDeclarationSyntax containingClass)
             {
-                if (invocation.FirstAncestor<ClassDeclarationSyntax>() is ClassDeclarationSyntax containingClass)
+                if (containingClass.BaseList?.Types == null ||
+                    containingClass.BaseList.Types.Count == 0)
                 {
-                    if (containingClass.BaseList?.Types == null ||
-                        containingClass.BaseList.Types.Count == 0)
-                    {
-                        return false;
-                    }
-
-                    method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
-                    return IsOnPropertyChanged(method, semanticModel, cancellationToken) == AnalysisResult.Yes;
+                    return false;
                 }
 
-                return false;
+                method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                return IsOnPropertyChanged(method, semanticModel, cancellationToken) == AnalysisResult.Yes;
             }
 
             return false;

@@ -957,7 +957,6 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
-        [Explicit("Test for #59")]
         [Test]
         public void WeirdRefCase()
         {
