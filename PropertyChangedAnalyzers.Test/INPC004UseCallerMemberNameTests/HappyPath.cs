@@ -419,5 +419,46 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void TimeSpanTicks()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private TimeSpan timeSpan;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public long Ticks
+        {
+            get => this.timeSpan.Ticks;
+            set
+            {
+                if (value == this.timeSpan.Ticks)
+                {
+                    return;
+                }
+
+                this.timeSpan = TimeSpan.FromTicks(value);
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }

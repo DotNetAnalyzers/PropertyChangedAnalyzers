@@ -8,12 +8,6 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    internal enum Search
-    {
-        TopLevel,
-        Recursive
-    }
-
     internal static class MemberPath
     {
         [Obsolete("Don't use this.", error: true)]
@@ -60,9 +54,17 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
+        internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context)
+        {
+            using (var assignedPath = PathWalker.Borrow(assigned))
+            {
+                return UsedMemberWalker.Uses(returned, assignedPath, Search.TopLevel, context.ContainingSymbol.ContainingType, context.SemanticModel, context.CancellationToken);
+            }
+        }
+
         internal static bool Uses(SyntaxNode scope, PathWalker memberPath, SyntaxNodeAnalysisContext context)
         {
-            return UsedMemberWalker.Uses(scope, memberPath, context.ContainingSymbol.ContainingType, context.SemanticModel, context.CancellationToken);
+            return UsedMemberWalker.Uses(scope, memberPath, Search.Recursive, context.ContainingSymbol.ContainingType, context.SemanticModel, context.CancellationToken);
         }
 
         internal static bool TryGetMemberName(ExpressionSyntax expression, out string name)
@@ -167,9 +169,9 @@ namespace PropertyChangedAnalyzers
                 return pooled;
             }
 
-            public static bool Uses(SyntaxNode scope, PathWalker backing, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public static bool Uses(SyntaxNode scope, PathWalker backing, Search search, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                using (var walker = Borrow(scope, Search.Recursive, containingType, semanticModel, cancellationToken))
+                using (var walker = Borrow(scope, search, containingType, semanticModel, cancellationToken))
                 {
                     foreach (var used in walker.usedMembers)
                     {
@@ -186,14 +188,6 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            public override void Visit(SyntaxNode node)
-            {
-                if (this.visited.Add(node))
-                {
-                    base.Visit(node);
-                }
-            }
-
             public override void VisitParameter(ParameterSyntax node)
             {
                 this.localsAndParameters.Add(node.Identifier);
@@ -202,7 +196,7 @@ namespace PropertyChangedAnalyzers
             public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
             {
                 this.localsAndParameters.Add(node.Identifier);
-                base.Visit(node.Initializer);
+                this.Visit(node.Initializer);
             }
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
@@ -248,6 +242,11 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var recursive in this.recursives)
                 {
+                    if (!this.visited.Add(recursive))
+                    {
+                        continue;
+                    }
+
                     if (recursive is InvocationExpressionSyntax invocation &&
                         invocation.IsPotentialThisOrBase() &&
                         this.semanticModel.GetSymbolSafe(invocation, this.cancellationToken) is IMethodSymbol method &&

@@ -180,7 +180,7 @@ namespace PropertyChangedAnalyzers
                         if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
                             ReferenceEquals(inProperty, propertyDeclaration) &&
                             Property.TrySingleReturnedInGetter(inProperty, out var returned) &&
-                            MemberPath.Equals(backing, returned))
+                            MemberPath.Uses(backing, returned, context))
                         {
                             // We let INPC002 handle this
                             continue;

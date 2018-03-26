@@ -614,5 +614,61 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, barCode, testCode);
         }
+
+        [Test]
+        public void WrappingPoint()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Drawing;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private Point point;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int X
+        {
+            get => this.point.X;
+            set
+            {
+                if (value == this.point.X)
+                {
+                    return;
+                }
+
+                this.point = new Point(value, this.point.Y);
+                this.OnPropertyChanged();
+            }
+        }
+
+        public int Y
+        {
+            get => this.point.Y;
+            set
+            {
+                if (value == this.point.Y)
+                {
+                    return;
+                }
+
+                this.point = new Point(this.point.X, value);
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }

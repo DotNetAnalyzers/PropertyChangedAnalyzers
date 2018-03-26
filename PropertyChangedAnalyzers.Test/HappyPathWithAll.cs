@@ -231,7 +231,96 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(analyzer, viewModelBaseCode, barCode, viewModelSubclassCode, viewModelCode, fooCode);
+
+            var foo1Code = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Drawing;
+    using System.Runtime.CompilerServices;
+
+    public class Foo1 : INotifyPropertyChanged
+    {
+        private Point point;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int X
+        {
+            get => this.point.X;
+            set
+            {
+                if (value == this.point.X)
+                {
+                    return;
+                }
+
+#pragma warning disable INPC003
+                this.point = new Point(value, this.point.Y);
+#pragma warning restore INPC003
+                this.OnPropertyChanged();
+            }
+        }
+
+        public int Y
+        {
+            get => this.point.Y;
+            set
+            {
+                if (value == this.point.Y)
+                {
+                    return;
+                }
+
+#pragma warning disable INPC003
+                this.point = new Point(this.point.X, value);
+#pragma warning restore INPC003
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var foo2Code = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo2 : INotifyPropertyChanged
+    {
+        private TimeSpan timeSpan;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public long Ticks
+        {
+            get => this.timeSpan.Ticks;
+            set
+            {
+                if (value == this.timeSpan.Ticks)
+                {
+                    return;
+                }
+
+                this.timeSpan = TimeSpan.FromTicks(value);
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.Valid(analyzer, viewModelBaseCode, barCode, viewModelSubclassCode, viewModelCode, fooCode, foo1Code, foo2Code);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
