@@ -159,7 +159,8 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
-                Property.IsSimplePropertyWithBackingField(inProperty, context.SemanticModel, context.CancellationToken))
+                Property.TrySingleReturnedInGetter(inProperty, out var returned) &&
+                MemberPath.Equals(backing, returned))
             {
                 return;
             }
