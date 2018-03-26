@@ -857,7 +857,6 @@ namespace RoslynSandbox
     public class Foo : INotifyPropertyChanged
     {
         private int value;
-        private readonly Bar bar = new Bar();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -880,21 +879,6 @@ namespace RoslynSandbox
                 this.value = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(Squared));
-            }
-        }
-
-        public int BarValue
-        {
-            get => this.bar.BarValue;
-            set
-            {
-                if (value == this.bar.BarValue)
-                {
-                    return;
-                }
-
-                this.bar.BarValue = value;
-                this.OnPropertyChanged();
             }
         }
 
@@ -991,6 +975,46 @@ namespace RoslynSandbox
     }
 }";
 
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void Nested()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value;
+        private readonly Bar bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int BarValue
+        {
+            get => this.bar.BarValue;
+            set
+            {
+                if (value == this.bar.BarValue)
+                {
+                    return;
+                }
+
+                this.bar.BarValue = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
     }

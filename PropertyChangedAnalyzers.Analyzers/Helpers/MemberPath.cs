@@ -248,21 +248,38 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var recursive in this.recursives)
                 {
-                    if (recursive is InvocationExpressionSyntax invocation)
+                    if (recursive is InvocationExpressionSyntax invocation &&
+                        invocation.IsPotentialThisOrBase() &&
+                        this.semanticModel.GetSymbolSafe(invocation, this.cancellationToken) is IMethodSymbol method &&
+                        Equals(this.containingType, method.ContainingType) &&
+                        method.TrySingleDeclaration(this.cancellationToken, out var declaration))
                     {
-                        if (this.semanticModel.GetSymbolSafe(invocation, this.cancellationToken) is IMethodSymbol method &&
-                            Equals(this.containingType, method.ContainingType) &&
-                            method.TrySingleDeclaration(this.cancellationToken, out var declaration))
-                        {
-                            VisitRecursive((SyntaxNode)declaration.Body ?? declaration.ExpressionBody);
-                        }
+                        VisitRecursive((SyntaxNode)declaration.Body ?? declaration.ExpressionBody);
                     }
-                    else if (this.semanticModel.GetSymbolSafe(recursive, this.cancellationToken) is IPropertySymbol property &&
-                             Equals(this.containingType, property.ContainingType) &&
+                    else if (TryGetProperty(recursive, out var property) &&
                              property.GetMethod.TrySingleDeclaration<AccessorDeclarationSyntax>(this.cancellationToken, out var getter))
                     {
                         VisitRecursive(getter);
                     }
+                }
+
+                bool TryGetProperty(ExpressionSyntax expression, out IPropertySymbol property)
+                {
+                    if (expression is IdentifierNameSyntax identifierName)
+                    {
+                        return this.containingType.TryFindProperty(identifierName.Identifier.ValueText, out property) &&
+                               property.Equals(this.semanticModel.GetSymbolSafe(identifierName, this.cancellationToken));
+                    }
+
+                    if (expression is MemberAccessExpressionSyntax memberAccess &&
+                        memberAccess.Expression is InstanceExpressionSyntax)
+                    {
+                        return this.containingType.TryFindProperty(memberAccess.Name.Identifier.ValueText, out property) &&
+                               property.Equals(this.semanticModel.GetSymbolSafe(memberAccess.Name, this.cancellationToken));
+                    }
+
+                    property = null;
+                    return false;
                 }
 
                 void VisitRecursive(SyntaxNode body)

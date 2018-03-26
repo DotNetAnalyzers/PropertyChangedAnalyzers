@@ -158,12 +158,12 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
-                Property.TrySingleReturnedInGetter(inProperty, out var returned) &&
-                MemberPath.Equals(backing, returned))
-            {
-                return;
-            }
+            //if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
+            //    Property.TrySingleReturnedInGetter(inProperty, out var returned) &&
+            //    MemberPath.Equals(backing, returned))
+            //{
+            //    return;
+            //}
 
             var typeDeclaration = context.Node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
             using (var pathWalker = MemberPath.PathWalker.Borrow(backing))
