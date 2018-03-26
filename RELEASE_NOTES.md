@@ -1,4 +1,7 @@
 #### 2.5.6
+* BUGFIX: Handle nested fields and properties.
+
+#### 2.5.5
 * FEATURE: Alternative codefixes that adds usings.
 
 #### 2.5.4
