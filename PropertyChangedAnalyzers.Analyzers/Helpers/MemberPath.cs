@@ -277,6 +277,7 @@ namespace PropertyChangedAnalyzers
                         walker.visited.UnionWith(this.visited);
                         walker.Visit(body);
                         this.usedMembers.AddRange(walker.usedMembers);
+                        this.visited.UnionWith(walker.visited);
                     }
                 }
             }

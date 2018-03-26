@@ -127,10 +127,13 @@ namespace RoslynSandbox.Client
 namespace RoslynSandbox
 {
     using System.ComponentModel;
+    using System.Drawing;
     using System.Runtime.CompilerServices;
 
     public class Foo
     {
+        private Point point;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value1 => this.Value1;
@@ -184,6 +187,40 @@ namespace RoslynSandbox
                 }
 
                 this.Value5 = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public int X
+        {
+            get => this.X;
+            set
+            {
+                if (value == this.point.X)
+                {
+                    return;
+                }
+
+                this.point = new Point(value, this.point.Y);
+                this.OnPropertyChanged();
+            }
+        }
+
+        public int Y
+        {
+            get
+            {
+                return this.Y;
+            }
+
+            set
+            {
+                if (value == this.point.Y)
+                {
+                    return;
+                }
+
+                this.point = new Point(this.point.X, value);
                 this.OnPropertyChanged();
             }
         }
