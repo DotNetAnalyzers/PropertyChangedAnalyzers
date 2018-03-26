@@ -60,7 +60,7 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node is PostfixUnaryExpressionSyntax expression &&
-                TryGetAssignedExpression(expression.Operand, out var backing))
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, expression.Operand, out var backing))
             {
                 Handle(context, backing);
             }
@@ -75,7 +75,7 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node is PrefixUnaryExpressionSyntax expression &&
-                TryGetAssignedExpression(expression.Operand, out var backing))
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, expression.Operand, out var backing))
             {
                 Handle(context, backing);
             }
@@ -90,7 +90,7 @@ namespace PropertyChangedAnalyzers
             }
 
             if (context.Node is AssignmentExpressionSyntax expression &&
-                TryGetAssignedExpression(expression.Left, out var backing))
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, expression.Left, out var backing))
             {
                 Handle(context, backing);
             }
@@ -106,13 +106,13 @@ namespace PropertyChangedAnalyzers
 
             if (context.Node is ArgumentSyntax argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
-                TryGetAssignedExpression(argument.Expression, out var backing))
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, argument.Expression, out var backing))
             {
                 Handle(context, backing);
             }
         }
 
-        private static bool TryGetAssignedExpression(SyntaxNode node, out ExpressionSyntax backing)
+        private static bool TryGetAssignedExpression(ITypeSymbol containingType, SyntaxNode node, out ExpressionSyntax backing)
         {
             backing = null;
             if (node.IsMissing)
@@ -121,12 +121,19 @@ namespace PropertyChangedAnalyzers
             }
 
             if (node is IdentifierNameSyntax identifierName &&
-                !IdentifierTypeWalker.IsLocalOrParameter(identifierName))
+                !IdentifierTypeWalker.IsLocalOrParameter(identifierName) &&
+                !containingType.TryFindProperty(identifierName.Identifier.ValueText, out _))
             {
                 backing = identifierName;
             }
             else if (node is MemberAccessExpressionSyntax memberAccess)
             {
+                if (memberAccess.Expression is ThisExpressionSyntax &&
+                    containingType.TryFindProperty(memberAccess.Name.Identifier.ValueText, out _))
+                {
+                    return false;
+                }
+
                 backing = memberAccess;
             }
 

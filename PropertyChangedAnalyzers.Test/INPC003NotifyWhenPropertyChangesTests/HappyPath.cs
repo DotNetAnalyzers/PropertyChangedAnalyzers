@@ -908,8 +908,9 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
-        [Test]
-        public void WhenSettingPropertyThatNotifies()
+        [TestCase("Value = newValue;")]
+        [TestCase("this.Value = newValue;")]
+        public void WhenSettingPropertyThatNotifies(string code)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -952,10 +953,11 @@ namespace RoslynSandbox
         }
     }
 }";
-
+            testCode = testCode.AssertReplace("this.Value = newValue;", code);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
+        [Explicit("Test for #59")]
         [Test]
         public void WeirdRefCase()
         {
