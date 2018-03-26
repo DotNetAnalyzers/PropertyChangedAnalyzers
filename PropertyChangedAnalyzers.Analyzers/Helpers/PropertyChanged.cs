@@ -51,7 +51,7 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var invocation in walker.Invocations)
                 {
-                    if (invocation.SpanStart < assignment.SpanStart)
+                    if (invocation.IsBeforeInScope(assignment) != false)
                     {
                         continue;
                     }
