@@ -133,21 +133,57 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int Value1 => this.Value1;
+
+        public int Value2 => Value2;
+
+        public int Value3 => this.Value1;
+
+        public int Value4
         {
             get
             {
-                return this.Value;
+                return this.Value4;
             }
 
             set
             {
-                if (value == this.Value)
+                if (value == this.Value4)
                 {
                     return;
                 }
 
-                this.Value = value;
+                this.Value4 = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public int Value5
+        {
+            get => this.Value5;
+            set
+            {
+                if (value == this.Value5)
+                {
+                    return;
+                }
+
+                this.Value5 = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public int Value6
+        {
+            get => this.Value5;
+            set
+            {
+                if (value == this.Value5)
+                {
+                    return;
+                }
+
+                this.Value5 = value;
                 this.OnPropertyChanged();
             }
         }
