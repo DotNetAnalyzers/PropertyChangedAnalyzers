@@ -559,6 +559,55 @@ namespace RoslynSandBox
 
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
+
+            [Test]
+            public void Recursive()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private double h1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public double H1
+        {
+            get => this.h1;
+            set
+            {
+                if (value.Equals(this.h1))
+                {
+                    return;
+                }
+
+                this.h1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Height));
+            }
+        }
+
+        public double Height
+        {
+            get
+            {
+                return Math.Min(this.Height, this.H1);
+            }
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
         }
     }
 }

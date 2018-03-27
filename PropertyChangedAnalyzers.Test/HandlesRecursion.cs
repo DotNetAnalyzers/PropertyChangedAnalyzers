@@ -126,6 +126,7 @@ namespace RoslynSandbox.Client
             var fooCode = @"
 namespace RoslynSandbox
 {
+    using System;
     using System.ComponentModel;
     using System.Drawing;
     using System.Runtime.CompilerServices;
@@ -239,6 +240,7 @@ namespace RoslynSandbox
                 this.h1 = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.Height));
+                this.OnPropertyChanged(nameof(this.Height2));
             }
         }
 
@@ -250,6 +252,14 @@ namespace RoslynSandbox
             }
         }
 
+        public double Height2
+        {
+            get
+            {
+                return Math.Min(this.Height2, this.H1);
+            }
+        }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -257,6 +267,55 @@ namespace RoslynSandbox
     }
 }";
             await Analyze.GetDiagnosticsAsync(analyzer, new[] { fooCode }, AnalyzerAssert.MetadataReferences).ConfigureAwait(false);
+        }
+
+        [TestCaseSource(nameof(AllAnalyzers))]
+        public void Repro(DiagnosticAnalyzer analyzer)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private double h1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public double H1
+        {
+            get => this.h1;
+            set
+            {
+                if (value.Equals(this.h1))
+                {
+                    return;
+                }
+
+                this.h1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Height));
+            }
+        }
+
+        public double Height
+        {
+            get
+            {
+                return Math.Min(this.Height, this.H1);
+            }
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.Valid(analyzer, testCode);
         }
     }
 }

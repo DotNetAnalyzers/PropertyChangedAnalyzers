@@ -37,7 +37,7 @@ namespace PropertyChangedAnalyzers.Test
             var testCode = @"
 namespace RoslynSandbox
 {
-    public class Fo
+    public class Foo
     {
     }
 }";

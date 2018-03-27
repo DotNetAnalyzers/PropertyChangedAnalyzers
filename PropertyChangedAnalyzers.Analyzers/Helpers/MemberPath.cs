@@ -181,9 +181,14 @@ namespace PropertyChangedAnalyzers
             {
             }
 
-            public static UsedMemberWalker Borrow(SyntaxNode scope, Search searchOption, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public static UsedMemberWalker Borrow(SyntaxNode scope, Search searchOption, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, UsedMemberWalker parent = null)
             {
                 var pooled = Borrow(() => new UsedMemberWalker());
+                if (parent != null)
+                {
+                    pooled.visited.UnionWith(parent.visited);
+                }
+
                 pooled.semanticModel = semanticModel;
                 pooled.cancellationToken = cancellationToken;
                 pooled.containingType = containingType;
@@ -324,10 +329,8 @@ namespace PropertyChangedAnalyzers
                         return;
                     }
 
-                    using (var walker = Borrow(body, Search.Recursive, this.containingType, this.semanticModel, this.cancellationToken))
+                    using (var walker = Borrow(body, Search.Recursive, this.containingType, this.semanticModel, this.cancellationToken, this))
                     {
-                        walker.visited.UnionWith(this.visited);
-                        walker.Visit(body);
                         this.usedMembers.AddRange(walker.usedMembers);
                         this.visited.UnionWith(walker.visited);
                     }
