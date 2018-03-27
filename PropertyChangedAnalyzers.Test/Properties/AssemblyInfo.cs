@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Gu.Roslyn.Asserts;
@@ -32,4 +32,6 @@ using Gu.Roslyn.Asserts;
     typeof(System.Xaml.XamlLanguage),
     typeof(Microsoft.CodeAnalysis.CSharp.CSharpCompilation),
     typeof(Microsoft.CodeAnalysis.Compilation),
+    typeof(Gu.Reactive.ICondition),
+    typeof(Gu.Wpf.Reactive.AsyncCommand),
     typeof(NUnit.Framework.Assert))]

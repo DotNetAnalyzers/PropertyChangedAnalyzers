@@ -7,6 +7,7 @@ group Test
   Stylet
   MvvmCross
   Prism.Mvvm
+  Gu.Wpf.Reactive
 
 group Analyzers
   AsyncUsageAnalyzers
