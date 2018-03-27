@@ -42,7 +42,7 @@ namespace PropertyChangedAnalyzers
                     {
                         var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
                         var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                        if (PropertyChanged.IsSetAndRaise(method, semanticModel, context.CancellationToken))
+                        if (PropertyChanged.IsSetAndRaise(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
                         {
                             if (invocation.Parent is ExpressionStatementSyntax ||
                                 invocation.Parent is ArrowExpressionClauseSyntax)

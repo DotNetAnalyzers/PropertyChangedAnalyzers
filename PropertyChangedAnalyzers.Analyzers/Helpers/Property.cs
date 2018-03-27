@@ -258,10 +258,7 @@ namespace PropertyChangedAnalyzers
 
             using (var walker = InvocationWalker.Borrow(setter))
             {
-                return walker.Invocations.TrySingle(
-                    x => PropertyChanged.IsSetAndRaiseCall(
-                        x, semanticModel, cancellationToken),
-                    out invocation);
+                return walker.Invocations.TrySingle(x => PropertyChanged.IsSetAndRaiseCall(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
             }
         }
 

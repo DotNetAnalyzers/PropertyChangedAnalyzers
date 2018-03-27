@@ -62,7 +62,7 @@ namespace PropertyChangedAnalyzers
             if (invoker == null)
             {
                 return usesUnderscoreNames
-                    ? $"PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs({propertyName}));"
+                    ? $"PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs(nameof({propertyName})));"
                     : $"this.PropertyChanged?.Invoke(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})));";
             }
 
@@ -78,7 +78,7 @@ namespace PropertyChangedAnalyzers
                 if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
                 {
                     return usesUnderscoreNames
-                        ? $"{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs({propertyName}));"
+                        ? $"{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs(nameof({propertyName})));"
                         : $"this.{invoker.Name}(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.{propertyName})));";
                 }
             }

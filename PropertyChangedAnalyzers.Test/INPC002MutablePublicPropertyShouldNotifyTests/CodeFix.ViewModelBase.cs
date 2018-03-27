@@ -663,6 +663,61 @@ namespace RoslynSandbox
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, testCode }, fixedCode, fixTitle: "Notify when value changes.");
                 AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, testCode }, fixedCode, fixTitle: "Notify when value changes.");
             }
+
+            [Test]
+            public void ViewModelBaseWithPropertyChangedEventArgsParameter()
+            {
+                var viewModelBaseCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class FooBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+    }
+}";
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : FooBase
+    {
+        ↓public int Value { get; set; }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : FooBase
+    {
+        private int value;
+
+        public int Value
+        {
+            get => this.value;
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.Value)));
+            }
+        }
+    }
+}";
+
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, fixedCode, fixTitle: "Notify when value changes.");
+                AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, fixedCode, fixTitle: "Notify when value changes.");
+            }
         }
     }
 }

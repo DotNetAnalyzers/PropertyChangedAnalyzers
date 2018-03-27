@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers
                 argumentList.Parent is InvocationExpressionSyntax invocation &&
                 invocation.IsPotentialThisOrBase())
             {
-                if (IsSetAndRaiseCall(invocation, semanticModel, cancellationToken) &&
+                if (IsSetAndRaiseCall(invocation, semanticModel, cancellationToken) != AnalysisResult.No &&
                     semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol setAndRaiseMethod &&
                     setAndRaiseMethod.Parameters.TryLast(x => x.Type == KnownSymbol.String, out var nameParameter))
                 {
@@ -216,7 +216,7 @@ namespace PropertyChangedAnalyzers
                                 continue;
                             case AnalysisResult.Yes:
                                 invoker = candidate;
-                                if (invoker.Parameters.TrySingle(out var parameter) &&
+                                if (candidate.Parameters.TrySingle(out var parameter) &&
                                     parameter.Type == KnownSymbol.String)
                                 {
                                     return true;
@@ -224,7 +224,13 @@ namespace PropertyChangedAnalyzers
 
                                 break;
                             case AnalysisResult.Maybe:
-                                invoker = candidate;
+                                if (invoker is null ||
+                                    (candidate.Parameters.TrySingle(out parameter) &&
+                                     parameter.Type == KnownSymbol.String))
+                                {
+                                    invoker = candidate;
+                                }
+
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
@@ -417,27 +423,22 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryGetSetAndRaise(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            if (type.TryFindFirstMethodRecursive(x => IsSetAndRaise(x, semanticModel, cancellationToken), out method))
-            {
-                return true;
-            }
-
-            return false;
+            return type.TryFindFirstMethodRecursive(x => IsSetAndRaise(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
         }
 
-        internal static bool IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
+        internal static AnalysisResult IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
         {
             if (candidate?.ArgumentList == null ||
                 candidate.ArgumentList.Arguments.Count < 2 ||
                 candidate.ArgumentList.Arguments.Count > 3 ||
                 !candidate.IsPotentialThisOrBase())
             {
-                return false;
+                return AnalysisResult.No;
             }
 
             if (!candidate.ArgumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out _))
             {
-                return false;
+                return AnalysisResult.No;
             }
 
             return IsSetAndRaise(
@@ -447,17 +448,17 @@ namespace PropertyChangedAnalyzers
                 @checked);
         }
 
-        internal static bool IsSetAndRaise(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
+        internal static AnalysisResult IsSetAndRaise(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> visited = null)
         {
-            if (@checked?.Add(candidate) == false)
+            if (visited?.Add(candidate) == false)
             {
-                return false;
+                return AnalysisResult.No;
             }
 
             if (candidate == null ||
                 candidate.IsStatic)
             {
-                return false;
+                return AnalysisResult.No;
             }
 
             if (candidate.MethodKind != MethodKind.Ordinary ||
@@ -467,7 +468,7 @@ namespace PropertyChangedAnalyzers
                 candidate.Parameters.Length < 3 ||
                     !candidate.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
             {
-                return false;
+                return AnalysisResult.No;
             }
 
             var type = candidate.TypeArguments.Length == 1
@@ -477,13 +478,13 @@ namespace PropertyChangedAnalyzers
             if (parameter.RefKind != RefKind.Ref ||
                 !ReferenceEquals(parameter.Type, type))
             {
-                return false;
+                return AnalysisResult.No;
             }
 
             if (!ReferenceEquals(candidate.Parameters[1].Type, type) ||
                 candidate.Parameters[candidate.Parameters.Length - 1].Type != KnownSymbol.String)
             {
-                return false;
+                return AnalysisResult.No;
             }
 
             if (candidate.DeclaringSyntaxReferences.TrySingle(out var reference))
@@ -496,12 +497,26 @@ namespace PropertyChangedAnalyzers
                              IsPropertyChangedInvoke(x, semanticModel, cancellationToken),
                         out _))
                     {
-                        using (var set = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(@checked))
+                        using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
                         {
-                            // ReSharper disable once AccessToDisposedClosure R# does not figure things out here.
-                            return walker.Invocations.TrySingle(
-                                x => IsSetAndRaiseCall(x, semanticModel, cancellationToken, set),
-                                out _);
+                            var result = AnalysisResult.No;
+                            foreach (var invocation in walker.Invocations)
+                            {
+                                switch (IsSetAndRaiseCall(invocation, semanticModel, cancellationToken, visited))
+                                {
+                                    case AnalysisResult.No:
+                                        break;
+                                    case AnalysisResult.Yes:
+                                        return AnalysisResult.Yes;
+                                    case AnalysisResult.Maybe:
+                                        result = AnalysisResult.Maybe;
+                                        break;
+                                    default:
+                                        throw new ArgumentOutOfRangeException();
+                                }
+                            }
+
+                            return result;
                         }
                     }
                 }
@@ -513,19 +528,24 @@ namespace PropertyChangedAnalyzers
                              semanticModel.GetSymbolSafe(x.Right, cancellationToken)?.Name == candidate.Parameters[1].Name,
                         out _))
                     {
-                        return false;
+                        return AnalysisResult.No;
                     }
                 }
 
-                return true;
+                return AnalysisResult.Yes;
             }
 
-            return candidate == KnownSymbol.MvvmLightViewModelBase.Set ||
-                   candidate == KnownSymbol.MvvmLightObservableObject.Set ||
-                   candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
-                   candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
-                   candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
-                   candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty;
+            if (candidate == KnownSymbol.MvvmLightViewModelBase.Set ||
+                candidate == KnownSymbol.MvvmLightObservableObject.Set ||
+                candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
+                candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
+                candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
+                candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty)
+            {
+                return AnalysisResult.Yes;
+            }
+
+            return candidate.Parameters.Length == 3 ? AnalysisResult.Maybe : AnalysisResult.No;
         }
 
         private static bool IsPotentialOnPropertyChanged(IMethodSymbol method)

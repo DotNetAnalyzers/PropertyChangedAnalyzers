@@ -73,7 +73,7 @@ namespace PropertyChangedAnalyzers
                             continue;
                         }
 
-                        if (PropertyChanged.IsSetAndRaiseCall(invocation, context.SemanticModel, context.CancellationToken))
+                        if (PropertyChanged.IsSetAndRaiseCall(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
                         {
                             continue;
                         }
