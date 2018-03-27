@@ -228,6 +228,11 @@ namespace PropertyChangedAnalyzers
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
             {
+                if (node.Parent is VariableDeclarationSyntax)
+                {
+                    return;
+                }
+
                 if (!this.localsAndParameters.Contains(node.Identifier))
                 {
                     this.usedMembers.Add(node);
@@ -238,19 +243,21 @@ namespace PropertyChangedAnalyzers
             public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
             {
                 this.usedMembers.Add(node);
+                base.VisitMemberAccessExpression(node);
+
                 if (node.Expression is InstanceExpressionSyntax)
                 {
                     this.recursives.Add(node);
-                }
-                else
-                {
-                    base.VisitMemberAccessExpression(node);
                 }
             }
 
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
-                this.recursives.Add(node);
+                if (node.IsPotentialThisOrBase())
+                {
+                    this.recursives.Add(node);
+                }
+
                 base.VisitInvocationExpression(node);
             }
 
@@ -278,12 +285,14 @@ namespace PropertyChangedAnalyzers
                         invocation.IsPotentialThisOrBase() &&
                         this.semanticModel.GetSymbolSafe(invocation, this.cancellationToken) is IMethodSymbol method &&
                         Equals(this.containingType, method.ContainingType) &&
-                        method.TrySingleDeclaration(this.cancellationToken, out var declaration))
+                        method.TrySingleDeclaration(this.cancellationToken, out var declaration) &&
+                        this.visited.Add(declaration))
                     {
                         VisitRecursive((SyntaxNode)declaration.Body ?? declaration.ExpressionBody);
                     }
                     else if (TryGetProperty(recursive, out var property) &&
-                             property.GetMethod.TrySingleDeclaration<AccessorDeclarationSyntax>(this.cancellationToken, out var getter))
+                             property.GetMethod.TrySingleDeclaration<AccessorDeclarationSyntax>(this.cancellationToken, out var getter) &&
+                             this.visited.Add(getter))
                     {
                         VisitRecursive(getter);
                     }

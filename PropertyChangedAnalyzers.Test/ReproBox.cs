@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test
     using NUnit.Framework;
     using PropertyChangedAnalyzers;
 
-    [Explicit("For harvesting testcases only.")]
+    [Explicit("For harvesting test cases only.")]
     public class ReproBox
     {
         // ReSharper disable once UnusedMember.Local

@@ -123,7 +123,7 @@ namespace RoslynSandbox.Client
         [TestCaseSource(nameof(AllAnalyzers))]
         public async Task InProperty(DiagnosticAnalyzer analyzer)
         {
-            var testCode = @"
+            var fooCode = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -133,6 +133,7 @@ namespace RoslynSandbox
     public class Foo
     {
         private Point point;
+        private double h1;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -225,13 +226,37 @@ namespace RoslynSandbox
             }
         }
 
+        public double H1
+        {
+            get => this.h1;
+            set
+            {
+                if (value.Equals(this.h1))
+                {
+                    return;
+                }
+
+                this.h1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.Height));
+            }
+        }
+
+        public double Height
+        {
+            get
+            {
+                return this.Height;
+            }
+        }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
-            await Analyze.GetDiagnosticsAsync(analyzer, new[] { testCode }, AnalyzerAssert.MetadataReferences).ConfigureAwait(false);
+            await Analyze.GetDiagnosticsAsync(analyzer, new[] { fooCode }, AnalyzerAssert.MetadataReferences).ConfigureAwait(false);
         }
     }
 }
