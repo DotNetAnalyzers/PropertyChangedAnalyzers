@@ -21,7 +21,7 @@ namespace PropertyChangedAnalyzers.Test
                                .ToArray();
 
         private static readonly Solution Solution = CodeFactory.CreateSolution(
-            new FileInfo("C:\\Tfs\\Map\\MAP\\Map.sln"),
+            new FileInfo("C:\\Git\\Gu.Reactive\\Gu.Reactive.sln"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 
