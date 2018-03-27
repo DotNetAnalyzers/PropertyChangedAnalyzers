@@ -89,7 +89,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var viewModelSubclassCode = @"
+            var viewModel1Code = @"
 namespace RoslynSandbox.Client
 {
     using RoslynSandbox.Core;
@@ -135,13 +135,13 @@ namespace RoslynSandbox.Client
     }
 }";
 
-            var viewModelCode = @"
+            var viewModel2Code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class ViewModel2 : INotifyPropertyChanged
     {
         private int value;
         private readonly Bar bar = new Bar();
@@ -363,7 +363,53 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(analyzer, viewModelBaseCode, barCode, viewModelSubclassCode, viewModelCode, fooCode, foo1Code, foo2Code, foo3Code);
+
+            var foo4Code = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class Foo4 : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public abstract int Value { get; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var foo5Code = @"
+namespace RoslynSandbox
+{
+    public class Foo5 : Foo4
+    {
+        private int value;
+
+        public override int Value => this.value;
+
+        public void Update(int newValue)
+        {
+            this.value = newValue;
+            this.OnPropertyChanged(nameof(this.Value));
+        }
+    }
+}";
+            AnalyzerAssert.Valid(
+                analyzer,
+                viewModelBaseCode,
+                barCode,
+                viewModel1Code,
+                viewModel2Code,
+                fooCode,
+                foo1Code,
+                foo2Code,
+                //foo3Code,
+                foo4Code,
+                foo5Code);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]

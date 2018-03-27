@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers
     {
         internal static bool TryFindFieldRecursive(this ITypeSymbol type, string name, out IFieldSymbol field)
         {
-            return type.TryFindSingleMemberRecursive(name, out field);
+            return type.TryFindFirstMemberRecursive(name, out field);
         }
 
         internal static bool TryFindEventRecursive(this ITypeSymbol type, string name, out IEventSymbol @event)
@@ -20,10 +20,10 @@ namespace PropertyChangedAnalyzers
         {
             if (name == "Item[]")
             {
-                return type.TryFindSingleMemberRecursive(x => x.IsIndexer, out property);
+                return type.TryFindFirstMemberRecursive(x => x.IsIndexer, out property);
             }
 
-            return type.TryFindSingleMemberRecursive(name, out property);
+            return type.TryFindFirstMemberRecursive(name, out property);
         }
 
         internal static bool TryFindFirstMethodRecursive(this ITypeSymbol type, string name, out IMethodSymbol result)

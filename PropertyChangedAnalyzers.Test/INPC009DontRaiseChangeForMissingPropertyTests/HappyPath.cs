@@ -705,5 +705,48 @@ namespace RoslynSandbox.Client
 
             AnalyzerAssert.Valid(Analyzer, viewModelBaseCode, viewModelCode);
         }
+
+        [Test]
+        public void OverriddenProperty()
+        {
+            var fooBase = @"
+namespace RoslynSandbox.Core
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class FooBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public abstract int Value { get; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var foo = @"
+namespace RoslynSandbox.Client
+{
+    using RoslynSandbox.Core;
+
+    public class Foo : FooBase
+    {
+        private int value;
+
+        public override int Value => this.value;
+
+        public void Update(int newValue)
+        {
+            this.value = newValue;
+            this.OnPropertyChanged(nameof(this.Value));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, fooBase, foo);
+        }
     }
 }
