@@ -3229,5 +3229,61 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
         }
+
+        [Test]
+        public void OverriddenProperty()
+        {
+            var barCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class FooBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public abstract int Value { get; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : FooBase
+    {
+        private int value;
+
+        public override int Value => this.value;
+
+        public void Update(int newValue)
+        {
+            ↓this.value = newValue;
+        }
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : FooBase
+    {
+        private int value;
+
+        public override int Value => this.value;
+
+        public void Update(int newValue)
+        {
+            this.value = newValue;
+            this.OnPropertyChanged(nameof(this.Value));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
+        }
     }
 }
