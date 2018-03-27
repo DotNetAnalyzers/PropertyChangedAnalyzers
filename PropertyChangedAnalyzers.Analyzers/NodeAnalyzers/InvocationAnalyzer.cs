@@ -33,7 +33,7 @@ namespace PropertyChangedAnalyzers
 
             if (context.Node is InvocationExpressionSyntax invocation)
             {
-                if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken))
+                if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
                 {
                     if ((invocation.ArgumentList == null ||
                          invocation.ArgumentList.Arguments.Count == 0) &&

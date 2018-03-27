@@ -297,15 +297,15 @@ namespace RoslynSandbox
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Bar();");
-                Assert.AreEqual(false, PropertyChanged.IsOnPropertyChanged(invocation, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsOnPropertyChanged(invocation, semanticModel, CancellationToken.None));
             }
 
-            [TestCase("Bar1()", false)]
-            [TestCase("Bar2()", false)]
-            [TestCase("Bar3()", false)]
-            [TestCase("Bar4()", false)]
-            [TestCase("OnPropertyChanged();", true)]
-            public void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, bool expected)
+            [TestCase("Bar1()", AnalysisResult.No)]
+            [TestCase("Bar2()", AnalysisResult.No)]
+            [TestCase("Bar3()", AnalysisResult.No)]
+            [TestCase("Bar4()", AnalysisResult.No)]
+            [TestCase("OnPropertyChanged();", AnalysisResult.Yes)]
+            public void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, AnalysisResult expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -395,8 +395,7 @@ namespace RoslynSandbox
             [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
             public void WhenRecursive(string signature)
             {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+                var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
 {
     using System;
@@ -429,6 +428,50 @@ namespace RoslynSandbox
                 var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsOnPropertyChanged(method, semanticModel, CancellationToken.None));
+            }
+
+            [Test]
+            public void ExceptionHandlingRelayCommand()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+namespace RoslynSandbox
+{
+    using System;
+    using Gu.Reactive;
+    using Gu.Wpf.Reactive;
+
+    public class ExceptionHandlingRelayCommand : ConditionRelayCommand
+    {
+        private Exception _exception;
+
+        public ExceptionHandlingRelayCommand(Action action, ICondition condition)
+            : base(action, condition)
+        {
+        }
+
+        public Exception Exception
+        {
+            get => _exception;
+
+            private set
+            {
+                if (Equals(value, _exception))
+                {
+                    return;
+                }
+
+                _exception = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+}");
+
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var invocation = syntaxTree.FindInvocation("OnPropertyChanged()");
+                Assert.AreEqual(AnalysisResult.Maybe, PropertyChanged.IsOnPropertyChanged(invocation, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual("Gu.Wpf.Reactive.CommandBase<object>.OnPropertyChanged(string)", method.ToString());
             }
         }
     }

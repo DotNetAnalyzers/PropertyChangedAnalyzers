@@ -78,7 +78,7 @@ namespace PropertyChangedAnalyzers
                             continue;
                         }
 
-                        if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) ||
+                        if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
                             PropertyChanged.IsPropertyChangedInvoke(invocation, context.SemanticModel, context.CancellationToken))
                         {
                             continue;
