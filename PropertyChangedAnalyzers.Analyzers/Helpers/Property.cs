@@ -97,19 +97,19 @@ namespace PropertyChangedAnalyzers
                 cancellationToken);
         }
 
-        internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, IPropertySymbol propertySymbol, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (propertySymbol.IsIndexer ||
-                propertySymbol.DeclaredAccessibility == Accessibility.Private ||
-                propertySymbol.DeclaredAccessibility == Accessibility.Protected ||
-                propertySymbol.IsStatic ||
-                propertySymbol.IsReadOnly ||
-                propertySymbol.GetMethod == null ||
-                propertySymbol.IsAbstract ||
-                propertySymbol.ContainingType == null ||
-                propertySymbol.ContainingType.IsValueType ||
-                propertySymbol.ContainingType.DeclaredAccessibility == Accessibility.Private ||
-                propertySymbol.ContainingType.DeclaredAccessibility == Accessibility.Protected ||
+            if (property.IsIndexer ||
+                property.DeclaredAccessibility == Accessibility.Private ||
+                property.DeclaredAccessibility == Accessibility.Protected ||
+                property.IsStatic ||
+                property.IsReadOnly ||
+                property.GetMethod == null ||
+                property.IsAbstract ||
+                property.ContainingType == null ||
+                property.ContainingType.IsValueType ||
+                property.ContainingType.DeclaredAccessibility == Accessibility.Private ||
+                property.ContainingType.DeclaredAccessibility == Accessibility.Protected ||
                 IsAutoPropertyOnlyAssignedInCtor(declaration))
             {
                 return false;
@@ -127,7 +127,7 @@ namespace PropertyChangedAnalyzers
                     return false;
                 }
 
-                if (PropertyChanged.InvokesPropertyChangedFor(assignment, propertySymbol, semanticModel, cancellationToken) != AnalysisResult.No)
+                if (PropertyChanged.InvokesPropertyChangedFor(assignment, property, semanticModel, cancellationToken) != AnalysisResult.No)
                 {
                     return false;
                 }
@@ -158,40 +158,6 @@ namespace PropertyChangedAnalyzers
             getter = null;
             setter = null;
             return false;
-        }
-
-        internal static bool IsSimplePropertyWithBackingField(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (!(property.TryGetGetter(out var getter) &&
-                property.TryGetSetter(out var setter)))
-            {
-                return false;
-            }
-
-            if (getter.Body?.Statements.Count != 1 ||
-                setter.Body?.Statements.Count != 1)
-            {
-                return false;
-            }
-
-            var returnStatement = getter.Body.Statements[0] as ReturnStatementSyntax;
-            var assignment = (setter.Body.Statements[0] as ExpressionStatementSyntax)?.Expression as AssignmentExpressionSyntax;
-            if (returnStatement == null ||
-                assignment == null)
-            {
-                return false;
-            }
-
-            var returnedField = semanticModel.GetSymbolSafe(returnStatement.Expression, cancellationToken) as IFieldSymbol;
-            var assignedField = semanticModel.GetSymbolSafe(assignment.Left, cancellationToken) as IFieldSymbol;
-            if (assignedField == null ||
-                returnedField == null)
-            {
-                return false;
-            }
-
-            var propertySymbol = semanticModel.GetDeclaredSymbolSafe(property, cancellationToken);
-            return assignedField.Equals(returnedField) && assignedField.ContainingType == propertySymbol?.ContainingType;
         }
 
         internal static bool TrySingleReturnedInGetter(PropertyDeclarationSyntax property, out ExpressionSyntax result)
