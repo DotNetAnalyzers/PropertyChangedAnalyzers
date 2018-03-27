@@ -1058,5 +1058,45 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void ExceptionHandlingRelayCommand()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using Gu.Reactive;
+    using Gu.Wpf.Reactive;
+
+    public class ExceptionHandlingRelayCommand : ConditionRelayCommand
+    {
+        private Exception _exception;
+
+        public ExceptionHandlingRelayCommand(Action action, ICondition condition)
+            : base(action, condition)
+        {
+        }
+
+        public Exception Exception
+        {
+            get => _exception;
+
+            private set
+            {
+                if (Equals(value, _exception))
+                {
+                    return;
+                }
+
+                _exception = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }

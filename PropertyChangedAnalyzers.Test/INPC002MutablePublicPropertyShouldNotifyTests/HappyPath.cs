@@ -670,5 +670,86 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void TimeSpanTicks()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private TimeSpan timeSpan;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public long Ticks
+        {
+            get => this.timeSpan.Ticks;
+            set
+            {
+                if (value == this.timeSpan.Ticks)
+                {
+                    return;
+                }
+
+                this.timeSpan = TimeSpan.FromTicks(value);
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void ExceptionHandlingRelayCommand()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using Gu.Reactive;
+    using Gu.Wpf.Reactive;
+
+    public class ExceptionHandlingRelayCommand : ConditionRelayCommand
+    {
+        private Exception _exception;
+
+        public ExceptionHandlingRelayCommand(Action action, ICondition condition)
+            : base(action, condition)
+        {
+        }
+
+        public Exception Exception
+        {
+            get => _exception;
+
+            private set
+            {
+                if (Equals(value, _exception))
+                {
+                    return;
+                }
+
+                _exception = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }

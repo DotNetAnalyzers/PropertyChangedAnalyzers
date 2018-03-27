@@ -398,6 +398,40 @@ namespace RoslynSandbox
         }
     }
 }";
+
+            var exceptionHandlingRelayCommand = @"
+namespace RoslynSandbox
+{
+    using System;
+    using Gu.Reactive;
+    using Gu.Wpf.Reactive;
+
+    public class ExceptionHandlingRelayCommand : ConditionRelayCommand
+    {
+        private Exception _exception;
+
+        public ExceptionHandlingRelayCommand(Action action, ICondition condition)
+            : base(action, condition)
+        {
+        }
+
+        public Exception Exception
+        {
+            get => _exception;
+
+            private set
+            {
+                if (Equals(value, _exception))
+                {
+                    return;
+                }
+
+                _exception = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+}";
             AnalyzerAssert.Valid(
                 analyzer,
                 viewModelBaseCode,
@@ -409,7 +443,8 @@ namespace RoslynSandbox
                 foo2Code,
                 foo3Code,
                 foo4Code,
-                foo5Code);
+                foo5Code,
+                exceptionHandlingRelayCommand);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
