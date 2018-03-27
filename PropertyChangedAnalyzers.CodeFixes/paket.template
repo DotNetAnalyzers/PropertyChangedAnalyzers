@@ -1,5 +1,5 @@
 ﻿type file
-version 2.5.7.0
+version 2.5.8.0
 title PropertyChangedAnalyzers
 id PropertyChangedAnalyzers
 authors Johan Larsson

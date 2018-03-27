@@ -1,3 +1,6 @@
+#### 2.5.8
+* FEATURE: Re-enabled detecting OnPropertyChanged and TrySet from outside the compilation.
+
 #### 2.5.6
 * BUGFIX: Handle nested fields and properties.
 
