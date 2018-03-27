@@ -96,11 +96,20 @@ namespace RoslynSandbox
 
             [TestCase("get => this.value1;", "set => this.value1 = value;", true)]
             [TestCase("get => this.value1;", "set => this.value2 = value;", false)]
+            [TestCase("get => this.bar1.Value1;", "set => this.bar1.Value1 = value;", true)]
+            [TestCase("get => this.bar1.Value1;", "set => this.bar2.Value1 = value;", false)]
+            [TestCase("get => this.bar1.Value1;", "set => this.bar1.Value2 = value;", false)]
             public void Uses(string getter, string setter, bool expected)
             {
                 var testCode = @"
 namespace RoslynSandbox
 {
+    public class Bar
+    {
+        public int Value1;
+        public int Value2;
+    }
+
     public class Foo
     {
         private Bar bar1 = new Bar();
@@ -131,7 +140,72 @@ namespace RoslynSandbox
                     null,
                     null,
                     CancellationToken.None);
-                Assert.AreEqual(expected, MemberPath.Uses(getExpression, setExpression, context));
+                Assert.AreEqual(expected, MemberPath.Uses(setExpression, getExpression, context));
+            }
+
+            [TestCase("get => Math.Abs(this.speed - 1) < 1E-2;", "set => this.Speed = 1;", true)]
+            [TestCase("get => Math.Abs(this.Speed - 1) < 1E-2;", "set => this.Speed = 1;", true)]
+            public void UsesWhenAssigningPropertyAndReturningField(string getter, string setter, bool expected)
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private double speed;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsSpeed1
+        {
+            get => Math.Abs(this.speed - 1) < 1E-2;
+            set => this.Speed = 1;
+        }
+
+        public double Speed
+        {
+            get => this.speed;
+
+            set
+            {
+                if (value.Equals(this.speed))
+                {
+                    return;
+                }
+
+                this.speed = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.IsSpeed1));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                testCode = testCode.AssertReplace("get => Math.Abs(this.speed - 1) < 1E-2;", getter)
+                                   .AssertReplace("set => this.Speed = 1;", setter);
+                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var propertyDeclaration = syntaxTree.FindPropertyDeclaration("IsSpeed1");
+                var getExpression = propertyDeclaration.Getter().ExpressionBody.Expression;
+                var setExpression = ((AssignmentExpressionSyntax)propertyDeclaration.Setter().ExpressionBody.Expression).Left;
+                var context = new SyntaxNodeAnalysisContext(
+                    propertyDeclaration,
+                    semanticModel.GetDeclaredSymbol(propertyDeclaration, CancellationToken.None),
+                    semanticModel,
+                    null,
+                    null,
+                    null,
+                    CancellationToken.None);
+                Assert.AreEqual(expected, MemberPath.Uses(setExpression, getExpression, context));
             }
         }
     }

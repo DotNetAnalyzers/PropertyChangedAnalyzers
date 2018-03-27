@@ -407,7 +407,7 @@ namespace RoslynSandbox
                 fooCode,
                 foo1Code,
                 foo2Code,
-                //foo3Code,
+                foo3Code,
                 foo4Code,
                 foo5Code);
         }

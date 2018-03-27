@@ -54,12 +54,39 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context)
+        internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledHashSet<SyntaxNode> visited = null)
         {
+            if (assigned is null ||
+                returned is null)
+            {
+                return false;
+            }
+
             using (var assignedPath = PathWalker.Borrow(assigned))
             {
-                return UsedMemberWalker.Uses(returned, assignedPath, Search.TopLevel, context.ContainingSymbol.ContainingType, context.SemanticModel, context.CancellationToken);
+                var containingType = context.ContainingSymbol.ContainingType;
+                if (UsedMemberWalker.Uses(returned, assignedPath, Search.TopLevel, containingType, context.SemanticModel, context.CancellationToken))
+                {
+                    return true;
+                }
+
+                if (assignedPath.IdentifierNames.TrySingle(out var candidate) &&
+                    containingType.TryFindPropertyRecursive(candidate.Identifier.ValueText, out var property) &&
+                    property.TrySingleDeclaration(context.CancellationToken, out var declaration) &&
+                    declaration.TryGetSetter(out var setter) &&
+                    Property.TrySingleAssignmentInSetter(setter, out var assignment))
+                {
+                    using (visited = PooledHashSet<SyntaxNode>.BorrowOrIncrementUsage(visited))
+                    {
+                        if (visited.Add(candidate))
+                        {
+                            return Uses(assignment.Left, returned, context, visited);
+                        }
+                    }
+                }
             }
+
+            return false;
         }
 
         internal static bool Uses(SyntaxNode scope, PathWalker memberPath, SyntaxNodeAnalysisContext context)

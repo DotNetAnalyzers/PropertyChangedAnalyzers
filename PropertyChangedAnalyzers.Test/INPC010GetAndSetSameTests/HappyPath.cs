@@ -218,7 +218,7 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
-        //[TestCase("get => Math.Abs(this.speed - 1) < 1E-2;")]
+        [TestCase("get => Math.Abs(this.speed - 1) < 1E-2;")]
         [TestCase("get => Math.Abs(this.Speed - 1) < 1E-2;")]
         public void IsSpeed1(string getter)
         {
