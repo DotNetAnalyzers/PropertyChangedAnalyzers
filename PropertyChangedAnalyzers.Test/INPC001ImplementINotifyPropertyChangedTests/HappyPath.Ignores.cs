@@ -7,7 +7,6 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     {
         internal class Ignores
         {
-
             [Test]
             public void Struct()
             {

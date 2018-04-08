@@ -38,7 +38,7 @@ namespace PropertyChangedAnalyzers.Helpers.Walkers
                 yield break;
             }
 
-            using (var walker = BorrowAndVisit(node.FirstAncestorOrSelf<SyntaxNode>(), () => new CommentWalker(SyntaxWalkerDepth.Trivia)))
+            using (var walker = BorrowAndVisit(node, () => new CommentWalker(SyntaxWalkerDepth.Trivia)))
             {
                 foreach (var singleComment in walker.singleLineComments)
                 {
@@ -54,7 +54,6 @@ namespace PropertyChangedAnalyzers.Helpers.Walkers
                 }
             }
         }
-
 
         protected override void Clear()
         {

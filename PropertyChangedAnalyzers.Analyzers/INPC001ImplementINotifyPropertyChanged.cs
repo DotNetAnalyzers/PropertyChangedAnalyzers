@@ -58,7 +58,6 @@ namespace PropertyChangedAnalyzers
                 ignoredPropNames.AddRange(names);
             }
 
-
             var type = (ITypeSymbol)context.ContainingSymbol;
             if (type.IsStatic ||
                 type.Is(KnownSymbol.INotifyPropertyChanged) ||
@@ -80,8 +79,10 @@ namespace PropertyChangedAnalyzers
                 var properties = string.Join(
                     Environment.NewLine,
                     declaration.Members.OfType<PropertyDeclarationSyntax>()
-                               .Where(x => CommentWalker.GetComments(x).Any(s => s == $"{DiagnosticId} IGNORE") && Property.ShouldNotify(x, context.SemanticModel, context.CancellationToken) && !ignoredPropNames.Contains(x.Identifier.ValueText))
-                               .Select(x => x.Identifier.ValueText));
+                               .Select(x => (x, x.Identifier.ValueText))
+                               .Where(x => Property.ShouldNotify(x.Item1, context.SemanticModel, context.CancellationToken) && !CommentWalker.GetComments(x.Item1).Any(s => s == $"{DiagnosticId} IGNORE") && !ignoredPropNames.Contains(x.Item2))
+                               .Select(x => x.Item2));
+                System.Diagnostics.Debug.WriteLine(properties);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
             }
 
