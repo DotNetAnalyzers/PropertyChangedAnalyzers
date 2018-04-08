@@ -7,6 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     {
         internal class Ignores
         {
+
             [Test]
             public void Struct()
             {
@@ -334,6 +335,100 @@ namespace RoslynSandbox
     }
 }";
                 testCode = testCode.AssertReplace("Value = value;", code);
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
+
+            [Test]
+            public void DisabledClassByComment()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    // INPC001 DISABLE ONCE
+    public class DisabledByComment
+    {
+        public string Prop1 { get; set; }
+    }
+}";
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
+
+            [Test]
+            public void DisabledSinglePropByClassComment()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    // INPC001 DISABLE DisabledProp
+    public class DisabledByComment : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.bar) return;
+                this.bar = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private string disabledProp;
+        public string DisabledProp { get=>disabledProp; set=>disabledProp=value; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
+
+            [Test]
+            public void DisabledSinglePropByPropComment()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    
+    public class DisabledByComment : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (value == this.bar) return;
+                this.bar = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private string disabledProp;
+        //INPC001 IGNORE
+        public string DisabledProp { get=>disabledProp; set=>disabledProp=value; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
         }
