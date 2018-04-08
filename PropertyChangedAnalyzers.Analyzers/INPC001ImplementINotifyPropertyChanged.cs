@@ -1,17 +1,22 @@
 namespace PropertyChangedAnalyzers
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using PropertyChangedAnalyzers.Helpers.Walkers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class INPC001ImplementINotifyPropertyChanged : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "INPC001";
+
+        private static readonly Regex CommentDisableRegex = new Regex($@"^{DiagnosticId} DISABLE (|ONCE|([a-zA-Z_]\w+,( |)){{0,}}[a-zA-Z_]\w+)$");
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
@@ -40,6 +45,19 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
+            IEnumerable<string> comments = CommentWalker.GetComments(context.Node).Where(s => CommentDisableRegex.IsMatch(s));
+            if (comments.Any(s => s.EndsWith("ONCE")))
+            {
+                return;
+            }
+
+            List<string> ignoredPropNames = new List<string>();
+            foreach (string s in comments)
+            {
+                string[] names = s.Replace($"{DiagnosticId} DISABLE ", string.Empty).Split(new[] { ", ", "," }, StringSplitOptions.RemoveEmptyEntries);
+                ignoredPropNames.AddRange(names);
+            }
+
             var type = (ITypeSymbol)context.ContainingSymbol;
             if (type.IsStatic ||
                 type.Is(KnownSymbol.INotifyPropertyChanged) ||
@@ -61,8 +79,10 @@ namespace PropertyChangedAnalyzers
                 var properties = string.Join(
                     Environment.NewLine,
                     declaration.Members.OfType<PropertyDeclarationSyntax>()
-                               .Where(x => Property.ShouldNotify(x, context.SemanticModel, context.CancellationToken))
-                               .Select(x => x.Identifier.ValueText));
+                               .Select(x => (x, x.Identifier.ValueText))
+                               .Where(x => Property.ShouldNotify(x.Item1, context.SemanticModel, context.CancellationToken) && !CommentWalker.GetComments(x.Item1).Any(s => s == $"{DiagnosticId} IGNORE") && !ignoredPropNames.Contains(x.Item2))
+                               .Select(x => x.Item2));
+                System.Diagnostics.Debug.WriteLine(properties);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
             }
 

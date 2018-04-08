@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Collections.Concurrent;
@@ -11,6 +11,11 @@
     {
         private static readonly ConcurrentQueue<PooledWalker<T>> Cache = new ConcurrentQueue<PooledWalker<T>>();
         private int refCount;
+
+        protected PooledWalker(SyntaxWalkerDepth depth = SyntaxWalkerDepth.Node)
+            : base(depth)
+        {
+        }
 
         public void Dispose()
         {
