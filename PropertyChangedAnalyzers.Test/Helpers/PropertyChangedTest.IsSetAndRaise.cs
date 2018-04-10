@@ -342,10 +342,7 @@ namespace RoslynSandbox
         public static readonly AvaloniaProperty<int> ValueProperty = AvaloniaProperty.Register<Foo,int>(nameof(Value));
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    MetadataReferences.FromAttributes().Concat( SpecialMetadataReferences.AvaloniaReferences ));
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, SpecialMetadataReferences.AvaloniaReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("SetAndRaise");
                 var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
