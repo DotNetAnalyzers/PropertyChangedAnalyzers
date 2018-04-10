@@ -8,6 +8,7 @@ group Test
   MvvmCross
   Prism.Mvvm
   Gu.Wpf.Reactive
+  Avalonia
 
 group Analyzers
   AsyncUsageAnalyzers

@@ -33,6 +33,7 @@ group Test
   nuget MvvmCross
   nuget Prism.Mvvm
   nuget Gu.Wpf.Reactive
+  nuget Avalonia
 
 group Build
   storage: none
