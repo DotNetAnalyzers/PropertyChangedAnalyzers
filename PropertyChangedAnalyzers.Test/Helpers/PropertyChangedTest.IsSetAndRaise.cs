@@ -320,6 +320,37 @@ namespace RoslynSandbox
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
                 Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
+
+            [Test]
+            public void Avalonia()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace RoslynSandbox
+{
+    using Avalonia;
+    public class Foo : AvaloniaObject
+    {
+        private int value;
+
+        public int Value
+        {
+            get { return value; }
+            set { this.SetAndRaise(ValueProperty, ref this.value, value); }
+        }
+
+        public static readonly AvaloniaProperty<int> ValueProperty = AvaloniaProperty.Register<Foo,int>(nameof(Value));
+    }
+}");
+                var compilation = CSharpCompilation.Create(
+                    "test",
+                    new[] { syntaxTree },
+                    MetadataReferences.FromAttributes().Concat( SpecialMetadataReferences.AvaloniaReferences ));
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var invocation = syntaxTree.FindInvocation("SetAndRaise");
+                var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
+            }
         }
     }
 }
