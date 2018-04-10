@@ -2,20 +2,16 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     internal partial class HappyPath
     {
-        internal class AvaloniaHappyPath
+        internal class Avalonia
         {
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.AddTransitiveMetadataReferences(typeof(Avalonia.AvaloniaObject).Assembly);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.AvaloniaReferences);
             }
 
             [OneTimeTearDown]

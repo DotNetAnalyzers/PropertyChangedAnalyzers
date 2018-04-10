@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Collections.Generic;
     using System.IO;
@@ -22,6 +22,8 @@
 
         internal static IReadOnlyList<MetadataReference> MvvmCrossReferences { get; } = CreateMvvmCrossReferences();
 
+        internal static IReadOnlyList<MetadataReference> AvaloniaReferences { get; } = CreateAvaloniaReferences();
+
         private static MetadataReference CreateDllReference(string dllName)
         {
             // ReSharper disable once PossibleNullReferenceException
@@ -37,6 +39,18 @@
                    {
                        MvvmCross,
                        MvvmCrossPlatform,
+                       CreateDllReference("System.Runtime.dll"),
+                       CreateDllReference("netstandard.dll"),
+                       CreateDllReference("System.Linq.Expressions.dll"),
+                       CreateDllReference("System.ObjectModel.dll"),
+                   };
+        }
+
+        private static IReadOnlyList<MetadataReference> CreateAvaloniaReferences()
+        {
+            return new[]
+                   {
+                       CreateDllReference("Avalonia.Base.dll"),
                        CreateDllReference("System.Runtime.dll"),
                        CreateDllReference("netstandard.dll"),
                        CreateDllReference("System.Linq.Expressions.dll"),
