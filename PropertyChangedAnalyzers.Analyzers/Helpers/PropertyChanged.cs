@@ -461,6 +461,17 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
+            if (candidate == KnownSymbol.MvvmLightViewModelBase.Set ||
+                candidate == KnownSymbol.MvvmLightObservableObject.Set ||
+                candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
+                candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
+                candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
+                candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty ||
+                candidate == KnownSymbol.AvaloniaObject.SetAndRaise)
+            {
+                return AnalysisResult.Yes;
+            }
+
             if (candidate.MethodKind != MethodKind.Ordinary ||
                 candidate.ReturnType != KnownSymbol.Boolean ||
                 !candidate.IsGenericMethod ||
@@ -532,16 +543,6 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                return AnalysisResult.Yes;
-            }
-
-            if (candidate == KnownSymbol.MvvmLightViewModelBase.Set ||
-                candidate == KnownSymbol.MvvmLightObservableObject.Set ||
-                candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
-                candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
-                candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
-                candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty)
-            {
                 return AnalysisResult.Yes;
             }
 
