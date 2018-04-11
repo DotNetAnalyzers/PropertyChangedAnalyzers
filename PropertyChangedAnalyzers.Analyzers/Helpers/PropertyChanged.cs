@@ -480,7 +480,7 @@ namespace PropertyChangedAnalyzers
                 !candidate.IsGenericMethod ||
                 candidate.TypeParameters.Length != 1 ||
                 candidate.Parameters.Length < 3 ||
-                    !candidate.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+                !candidate.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 return AnalysisResult.No;
             }
