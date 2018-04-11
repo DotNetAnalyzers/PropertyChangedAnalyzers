@@ -311,10 +311,7 @@ namespace RoslynSandbox
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
@@ -329,6 +326,7 @@ namespace RoslynSandbox
 namespace RoslynSandbox
 {
     using Avalonia;
+
     public class Foo : AvaloniaObject
     {
         private int _value;
@@ -336,17 +334,16 @@ namespace RoslynSandbox
         public int Value
         {
             get { return _value; }
-            set { this.SetAndRaise<int>(ValueProperty, ref this._value, value); }
+            set { this.SetAndRaise(ValueProperty, ref this._value, value); }
         }
 
         public static readonly AvaloniaProperty<int> ValueProperty = AvaloniaProperty.Register<Foo,int>(nameof(Value));
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, SpecialMetadataReferences.AvaloniaReferences);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes().Concat(SpecialMetadataReferences.AvaloniaReferences));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("SetAndRaise");
-                var symbolInfo = semanticModel.SemanticModelFor(invocation)?.GetSymbolInfo(invocation, CancellationToken.None);// Fails due to OverloadResolution
-                var method = (IMethodSymbol)symbolInfo?.Symbol;
+                var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
         }

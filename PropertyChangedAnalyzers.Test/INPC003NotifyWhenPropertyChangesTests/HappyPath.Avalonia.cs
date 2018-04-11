@@ -82,13 +82,10 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if(name==value)
-                {
-                    return;
+                string prevGreeting=Greeting;
+                if(this.SetAndRaise(NameProperty, ref this.name, value)){
+                    this.RaiseOnPropertyChanged(GreetingProperty, prevGreeting, Greeting);
                 }
-                string previousGreeting=Greeting;
-                this.SetAndRaise(NameProperty, ref name, value);
-                this.RaisePropertyChange(GreetingProperty, previousGreeting, Greeting);
             }
         }
 

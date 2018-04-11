@@ -6,13 +6,13 @@ namespace PropertyChangedAnalyzers
 
     internal class AvaloniaObject : QualifiedType
     {
-        internal readonly QualifiedMethod SetAndRaiseT;
+        internal readonly QualifiedMethod SetAndRaise;
         internal readonly QualifiedMethod RaisePropertyChanged;
 
         internal AvaloniaObject()
         : base("Avalonia.AvaloniaObject")
         {
-            this.SetAndRaiseT = new QualifiedMethod(this, $"{nameof(this.SetAndRaiseT)}`1");
+            this.SetAndRaise = new QualifiedMethod(this, nameof(this.SetAndRaise));
             this.RaisePropertyChanged = new QualifiedMethod(this, nameof(this.RaisePropertyChanged));
         }
     }

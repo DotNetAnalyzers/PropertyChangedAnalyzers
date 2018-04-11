@@ -39,8 +39,8 @@ namespace PropertyChangedAnalyzers.Test.Helpers
                    {
                        MvvmCross,
                        MvvmCrossPlatform,
-                       CreateDllReference("System.Runtime.dll"),
                        CreateDllReference("netstandard.dll"),
+                       CreateDllReference("System.Runtime.dll"),
                        CreateDllReference("System.Linq.Expressions.dll"),
                        CreateDllReference("System.ObjectModel.dll"),
                    };
@@ -51,10 +51,13 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             return new[]
                    {
                        CreateDllReference("Avalonia.Base.dll"),
-                       CreateDllReference("System.Runtime.dll"),
                        CreateDllReference("netstandard.dll"),
+                       CreateDllReference("System.Runtime.dll"),
                        CreateDllReference("System.Linq.Expressions.dll"),
                        CreateDllReference("System.ObjectModel.dll"),
+                       CreateDllReference("System.Reactive.Core.dll"),
+                       CreateDllReference("System.Reactive.Interfaces.dll"),
+                       CreateDllReference("System.Reactive.Linq.dll"),
                    };
         }
     }
