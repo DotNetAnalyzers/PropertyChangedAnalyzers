@@ -331,12 +331,12 @@ namespace RoslynSandbox
     using Avalonia;
     public class Foo : AvaloniaObject
     {
-        private int value;
+        private int _value;
 
         public int Value
         {
-            get { return value; }
-            set { this.SetAndRaise(ValueProperty, ref this.value, value); }
+            get { return _value; }
+            set { this.SetAndRaise<int>(ValueProperty, ref this._value, value); }
         }
 
         public static readonly AvaloniaProperty<int> ValueProperty = AvaloniaProperty.Register<Foo,int>(nameof(Value));
@@ -345,7 +345,8 @@ namespace RoslynSandbox
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, SpecialMetadataReferences.AvaloniaReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("SetAndRaise");
-                var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+                var symbolInfo = semanticModel.SemanticModelFor(invocation)?.GetSymbolInfo(invocation, CancellationToken.None);// Fails due to OverloadResolution
+                var method = (IMethodSymbol)symbolInfo?.Symbol;
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
         }

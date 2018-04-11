@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Threading;
 

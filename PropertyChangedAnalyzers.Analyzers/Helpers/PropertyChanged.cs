@@ -394,6 +394,8 @@ namespace PropertyChangedAnalyzers
                     method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChangedOfT ||
                     method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange ||
                     method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChangeOfT ||
+                    method == KnownSymbol.AvaloniaObject.SetAndRaiseT ||
+                    method == KnownSymbol.AvaloniaObject.RaisePropertyChanged ||
                     method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChange ||
                     method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChangeOfT ||
                     method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChanged ||
@@ -538,6 +540,8 @@ namespace PropertyChangedAnalyzers
             if (candidate == KnownSymbol.MvvmLightViewModelBase.Set ||
                 candidate == KnownSymbol.MvvmLightObservableObject.Set ||
                 candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
+                candidate == KnownSymbol.AvaloniaObject.RaisePropertyChanged ||
+                candidate == KnownSymbol.AvaloniaObject.SetAndRaiseT ||
                 candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
                 candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
                 candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty)
