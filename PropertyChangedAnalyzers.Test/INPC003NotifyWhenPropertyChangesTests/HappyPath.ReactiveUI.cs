@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.ReactiveUIReferences);
+                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.ReactiveUIReferences);
             }
 
             [OneTimeTearDown]

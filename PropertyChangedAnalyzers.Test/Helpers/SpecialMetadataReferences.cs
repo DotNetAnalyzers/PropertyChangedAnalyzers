@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 
         internal static IReadOnlyList<MetadataReference> MvvmCrossReferences { get; } = CreateMvvmCrossReferences();
 
-        internal static IReadOnlyList<MetadataReference> ReactiveUIReferences { get; } = CreateReactiveUIRefrences();
+        internal static MetadataReference ReactiveUIReferences { get; } = CreateDllReference("ReactiveUI.dll");
 
         private static MetadataReference CreateDllReference(string dllName)
         {
@@ -43,16 +43,6 @@ namespace PropertyChangedAnalyzers.Test.Helpers
                        CreateDllReference("netstandard.dll"),
                        CreateDllReference("System.Linq.Expressions.dll"),
                        CreateDllReference("System.ObjectModel.dll"),
-                   };
-        }
-
-        private static IReadOnlyList<MetadataReference> CreateReactiveUIRefrences()
-        {
-            return new[]
-                   {
-                       CreateDllReference("ReactiveUI.dll"),
-                       CreateDllReference("System.Runtime.dll"),
-                       CreateDllReference("netstandard.dll"),
                    };
         }
     }
