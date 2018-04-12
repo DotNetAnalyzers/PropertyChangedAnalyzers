@@ -33,6 +33,7 @@ group Test
   nuget MvvmCross
   nuget Prism.Mvvm
   nuget Gu.Wpf.Reactive
+  nuget reactiveui
 
 group Build
   storage: none
