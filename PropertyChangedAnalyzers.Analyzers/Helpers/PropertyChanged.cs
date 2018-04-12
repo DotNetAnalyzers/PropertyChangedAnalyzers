@@ -128,7 +128,8 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (IsOnPropertyChanged(invocation, semanticModel, cancellationToken, out var onPropertyChanged) != AnalysisResult.No &&
+            IMethodSymbol onPropertyChanged = null;
+            if (IsOnPropertyChanged(invocation, semanticModel, cancellationToken, out onPropertyChanged) != AnalysisResult.No &&
                 onPropertyChanged.Parameters.TrySingle(out var parameter))
             {
                 if (invocation.ArgumentList.Arguments.Count == 0)
@@ -176,6 +177,11 @@ namespace PropertyChangedAnalyzers
                         return AnalysisResult.No;
                     }
                 }
+            }
+
+            if (onPropertyChanged == KnownSymbol.AvaloniaObject.RaisePropertyChanged)
+            {
+                return AnalysisResult.Yes;
             }
 
             return AnalysisResult.No;
@@ -288,6 +294,12 @@ namespace PropertyChangedAnalyzers
         internal static AnalysisResult IsOnPropertyChanged(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
             method = null;
+            if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol raised && raised == KnownSymbol.AvaloniaObject.RaisePropertyChanged)
+            {
+                method = raised;
+                return AnalysisResult.Yes;
+            }
+
             if (invocation == null ||
                 invocation.ArgumentList?.Arguments.Count > 1 ||
                 !invocation.IsPotentialReturnVoid() ||
@@ -321,6 +333,11 @@ namespace PropertyChangedAnalyzers
             if (!IsPotentialOnPropertyChanged(method))
             {
                 return AnalysisResult.No;
+            }
+
+            if (method == KnownSymbol.AvaloniaObject.RaisePropertyChanged)
+            {
+                return AnalysisResult.Yes;
             }
 
             var result = AnalysisResult.No;
@@ -395,7 +412,6 @@ namespace PropertyChangedAnalyzers
                     method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange ||
                     method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChangeOfT ||
                     method == KnownSymbol.AvaloniaObject.SetAndRaise ||
-                    method == KnownSymbol.AvaloniaObject.RaisePropertyChanged ||
                     method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChange ||
                     method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChangeOfT ||
                     method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChanged ||
@@ -469,8 +485,7 @@ namespace PropertyChangedAnalyzers
                 candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
                 candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
                 candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty ||
-                candidate == KnownSymbol.AvaloniaObject.SetAndRaise ||
-                candidate == KnownSymbol.AvaloniaObject.RaisePropertyChanged)
+                candidate == KnownSymbol.AvaloniaObject.SetAndRaise)
             {
                 return AnalysisResult.Yes;
             }

@@ -103,26 +103,26 @@ namespace RoslynSandbox
     public class ViewModel : AvaloniaObject
     {
         private string name;
-        
-        public string Greeting { get { return $""Hello {this.name}""; } }
+
+        public string Greeting { get { return $""Hello { this.name}""; } }
 
         public string Name
         {
             get { return this.name; }
             set
             {
-                if(name==value)
+                if (name == value)
                 {
                     return;
                 }
                 string prevGreeting = this.Greeting;
-                this.SetAndRaise(NameProperty, ref this.name, value))
+                this.SetAndRaise(NameProperty, ref this.name, value);
                 this.RaisePropertyChanged(GreetingProperty, prevGreeting, this.Greeting);
             }
         }
 
-        public static readonly AvaloniaProperty<string> NameProperty = AvaloniaProperty.Register<ViewModel,string>(nameof(Name));
-        public static readonly AvaloniaProperty<string> GreetingProperty = AvaloniaProperty.Register<ViewModel,string>(nameof(Greeting));
+        public static readonly AvaloniaProperty<string> NameProperty = AvaloniaProperty.Register<ViewModel, string>(nameof(Name));
+        public static readonly AvaloniaProperty<string> GreetingProperty = AvaloniaProperty.Register<ViewModel, string>(nameof(Greeting));
     }
 }";
                 AnalyzerAssert.Valid(Analyzer, testCode);
