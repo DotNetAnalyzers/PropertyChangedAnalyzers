@@ -93,6 +93,21 @@ namespace RoslynSandbox
                 AnalyzerAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
+
+            [Test]
+            public void ReactiveUI()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : ReactiveUI.ReactiveObject
+    {
+        public int Bar { get; set; }
+    }
+}";
+                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.ReactiveUIReferences);
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
         }
     }
 }

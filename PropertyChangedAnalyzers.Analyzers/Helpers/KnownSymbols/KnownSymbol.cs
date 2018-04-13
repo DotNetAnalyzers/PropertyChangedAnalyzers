@@ -45,6 +45,7 @@ namespace PropertyChangedAnalyzers
         internal static readonly StyletPropertyChangedBase StyletPropertyChangedBase = new StyletPropertyChangedBase();
         internal static readonly MvvmCrossCoreMvxNotifyPropertyChanged MvvmCrossCoreMvxNotifyPropertyChanged = new MvvmCrossCoreMvxNotifyPropertyChanged();
         internal static readonly MicrosoftPracticesPrismMvvmBindableBase MicrosoftPracticesPrismMvvmBindableBase = new MicrosoftPracticesPrismMvvmBindableBase();
+        internal static readonly IReactiveObject IReactiveObject = new IReactiveObject();
 
         private static QualifiedType Create(string qualifiedName, string alias = null)
         {

@@ -399,7 +399,8 @@ namespace PropertyChangedAnalyzers
                     method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChanged ||
                     method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChangedOfT ||
                     method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChanged ||
-                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChangedOfT)
+                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChangedOfT ||
+                    method == KnownSymbol.IReactiveObject.RaisePropertyChanged)
                 {
                     return AnalysisResult.Yes;
                 }
@@ -540,7 +541,8 @@ namespace PropertyChangedAnalyzers
                 candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
                 candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
                 candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
-                candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty)
+                candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty ||
+                candidate == KnownSymbol.IReactiveObject.SetAndRaiseIfChanged)
             {
                 return AnalysisResult.Yes;
             }
