@@ -65,35 +65,64 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public void RaisePropertyChanged()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Avalonia.AvaloniaObject
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set {
+                if(this.name==value)
+                {
+                    return;
+                }
+                this.RaisePropertyChanged(NameProperty, this.name, value);
+                this.name=value;
+            }
+        }
+        
+        public static readonly Avalonia.AvaloniaProperty<string> NameProperty = Avalonia.AvaloniaProperty.Register<ViewModel,string>(nameof(Name));
+    }
+}";
+                AnalyzerAssert.Valid(Analyzer, testCode);
+            }
+
+            [Test]
             public void SetAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
 {
-    using Avalonia
+    using Avalonia;
     public class ViewModel : AvaloniaObject
     {
         private string name;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string Greeting { get { return $""Hello { this.name}""; } }
 
         public string Name
         {
             get { return this.name; }
             set
             {
-                if(name==value)
+                if (name == value)
                 {
                     return;
                 }
-                string previousGreeting=Greeting;
-                this.SetAndRaise(NameProperty, ref name, value);
-                this.RaisePropertyChange(GreetingProperty, previousGreeting, Greeting);
+                string prevGreeting = this.Greeting;
+                this.SetAndRaise(NameProperty, ref this.name, value);
+                this.RaisePropertyChanged(GreetingProperty, prevGreeting, this.Greeting);
             }
         }
 
-        public static readonly AvaloniaProperty<string> NameProperty = AvaloniaProperty.Register<ViewModel,string>(nameof(Name));
-        public static readonly AvaloniaProperty<string> GreetingProperty = AvaloniaProperty.Register<ViewModel,string>(nameof(Greeting));
+        public static readonly AvaloniaProperty<string> NameProperty = AvaloniaProperty.Register<ViewModel, string>(nameof(Name));
+        public static readonly AvaloniaProperty<string> GreetingProperty = AvaloniaProperty.Register<ViewModel, string>(nameof(Greeting));
     }
 }";
                 AnalyzerAssert.Valid(Analyzer, testCode);

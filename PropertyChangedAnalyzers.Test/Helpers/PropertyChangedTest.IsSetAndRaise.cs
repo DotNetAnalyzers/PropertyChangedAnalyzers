@@ -329,12 +329,12 @@ namespace RoslynSandbox
 
     public class Foo : AvaloniaObject
     {
-        private int value;
+        private int _value;
 
         public int Value
         {
-            get { return value; }
-            set { this.SetAndRaise(ValueProperty, ref this.value, value); }
+            get { return _value; }
+            set { this.SetAndRaise(ValueProperty, ref this._value, value); }
         }
 
         public static readonly AvaloniaProperty<int> ValueProperty = AvaloniaProperty.Register<Foo,int>(nameof(Value));
