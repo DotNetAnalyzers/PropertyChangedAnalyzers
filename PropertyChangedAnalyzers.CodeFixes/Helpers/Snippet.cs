@@ -48,7 +48,9 @@ namespace PropertyChangedAnalyzers
 
         internal static string OnPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
         {
-            if (invoker.IsCallerMemberName())
+            if (invoker != null &&
+                invoker.Parameters.TrySingle(out var parameter) &&
+                parameter.IsCallerMemberName())
             {
                 return usesUnderscoreNames
                     ? $"{invoker.Name}();"
