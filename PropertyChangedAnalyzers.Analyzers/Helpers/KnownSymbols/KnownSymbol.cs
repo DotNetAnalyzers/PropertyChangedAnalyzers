@@ -1,6 +1,8 @@
 // ReSharper disable InconsistentNaming
 namespace PropertyChangedAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal static class KnownSymbol
     {
         internal static readonly ObjectType Object = new ObjectType();

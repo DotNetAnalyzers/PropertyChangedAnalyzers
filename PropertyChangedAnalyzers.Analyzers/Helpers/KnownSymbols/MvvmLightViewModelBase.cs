@@ -1,5 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class MvvmLightViewModelBase : QualifiedType
     {
         internal readonly QualifiedMethod Set;

@@ -1,5 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class StyletPropertyChangedBase : QualifiedType
     {
         internal readonly QualifiedMethod SetAndNotify;

@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -104,7 +105,7 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol candidate &&
+            if (SemanticModelExt.GetSymbolSafe(semanticModel, invocation, cancellationToken) is IMethodSymbol candidate &&
                 candidate == expected)
             {
                 result = candidate;

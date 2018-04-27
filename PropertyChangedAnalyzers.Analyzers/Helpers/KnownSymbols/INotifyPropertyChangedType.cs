@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
+    using Gu.Roslyn.AnalyzerExtensions;
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     internal class INotifyPropertyChangedType : QualifiedType

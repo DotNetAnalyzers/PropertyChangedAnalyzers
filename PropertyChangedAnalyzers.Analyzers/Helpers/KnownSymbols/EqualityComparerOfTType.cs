@@ -1,5 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class EqualityComparerOfTType : QualifiedType
     {
         internal readonly QualifiedMethod EqualsMethod;

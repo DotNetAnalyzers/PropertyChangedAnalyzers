@@ -1,5 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class DependencyPropertyKeyType : QualifiedType
     {
         internal readonly QualifiedProperty DependencyProperty;

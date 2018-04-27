@@ -1,5 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class MicrosoftPracticesPrismMvvmBindableBase : QualifiedType
     {
         internal readonly QualifiedMethod SetProperty;

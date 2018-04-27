@@ -1,5 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class CaliburnMicroPropertyChangedBase : QualifiedType
     {
         internal readonly QualifiedMethod Set;

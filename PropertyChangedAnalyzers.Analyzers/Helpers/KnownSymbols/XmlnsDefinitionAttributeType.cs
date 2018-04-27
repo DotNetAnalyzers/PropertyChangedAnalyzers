@@ -1,5 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
+
     internal class XmlnsDefinitionAttributeType : QualifiedType
     {
         internal readonly string XmlNamespaceArgumentName = "xmlNamespace";

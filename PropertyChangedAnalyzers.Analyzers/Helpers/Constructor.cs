@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -14,7 +15,7 @@ namespace PropertyChangedAnalyzers
                 if (simpleName.Identifier.ValueText == qualifiedType.Type ||
                     AliasWalker.Contains(objectCreation.SyntaxTree, simpleName.Identifier.ValueText))
                 {
-                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
+                    ctor = SemanticModelExt.GetSymbolSafe(semanticModel, objectCreation, cancellationToken) as IMethodSymbol;
                     return ctor?.ContainingType == qualifiedType;
                 }
 
@@ -27,7 +28,7 @@ namespace PropertyChangedAnalyzers
                 if (typeName == qualifiedType.Type ||
                     AliasWalker.Contains(objectCreation.SyntaxTree, typeName))
                 {
-                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken) as IMethodSymbol;
+                    ctor = SemanticModelExt.GetSymbolSafe(semanticModel, objectCreation, cancellationToken) as IMethodSymbol;
                     return ctor?.ContainingType == qualifiedType;
                 }
 
