@@ -4,6 +4,7 @@ namespace PropertyChangedAnalyzers
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -13,15 +14,13 @@ namespace PropertyChangedAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveExpressionCodeFix))]
     [Shared]
-    internal class RemoveExpressionCodeFix : CodeFixProvider
+    internal class RemoveExpressionCodeFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC012DontUseExpression.DiagnosticId);
 
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
@@ -42,7 +41,7 @@ namespace PropertyChangedAnalyzers
                 var type = semanticModel.GetDeclaredSymbolSafe(argument?.FirstAncestorOrSelf<ClassDeclarationSyntax>(), context.CancellationToken);
                 if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker))
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         "Use overload that does not use expression.",
                         (editor, cancellationToken) => RemoveExpression(editor, argument, invoker, underscoreFields, cancellationToken),
                         this.GetType(),
@@ -61,20 +60,20 @@ namespace PropertyChangedAnalyzers
                 {
                     editor.ReplaceNode(
                         invocation,
-                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, property?.Name, usesUnderscoreNames).TrimEnd(';'))
-                                     .WithSimplifiedNames()
-                                     .WithLeadingElasticLineFeed()
-                                     .WithTrailingElasticLineFeed()
+                        Trivia.WithTrailingElasticLineFeed(
+                                         SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, property?.Name, usesUnderscoreNames).TrimEnd(';'))
+                                                      .WithSimplifiedNames()
+                                                      .WithLeadingElasticLineFeed())
                                      .WithAdditionalAnnotations(Formatter.Annotation));
                 }
                 else
                 {
                     editor.ReplaceNode(
                         invocation,
-                        SyntaxFactory.ParseExpression(Snippet.OnOtherPropertyChanged(invoker, name, usesUnderscoreNames).TrimEnd(';'))
-                                     .WithSimplifiedNames()
-                                     .WithLeadingElasticLineFeed()
-                                     .WithTrailingElasticLineFeed()
+                        Trivia.WithTrailingElasticLineFeed(
+                                         SyntaxFactory.ParseExpression(Snippet.OnOtherPropertyChanged(invoker, name, usesUnderscoreNames).TrimEnd(';'))
+                                                      .WithSimplifiedNames()
+                                                      .WithLeadingElasticLineFeed())
                                      .WithAdditionalAnnotations(Formatter.Annotation));
                 }
             }

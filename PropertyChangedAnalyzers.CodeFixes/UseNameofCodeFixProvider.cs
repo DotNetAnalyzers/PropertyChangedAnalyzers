@@ -4,6 +4,7 @@ namespace PropertyChangedAnalyzers
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -12,16 +13,13 @@ namespace PropertyChangedAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseNameofCodeFixProvider))]
     [Shared]
-    internal class UseNameofCodeFixProvider : CodeFixProvider
+    internal class UseNameofCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC013UseNameof.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
@@ -37,7 +35,7 @@ namespace PropertyChangedAnalyzers
                 var argument = (ArgumentSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                 if (argument.Expression is LiteralExpressionSyntax literal)
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         "Use nameof",
                         (editor, cancellationToken) => ApplyFix(editor, argument, literal.Token.ValueText, cancellationToken),
                         this.GetType(),
@@ -56,15 +54,13 @@ namespace PropertyChangedAnalyzers
             {
                 editor.ReplaceNode(
                     argument.Expression,
-                    (x, _) => SyntaxFactory.ParseExpression($"nameof(this.{name})")
-                                           .WithTriviaFrom(x));
+                    (x, _) => SyntaxNodeExtensions.WithTriviaFrom(SyntaxFactory.ParseExpression($"nameof(this.{name})"), x));
             }
             else
             {
                 editor.ReplaceNode(
                     argument.Expression,
-                    (x, _) => SyntaxFactory.ParseExpression($"nameof({name})")
-                                           .WithTriviaFrom(x));
+                    (x, _) => SyntaxNodeExtensions.WithTriviaFrom(SyntaxFactory.ParseExpression($"nameof({name})"), x));
             }
         }
 

@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -14,16 +14,13 @@ namespace PropertyChangedAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CheckIfDifferentBeforeNotifyFixProvider))]
     [Shared]
-    internal class CheckIfDifferentBeforeNotifyFixProvider : CodeFixProvider
+    internal class CheckIfDifferentBeforeNotifyFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC005CheckIfDifferentBeforeNotifying.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                                    .ConfigureAwait(false);
@@ -54,7 +51,7 @@ namespace PropertyChangedAnalyzers
                         continue;
                     }
 
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         "Check that value is different before notifying.",
                         (editor, cancellationToken) => AddCheckIfDifferent(editor, assignment, cancellationToken),
                         this.GetType(),
@@ -67,7 +64,7 @@ namespace PropertyChangedAnalyzers
                         ReferenceEquals(setter.Body.Statements[0], statementSyntax) &&
                         PropertyChanged.TryGetSetAndRaise(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",
                             (editor, cancellationToken) => UseSetAndRaise(editor, setter, assignment, setAndRaiseMethod),
                             $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",
@@ -82,7 +79,7 @@ namespace PropertyChangedAnalyzers
                         if (invocationStatement.Parent is BlockSyntax block &&
                             block.Statements.IndexOf(setAndRaiseStatement) == block.Statements.IndexOf(invocationStatement) - 1)
                         {
-                            context.RegisterDocumentEditorFix(
+                            context.RegisterCodeFix(
                                     "Check that value is different before notifying.",
                                     (editor, cancellationToken) => CreateIf(editor, setAndRaiseStatement, invocationStatement),
                                     this.GetType(),
@@ -94,7 +91,7 @@ namespace PropertyChangedAnalyzers
                         if (invocationStatement.Parent is BlockSyntax block &&
                             block.Statements.IndexOf(ifSetAndRaiseStatement) == block.Statements.IndexOf(invocationStatement) - 1)
                         {
-                            context.RegisterDocumentEditorFix(
+                            context.RegisterCodeFix(
                                 "Check that value is different before notifying.",
                                 (editor, cancellationToken) => AddToIf(editor, ifSetAndRaiseStatement, invocationStatement),
                                 this.GetType(),
@@ -121,10 +118,9 @@ namespace PropertyChangedAnalyzers
                                         .AppendLine("}")
                                         .AppendLine()
                                         .Return();
-            var ifReturn = SyntaxFactory.ParseStatement(code)
-                                        .WithSimplifiedNames()
-                                        .WithLeadingElasticLineFeed()
-                                        .WithTrailingElasticLineFeed()
+            var ifReturn = Trivia.WithTrailingElasticLineFeed(SyntaxFactory.ParseStatement(code)
+                 .WithSimplifiedNames()
+                 .WithLeadingElasticLineFeed())
                                         .WithAdditionalAnnotations(Formatter.Annotation);
             editor.InsertBefore(statementSyntax, ifReturn);
         }
@@ -143,10 +139,9 @@ namespace PropertyChangedAnalyzers
                                                 .AppendLine("}")
                                                 .Return();
 
-                    return SyntaxFactory.ParseStatement(code)
-                                        .WithSimplifiedNames()
-                                        .WithLeadingElasticLineFeed()
-                                        .WithTrailingElasticLineFeed()
+                    return Trivia.WithTrailingElasticLineFeed(SyntaxFactory.ParseStatement(code)
+                 .WithSimplifiedNames()
+                 .WithLeadingElasticLineFeed())
                                         .WithAdditionalAnnotations(Formatter.Annotation);
                 });
         }
@@ -160,11 +155,11 @@ namespace PropertyChangedAnalyzers
                 {
                     editor.ReplaceNode(
                         body,
-                        body.AddStatements(invocation.WithLeadingElasticLineFeed()));
+                        body.AddStatements(Trivia.WithLeadingElasticLineFeed(invocation)));
                 }
                 else
                 {
-                    editor.InsertAfter(body.Statements.Last(), invocation.WithLeadingElasticLineFeed());
+                    editor.InsertAfter(body.Statements.Last(), Trivia.WithLeadingElasticLineFeed(invocation));
                 }
             }
             else
@@ -174,39 +169,39 @@ namespace PropertyChangedAnalyzers
                     editor.RemoveNode(invocation);
                     editor.ReplaceNode(
                         ifSetAndRaise,
-                        (x, _) => ((IfStatementSyntax)x)
-                            .WithStatement(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation))
-                            .WithSimplifiedNames()
-                            .WithTrailingElasticLineFeed()
-                            .WithAdditionalAnnotations(Formatter.Annotation));
+                        (x, _) => Trivia.WithTrailingElasticLineFeed(
+                                            ((IfStatementSyntax)x)
+                                            .WithStatement(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation))
+                                            .WithSimplifiedNames())
+                                        .WithAdditionalAnnotations(Formatter.Annotation));
                 }
                 else
                 {
                     editor.RemoveNode(invocation);
                     editor.ReplaceNode(
                         ifSetAndRaise.Statement,
-                        (x, _) => SyntaxFactory.Block(ifSetAndRaise.Statement, invocation)
-                                                .WithSimplifiedNames()
-                                                .WithTrailingElasticLineFeed()
+                        (x, _) => Trivia.WithTrailingElasticLineFeed(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation)
+                 .WithSimplifiedNames())
                                                 .WithAdditionalAnnotations(Formatter.Annotation));
                 }
             }
 
-            editor.FormatNode(ifSetAndRaise);
+            DocumentEditorExt.FormatNode(editor, ifSetAndRaise);
         }
 
         private static void UseSetAndRaise(DocumentEditor editor, AccessorDeclarationSyntax setter, AssignmentExpressionSyntax assignment, IMethodSymbol setAndRaise)
         {
             var underscoreFields = CodeStyle.UnderscoreFields(editor.SemanticModel);
-            editor.ReplaceNode(
+            DocumentEditorExt.ReplaceNode(
+                editor,
                 setter,
-                x => x.WithBody(null)
-                      .WithExpressionBody(
-                          SyntaxFactory.ArrowExpressionClause(
-                              SyntaxFactory.ParseExpression(
-                                  $"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {assignment.Left}, value);")))
-                      .WithTrailingElasticLineFeed()
-                      .WithAdditionalAnnotations(Formatter.Annotation));
+                x => Trivia.WithTrailingElasticLineFeed(
+                               x.WithBody(null)
+                                .WithExpressionBody(
+                                    SyntaxFactory.ArrowExpressionClause(
+                                        SyntaxFactory.ParseExpression(
+                                            $"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {assignment.Left}, value);"))))
+                           .WithAdditionalAnnotations(Formatter.Annotation));
         }
     }
 }

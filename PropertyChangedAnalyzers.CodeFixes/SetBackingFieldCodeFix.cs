@@ -3,6 +3,7 @@ namespace PropertyChangedAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -11,15 +12,13 @@ namespace PropertyChangedAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SetBackingFieldCodeFix))]
     [Shared]
-    internal class SetBackingFieldCodeFix : CodeFixProvider
+    internal class SetBackingFieldCodeFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC014PreferSettingBackingFieldInCtor.DiagnosticId);
 
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
@@ -39,9 +38,10 @@ namespace PropertyChangedAnalyzers
                     Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                     Property.TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, context.CancellationToken, out var field))
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         "Set backing field.",
                         (e, cancellationToken) => SetBackingField(e, assignment, field),
+                        "Set backing field.",
                         diagnostic);
                 }
             }

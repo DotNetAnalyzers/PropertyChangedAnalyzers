@@ -3,7 +3,7 @@ namespace PropertyChangedAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
-
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCallerMemberNameCodeFixProvider))]
     [Shared]
-    internal class UseCallerMemberNameCodeFixProvider : CodeFixProvider
+    internal class UseCallerMemberNameCodeFixProvider : DocumentEditorCodeFixProvider
     {
         private static readonly AttributeListSyntax CallerMemberName =
             SyntaxFactory.AttributeList(
@@ -24,10 +24,8 @@ namespace PropertyChangedAnalyzers
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC004UseCallerMemberName.DiagnosticId);
 
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
@@ -45,7 +43,7 @@ namespace PropertyChangedAnalyzers
                 var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                 if (node.FirstAncestorOrSelf<ParameterSyntax>() is ParameterSyntax parameter)
                 {
-                    context.RegisterDocumentEditorFix(
+                    context.RegisterCodeFix(
                         "Use [CallerMemberName]",
                         (editor, x) => editor.ReplaceNode(
                             parameter,
@@ -63,7 +61,7 @@ namespace PropertyChangedAnalyzers
                     {
                         if (parameterSymbol.IsCallerMemberName())
                         {
-                            context.RegisterDocumentEditorFix(
+                            context.RegisterCodeFix(
                             "Use [CallerMemberName]",
                             (editor, _) => editor.RemoveNode(argument),
                             this.GetType(),
@@ -71,7 +69,7 @@ namespace PropertyChangedAnalyzers
                         }
                         else if (SymbolExt.TrySingleDeclaration((ISymbol)parameterSymbol, context.CancellationToken, out ParameterSyntax parameterSyntax))
                         {
-                            context.RegisterDocumentEditorFix(
+                            context.RegisterCodeFix(
                                 "Use [CallerMemberName]",
                                 (editor, x) =>
                                 {

@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -12,17 +12,15 @@ namespace PropertyChangedAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCorrectEqualityCodeFixProvider))]
     [Shared]
-    internal class UseCorrectEqualityCodeFixProvider : CodeFixProvider
+    internal class UseCorrectEqualityCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             INPC006UseReferenceEquals.DiagnosticId,
             INPC006UseObjectEqualsForReferenceTypes.DiagnosticId);
 
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                               .ConfigureAwait(false);
@@ -73,15 +71,15 @@ namespace PropertyChangedAnalyzers
                             ? backingField.Name
                             : $"this.{backingField.Name}";
 
-                        var equalsExpression = SyntaxFactory.ParseExpression(
-                                                                Snippet.EqualityCheck(
-                                                                    property.Type,
-                                                                    "value",
-                                                                    fieldAccess,
-                                                                    semanticModel))
-                                                            .WithSimplifiedNames();
+                        var equalsExpression = Simplify.WithSimplifiedNames(
+                                                                SyntaxFactory.ParseExpression(
+                                                                    Snippet.EqualityCheck(
+                                                                        property.Type,
+                                                                        "value",
+                                                                        fieldAccess,
+                                                                        semanticModel)));
 
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             $"Use {equalsExpression}",
                             (editor, cancellationToken) => editor.ReplaceNode(ifStatement.Condition, equalsExpression),
                             this.GetType(),

@@ -3,6 +3,7 @@ namespace PropertyChangedAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -12,16 +13,13 @@ namespace PropertyChangedAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NotifyPropertyChangedCodeFixProvider))]
     [Shared]
-    internal class NotifyPropertyChangedCodeFixProvider : CodeFixProvider
+    internal class NotifyPropertyChangedCodeFixProvider : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC003NotifyWhenPropertyChanges.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
@@ -47,7 +45,7 @@ namespace PropertyChangedAnalyzers
                             if (invocation.Parent is ExpressionStatementSyntax ||
                                 invocation.Parent is ArrowExpressionClauseSyntax)
                             {
-                                context.RegisterDocumentEditorFix(
+                                context.RegisterCodeFix(
                                     $"Notify that property {property} changes.",
                                     (editor, cancellationToken) => MakeNotifyCreateIf(
                                         editor,
@@ -62,7 +60,7 @@ namespace PropertyChangedAnalyzers
 
                             if (invocation.Parent is IfStatementSyntax ifStatement)
                             {
-                                context.RegisterDocumentEditorFix(
+                                context.RegisterCodeFix(
                                     $"Notify that property {property} changes.",
                                     (editor, _) => MakeNotifyInIf(
                                         editor,
@@ -80,7 +78,7 @@ namespace PropertyChangedAnalyzers
                                 unary.Parent is IfStatementSyntax ifStatement2 &&
                                 ifStatement2.IsReturnOnly())
                             {
-                                context.RegisterDocumentEditorFix(
+                                context.RegisterCodeFix(
                                     $"Notify that property {property} changes.",
                                     (editor, _) => MakeNotify(
                                         editor,
@@ -94,7 +92,7 @@ namespace PropertyChangedAnalyzers
                             }
                         }
 
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             $"Notify that property {property} changes.",
                             (editor, _) => MakeNotify(
                                 editor,
@@ -117,10 +115,10 @@ namespace PropertyChangedAnalyzers
                 propertyDeclaration.Identifier.ValueText == propertyName
                     ? Snippet.OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)
                     : Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames);
-            var onPropertyChanged = SyntaxFactory.ParseStatement(snippet)
-                                                 .WithSimplifiedNames()
-                                                 .WithLeadingElasticLineFeed()
-                                                 .WithTrailingElasticLineFeed()
+            var onPropertyChanged = Trivia.WithTrailingElasticLineFeed(
+                                                     SyntaxFactory.ParseStatement(snippet)
+                                                                  .WithSimplifiedNames()
+                                                                  .WithLeadingElasticLineFeed())
                                                  .WithAdditionalAnnotations(Formatter.Annotation);
             if (assignment.Parent is AnonymousFunctionExpressionSyntax anonymousFunction)
             {
@@ -171,13 +169,13 @@ namespace PropertyChangedAnalyzers
                                                     .AppendLine("}")
                                                     .Return();
 
-                        return SyntaxFactory.ParseStatement(code)
-                                            .WithSimplifiedNames()
-                                            .WithLeadingElasticLineFeed()
-                                            .WithTrailingElasticLineFeed()
+                        return Trivia.WithTrailingElasticLineFeed(
+                                                SyntaxFactory.ParseStatement(code)
+                                                             .WithSimplifiedNames()
+                                                             .WithLeadingElasticLineFeed())
                                             .WithAdditionalAnnotations(Formatter.Annotation);
                     });
-                editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
+                DocumentEditorExt.FormatNode(editor, invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
                 return;
             }
 
@@ -185,7 +183,8 @@ namespace PropertyChangedAnalyzers
                 arrow.Parent is AccessorDeclarationSyntax accessor)
             {
                 editor.RemoveNode(accessor.ExpressionBody);
-                editor.ReplaceNode(
+                DocumentEditorExt.ReplaceNode(
+                    editor,
                     accessor,
                     x =>
                     {
@@ -196,24 +195,24 @@ namespace PropertyChangedAnalyzers
                                                     .AppendLine("}")
                                                     .Return();
 
-                        var body = SyntaxFactory.ParseStatement(code)
-                                                .WithSimplifiedNames()
-                                                .WithLeadingElasticLineFeed()
-                                                .WithTrailingElasticLineFeed()
+                        var body = Trivia.WithTrailingElasticLineFeed(
+                                                    SyntaxFactory.ParseStatement(code)
+                                                                 .WithSimplifiedNames()
+                                                                 .WithLeadingElasticLineFeed())
                                                 .WithAdditionalAnnotations(Formatter.Annotation);
                         return x.WithBody(SyntaxFactory.Block(body))
                                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                     });
-                editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
+                DocumentEditorExt.FormatNode(editor, invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
             }
         }
 
         private static void MakeNotifyInIf(DocumentEditor editor, IfStatementSyntax ifStatement, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
         {
-            var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
-                                                 .WithSimplifiedNames()
-                                                 .WithLeadingElasticLineFeed()
-                                                 .WithTrailingElasticLineFeed()
+            var onPropertyChanged = Trivia.WithTrailingElasticLineFeed(
+                                                     SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
+                                                                  .WithSimplifiedNames()
+                                                                  .WithLeadingElasticLineFeed())
                                                  .WithAdditionalAnnotations(Formatter.Annotation);
 
             if (ifStatement.Statement is BlockSyntax block)
@@ -244,9 +243,9 @@ namespace PropertyChangedAnalyzers
                                                     .AppendLine("}")
                                                     .Return();
 
-                        return SyntaxFactory.ParseStatement(code)
-                                            .WithSimplifiedNames()
-                                            .WithTrailingElasticLineFeed()
+                        return Trivia.WithTrailingElasticLineFeed(
+                                                SyntaxFactory.ParseStatement(code)
+                                                             .WithSimplifiedNames())
                                             .WithAdditionalAnnotations(Formatter.Annotation);
                     });
             }

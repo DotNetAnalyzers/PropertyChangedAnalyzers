@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakePropertyNotifyCodeFixProvider))]
     [Shared]
-    internal class MakePropertyNotifyCodeFixProvider : CodeFixProvider
+    internal class MakePropertyNotifyCodeFixProvider : DocumentEditorCodeFixProvider
     {
         private const string NotifyWhenValueChanges = "Notify when value changes.";
 
@@ -23,10 +23,7 @@ namespace PropertyChangedAnalyzers
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC002MutablePublicPropertyShouldNotify.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider() => DocumentEditorFixAllProvider.Default;
-
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
@@ -53,7 +50,7 @@ namespace PropertyChangedAnalyzers
                     var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
                     if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             key,
                             (editor, cancellationToken) => MakeAutoPropertySet(
                                 editor,
@@ -66,7 +63,7 @@ namespace PropertyChangedAnalyzers
                     }
                     else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                     {
-                        context.RegisterDocumentEditorFix(
+                        context.RegisterCodeFix(
                             key,
                             (editor, cancellationToken) => MakeWithBackingFieldSet(
                                 editor,
@@ -86,7 +83,7 @@ namespace PropertyChangedAnalyzers
                     {
                         if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                         {
-                            context.RegisterDocumentEditorFix(
+                            context.RegisterCodeFix(
                                 NotifyWhenValueChanges,
                                 (editor, cancellationToken) => MakeAutoPropertyNotifyWhenValueChanges(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
                                 NotifyWhenValueChanges,
@@ -94,13 +91,13 @@ namespace PropertyChangedAnalyzers
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                         {
-                            context.RegisterDocumentEditorFix(
+                            context.RegisterCodeFix(
                                 NotifyWhenValueChanges,
                                 (editor, cancellationToken) => MakeWithBackingFieldNotifyWhenValueChanges(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
                                 NotifyWhenValueChanges,
                                 diagnostic);
 
-                            context.RegisterDocumentEditorFix(
+                            context.RegisterCodeFix(
                                 "Notify.",
                                 (editor, cancellationToken) => MakeWithBackingFieldNotify(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
                                 "Notify.",
@@ -147,24 +144,26 @@ namespace PropertyChangedAnalyzers
                                             .AppendLine("}")
                                             .Return();
                 var template = ParseProperty(code);
-                editor.ReplaceNode(
+                DocumentEditorExt.ReplaceNode(
+                    editor,
                     getter,
-                    x => x.WithExpressionBody(template.Getter().ExpressionBody)
-                          .WithTrailingElasticLineFeed()
+                    x => Trivia.WithTrailingElasticLineFeed(x.WithExpressionBody(template.Getter().ExpressionBody))
                           .WithAdditionalAnnotations(Formatter.Annotation));
-                editor.ReplaceNode(
+                DocumentEditorExt.ReplaceNode(
+                    editor,
                     setter,
                     x => x.WithBody(template.Setter().Body)
                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
                           .WithAdditionalAnnotations(Formatter.Annotation));
                 if (propertyDeclaration.Initializer != null)
                 {
-                    editor.ReplaceNode(
+                    DocumentEditorExt.ReplaceNode(
+                        editor,
                         propertyDeclaration,
                         x => x.WithoutInitializer());
                 }
 
-                editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                DocumentEditorExt.ReplaceNode(editor, propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
             }
         }
 
@@ -199,16 +198,17 @@ namespace PropertyChangedAnalyzers
                                             .AppendLine("}")
                                             .Return();
                 var template = ParseProperty(code);
-                editor.ReplaceNode(
+                DocumentEditorExt.ReplaceNode(
+                    editor,
                     getter,
-                    x => x.WithExpressionBody(template.Getter().ExpressionBody)
-                          .WithLeadingLineFeed());
+                    x => Trivia.WithLeadingLineFeed(x.WithExpressionBody(template.Getter().ExpressionBody)));
 
-                editor.ReplaceNode(
+                DocumentEditorExt.ReplaceNode(
+                    editor,
                     setter,
-                    x => x.WithExpressionBody(template.Setter().ExpressionBody)
-                          .WithLeadingLineFeed()
-                          .WithTrailingLineFeed());
+                    x => Trivia.WithTrailingLineFeed(
+                              x.WithExpressionBody(template.Setter().ExpressionBody)
+                               .WithLeadingLineFeed()));
 
                 if (propertyDeclaration.Initializer != null)
                 {
@@ -217,7 +217,7 @@ namespace PropertyChangedAnalyzers
                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
 
-                editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                DocumentEditorExt.ReplaceNode(editor, propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
             }
         }
 
@@ -263,7 +263,7 @@ namespace PropertyChangedAnalyzers
                                       .WithExpressionBody(null)
                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                         });
-                    editor.FormatNode(propertyDeclaration);
+                    DocumentEditorExt.FormatNode(editor, propertyDeclaration);
                 }
 
                 if (setter.Body?.Statements.Count == 1 &&
@@ -277,24 +277,24 @@ namespace PropertyChangedAnalyzers
                                                 .AppendLine("        }")
                                                 .AppendLine()
                                                 .Return();
-                    var ifStatement = SyntaxFactory.ParseStatement(code)
-                                                   .WithSimplifiedNames()
-                                                   .WithLeadingElasticLineFeed()
-                                                   .WithTrailingElasticLineFeed()
+                    var ifStatement = Trivia.WithTrailingElasticLineFeed(
+                                                       SyntaxFactory.ParseStatement(code)
+                                                                    .WithSimplifiedNames()
+                                                                    .WithLeadingElasticLineFeed())
                                                    .WithAdditionalAnnotations(Formatter.Annotation);
                     editor.InsertBefore(
                         statement,
                         ifStatement);
                     var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
-                    var notifyStatement = SyntaxFactory
-                                          .ParseStatement(
-                                              Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
-                                          .WithSimplifiedNames()
-                                          .WithLeadingElasticLineFeed()
-                                          .WithTrailingElasticLineFeed()
+                    var notifyStatement = Trivia.WithTrailingElasticLineFeed(
+                                              SyntaxFactory
+                                                  .ParseStatement(
+                                                      Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
+                                                  .WithSimplifiedNames()
+                                                  .WithLeadingElasticLineFeed())
                                           .WithAdditionalAnnotations(Formatter.Annotation);
                     editor.InsertAfter(statement, notifyStatement);
-                    editor.FormatNode(propertyDeclaration);
+                    DocumentEditorExt.FormatNode(editor, propertyDeclaration);
                 }
             }
         }
@@ -311,11 +311,11 @@ namespace PropertyChangedAnalyzers
             {
                 var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
                 var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                var notifyStatement = SyntaxFactory
-                    .ParseStatement(Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
-                    .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
-                    .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                    .WithSimplifiedNames()
+                var notifyStatement = Simplify.WithSimplifiedNames(
+                                          SyntaxFactory
+                                              .ParseStatement(Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
+                                              .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                                              .WithTrailingTrivia(SyntaxFactory.ElasticMarker))
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 if (setter.ExpressionBody != null)
                 {
@@ -331,12 +331,12 @@ namespace PropertyChangedAnalyzers
                                       .WithExpressionBody(null)
                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                         });
-                    editor.FormatNode(propertyDeclaration);
+                    DocumentEditorExt.FormatNode(editor, propertyDeclaration);
                 }
                 else if (setter.Body != null)
                 {
                     editor.InsertAfter(statement, notifyStatement);
-                    editor.FormatNode(propertyDeclaration);
+                    DocumentEditorExt.FormatNode(editor, propertyDeclaration);
                 }
             }
         }
@@ -352,9 +352,9 @@ namespace PropertyChangedAnalyzers
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
             {
                 var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
-                var setExpression = SyntaxFactory.ParseExpression($"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
-                    .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                    .WithSimplifiedNames()
+                var setExpression = Simplify.WithSimplifiedNames(
+                                                     SyntaxFactory.ParseExpression($"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
+                                                                  .WithTrailingTrivia(SyntaxFactory.ElasticMarker))
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 editor.ReplaceNode(assignment, setExpression);
             }
@@ -362,12 +362,12 @@ namespace PropertyChangedAnalyzers
 
         private static PropertyDeclarationSyntax ParseProperty(string code)
         {
-            return (PropertyDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code)
-                                                           .Members
-                                                           .Single()
-                                                           .WithSimplifiedNames()
-                                                           .WithLeadingElasticLineFeed()
-                                                           .WithTrailingElasticLineFeed()
+            return (PropertyDeclarationSyntax)Trivia.WithTrailingElasticLineFeed(
+                                                               SyntaxFactory.ParseCompilationUnit(code)
+                                                                            .Members
+                                                                            .Single()
+                                                                            .WithSimplifiedNames()
+                                                                            .WithLeadingElasticLineFeed())
                                                            .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
