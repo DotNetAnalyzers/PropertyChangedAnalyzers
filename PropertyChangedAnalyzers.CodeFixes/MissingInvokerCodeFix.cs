@@ -5,6 +5,7 @@ namespace PropertyChangedAnalyzers
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -73,10 +74,11 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
             var type = editor.SemanticModel.GetDeclaredSymbolSafe(classDeclaration, cancellationToken);
-            var underscoreFields = CodeStyle.UnderscoreFields(editor.SemanticModel);
+            var underscoreFields = editor.SemanticModel.UnderscoreFields();
             if (type.IsSealed)
             {
-                editor.AddMethod(
+                DocumentEditorExt.AddMethod(
+                    editor,
                     classDeclaration,
                     ParseMethod(
                         @"
@@ -88,7 +90,8 @@ private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName
             }
             else if (type.IsStatic)
             {
-                editor.AddMethod(
+                DocumentEditorExt.AddMethod(
+                    editor,
                     classDeclaration,
                     ParseMethod(
                         @"
@@ -100,7 +103,8 @@ private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMem
             }
             else
             {
-                editor.AddMethod(
+                DocumentEditorExt.AddMethod(
+                    editor,
                     classDeclaration,
                     ParseMethod(
                         @"
@@ -121,10 +125,10 @@ protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.Caller
                 code = code.Replace("this.", string.Empty);
             }
 
-            return (MethodDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code)
-                                                         .Members
-                                                         .Single()
-                                                         .WithSimplifiedNames()
+            return (MethodDeclarationSyntax)Simplify.WithSimplifiedNames(
+                                                             SyntaxFactory.ParseCompilationUnit(code)
+                                                                          .Members
+                                                                          .Single())
                                                          .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
                                                          .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                          .WithAdditionalAnnotations(Formatter.Annotation);

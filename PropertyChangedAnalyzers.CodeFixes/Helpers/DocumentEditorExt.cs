@@ -5,6 +5,7 @@ namespace PropertyChangedAnalyzers
     using System.Linq;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -35,8 +36,8 @@ namespace PropertyChangedAnalyzers
         {
             var property = editor.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
             var name = usesUnderscoreNames
-                ? $"_{property.Name.ToFirstCharLower()}"
-                : property.Name.ToFirstCharLower();
+                ? $"_{StringExt.ToFirstCharLower(property.Name)}"
+                : StringExt.ToFirstCharLower(property.Name);
             while (property.ContainingType.MemberNames.Any(x => x == name))
             {
                 name += "_";

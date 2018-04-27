@@ -7,6 +7,7 @@ namespace PropertyChangedAnalyzers
     using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -193,8 +194,8 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
             ImplementINotifyPropertyChanged(context, semanticModel, classDeclaration, editor);
-            editor.AddUsing(SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left));
-            editor.AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
+            DocumentEditorExt.AddUsing(editor, SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left));
+            DocumentEditorExt.AddUsing(editor, SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
             return editor.GetChangedDocument();
         }
 
@@ -209,7 +210,7 @@ namespace PropertyChangedAnalyzers
         private static void ImplementINotifyPropertyChanged(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, DocumentEditor editor)
         {
             var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
-            var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
+            var underscoreFields = semanticModel.UnderscoreFields();
             if (!type.Is(KnownSymbol.INotifyPropertyChanged))
             {
                 if (classDeclaration.BaseList != null &&
@@ -228,7 +229,8 @@ namespace PropertyChangedAnalyzers
 
             if (!type.TryFindEventRecursive("PropertyChanged", out _))
             {
-                editor.AddEvent(
+                DocumentEditorExt.AddEvent(
+                    editor,
                     classDeclaration,
                     (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration(
                         "PropertyChanged",
@@ -245,7 +247,8 @@ namespace PropertyChangedAnalyzers
             {
                 if (type.IsSealed)
                 {
-                    editor.AddMethod(
+                    DocumentEditorExt.AddMethod(
+                        editor,
                         classDeclaration,
                         ParseMethod(
                             @"private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -256,7 +259,8 @@ namespace PropertyChangedAnalyzers
                 }
                 else
                 {
-                    editor.AddMethod(
+                    DocumentEditorExt.AddMethod(
+                        editor,
                         classDeclaration,
                         ParseMethod(
                             @"protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -273,7 +277,7 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
             AddBaseType(context, classDeclaration, viewModelBaseType, editor);
-            editor.AddUsing(SyntaxFactory.UsingDirective(viewModelBaseType.Left));
+            DocumentEditorExt.AddUsing(editor, SyntaxFactory.UsingDirective(viewModelBaseType.Left));
             return editor.GetChangedDocument();
         }
 
@@ -335,10 +339,10 @@ namespace PropertyChangedAnalyzers
                 code = code.Replace("this.", string.Empty);
             }
 
-            return (MethodDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code)
-                                                         .Members
-                                                         .Single()
-                                                         .WithSimplifiedNames()
+            return (MethodDeclarationSyntax)Simplify.WithSimplifiedNames(
+                                                             SyntaxFactory.ParseCompilationUnit(code)
+                                                                          .Members
+                                                                          .Single())
                                                          .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
                                                          .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                          .WithAdditionalAnnotations(Formatter.Annotation);
