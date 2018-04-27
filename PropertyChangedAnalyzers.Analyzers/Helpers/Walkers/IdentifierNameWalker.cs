@@ -43,7 +43,7 @@ namespace PropertyChangedAnalyzers
             foreach (var identifierName in this.identifierNames)
             {
                 if (parameter.MetadataName == identifierName.Identifier.ValueText &&
-                    SemanticModelExt.GetSymbolSafe(semanticModel, identifierName, cancellationToken) is IParameterSymbol)
+                    semanticModel.GetSymbolSafe(identifierName, cancellationToken) is IParameterSymbol)
                 {
                     return true;
                 }

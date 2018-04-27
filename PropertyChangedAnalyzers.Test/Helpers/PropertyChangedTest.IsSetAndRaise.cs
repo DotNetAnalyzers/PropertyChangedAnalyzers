@@ -4,7 +4,6 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
@@ -36,7 +35,7 @@ namespace RoslynSandbox
                     MetadataReferences.FromAttributes().Concat(new[] { SpecialMetadataReferences.Stylet }));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("SetAndNotify");
-                var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
@@ -64,7 +63,7 @@ namespace RoslynSandbox
                     MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Set");
-                var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 
@@ -92,7 +91,7 @@ namespace RoslynSandbox
                     MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Set");
-                var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsSetAndRaise(method, semanticModel, CancellationToken.None));
             }
 

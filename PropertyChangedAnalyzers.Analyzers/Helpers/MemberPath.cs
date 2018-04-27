@@ -77,7 +77,7 @@ namespace PropertyChangedAnalyzers
                     declaration.TryGetSetter(out var setter) &&
                     Property.TrySingleAssignmentInSetter(setter, out var assignment))
                 {
-                    using (var set = PooledSet.IncrementUsage(visited))
+                    using (var set = visited.IncrementUsage())
                     {
                         if (set.Add(candidate))
                         {
@@ -269,7 +269,7 @@ namespace PropertyChangedAnalyzers
                         invocation.IsPotentialThisOrBase() &&
                         this.semanticModel.GetSymbolSafe(invocation, this.cancellationToken) is IMethodSymbol method &&
                         Equals(this.containingType, method.ContainingType) &&
-                        method.TrySingleDeclaration(this.cancellationToken, out var declaration) &&
+                        method.TrySingleDeclaration(this.cancellationToken, out MethodDeclarationSyntax declaration) &&
                         this.visited.Add(declaration))
                     {
                         VisitRecursive((SyntaxNode)declaration.Body ?? declaration.ExpressionBody);

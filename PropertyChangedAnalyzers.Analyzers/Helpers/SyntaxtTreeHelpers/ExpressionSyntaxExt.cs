@@ -33,10 +33,10 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            var symbol = SemanticModelExt.SemanticModelFor(semanticModel, expression)
+            var symbol = semanticModel.SemanticModelFor(expression)
                                       .GetTypeInfo(expression, cancellationToken)
                                       .Type;
-            return TypeSymbolExt.Is(symbol, type);
+            return symbol.Is(type);
         }
 
         internal static bool IsSameType(this ExpressionSyntax expression, QualifiedType metadataName, SyntaxNodeAnalysisContext context)
@@ -62,10 +62,10 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            var symbol = SemanticModelExt.SemanticModelFor(semanticModel, expression)
+            var symbol = semanticModel.SemanticModelFor(expression)
                                       .GetTypeInfo(expression, cancellationToken)
                                       .Type;
-            return TypeSymbolExt.IsSameType(symbol, type);
+            return symbol.IsSameType(type);
         }
     }
 }

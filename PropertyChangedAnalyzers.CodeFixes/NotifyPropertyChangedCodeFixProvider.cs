@@ -35,12 +35,12 @@ namespace PropertyChangedAnalyzers
                     var expression = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                                .FirstAncestorOrSelf<ExpressionSyntax>();
                     var typeDeclaration = expression.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-                    var type = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, typeDeclaration, context.CancellationToken);
+                    var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
                     if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
                         invoker.Parameters[0].Type == KnownSymbol.String)
                     {
                         var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-                        var method = (IMethodSymbol)SemanticModelExt.GetSymbolSafe(semanticModel, invocation, context.CancellationToken);
+                        var method = semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
                         if (PropertyChanged.IsSetAndRaise(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
                         {
                             if (invocation.Parent is ExpressionStatementSyntax ||
@@ -116,10 +116,9 @@ namespace PropertyChangedAnalyzers
                 propertyDeclaration.Identifier.ValueText == propertyName
                     ? Snippet.OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)
                     : Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames);
-            var onPropertyChanged = Trivia.WithTrailingElasticLineFeed(
-                                                     SyntaxFactory.ParseStatement(snippet)
-                                                                  .WithSimplifiedNames()
-                                                                  .WithLeadingElasticLineFeed())
+            var onPropertyChanged = SyntaxFactory.ParseStatement(snippet)
+                                                 .WithSimplifiedNames()
+                                                 .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                                  .WithAdditionalAnnotations(Formatter.Annotation);
             if (assignment.Parent is AnonymousFunctionExpressionSyntax anonymousFunction)
             {
@@ -170,10 +169,9 @@ namespace PropertyChangedAnalyzers
                                                     .AppendLine("}")
                                                     .Return();
 
-                        return Trivia.WithTrailingElasticLineFeed(
-                                                SyntaxFactory.ParseStatement(code)
-                                                             .WithSimplifiedNames()
-                                                             .WithLeadingElasticLineFeed())
+                        return SyntaxFactory.ParseStatement(code)
+                                            .WithSimplifiedNames()
+                                            .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                             .WithAdditionalAnnotations(Formatter.Annotation);
                     });
                 editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
@@ -194,10 +192,9 @@ namespace PropertyChangedAnalyzers
                                                     .AppendLine("}")
                                                     .Return();
 
-                        var body = Trivia.WithTrailingElasticLineFeed(
-                                                    SyntaxFactory.ParseStatement(code)
-                                                                 .WithSimplifiedNames()
-                                                                 .WithLeadingElasticLineFeed())
+                        var body = SyntaxFactory.ParseStatement(code)
+                                                .WithSimplifiedNames()
+                                                .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                                 .WithAdditionalAnnotations(Formatter.Annotation);
                         return x.WithBody(SyntaxFactory.Block(body))
                                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
@@ -208,10 +205,9 @@ namespace PropertyChangedAnalyzers
 
         private static void MakeNotifyInIf(DocumentEditor editor, IfStatementSyntax ifStatement, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
         {
-            var onPropertyChanged = Trivia.WithTrailingElasticLineFeed(
-                                                     SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
-                                                                  .WithSimplifiedNames()
-                                                                  .WithLeadingElasticLineFeed())
+            var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
+                                                 .WithSimplifiedNames()
+                                                 .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                                  .WithAdditionalAnnotations(Formatter.Annotation);
 
             if (ifStatement.Statement is BlockSyntax block)
@@ -242,9 +238,8 @@ namespace PropertyChangedAnalyzers
                                                     .AppendLine("}")
                                                     .Return();
 
-                        return Trivia.WithTrailingElasticLineFeed(
-                                                SyntaxFactory.ParseStatement(code)
-                                                             .WithSimplifiedNames())
+                        return SyntaxFactory.ParseStatement(code)
+                                            .WithSimplifiedNames().WithTrailingElasticLineFeed()
                                             .WithAdditionalAnnotations(Formatter.Annotation);
                     });
             }

@@ -40,7 +40,7 @@ namespace PropertyChangedAnalyzers
                     }
                 }
                 else if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
-                         method.TrySingleDeclaration(cancellationToken, out var declaration))
+                         method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax declaration))
                 {
                     switch (Invokes(declaration))
                     {
@@ -305,7 +305,7 @@ namespace PropertyChangedAnalyzers
                     return AnalysisResult.No;
                 }
 
-                method = semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol;
+                method = semanticModel.GetSymbolSafe(invocation, cancellationToken);
                 return IsOnPropertyChanged(method, semanticModel, cancellationToken);
             }
 
@@ -326,7 +326,7 @@ namespace PropertyChangedAnalyzers
 
             var result = AnalysisResult.No;
             if (method.Parameters.TrySingle(out var parameter) &&
-                method.TrySingleDeclaration(cancellationToken, out var declaration))
+                method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax declaration))
             {
                 using (var walker = InvocationWalker.Borrow(declaration))
                 {
@@ -366,7 +366,7 @@ namespace PropertyChangedAnalyzers
                                 if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
                                     method.ContainingType.Is(invokedMethod.ContainingType))
                                 {
-                                    using (var set = PooledSet.IncrementUsage(visited))
+                                    using (var set = visited.IncrementUsage())
                                     {
                                         switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, set))
                                         {
@@ -445,7 +445,7 @@ namespace PropertyChangedAnalyzers
             }
 
             return IsSetAndRaise(
-                semanticModel.GetSymbolSafe(candidate, cancellationToken) as IMethodSymbol,
+                semanticModel.GetSymbolSafe(candidate, cancellationToken),
                 semanticModel,
                 cancellationToken,
                 @checked);
@@ -500,7 +500,7 @@ namespace PropertyChangedAnalyzers
                              IsPropertyChangedInvoke(x, semanticModel, cancellationToken),
                         out _))
                     {
-                        using (var set = PooledSet.IncrementUsage(visited))
+                        using (var set = visited.IncrementUsage())
                         {
                             var result = AnalysisResult.No;
                             foreach (var invocation in walker.Invocations)

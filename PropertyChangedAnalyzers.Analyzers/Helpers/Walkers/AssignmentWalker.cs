@@ -39,7 +39,7 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var assignment in walker.Assignments)
                 {
-                    var assignedSymbol = SemanticModelExt.GetSymbolSafe(semanticModel, assignment.Left, cancellationToken);
+                    var assignedSymbol = semanticModel.GetSymbolSafe(assignment.Left, cancellationToken);
                     if (field.Equals(assignedSymbol))
                     {
                         return true;

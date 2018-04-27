@@ -211,18 +211,8 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            foreach (var declaration in property.Declarations(cancellationToken))
-            {
-                var propertyDeclaration = declaration as PropertyDeclarationSyntax;
-                if (propertyDeclaration == null)
-                {
-                    continue;
-                }
-
-                return TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, cancellationToken, out field);
-            }
-
-            return false;
+            return property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration) &&
+                   TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, cancellationToken, out field);
         }
 
         internal static bool TryGetBackingFieldFromSetter(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)

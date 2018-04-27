@@ -34,7 +34,7 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            if (SemanticModelExt.GetSymbolSafe(semanticModel, invocation, cancellationToken) is IMethodSymbol candidate &&
+            if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol candidate &&
                 candidate == expected)
             {
                 result = candidate;

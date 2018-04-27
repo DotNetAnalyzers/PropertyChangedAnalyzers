@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers
                 if (simpleName.Identifier.ValueText == qualifiedType.Type ||
                     AliasWalker.Contains(objectCreation.SyntaxTree, simpleName.Identifier.ValueText))
                 {
-                    ctor = SemanticModelExt.GetSymbolSafe(semanticModel, objectCreation, cancellationToken) as IMethodSymbol;
+                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken);
                     return ctor?.ContainingType == qualifiedType;
                 }
 
@@ -28,7 +28,7 @@ namespace PropertyChangedAnalyzers
                 if (typeName == qualifiedType.Type ||
                     AliasWalker.Contains(objectCreation.SyntaxTree, typeName))
                 {
-                    ctor = SemanticModelExt.GetSymbolSafe(semanticModel, objectCreation, cancellationToken) as IMethodSymbol;
+                    ctor = semanticModel.GetSymbolSafe(objectCreation, cancellationToken);
                     return ctor?.ContainingType == qualifiedType;
                 }
 
