@@ -173,7 +173,7 @@ namespace PropertyChangedAnalyzers
                         propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) &&
                         TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter) &&
                         !getter.Contains(backing) &&
-                        MemberPath.Uses(getter, pathWalker, context) &&
+                        PropertyPath.Uses(getter, pathWalker, context) &&
                         !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
                         context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
                         PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
@@ -181,7 +181,7 @@ namespace PropertyChangedAnalyzers
                         if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
                             ReferenceEquals(inProperty, propertyDeclaration) &&
                             Property.TrySingleReturnedInGetter(inProperty, out var returned) &&
-                            MemberPath.Uses(backing, returned, context))
+                            PropertyPath.Uses(backing, returned, context))
                         {
                             // We let INPC002 handle this
                             continue;

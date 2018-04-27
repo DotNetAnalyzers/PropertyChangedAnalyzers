@@ -71,7 +71,7 @@ namespace PropertyChangedAnalyzers
 
                             if (assignmentWalker.Assignments.TrySingle(out var singleAssignment) &&
                                 ReturnExpressionsWalker.TryGetSingle(getter, out var singleReturnValue) &&
-                                !MemberPath.Uses(singleAssignment.Left, singleReturnValue, context))
+                                !PropertyPath.Uses(singleAssignment.Left, singleReturnValue, context))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(INPC010GetAndSetSame.Descriptor, propertyDeclaration.GetLocation()));
                             }

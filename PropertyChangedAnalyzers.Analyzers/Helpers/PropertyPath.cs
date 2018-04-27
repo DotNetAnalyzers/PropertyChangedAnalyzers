@@ -5,55 +5,13 @@ namespace PropertyChangedAnalyzers
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    internal static class MemberPath
+    internal static class PropertyPath
     {
         [Obsolete("Don't use this.", error: true)]
         public static new bool Equals(object x, object y) => throw new InvalidOperationException();
-
-        internal static bool Equals(ExpressionSyntax x, ExpressionSyntax y)
-        {
-            if (ReferenceEquals(x, y))
-            {
-                return true;
-            }
-
-            if (x is null ||
-                y is null)
-            {
-                return false;
-            }
-
-            using (var xWalker = PathWalker.Borrow(x))
-            using (var yWalker = PathWalker.Borrow(y))
-            {
-                return Equals(xWalker, yWalker);
-            }
-        }
-
-        internal static bool Equals(PathWalker xWalker, PathWalker yWalker)
-        {
-            var xPath = xWalker.IdentifierNames;
-            var yPath = yWalker.IdentifierNames;
-            if (xPath.Count == 0 ||
-                xPath.Count != yPath.Count)
-            {
-                return false;
-            }
-
-            for (var i = 0; i < xPath.Count; i++)
-            {
-                if (xPath[i].Identifier.ValueText != yPath[i].Identifier.ValueText)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
 
         internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode> visited = null)
         {
@@ -63,7 +21,7 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            using (var assignedPath = PathWalker.Borrow(assigned))
+            using (var assignedPath = MemberPath.PathWalker.Borrow(assigned))
             {
                 var containingType = context.ContainingSymbol.ContainingType;
                 if (UsedMemberWalker.Uses(returned, assignedPath, Search.TopLevel, containingType, context.SemanticModel, context.CancellationToken))
@@ -90,59 +48,30 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool Uses(SyntaxNode scope, PathWalker memberPath, SyntaxNodeAnalysisContext context)
+        internal static bool Uses(SyntaxNode scope, MemberPath.PathWalker memberPath, SyntaxNodeAnalysisContext context)
         {
             return UsedMemberWalker.Uses(scope, memberPath, Search.Recursive, context.ContainingSymbol.ContainingType, context.SemanticModel, context.CancellationToken);
         }
 
-        internal sealed class PathWalker : PooledWalker<PathWalker>
+        private static bool Equals(MemberPath.PathWalker xWalker, MemberPath.PathWalker yWalker)
         {
-            private readonly List<IdentifierNameSyntax> identifierNames = new List<IdentifierNameSyntax>();
-
-            private PathWalker()
+            var xPath = xWalker.IdentifierNames;
+            var yPath = yWalker.IdentifierNames;
+            if (xPath.Count == 0 ||
+                xPath.Count != yPath.Count)
             {
+                return false;
             }
 
-            public IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
-
-            public static PathWalker Borrow(ExpressionSyntax node)
+            for (var i = 0; i < xPath.Count; i++)
             {
-                var walker = BorrowAndVisit(node, () => new PathWalker());
-                if (walker.identifierNames.TryFirst(out var first))
+                if (xPath[i].Identifier.ValueText != yPath[i].Identifier.ValueText)
                 {
-                    if (IdentifierTypeWalker.IsLocalOrParameter(first))
-                    {
-                        walker.identifierNames.Clear();
-                    }
-                }
-
-                return walker;
-            }
-
-            public override void Visit(SyntaxNode node)
-            {
-                switch (node.Kind())
-                {
-                    case SyntaxKind.ConditionalAccessExpression:
-                    case SyntaxKind.SimpleMemberAccessExpression:
-                    case SyntaxKind.MemberBindingExpression:
-                    case SyntaxKind.IdentifierName:
-                        base.Visit(node);
-                        break;
+                    return false;
                 }
             }
 
-            public override void VisitIdentifierName(IdentifierNameSyntax node)
-            {
-                this.identifierNames.Add(node);
-            }
-
-            public override string ToString() => string.Join(".", this.identifierNames);
-
-            protected override void Clear()
-            {
-                this.identifierNames.Clear();
-            }
+            return true;
         }
 
         private sealed class UsedMemberWalker : PooledWalker<UsedMemberWalker>
@@ -180,15 +109,15 @@ namespace PropertyChangedAnalyzers
                 return pooled;
             }
 
-            public static bool Uses(SyntaxNode scope, PathWalker backing, Search search, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
+            public static bool Uses(SyntaxNode scope, MemberPath.PathWalker backing, Search search, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
                 using (var walker = Borrow(scope, search, containingType, semanticModel, cancellationToken))
                 {
                     foreach (var used in walker.usedMembers)
                     {
-                        using (var usedPath = PathWalker.Borrow(used))
+                        using (var usedPath = MemberPath.PathWalker.Borrow(used))
                         {
-                            if (MemberPath.Equals(usedPath, backing))
+                            if (PropertyPath.Equals(usedPath, backing))
                             {
                                 return true;
                             }
