@@ -45,7 +45,7 @@ namespace PropertyChangedAnalyzers
                     continue;
                 }
 
-                var type = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, classDeclarationSyntax, context.CancellationToken);
+                var type = semanticModel.GetDeclaredSymbolSafe(classDeclarationSyntax, context.CancellationToken);
                 if (PropertyChanged.TryGetSetAndRaise(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
                 {
                     var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
@@ -121,7 +121,7 @@ namespace PropertyChangedAnalyzers
                 }
 
                 var underscoreFields = semanticModel.UnderscoreFields();
-                var property = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, propertyDeclaration, cancellationToken);
+                var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                 var backingField = editor.AddBackingField(propertyDeclaration);
                 var fieldAccess = underscoreFields
                     ? backingField.Name()
@@ -145,7 +145,7 @@ namespace PropertyChangedAnalyzers
                                             .Return();
                 var template = ParseProperty(code);
                 editor.ReplaceNode(getter,
-                    x => Trivia.WithTrailingElasticLineFeed(x.WithExpressionBody(template.Getter().ExpressionBody))
+                    x => x.WithExpressionBody(template.Getter().ExpressionBody).WithTrailingElasticLineFeed()
                           .WithAdditionalAnnotations(Formatter.Annotation));
                 editor.ReplaceNode(setter,
                     x => x.WithBody(template.Setter().Body)
@@ -193,12 +193,11 @@ namespace PropertyChangedAnalyzers
                                             .Return();
                 var template = ParseProperty(code);
                 editor.ReplaceNode(getter,
-                    x => Trivia.WithLeadingLineFeed(x.WithExpressionBody(template.Getter().ExpressionBody)));
+                    x => x.WithExpressionBody(template.Getter().ExpressionBody).WithLeadingLineFeed());
 
                 editor.ReplaceNode(setter,
-                    x => Trivia.WithTrailingLineFeed(
-                              x.WithExpressionBody(template.Setter().ExpressionBody)
-                               .WithLeadingLineFeed()));
+                    x => x.WithExpressionBody(template.Setter().ExpressionBody)
+                          .WithLeadingLineFeed().WithTrailingLineFeed());
 
                 if (propertyDeclaration.Initializer != null)
                 {
@@ -219,12 +218,12 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (PropertyDeclarationSyntaxExt.TryGetSetter(propertyDeclaration, out var setter))
+            if (propertyDeclaration.TryGetSetter(out var setter))
             {
                 if (setter.ExpressionBody != null &&
                     IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
                 {
-                    var property = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, propertyDeclaration, cancellationToken);
+                    var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                     var underscoreFields = semanticModel.UnderscoreFields();
                     var code = StringBuilderPool.Borrow()
                                                 .AppendLine($"public Type PropertyName")
@@ -259,7 +258,7 @@ namespace PropertyChangedAnalyzers
                 if (setter.Body?.Statements.Count == 1 &&
                     IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out assignment, out _))
                 {
-                    var property = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, propertyDeclaration, cancellationToken);
+                    var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
                     var code = StringBuilderPool.Borrow()
                                                 .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
                                                 .AppendLine("        {")
@@ -267,21 +266,19 @@ namespace PropertyChangedAnalyzers
                                                 .AppendLine("        }")
                                                 .AppendLine()
                                                 .Return();
-                    var ifStatement = Trivia.WithTrailingElasticLineFeed(
-                                                       SyntaxFactory.ParseStatement(code)
-                                                                    .WithSimplifiedNames()
-                                                                    .WithLeadingElasticLineFeed())
+                    var ifStatement = SyntaxFactory.ParseStatement(code)
+                                                   .WithSimplifiedNames()
+                                                   .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                                    .WithAdditionalAnnotations(Formatter.Annotation);
                     editor.InsertBefore(
                         statement,
                         ifStatement);
                     var underscoreFields = semanticModel.UnderscoreFields();
-                    var notifyStatement = Trivia.WithTrailingElasticLineFeed(
-                                              SyntaxFactory
-                                                  .ParseStatement(
-                                                      Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
-                                                  .WithSimplifiedNames()
-                                                  .WithLeadingElasticLineFeed())
+                    var notifyStatement = SyntaxFactory
+                                          .ParseStatement(
+                                              Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
+                                          .WithSimplifiedNames()
+                                          .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                           .WithAdditionalAnnotations(Formatter.Annotation);
                     editor.InsertAfter(statement, notifyStatement);
                     editor.FormatNode(propertyDeclaration);
@@ -300,12 +297,11 @@ namespace PropertyChangedAnalyzers
             if (IsSimpleAssignmentOnly(propertyDeclaration, out var setter, out var statement, out var assignment, out _))
             {
                 var underscoreFields = semanticModel.UnderscoreFields();
-                var property = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, propertyDeclaration, cancellationToken);
-                var notifyStatement = Simplify.WithSimplifiedNames(
-                                          SyntaxFactory
-                                              .ParseStatement(Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
-                                              .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
-                                              .WithTrailingTrivia(SyntaxFactory.ElasticMarker))
+                var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                var notifyStatement = SyntaxFactory
+                                      .ParseStatement(Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
+                                      .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                                      .WithTrailingTrivia(SyntaxFactory.ElasticMarker).WithSimplifiedNames()
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 if (setter.ExpressionBody != null)
                 {
@@ -342,9 +338,8 @@ namespace PropertyChangedAnalyzers
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
             {
                 var underscoreFields = semanticModel.UnderscoreFields();
-                var setExpression = Simplify.WithSimplifiedNames(
-                                                     SyntaxFactory.ParseExpression($"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
-                                                                  .WithTrailingTrivia(SyntaxFactory.ElasticMarker))
+                var setExpression = SyntaxFactory.ParseExpression($"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
+                                                 .WithTrailingTrivia(SyntaxFactory.ElasticMarker).WithSimplifiedNames()
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 editor.ReplaceNode(assignment, setExpression);
             }
@@ -352,18 +347,17 @@ namespace PropertyChangedAnalyzers
 
         private static PropertyDeclarationSyntax ParseProperty(string code)
         {
-            return (PropertyDeclarationSyntax)Trivia.WithTrailingElasticLineFeed(
-                                                               SyntaxFactory.ParseCompilationUnit(code)
-                                                                            .Members
-                                                                            .Single()
-                                                                            .WithSimplifiedNames()
-                                                                            .WithLeadingElasticLineFeed())
+            return (PropertyDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code)
+                                                           .Members
+                                                           .Single()
+                                                           .WithSimplifiedNames()
+                                                           .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                                            .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)
         {
-            if (PropertyDeclarationSyntaxExt.TryGetSetter(propertyDeclaration, out setter))
+            if (propertyDeclaration.TryGetSetter(out setter))
             {
                 if (setter.Body?.Statements.Count == 1)
                 {
