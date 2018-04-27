@@ -128,7 +128,7 @@ namespace PropertyChangedAnalyzers
                    invocation.ArgumentList?.Arguments.Count == 2 &&
                    IsMatchingNullable(GetSymbolType(first) as INamedTypeSymbol, GetSymbolType(other) as INamedTypeSymbol) &&
                    IsArguments(invocation, semanticModel, cancellationToken, first, other) &&
-                   semanticModel.GetSymbolSafe(invocation, cancellationToken) as IMethodSymbol == KnownSymbol.Nullable.Equals;
+                   semanticModel.GetSymbolSafe(invocation, cancellationToken) == KnownSymbol.Nullable.Equals;
 
             bool IsMatchingNullable(INamedTypeSymbol type1, INamedTypeSymbol type2)
             {

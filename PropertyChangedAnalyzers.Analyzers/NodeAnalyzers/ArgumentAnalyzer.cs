@@ -121,7 +121,7 @@ namespace PropertyChangedAnalyzers
 
                     if (PropertyChanged.IsPropertyChangedInvoke(invokeCandidate, context.SemanticModel, context.CancellationToken) &&
                          argumentList.Arguments[1] == argument &&
-                         context.SemanticModel.GetSymbolSafe(invokeCandidate, context.CancellationToken) is IMethodSymbol &&
+                         context.SemanticModel.TryGetSymbol(invokeCandidate, context.CancellationToken, out _) &&
                          PropertyChanged.TryGetInvokedPropertyChangedName(invokeCandidate, context.SemanticModel, context.CancellationToken, out propertyName) == AnalysisResult.Yes &&
                          !string.IsNullOrEmpty(propertyName) &&
                          !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _))

@@ -46,7 +46,7 @@ namespace PropertyChangedAnalyzers
                 eventSymbol.Name == "PropertyChanged")
             {
                 if (!eventSymbol.IsStatic &&
-                    !eventSymbol.ContainingType.IsInterface() &&
+                    eventSymbol.ContainingType.TypeKind != TypeKind.Interface &&
                     eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
                     !PropertyChanged.TryGetOnPropertyChanged(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                 {
