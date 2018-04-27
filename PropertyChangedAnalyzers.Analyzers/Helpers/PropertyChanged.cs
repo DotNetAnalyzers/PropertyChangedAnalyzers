@@ -312,7 +312,7 @@ namespace PropertyChangedAnalyzers
             return AnalysisResult.No;
         }
 
-        internal static AnalysisResult IsOnPropertyChanged(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> visited = null)
+        internal static AnalysisResult IsOnPropertyChanged(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
         {
             if (visited?.Add(method) == false)
             {
@@ -366,9 +366,9 @@ namespace PropertyChangedAnalyzers
                                 if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
                                     method.ContainingType.Is(invokedMethod.ContainingType))
                                 {
-                                    using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
+                                    using (var set = PooledSet.IncrementUsage(visited))
                                     {
-                                        switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, visited))
+                                        switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, set))
                                         {
                                             case AnalysisResult.No:
                                                 break;
@@ -429,7 +429,7 @@ namespace PropertyChangedAnalyzers
             return type.TryFindFirstMethodRecursive(x => IsSetAndRaise(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
         }
 
-        internal static AnalysisResult IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> @checked = null)
+        internal static AnalysisResult IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> @checked = null)
         {
             if (candidate?.ArgumentList == null ||
                 candidate.ArgumentList.Arguments.Count < 2 ||
@@ -451,7 +451,7 @@ namespace PropertyChangedAnalyzers
                 @checked);
         }
 
-        internal static AnalysisResult IsSetAndRaise(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledHashSet<IMethodSymbol> visited = null)
+        internal static AnalysisResult IsSetAndRaise(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
         {
             if (visited?.Add(candidate) == false)
             {
@@ -500,12 +500,12 @@ namespace PropertyChangedAnalyzers
                              IsPropertyChangedInvoke(x, semanticModel, cancellationToken),
                         out _))
                     {
-                        using (visited = PooledHashSet<IMethodSymbol>.BorrowOrIncrementUsage(visited))
+                        using (var set = PooledSet.IncrementUsage(visited))
                         {
                             var result = AnalysisResult.No;
                             foreach (var invocation in walker.Invocations)
                             {
-                                switch (IsSetAndRaiseCall(invocation, semanticModel, cancellationToken, visited))
+                                switch (IsSetAndRaiseCall(invocation, semanticModel, cancellationToken, set))
                                 {
                                     case AnalysisResult.No:
                                         break;

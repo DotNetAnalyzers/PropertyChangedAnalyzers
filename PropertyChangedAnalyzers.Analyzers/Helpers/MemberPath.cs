@@ -55,7 +55,7 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledHashSet<SyntaxNode> visited = null)
+        internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode> visited = null)
         {
             if (assigned is null ||
                 returned is null)
@@ -77,11 +77,11 @@ namespace PropertyChangedAnalyzers
                     declaration.TryGetSetter(out var setter) &&
                     Property.TrySingleAssignmentInSetter(setter, out var assignment))
                 {
-                    using (visited = PooledHashSet<SyntaxNode>.BorrowOrIncrementUsage(visited))
+                    using (var set = PooledSet.IncrementUsage(visited))
                     {
-                        if (visited.Add(candidate))
+                        if (set.Add(candidate))
                         {
-                            return Uses(assignment.Left, returned, context, visited);
+                            return Uses(assignment.Left, returned, context, set);
                         }
                     }
                 }
@@ -93,28 +93,6 @@ namespace PropertyChangedAnalyzers
         internal static bool Uses(SyntaxNode scope, PathWalker memberPath, SyntaxNodeAnalysisContext context)
         {
             return UsedMemberWalker.Uses(scope, memberPath, Search.Recursive, context.ContainingSymbol.ContainingType, context.SemanticModel, context.CancellationToken);
-        }
-
-        internal static bool TryGetMemberName(ExpressionSyntax expression, out string name)
-        {
-            name = null;
-            switch (expression)
-            {
-                case IdentifierNameSyntax identifierName:
-                    name = identifierName.Identifier.ValueText;
-                    break;
-                case MemberAccessExpressionSyntax memberAccess:
-                    name = memberAccess.Name.Identifier.ValueText;
-                    break;
-                case MemberBindingExpressionSyntax memberBinding:
-                    name = memberBinding.Name.Identifier.ValueText;
-                    break;
-                case ConditionalAccessExpressionSyntax conditionalAccess:
-                    TryGetMemberName(conditionalAccess.WhenNotNull, out name);
-                    break;
-            }
-
-            return name != null;
         }
 
         internal sealed class PathWalker : PooledWalker<PathWalker>
