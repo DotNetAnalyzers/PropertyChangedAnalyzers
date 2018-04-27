@@ -108,7 +108,7 @@ namespace PropertyChangedAnalyzers
                    invocation.ArgumentList.Arguments.TrySingle(out var argument) &&
                    TryGetName(argument.Expression, out var argName) &&
                    argName == GetSymbolName(arg) &&
-                   invocation.TryGetInvokedMethodName(out var name) &&
+                   invocation.TryGetMethodName(out var name) &&
                    name == "Equals" &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                    TryGetName(memberAccess.Expression, out var instanceName) &&
@@ -120,7 +120,7 @@ namespace PropertyChangedAnalyzers
         internal static bool IsNullableEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
             return condition is InvocationExpressionSyntax invocation &&
-                   invocation.TryGetInvokedMethodName(out var methodName) &&
+                   invocation.TryGetMethodName(out var methodName) &&
                    methodName == "Equals" &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                    TryGetName(memberAccess.Expression, out var className) &&

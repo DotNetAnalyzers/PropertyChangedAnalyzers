@@ -249,7 +249,7 @@ namespace PropertyChangedAnalyzers
         {
             if (invocation.ArgumentList?.Arguments.Count == 2 &&
                 invocation.ArgumentList.Arguments[0].Expression.IsEitherKind(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
-                invocation.TryGetInvokedMethodName(out var name) &&
+                invocation.TryGetMethodName(out var name) &&
                 invocation.IsPotentialReturnVoid())
             {
                 if (name == "Invoke")

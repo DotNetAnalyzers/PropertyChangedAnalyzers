@@ -140,7 +140,7 @@ namespace PropertyChangedAnalyzers
         private static bool IsFirstCall(InvocationExpressionSyntax invocation)
         {
             if (invocation.FirstAncestorOrSelf<BlockSyntax>() is BlockSyntax block &&
-                invocation.TryGetInvokedMethodName(out var name))
+                invocation.TryGetMethodName(out var name))
             {
                 using (var walker = InvocationWalker.Borrow(block))
                 {
@@ -156,7 +156,7 @@ namespace PropertyChangedAnalyzers
                             return true;
                         }
 
-                        if (other.TryGetInvokedMethodName(out var otherName) &&
+                        if (other.TryGetMethodName(out var otherName) &&
                             name == otherName)
                         {
                             return false;
