@@ -2,6 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -38,7 +39,7 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var assignment in walker.Assignments)
                 {
-                    var assignedSymbol = semanticModel.GetSymbolSafe(assignment.Left, cancellationToken);
+                    var assignedSymbol = SemanticModelExt.GetSymbolSafe(semanticModel, assignment.Left, cancellationToken);
                     if (field.Equals(assignedSymbol))
                     {
                         return true;

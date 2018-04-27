@@ -2,6 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -42,7 +43,7 @@ namespace PropertyChangedAnalyzers
             foreach (var identifierName in this.identifierNames)
             {
                 if (parameter.MetadataName == identifierName.Identifier.ValueText &&
-                    semanticModel.GetSymbolSafe(identifierName, cancellationToken) is IParameterSymbol)
+                    SemanticModelExt.GetSymbolSafe(semanticModel, identifierName, cancellationToken) is IParameterSymbol)
                 {
                     return true;
                 }

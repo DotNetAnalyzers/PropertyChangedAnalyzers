@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -36,13 +37,13 @@ namespace PropertyChangedAnalyzers
             }
 
             if (identifier.Identifier.ValueText == "value" &&
-                identifier.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax accessor &&
+                SyntaxNodeExt.FirstAncestor<AccessorDeclarationSyntax>(identifier) is AccessorDeclarationSyntax accessor &&
                 accessor.IsKind(SyntaxKind.SetAccessorDeclaration))
             {
                 return true;
             }
 
-            using (var walker = BorrowAndVisit(identifier.FirstAncestor<MemberDeclarationSyntax>(), () => new IdentifierTypeWalker()))
+            using (var walker = BorrowAndVisit(SyntaxNodeExt.FirstAncestor<MemberDeclarationSyntax>(identifier), () => new IdentifierTypeWalker()))
             {
                 foreach (var parameter in walker.parameters)
                 {
