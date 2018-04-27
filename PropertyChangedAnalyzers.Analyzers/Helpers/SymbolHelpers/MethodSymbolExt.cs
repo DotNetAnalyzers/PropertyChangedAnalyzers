@@ -1,21 +1,11 @@
 namespace PropertyChangedAnalyzers
 {
-    using System.Collections.Generic;
-    using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class MethodSymbolExt
     {
-        internal static IEnumerable<SyntaxNode> Declarations(this IMethodSymbol symbol, CancellationToken cancellationToken)
-        {
-            foreach (var syntaxReference in symbol.DeclaringSyntaxReferences)
-            {
-                yield return syntaxReference.GetSyntax(cancellationToken);
-            }
-        }
-
         internal static bool TryGetMatchingParameter(this IMethodSymbol method, ArgumentSyntax argument, out IParameterSymbol parameter)
         {
             if (argument.NameColon is NameColonSyntax nameColon &&

@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers.Test.Documentation
 
         private static IReadOnlyList<DescriptorInfo> DescriptorsWithDocs => Descriptors.Where(d => d.DocExists).ToArray();
 
-        private static string SolutionDirectory => CodeFactory.FindSolutionFile("PropertyChangedAnalyzers.sln").DirectoryName;
+        private static string SolutionDirectory => SolutionFile.Find("PropertyChangedAnalyzers.sln").DirectoryName;
 
         private static string DocumentsDirectory => Path.Combine(SolutionDirectory, "documentation");
 

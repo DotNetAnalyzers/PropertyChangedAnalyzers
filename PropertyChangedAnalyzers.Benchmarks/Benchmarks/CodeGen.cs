@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
     public class CodeGen
     {
-        public static string ProjectDirectory { get; } = CodeFactory.FindProjectFile("PropertyChangedAnalyzers.Benchmarks.csproj").DirectoryName;
+        public static string ProjectDirectory { get; } = ProjectFile.Find("PropertyChangedAnalyzers.Benchmarks.csproj").DirectoryName;
 
         public static string BenchmarksDirectory { get; } = Path.Combine(ProjectDirectory, "Benchmarks");
 

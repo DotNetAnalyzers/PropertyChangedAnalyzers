@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -50,7 +51,7 @@ namespace PropertyChangedAnalyzers
                     !PropertyChanged.TryGetOnPropertyChanged(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                 {
                     if (eventSymbol.ContainingType.IsSealed &&
-                        !eventSymbol.ContainingType.TryFindProperty(x => x.SetMethod != null, out _))
+                        !eventSymbol.ContainingType.GetMembers().TryFirstOfType(x => x.SetMethod != null, out IPropertySymbol _))
                     {
                         return;
                     }
