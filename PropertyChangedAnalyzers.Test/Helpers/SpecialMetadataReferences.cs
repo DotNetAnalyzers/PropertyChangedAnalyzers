@@ -2,6 +2,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Collections.Generic;
     using System.IO;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
 

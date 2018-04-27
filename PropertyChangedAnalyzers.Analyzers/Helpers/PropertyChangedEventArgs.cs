@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -55,13 +56,13 @@ namespace PropertyChangedAnalyzers
             }
 
             if (cached is IPropertySymbol property &&
-                property.TrySingleDeclaration(cancellationToken, out var propertyDeclaration))
+                property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration))
             {
                 return TryGetCreation(propertyDeclaration.Initializer?.Value, out nameArg);
             }
 
             if (cached is ILocalSymbol local &&
-                local.TrySingleDeclaration(cancellationToken, out var variableDeclaration) &&
+                local.TrySingleDeclaration(cancellationToken, out VariableDeclarationSyntax variableDeclaration) &&
                 variableDeclaration.Variables.TryLast(out variable) &&
                 variable.Initializer is EqualsValueClauseSyntax initializer)
             {
