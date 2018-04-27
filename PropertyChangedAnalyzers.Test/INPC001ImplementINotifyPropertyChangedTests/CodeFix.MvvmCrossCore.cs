@@ -35,14 +35,14 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    using MvvmCross.Core.ViewModels;
+    using MvvmCross.ViewModels;
 
     public class Foo : MvxNotifyPropertyChanged
     {
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged and add using.");
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged and add using.");
             }
 
             [Test]
@@ -60,12 +60,12 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged fully qualified.");
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged fully qualified.");
             }
 
             [Test]
@@ -83,14 +83,14 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    using MvvmCross.Core.ViewModels;
+    using MvvmCross.ViewModels;
 
     public class Foo : MvxViewModel
     {
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxViewModel and add using.");
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel and add using.");
             }
 
             [Test]
@@ -108,12 +108,12 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxViewModel
+    public class Foo : MvvmCross.ViewModels.MvxViewModel
     {
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Subclass MvvmCross.Core.ViewModels.MvxViewModel fully qualified.");
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel fully qualified.");
             }
 
             [Test]

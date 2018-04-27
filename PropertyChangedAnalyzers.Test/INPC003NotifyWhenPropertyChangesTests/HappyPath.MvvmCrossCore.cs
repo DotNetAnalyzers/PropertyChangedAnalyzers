@@ -26,7 +26,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
@@ -46,7 +46,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
@@ -66,7 +66,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
@@ -94,7 +94,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -122,7 +122,7 @@ namespace RoslynSandbox
                 var fooBaseCode = @"
 namespace RoslynSandbox
 {
-    public abstract class FooBase : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public abstract class FooBase : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         public override bool Set<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {

@@ -69,7 +69,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         public int Bar { get; set; }
     }

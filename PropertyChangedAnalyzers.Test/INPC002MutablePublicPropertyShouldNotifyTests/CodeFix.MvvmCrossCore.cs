@@ -26,7 +26,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         ↓public int Bar { get; set; }
     }
@@ -35,7 +35,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int bar;
 
@@ -65,7 +65,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         ↓public int Bar { get; set; }
     }
@@ -74,7 +74,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int bar;
 
@@ -95,7 +95,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    internal class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    internal class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         ↓internal int Bar { get; set; }
     }
@@ -104,7 +104,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    internal class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    internal class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int bar;
 
@@ -125,7 +125,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         ↓public int Bar { get; set; } = 1;
     }
@@ -134,7 +134,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int bar = 1;
 
@@ -155,7 +155,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         ↓public virtual int Bar { get; set; }
     }
@@ -164,7 +164,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int bar;
 
@@ -185,7 +185,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         ↓public int Bar { get; private set; }
 
@@ -199,7 +199,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int bar;
 
@@ -225,7 +225,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         public Foo(int bar)
         {
@@ -239,7 +239,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int _bar;
 
@@ -265,7 +265,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
@@ -280,7 +280,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
@@ -301,7 +301,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string _name;
 
@@ -316,7 +316,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string _name;
 

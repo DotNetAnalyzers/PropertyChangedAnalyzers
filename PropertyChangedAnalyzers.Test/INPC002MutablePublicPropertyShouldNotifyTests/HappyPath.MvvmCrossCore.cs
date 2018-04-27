@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -26,7 +26,7 @@
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int value;
 
@@ -47,7 +47,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class Foo : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int value;
 
@@ -72,7 +72,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int bar;
 

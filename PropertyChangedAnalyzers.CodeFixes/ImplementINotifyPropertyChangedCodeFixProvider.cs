@@ -44,11 +44,19 @@ namespace PropertyChangedAnalyzers
                                                                                                                   .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                                                   .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
-        private static readonly QualifiedNameSyntax MvxNotifyPropertyChanged = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged")
+        private static readonly QualifiedNameSyntax MvvmCrossMvxNotifyPropertyChanged = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.ViewModels.MvxNotifyPropertyChanged")
+                                                                                                                              .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                                                              .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
+        private static readonly QualifiedNameSyntax MvvmCrossMvxViewModel = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.ViewModels.MvxViewModel")
+                                                                                                                  .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                                                                                  .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+
+        private static readonly QualifiedNameSyntax MvvmCrossCoreMvxNotifyPropertyChanged = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged")
                                                                                                                  .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                                                  .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
-        private static readonly QualifiedNameSyntax MvxViewModel = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxViewModel")
+        private static readonly QualifiedNameSyntax MvvmCrossCoreMvxViewModel = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxViewModel")
                                                                                                      .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                                                                      .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
 
@@ -108,10 +116,16 @@ namespace PropertyChangedAnalyzers
                         RegisterSubclassFixes(diagnostic, classDeclaration, StyletPropertyChangedBase);
                     }
 
+                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("MvvmCross.dll") == true))
+                    {
+                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossMvxNotifyPropertyChanged);
+                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossMvxViewModel);
+                    }
+
                     if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("MvvmCross.Core.dll") == true))
                     {
-                        RegisterSubclassFixes(diagnostic, classDeclaration, MvxNotifyPropertyChanged);
-                        RegisterSubclassFixes(diagnostic, classDeclaration, MvxViewModel);
+                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossCoreMvxNotifyPropertyChanged);
+                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossCoreMvxViewModel);
                     }
 
                     if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Prism.Mvvm.dll") == true))
