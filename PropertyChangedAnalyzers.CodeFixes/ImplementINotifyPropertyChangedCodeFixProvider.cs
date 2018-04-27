@@ -194,8 +194,8 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
             ImplementINotifyPropertyChanged(context, semanticModel, classDeclaration, editor);
-            DocumentEditorExt.AddUsing(editor, SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left));
-            DocumentEditorExt.AddUsing(editor, SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
+            editor.AddUsing(SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left));
+            editor.AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
             return editor.GetChangedDocument();
         }
 
@@ -229,9 +229,7 @@ namespace PropertyChangedAnalyzers
 
             if (!type.TryFindEventRecursive("PropertyChanged", out _))
             {
-                DocumentEditorExt.AddEvent(
-                    editor,
-                    classDeclaration,
+                editor.AddEvent(classDeclaration,
                     (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration(
                         "PropertyChanged",
                         PropertyChangedEventHandlerType,
@@ -247,9 +245,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (type.IsSealed)
                 {
-                    DocumentEditorExt.AddMethod(
-                        editor,
-                        classDeclaration,
+                    editor.AddMethod(classDeclaration,
                         ParseMethod(
                             @"private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
                               {
@@ -259,9 +255,7 @@ namespace PropertyChangedAnalyzers
                 }
                 else
                 {
-                    DocumentEditorExt.AddMethod(
-                        editor,
-                        classDeclaration,
+                    editor.AddMethod(classDeclaration,
                         ParseMethod(
                             @"protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
                               {
@@ -277,7 +271,7 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
             AddBaseType(context, classDeclaration, viewModelBaseType, editor);
-            DocumentEditorExt.AddUsing(editor, SyntaxFactory.UsingDirective(viewModelBaseType.Left));
+            editor.AddUsing(SyntaxFactory.UsingDirective(viewModelBaseType.Left));
             return editor.GetChangedDocument();
         }
 

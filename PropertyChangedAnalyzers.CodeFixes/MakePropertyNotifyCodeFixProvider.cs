@@ -5,6 +5,7 @@ namespace PropertyChangedAnalyzers
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -44,7 +45,7 @@ namespace PropertyChangedAnalyzers
                     continue;
                 }
 
-                var type = semanticModel.GetDeclaredSymbolSafe(classDeclarationSyntax, context.CancellationToken);
+                var type = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, classDeclarationSyntax, context.CancellationToken);
                 if (PropertyChanged.TryGetSetAndRaise(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
                 {
                     var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
@@ -56,8 +57,7 @@ namespace PropertyChangedAnalyzers
                                 editor,
                                 propertyDeclaration,
                                 setAndRaiseMethod,
-                                semanticModel,
-                                cancellationToken),
+                                semanticModel),
                             key,
                             diagnostic);
                     }
@@ -120,9 +120,9 @@ namespace PropertyChangedAnalyzers
                     return;
                 }
 
-                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
-                var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                var backingField = editor.AddBackingField(propertyDeclaration, underscoreFields, cancellationToken);
+                var underscoreFields = semanticModel.UnderscoreFields();
+                var property = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, propertyDeclaration, cancellationToken);
+                var backingField = editor.AddBackingField(propertyDeclaration);
                 var fieldAccess = underscoreFields
                     ? backingField.Name()
                     : $"this.{backingField.Name()}";
@@ -144,30 +144,24 @@ namespace PropertyChangedAnalyzers
                                             .AppendLine("}")
                                             .Return();
                 var template = ParseProperty(code);
-                DocumentEditorExt.ReplaceNode(
-                    editor,
-                    getter,
+                editor.ReplaceNode(getter,
                     x => Trivia.WithTrailingElasticLineFeed(x.WithExpressionBody(template.Getter().ExpressionBody))
                           .WithAdditionalAnnotations(Formatter.Annotation));
-                DocumentEditorExt.ReplaceNode(
-                    editor,
-                    setter,
+                editor.ReplaceNode(setter,
                     x => x.WithBody(template.Setter().Body)
                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
                           .WithAdditionalAnnotations(Formatter.Annotation));
                 if (propertyDeclaration.Initializer != null)
                 {
-                    DocumentEditorExt.ReplaceNode(
-                        editor,
-                        propertyDeclaration,
+                    editor.ReplaceNode(propertyDeclaration,
                         x => x.WithoutInitializer());
                 }
 
-                DocumentEditorExt.ReplaceNode(editor, propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
             }
         }
 
-        private static void MakeAutoPropertySet(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static void MakeAutoPropertySet(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel)
         {
             var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration == null)
@@ -185,8 +179,8 @@ namespace PropertyChangedAnalyzers
                     return;
                 }
 
-                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
-                var backingField = editor.AddBackingField(propertyDeclaration, underscoreFields, cancellationToken);
+                var underscoreFields = semanticModel.UnderscoreFields();
+                var backingField = editor.AddBackingField(propertyDeclaration);
                 var fieldAccess = underscoreFields
                     ? backingField.Name()
                     : $"this.{backingField.Name()}";
@@ -198,14 +192,10 @@ namespace PropertyChangedAnalyzers
                                             .AppendLine("}")
                                             .Return();
                 var template = ParseProperty(code);
-                DocumentEditorExt.ReplaceNode(
-                    editor,
-                    getter,
+                editor.ReplaceNode(getter,
                     x => Trivia.WithLeadingLineFeed(x.WithExpressionBody(template.Getter().ExpressionBody)));
 
-                DocumentEditorExt.ReplaceNode(
-                    editor,
-                    setter,
+                editor.ReplaceNode(setter,
                     x => Trivia.WithTrailingLineFeed(
                               x.WithExpressionBody(template.Setter().ExpressionBody)
                                .WithLeadingLineFeed()));
@@ -217,7 +207,7 @@ namespace PropertyChangedAnalyzers
                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
 
-                DocumentEditorExt.ReplaceNode(editor, propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
             }
         }
 
@@ -229,13 +219,13 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            if (propertyDeclaration.TryGetSetter(out var setter))
+            if (PropertyDeclarationSyntaxExt.TryGetSetter(propertyDeclaration, out var setter))
             {
                 if (setter.ExpressionBody != null &&
                     IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
                 {
-                    var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                    var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
+                    var property = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, propertyDeclaration, cancellationToken);
+                    var underscoreFields = semanticModel.UnderscoreFields();
                     var code = StringBuilderPool.Borrow()
                                                 .AppendLine($"public Type PropertyName")
                                                 .AppendLine("{")
@@ -263,13 +253,13 @@ namespace PropertyChangedAnalyzers
                                       .WithExpressionBody(null)
                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                         });
-                    DocumentEditorExt.FormatNode(editor, propertyDeclaration);
+                    editor.FormatNode(propertyDeclaration);
                 }
 
                 if (setter.Body?.Statements.Count == 1 &&
                     IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out assignment, out _))
                 {
-                    var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                    var property = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, propertyDeclaration, cancellationToken);
                     var code = StringBuilderPool.Borrow()
                                                 .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
                                                 .AppendLine("        {")
@@ -285,7 +275,7 @@ namespace PropertyChangedAnalyzers
                     editor.InsertBefore(
                         statement,
                         ifStatement);
-                    var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
+                    var underscoreFields = semanticModel.UnderscoreFields();
                     var notifyStatement = Trivia.WithTrailingElasticLineFeed(
                                               SyntaxFactory
                                                   .ParseStatement(
@@ -294,7 +284,7 @@ namespace PropertyChangedAnalyzers
                                                   .WithLeadingElasticLineFeed())
                                           .WithAdditionalAnnotations(Formatter.Annotation);
                     editor.InsertAfter(statement, notifyStatement);
-                    DocumentEditorExt.FormatNode(editor, propertyDeclaration);
+                    editor.FormatNode(propertyDeclaration);
                 }
             }
         }
@@ -309,8 +299,8 @@ namespace PropertyChangedAnalyzers
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out var setter, out var statement, out var assignment, out _))
             {
-                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
-                var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                var underscoreFields = semanticModel.UnderscoreFields();
+                var property = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, propertyDeclaration, cancellationToken);
                 var notifyStatement = Simplify.WithSimplifiedNames(
                                           SyntaxFactory
                                               .ParseStatement(Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
@@ -331,12 +321,12 @@ namespace PropertyChangedAnalyzers
                                       .WithExpressionBody(null)
                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                         });
-                    DocumentEditorExt.FormatNode(editor, propertyDeclaration);
+                    editor.FormatNode(propertyDeclaration);
                 }
                 else if (setter.Body != null)
                 {
                     editor.InsertAfter(statement, notifyStatement);
-                    DocumentEditorExt.FormatNode(editor, propertyDeclaration);
+                    editor.FormatNode(propertyDeclaration);
                 }
             }
         }
@@ -351,7 +341,7 @@ namespace PropertyChangedAnalyzers
 
             if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
             {
-                var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
+                var underscoreFields = semanticModel.UnderscoreFields();
                 var setExpression = Simplify.WithSimplifiedNames(
                                                      SyntaxFactory.ParseExpression($"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
                                                                   .WithTrailingTrivia(SyntaxFactory.ElasticMarker))
@@ -373,7 +363,7 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)
         {
-            if (propertyDeclaration.TryGetSetter(out setter))
+            if (PropertyDeclarationSyntaxExt.TryGetSetter(propertyDeclaration, out setter))
             {
                 if (setter.Body?.Statements.Count == 1)
                 {

@@ -4,6 +4,7 @@ namespace PropertyChangedAnalyzers
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -57,8 +58,7 @@ namespace PropertyChangedAnalyzers
                         this.GetType(),
                         diagnostic);
 
-                    var type = semanticModel.GetDeclaredSymbolSafe(
-                        setter.FirstAncestor<ClassDeclarationSyntax>(),
+                    var type = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, SyntaxNodeExt.FirstAncestor<ClassDeclarationSyntax>(setter),
                         context.CancellationToken);
                     if (setter.Body.Statements.Count == 2 &&
                         ReferenceEquals(setter.Body.Statements[0], statementSyntax) &&
@@ -110,7 +110,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var type = editor.SemanticModel.GetTypeInfoSafe(assignment.Left, cancellationToken).Type;
+            var type = SemanticModelExt.GetTypeInfoSafe(editor.SemanticModel, assignment.Left, cancellationToken).Type;
             var code = StringBuilderPool.Borrow()
                                         .AppendLine($"if ({Snippet.EqualityCheck(type, "value", assignment.Left.ToString(), editor.SemanticModel)})")
                                         .AppendLine("{")

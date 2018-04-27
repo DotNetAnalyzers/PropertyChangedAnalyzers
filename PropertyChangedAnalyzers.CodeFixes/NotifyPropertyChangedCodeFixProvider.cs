@@ -3,6 +3,7 @@ namespace PropertyChangedAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -26,7 +27,7 @@ namespace PropertyChangedAnalyzers
 
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
-            var underscoreFields = CodeStyle.UnderscoreFields(semanticModel);
+            var underscoreFields = semanticModel.UnderscoreFields();
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.TryGetValue(INPC003NotifyWhenPropertyChanges.PropertyNameKey, out var property))
@@ -34,12 +35,12 @@ namespace PropertyChangedAnalyzers
                     var expression = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                                .FirstAncestorOrSelf<ExpressionSyntax>();
                     var typeDeclaration = expression.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-                    var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
+                    var type = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, typeDeclaration, context.CancellationToken);
                     if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
                         invoker.Parameters[0].Type == KnownSymbol.String)
                     {
                         var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-                        var method = (IMethodSymbol)semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
+                        var method = (IMethodSymbol)SemanticModelExt.GetSymbolSafe(semanticModel, invocation, context.CancellationToken);
                         if (PropertyChanged.IsSetAndRaise(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
                         {
                             if (invocation.Parent is ExpressionStatementSyntax ||
@@ -110,7 +111,7 @@ namespace PropertyChangedAnalyzers
         private static void MakeNotify(DocumentEditor editor, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
         {
             var snippet =
-                assignment.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax
+                SyntaxNodeExt.FirstAncestor<PropertyDeclarationSyntax>(assignment) is PropertyDeclarationSyntax
                     propertyDeclaration &&
                 propertyDeclaration.Identifier.ValueText == propertyName
                     ? Snippet.OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)
@@ -175,7 +176,7 @@ namespace PropertyChangedAnalyzers
                                                              .WithLeadingElasticLineFeed())
                                             .WithAdditionalAnnotations(Formatter.Annotation);
                     });
-                DocumentEditorExt.FormatNode(editor, invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
+                editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
                 return;
             }
 
@@ -183,9 +184,7 @@ namespace PropertyChangedAnalyzers
                 arrow.Parent is AccessorDeclarationSyntax accessor)
             {
                 editor.RemoveNode(accessor.ExpressionBody);
-                DocumentEditorExt.ReplaceNode(
-                    editor,
-                    accessor,
+                editor.ReplaceNode(accessor,
                     x =>
                     {
                         var code = StringBuilderPool.Borrow()
@@ -203,7 +202,7 @@ namespace PropertyChangedAnalyzers
                         return x.WithBody(SyntaxFactory.Block(body))
                                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                     });
-                DocumentEditorExt.FormatNode(editor, invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
+                editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
             }
         }
 

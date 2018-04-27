@@ -77,9 +77,7 @@ namespace PropertyChangedAnalyzers
             var underscoreFields = editor.SemanticModel.UnderscoreFields();
             if (type.IsSealed)
             {
-                DocumentEditorExt.AddMethod(
-                    editor,
-                    classDeclaration,
+                editor.AddMethod(classDeclaration,
                     ParseMethod(
                         @"
 private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -90,9 +88,7 @@ private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName
             }
             else if (type.IsStatic)
             {
-                DocumentEditorExt.AddMethod(
-                    editor,
-                    classDeclaration,
+                editor.AddMethod(classDeclaration,
                     ParseMethod(
                         @"
 private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -103,9 +99,7 @@ private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMem
             }
             else
             {
-                DocumentEditorExt.AddMethod(
-                    editor,
-                    classDeclaration,
+                editor.AddMethod(classDeclaration,
                     ParseMethod(
                         @"
 protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
