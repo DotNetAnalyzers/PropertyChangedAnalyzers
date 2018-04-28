@@ -41,42 +41,42 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var type = (ITypeSymbol)context.ContainingSymbol;
-            if (type.IsStatic ||
-                type.Is(KnownSymbol.INotifyPropertyChanged) ||
-                type.Is(KnownSymbol.MarkupExtension) ||
-                type.Is(KnownSymbol.Attribute) ||
-                type.Is(KnownSymbol.IValueConverter) ||
-                type.Is(KnownSymbol.IMultiValueConverter) ||
-                type.Is(KnownSymbol.DataTemplateSelector) ||
-                type.Is(KnownSymbol.DependencyObject))
+            if (context.ContainingSymbol is INamedTypeSymbol type &&
+                context.Node is ClassDeclarationSyntax classDeclaration)
             {
-                return;
-            }
-
-            var declaration = (ClassDeclarationSyntax)context.Node;
-            if (declaration.Members.TryFirst(
-                x => Property.ShouldNotify(x as PropertyDeclarationSyntax, context.SemanticModel, context.CancellationToken),
-                out _))
-            {
-                var properties = string.Join(
-                    Environment.NewLine,
-                    declaration.Members.OfType<PropertyDeclarationSyntax>()
-                               .Where(x => Property.ShouldNotify(x, context.SemanticModel, context.CancellationToken))
-                               .Select(x => x.Identifier.ValueText));
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
-            }
-
-            if (type.TryFindEvent("PropertyChanged", out var eventSymbol))
-            {
-                if (eventSymbol.Name != KnownSymbol.INotifyPropertyChanged.PropertyChanged.Name ||
-                    eventSymbol.Type != KnownSymbol.PropertyChangedEventHandler ||
-                    eventSymbol.IsStatic)
+                if (type.IsStatic ||
+                    type.Is(KnownSymbol.INotifyPropertyChanged) ||
+                    type.Is(KnownSymbol.MarkupExtension) ||
+                    type.Is(KnownSymbol.Attribute) ||
+                    type.Is(KnownSymbol.IValueConverter) ||
+                    type.Is(KnownSymbol.IMultiValueConverter) ||
+                    type.Is(KnownSymbol.DataTemplateSelector) ||
+                    type.Is(KnownSymbol.DependencyObject))
                 {
                     return;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), $"The class {type.Name} has event PropertyChanged but does not implement INotifyPropertyChanged."));
+                if (classDeclaration.Members.TryFirstOfType(x => Property.ShouldNotify(x, context.SemanticModel, context.CancellationToken), out PropertyDeclarationSyntax _))
+                {
+                    var properties = string.Join(
+                        Environment.NewLine,
+                        classDeclaration.Members.OfType<PropertyDeclarationSyntax>()
+                                   .Where(x => Property.ShouldNotify(x, context.SemanticModel, context.CancellationToken))
+                                   .Select(x => x.Identifier.ValueText));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, classDeclaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
+                }
+
+                if (type.TryFindEvent("PropertyChanged", out var eventSymbol))
+                {
+                    if (eventSymbol.Name != KnownSymbol.INotifyPropertyChanged.PropertyChanged.Name ||
+                        eventSymbol.Type != KnownSymbol.PropertyChangedEventHandler ||
+                        eventSymbol.IsStatic)
+                    {
+                        return;
+                    }
+
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, classDeclaration.Identifier.GetLocation(), $"The class {type.Name} has event PropertyChanged but does not implement INotifyPropertyChanged."));
+                }
             }
         }
     }

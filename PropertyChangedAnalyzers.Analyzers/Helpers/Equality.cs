@@ -71,7 +71,7 @@ namespace PropertyChangedAnalyzers
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
-                   invocation.TryGetInvokedSymbol(KnownSymbol.Object.Equals, semanticModel, cancellationToken, out _) &&
+                   semanticModel.TryGetSymbol(invocation, KnownSymbol.Object.Equals, cancellationToken, out _) &&
                    IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
@@ -85,7 +85,7 @@ namespace PropertyChangedAnalyzers
                    !string.Equals(instance, "Nullable", StringComparison.OrdinalIgnoreCase) &&
                    instance != GetSymbolName(first) &&
                    instance != GetSymbolName(other) &&
-                   invocation.TryGetInvokedSymbol(KnownSymbol.EqualityComparerOfT.EqualsMethod, semanticModel, cancellationToken, out _) &&
+                   semanticModel.TryGetSymbol(invocation, KnownSymbol.EqualityComparerOfT.EqualsMethod, cancellationToken, out _) &&
                    IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
@@ -97,7 +97,7 @@ namespace PropertyChangedAnalyzers
                    string.Equals(className, "string", StringComparison.OrdinalIgnoreCase) &&
                    GetSymbolType(first) == KnownSymbol.String &&
                    GetSymbolType(other) == KnownSymbol.String &&
-                   invocation.TryGetInvokedSymbol(KnownSymbol.String.Equals, semanticModel, cancellationToken, out _) &&
+                   semanticModel.TryGetSymbol(invocation, KnownSymbol.String.Equals, cancellationToken, out _) &&
                    IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
@@ -162,7 +162,7 @@ namespace PropertyChangedAnalyzers
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
-                   invocation.TryGetInvokedSymbol(KnownSymbol.Object.ReferenceEquals, semanticModel, cancellationToken, out _) &&
+                   semanticModel.TryGetSymbol(invocation, KnownSymbol.Object.ReferenceEquals, cancellationToken, out _) &&
                    IsArguments(invocation, semanticModel, cancellationToken, first, other);
         }
 
