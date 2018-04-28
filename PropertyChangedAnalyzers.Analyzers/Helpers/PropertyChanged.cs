@@ -21,7 +21,7 @@ namespace PropertyChangedAnalyzers
                     semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol setAndRaiseMethod &&
                     setAndRaiseMethod.Parameters.TryLast(x => x.Type == KnownSymbol.String, out var nameParameter))
                 {
-                    if (invocation.TryGetMatchingArgument(nameParameter, out var nameArg))
+                    if (invocation.TryFindArgument(nameParameter, out var nameArg))
                     {
                         if (nameArg.TryGetStringValue(semanticModel, cancellationToken, out var name))
                         {

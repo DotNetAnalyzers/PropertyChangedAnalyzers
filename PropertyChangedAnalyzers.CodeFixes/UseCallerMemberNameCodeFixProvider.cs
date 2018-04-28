@@ -58,7 +58,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (argument.Parent.Parent is InvocationExpressionSyntax invocation &&
                         semanticModel.GetSymbolSafe(invocation, context.CancellationToken) is IMethodSymbol method &&
-                        method.TryGetMatchingParameter(argument, out var parameterSymbol))
+                        method.TryFindParameter(argument, out var parameterSymbol))
                     {
                         if (parameterSymbol.IsCallerMemberName())
                         {

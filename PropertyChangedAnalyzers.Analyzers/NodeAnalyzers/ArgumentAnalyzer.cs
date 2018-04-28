@@ -39,7 +39,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (text == ContainingSymbolName(context.ContainingSymbol) &&
                         context.SemanticModel.GetSymbolSafe(argumentList.Parent, context.CancellationToken) is IMethodSymbol method &&
-                        method.TryGetMatchingParameter(argument, out var parameter))
+                        method.TryFindParameter(argument, out var parameter))
                     {
                         if (parameter.IsCallerMemberName())
                         {
