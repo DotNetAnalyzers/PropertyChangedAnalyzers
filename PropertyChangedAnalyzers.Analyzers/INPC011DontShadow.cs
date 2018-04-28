@@ -39,14 +39,12 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var @event = (IEventSymbol)context.ContainingSymbol;
-            if (@event == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
-               !@event.IsOverride)
+            if (context.ContainingSymbol is IEventSymbol eventSymbol &&
+                eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
+               !eventSymbol.IsOverride &&
+                eventSymbol.ContainingType.BaseType.TryFindEventRecursive("PropertyChanged", out _))
             {
-                if (@event.ContainingType.BaseType.TryFindEventRecursive("PropertyChanged", out _))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
-                }
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
             }
         }
     }
