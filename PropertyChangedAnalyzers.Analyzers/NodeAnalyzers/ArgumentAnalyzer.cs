@@ -64,7 +64,7 @@ namespace PropertyChangedAnalyzers
                         if (argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
                             objectCreation.Parent is ArgumentSyntax parentArg &&
                             parentArg.FirstAncestor<InvocationExpressionSyntax>() is InvocationExpressionSyntax parentInvocation &&
-                            Constructor.TryGet(objectCreation, KnownSymbol.PropertyChangedEventArgs, context.SemanticModel, context.CancellationToken, out _))
+                            context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbol.PropertyChangedEventArgs, context.CancellationToken, out _))
                         {
                             if ((PropertyChanged.IsOnPropertyChanged(parentInvocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
                                  PropertyChanged.IsPropertyChangedInvoke(parentInvocation, context.SemanticModel, context.CancellationToken)) &&
