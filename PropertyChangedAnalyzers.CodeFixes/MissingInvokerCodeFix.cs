@@ -120,12 +120,11 @@ protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.Caller
                 code = code.Replace("this.", string.Empty);
             }
 
-            return (MethodDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code)
-                                                         .Members
-                                                         .Single().WithSimplifiedNames()
-                                                         .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
-                                                         .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                         .WithAdditionalAnnotations(Formatter.Annotation);
+            return Parse.MethodDeclaration(code)
+                        .WithSimplifiedNames()
+                        .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                        .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                        .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         private static bool NoPropertyShouldNotify(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)

@@ -347,12 +347,11 @@ namespace PropertyChangedAnalyzers
 
         private static PropertyDeclarationSyntax ParseProperty(string code)
         {
-            return (PropertyDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code)
-                                                           .Members
-                                                           .Single()
-                                                           .WithSimplifiedNames()
-                                                           .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
-                                                           .WithAdditionalAnnotations(Formatter.Annotation);
+            return Parse.PropertyDeclaration(code)
+                        .WithSimplifiedNames()
+                        .WithLeadingElasticLineFeed()
+                        .WithTrailingElasticLineFeed()
+                        .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)

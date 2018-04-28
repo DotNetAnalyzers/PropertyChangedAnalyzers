@@ -63,8 +63,7 @@ namespace PropertyChangedAnalyzers
                         invocation,
                         SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, property?.Name, usesUnderscoreNames).TrimEnd(';'))
                                      .WithSimplifiedNames()
-                                     .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed(
-                                     )
+                                     .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                      .WithAdditionalAnnotations(Formatter.Annotation));
                 }
                 else
@@ -73,8 +72,7 @@ namespace PropertyChangedAnalyzers
                         invocation,
                         SyntaxFactory.ParseExpression(Snippet.OnOtherPropertyChanged(invoker, name, usesUnderscoreNames).TrimEnd(';'))
                                      .WithSimplifiedNames()
-                                     .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed(
-                                     )
+                                     .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                      .WithAdditionalAnnotations(Formatter.Annotation));
                 }
             }
