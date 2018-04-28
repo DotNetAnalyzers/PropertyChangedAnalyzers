@@ -333,10 +333,10 @@ namespace PropertyChangedAnalyzers
                 code = code.Replace("this.", string.Empty);
             }
 
-            return (MethodDeclarationSyntax)Simplify.WithSimplifiedNames(
-                                                             SyntaxFactory.ParseCompilationUnit(code)
-                                                                          .Members
-                                                                          .Single())
+            return (MethodDeclarationSyntax)SyntaxFactory.ParseCompilationUnit(code)
+                                                         .Members
+                                                         .Single().WithSimplifiedNames(
+                                                         )
                                                          .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
                                                          .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
                                                          .WithAdditionalAnnotations(Formatter.Annotation);

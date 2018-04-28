@@ -58,7 +58,8 @@ namespace PropertyChangedAnalyzers
                         this.GetType(),
                         diagnostic);
 
-                    var type = SemanticModelExt.GetDeclaredSymbolSafe(semanticModel, SyntaxNodeExt.FirstAncestor<ClassDeclarationSyntax>(setter),
+                    var type = semanticModel.GetDeclaredSymbolSafe(
+                        SyntaxNodeExt.FirstAncestor<ClassDeclarationSyntax>(setter),
                         context.CancellationToken);
                     if (setter.Body.Statements.Count == 2 &&
                         ReferenceEquals(setter.Body.Statements[0], statementSyntax) &&
@@ -110,7 +111,7 @@ namespace PropertyChangedAnalyzers
                 return;
             }
 
-            var type = SemanticModelExt.GetTypeInfoSafe(editor.SemanticModel, assignment.Left, cancellationToken).Type;
+            var type = editor.SemanticModel.GetTypeInfoSafe(assignment.Left, cancellationToken).Type;
             var code = StringBuilderPool.Borrow()
                                         .AppendLine($"if ({Snippet.EqualityCheck(type, "value", assignment.Left.ToString(), editor.SemanticModel)})")
                                         .AppendLine("{")
@@ -118,9 +119,9 @@ namespace PropertyChangedAnalyzers
                                         .AppendLine("}")
                                         .AppendLine()
                                         .Return();
-            var ifReturn = Trivia.WithTrailingElasticLineFeed(SyntaxFactory.ParseStatement(code)
-                 .WithSimplifiedNames()
-                 .WithLeadingElasticLineFeed())
+            var ifReturn = SyntaxFactory.ParseStatement(code)
+                                        .WithSimplifiedNames()
+                                        .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                         .WithAdditionalAnnotations(Formatter.Annotation);
             editor.InsertBefore(statementSyntax, ifReturn);
         }
@@ -139,9 +140,9 @@ namespace PropertyChangedAnalyzers
                                                 .AppendLine("}")
                                                 .Return();
 
-                    return Trivia.WithTrailingElasticLineFeed(SyntaxFactory.ParseStatement(code)
-                 .WithSimplifiedNames()
-                 .WithLeadingElasticLineFeed())
+                    return SyntaxFactory.ParseStatement(code)
+                                        .WithSimplifiedNames()
+                                        .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                         .WithAdditionalAnnotations(Formatter.Annotation);
                 });
         }
@@ -155,11 +156,11 @@ namespace PropertyChangedAnalyzers
                 {
                     editor.ReplaceNode(
                         body,
-                        body.AddStatements(Trivia.WithLeadingElasticLineFeed(invocation)));
+                        body.AddStatements(invocation.WithLeadingElasticLineFeed()));
                 }
                 else
                 {
-                    editor.InsertAfter(body.Statements.Last(), Trivia.WithLeadingElasticLineFeed(invocation));
+                    editor.InsertAfter(body.Statements.Last(), invocation.WithLeadingElasticLineFeed());
                 }
             }
             else
@@ -169,10 +170,10 @@ namespace PropertyChangedAnalyzers
                     editor.RemoveNode(invocation);
                     editor.ReplaceNode(
                         ifSetAndRaise,
-                        (x, _) => Trivia.WithTrailingElasticLineFeed(
-                                            ((IfStatementSyntax)x)
-                                            .WithStatement(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation))
-                                            .WithSimplifiedNames())
+                        (x, _) => ((IfStatementSyntax)x)
+                                  .WithStatement(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation))
+                                  .WithSimplifiedNames().WithTrailingElasticLineFeed(
+                                  )
                                         .WithAdditionalAnnotations(Formatter.Annotation));
                 }
                 else
@@ -180,27 +181,26 @@ namespace PropertyChangedAnalyzers
                     editor.RemoveNode(invocation);
                     editor.ReplaceNode(
                         ifSetAndRaise.Statement,
-                        (x, _) => Trivia.WithTrailingElasticLineFeed(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation)
-                 .WithSimplifiedNames())
+                        (x, _) => SyntaxFactory.Block(ifSetAndRaise.Statement, invocation)
+                                               .WithSimplifiedNames().WithTrailingElasticLineFeed()
                                                 .WithAdditionalAnnotations(Formatter.Annotation));
                 }
             }
 
-            DocumentEditorExt.FormatNode(editor, ifSetAndRaise);
+            editor.FormatNode(ifSetAndRaise);
         }
 
         private static void UseSetAndRaise(DocumentEditor editor, AccessorDeclarationSyntax setter, AssignmentExpressionSyntax assignment, IMethodSymbol setAndRaise)
         {
-            var underscoreFields = CodeStyle.UnderscoreFields(editor.SemanticModel);
-            DocumentEditorExt.ReplaceNode(
-                editor,
+            var underscoreFields = editor.SemanticModel.UnderscoreFields();
+            editor.ReplaceNode(
                 setter,
-                x => Trivia.WithTrailingElasticLineFeed(
-                               x.WithBody(null)
-                                .WithExpressionBody(
-                                    SyntaxFactory.ArrowExpressionClause(
-                                        SyntaxFactory.ParseExpression(
-                                            $"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {assignment.Left}, value);"))))
+                x => x.WithBody(null)
+                      .WithExpressionBody(
+                          SyntaxFactory.ArrowExpressionClause(
+                              SyntaxFactory.ParseExpression(
+                                  $"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {assignment.Left}, value);"))).WithTrailingElasticLineFeed(
+                      )
                            .WithAdditionalAnnotations(Formatter.Annotation));
         }
     }

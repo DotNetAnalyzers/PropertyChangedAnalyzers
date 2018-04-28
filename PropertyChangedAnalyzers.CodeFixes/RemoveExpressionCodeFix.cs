@@ -61,20 +61,20 @@ namespace PropertyChangedAnalyzers
                 {
                     editor.ReplaceNode(
                         invocation,
-                        Trivia.WithTrailingElasticLineFeed(
-                                         SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, property?.Name, usesUnderscoreNames).TrimEnd(';'))
-                                                      .WithSimplifiedNames()
-                                                      .WithLeadingElasticLineFeed())
+                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, property?.Name, usesUnderscoreNames).TrimEnd(';'))
+                                     .WithSimplifiedNames()
+                                     .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed(
+                                     )
                                      .WithAdditionalAnnotations(Formatter.Annotation));
                 }
                 else
                 {
                     editor.ReplaceNode(
                         invocation,
-                        Trivia.WithTrailingElasticLineFeed(
-                                         SyntaxFactory.ParseExpression(Snippet.OnOtherPropertyChanged(invoker, name, usesUnderscoreNames).TrimEnd(';'))
-                                                      .WithSimplifiedNames()
-                                                      .WithLeadingElasticLineFeed())
+                        SyntaxFactory.ParseExpression(Snippet.OnOtherPropertyChanged(invoker, name, usesUnderscoreNames).TrimEnd(';'))
+                                     .WithSimplifiedNames()
+                                     .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed(
+                                     )
                                      .WithAdditionalAnnotations(Formatter.Annotation));
                 }
             }
