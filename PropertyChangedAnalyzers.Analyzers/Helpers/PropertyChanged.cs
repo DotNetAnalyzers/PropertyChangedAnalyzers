@@ -75,7 +75,7 @@ namespace PropertyChangedAnalyzers
                     foreach (var candidate in walker.Invocations)
                     {
                         if (!candidate.Contains(assignment) &&
-                            candidate.IsBeforeInScope(assignment) == true)
+                            candidate.IsExecutedBefore(assignment) == true)
                         {
                             continue;
                         }
