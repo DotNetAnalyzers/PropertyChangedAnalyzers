@@ -59,7 +59,7 @@ namespace PropertyChangedAnalyzers
                         diagnostic);
 
                     var type = semanticModel.GetDeclaredSymbolSafe(
-                        SyntaxNodeExt.FirstAncestor<ClassDeclarationSyntax>(setter),
+                        setter.FirstAncestor<ClassDeclarationSyntax>(),
                         context.CancellationToken);
                     if (setter.Body.Statements.Count == 2 &&
                         ReferenceEquals(setter.Body.Statements[0], statementSyntax) &&

@@ -110,8 +110,7 @@ namespace PropertyChangedAnalyzers
 
         private static void MakeNotify(DocumentEditor editor, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
         {
-            var snippet =
-                SyntaxNodeExt.FirstAncestor<PropertyDeclarationSyntax>(assignment) is PropertyDeclarationSyntax
+            var snippet = assignment.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax
                     propertyDeclaration &&
                 propertyDeclaration.Identifier.ValueText == propertyName
                     ? Snippet.OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)
