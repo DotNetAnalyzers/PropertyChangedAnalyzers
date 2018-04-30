@@ -261,18 +261,18 @@ namespace PropertyChangedAnalyzers
                         return false;
                     }
 
-                    if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokeMethod)
+                    if (semanticModel.TryGetSymbol(invocation, cancellationToken, out var invokeMethod))
                     {
                         return invokeMethod == KnownSymbol.PropertyChangedEventHandler.Invoke;
                     }
                 }
                 else if (name == "PropertyChanged" &&
-                         semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method)
+                         semanticModel.TryGetSymbol(invocation, cancellationToken, out var method))
                 {
                     return method == KnownSymbol.PropertyChangedEventHandler.Invoke;
                 }
                 else if (invocation.Expression is IdentifierNameSyntax &&
-                         semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol handler)
+                         semanticModel.TryGetSymbol(invocation, cancellationToken, out var handler))
                 {
                     return handler == KnownSymbol.PropertyChangedEventHandler.Invoke;
                 }
@@ -305,8 +305,10 @@ namespace PropertyChangedAnalyzers
                     return AnalysisResult.No;
                 }
 
-                method = semanticModel.GetSymbolSafe(invocation, cancellationToken);
-                return IsOnPropertyChanged(method, semanticModel, cancellationToken);
+                if (semanticModel.TryGetSymbol(invocation, cancellationToken, out method))
+                {
+                    return IsOnPropertyChanged(method, semanticModel, cancellationToken);
+                }
             }
 
             return AnalysisResult.No;
@@ -352,19 +354,13 @@ namespace PropertyChangedAnalyzers
                                 return AnalysisResult.Yes;
                             }
                         }
-                        else if (invocation.ArgumentList.Arguments.TrySingle(out argument))
+                        else if (invocation.ArgumentList.Arguments.TrySingle(out argument) &&
+                                 invocation.IsPotentialThisOrBase())
                         {
-                            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                                !(memberAccess.Expression is InstanceExpressionSyntax))
-                            {
-                                continue;
-                            }
-
                             if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, semanticModel, cancellationToken) ||
                                 IdentifierNameWalker.Contains(argument.Expression, parameter, semanticModel, cancellationToken))
                             {
-                                if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol invokedMethod &&
-                                    method.ContainingType.Is(invokedMethod.ContainingType))
+                                if (semanticModel.TryGetSymbol(invocation, cancellationToken, out var invokedMethod))
                                 {
                                     using (var set = visited.IncrementUsage())
                                     {

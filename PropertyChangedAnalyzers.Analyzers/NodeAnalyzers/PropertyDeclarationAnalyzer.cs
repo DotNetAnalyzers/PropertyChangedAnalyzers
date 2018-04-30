@@ -43,9 +43,9 @@ namespace PropertyChangedAnalyzers
 
                 if (propertyDeclaration.TryGetGetter(out var getter))
                 {
-                    using (var returnWalker = ReturnExpressionsWalker.Borrow(getter))
+                    using (var walker = ReturnExpressionsWalker.Borrow(getter))
                     {
-                        if (returnWalker.ReturnValues.TryFirst(x => IsProperty(x, property), out var recursiveReturnValue))
+                        if (walker.ReturnValues.TryFirst(x => IsProperty(x, property), out var recursiveReturnValue))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, recursiveReturnValue.GetLocation(), "Getter returns property, infinite recursion"));
                         }
