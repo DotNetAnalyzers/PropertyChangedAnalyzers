@@ -101,7 +101,7 @@ namespace PropertyChangedAnalyzers
                 }
 
                 if (type.BaseType == KnownSymbol.Object &&
-                    !type.Is(KnownSymbol.INotifyPropertyChanged))
+                    !type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation))
                 {
                     if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("GalaSoft.MvvmLight.dll") == true))
                     {
@@ -194,8 +194,8 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
                                              .ConfigureAwait(false);
             ImplementINotifyPropertyChanged(context, semanticModel, classDeclaration, editor);
-            editor.AddUsing(SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left));
-            editor.AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
+            editor.AddUsing(SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left))
+                  .AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
             return editor.GetChangedDocument();
         }
 
@@ -211,7 +211,7 @@ namespace PropertyChangedAnalyzers
         {
             var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
             var underscoreFields = semanticModel.UnderscoreFields();
-            if (!type.Is(KnownSymbol.INotifyPropertyChanged))
+            if (!type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation))
             {
                 if (classDeclaration.BaseList != null &&
                     classDeclaration.BaseList.Types.TryFirst(

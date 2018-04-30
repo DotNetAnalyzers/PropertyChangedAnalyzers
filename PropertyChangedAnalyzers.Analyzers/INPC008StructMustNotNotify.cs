@@ -42,7 +42,7 @@ namespace PropertyChangedAnalyzers
 
             if (context.Node is StructDeclarationSyntax structDeclaration &&
                 context.ContainingSymbol is INamedTypeSymbol type &&
-                type.Is(KnownSymbol.INotifyPropertyChanged))
+                type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetNode().GetLocation(), context.ContainingSymbol.Name));
             }

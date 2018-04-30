@@ -63,7 +63,7 @@ namespace PropertyChangedAnalyzers
 
                         if (getter != null)
                         {
-                            if (property.ContainingType.Is(KnownSymbol.INotifyPropertyChanged) &&
+                            if (property.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) &&
                                 Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(INPC002MutablePublicPropertyShouldNotify.Descriptor, propertyDeclaration.GetLocation(), property.Name));
