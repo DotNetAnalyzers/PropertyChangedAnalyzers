@@ -154,7 +154,8 @@ namespace PropertyChangedAnalyzers
                           .WithAdditionalAnnotations(Formatter.Annotation));
                 if (propertyDeclaration.Initializer != null)
                 {
-                    editor.ReplaceNode(propertyDeclaration,
+                    editor.ReplaceNode(
+                        propertyDeclaration,
                         x => x.WithoutInitializer());
                 }
 

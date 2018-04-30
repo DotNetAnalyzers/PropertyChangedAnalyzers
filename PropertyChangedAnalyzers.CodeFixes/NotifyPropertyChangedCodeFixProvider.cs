@@ -181,7 +181,8 @@ namespace PropertyChangedAnalyzers
                 arrow.Parent is AccessorDeclarationSyntax accessor)
             {
                 editor.RemoveNode(accessor.ExpressionBody);
-                editor.ReplaceNode(accessor,
+                editor.ReplaceNode(
+                    accessor,
                     x =>
                     {
                         var code = StringBuilderPool.Borrow()

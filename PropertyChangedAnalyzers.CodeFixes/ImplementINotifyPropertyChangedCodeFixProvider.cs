@@ -229,7 +229,8 @@ namespace PropertyChangedAnalyzers
 
             if (!type.TryFindEventRecursive("PropertyChanged", out _))
             {
-                editor.AddEvent(classDeclaration,
+                editor.AddEvent(
+                    classDeclaration,
                     (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration(
                         "PropertyChanged",
                         PropertyChangedEventHandlerType,
@@ -245,7 +246,8 @@ namespace PropertyChangedAnalyzers
             {
                 if (type.IsSealed)
                 {
-                    editor.AddMethod(classDeclaration,
+                    editor.AddMethod(
+                        classDeclaration,
                         ParseMethod(
                             @"private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
                               {
@@ -255,7 +257,8 @@ namespace PropertyChangedAnalyzers
                 }
                 else
                 {
-                    editor.AddMethod(classDeclaration,
+                    editor.AddMethod(
+                        classDeclaration,
                         ParseMethod(
                             @"protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
                               {
