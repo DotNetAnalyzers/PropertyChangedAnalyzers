@@ -248,7 +248,7 @@ namespace PropertyChangedAnalyzers
         internal static bool IsPropertyChangedInvoke(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (invocation.ArgumentList?.Arguments.Count == 2 &&
-                invocation.ArgumentList.Arguments[0].Expression.IsEitherKind(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
+                invocation.ArgumentList.Arguments[0].Expression.IsEither(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
                 invocation.TryGetMethodName(out var name) &&
                 invocation.IsPotentialReturnVoid())
             {
