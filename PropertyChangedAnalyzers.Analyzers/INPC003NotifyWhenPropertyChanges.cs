@@ -113,6 +113,75 @@ namespace PropertyChangedAnalyzers
             }
         }
 
+        private static void Handle(SyntaxNodeAnalysisContext context, ExpressionSyntax backing)
+        {
+            if (context.IsExcludedFromAnalysis() ||
+                IsInIgnoredScope(context))
+            {
+                return;
+            }
+
+            if (context.ContainingSymbol.ContainingType is INamedTypeSymbol containingType &&
+                containingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) &&
+                context.Node.TryFirstAncestorOrSelf<TypeDeclarationSyntax>(out var typeDeclaration))
+            {
+                using (var pathWalker = MemberPath.PathWalker.Borrow(backing))
+                {
+                    if (pathWalker.IdentifierNames.Count == 0)
+                    {
+                        return;
+                    }
+
+                    foreach (var member in typeDeclaration.Members)
+                    {
+                        if (member is PropertyDeclarationSyntax propertyDeclaration &&
+                            propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) &&
+                            TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter) &&
+                            !getter.Contains(backing) &&
+                            PropertyPath.Uses(getter, pathWalker, context) &&
+                            !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
+                            context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
+                            PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
+                        {
+                            if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
+                                ReferenceEquals(inProperty, propertyDeclaration) &&
+                                Property.TrySingleReturnedInGetter(inProperty, out var returned) &&
+                                PropertyPath.Uses(backing, returned, context))
+                            {
+                                // We let INPC002 handle this
+                                continue;
+                            }
+
+                            var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
+                        }
+                    }
+                }
+            }
+        }
+
+        private static bool IsInIgnoredScope(SyntaxNodeAnalysisContext context)
+        {
+            if (context.ContainingSymbol is IMethodSymbol method &&
+                method.Name == "Dispose")
+            {
+                return true;
+            }
+
+            if (context.Node.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null ||
+                context.Node.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
+            {
+                if (context.Node.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         private static bool TryGetAssignedExpression(ITypeSymbol containingType, SyntaxNode node, out ExpressionSyntax backing)
         {
             backing = null;
@@ -139,86 +208,6 @@ namespace PropertyChangedAnalyzers
             }
 
             return backing != null;
-        }
-
-        private static void Handle(SyntaxNodeAnalysisContext context, ExpressionSyntax backing)
-        {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (IsInIgnoredScope(context))
-            {
-                return;
-            }
-
-            var typeSymbol = context.ContainingSymbol.ContainingType;
-            if (!typeSymbol.Is(KnownSymbol.INotifyPropertyChanged))
-            {
-                return;
-            }
-
-            var typeDeclaration = context.Node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-            using (var pathWalker = MemberPath.PathWalker.Borrow(backing))
-            {
-                if (pathWalker.IdentifierNames.Count == 0)
-                {
-                    return;
-                }
-
-                foreach (var member in typeDeclaration.Members)
-                {
-                    if (member is PropertyDeclarationSyntax propertyDeclaration &&
-                        propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) &&
-                        TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter) &&
-                        !getter.Contains(backing) &&
-                        PropertyPath.Uses(getter, pathWalker, context) &&
-                        !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
-                        context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
-                        PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
-                    {
-                        if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
-                            ReferenceEquals(inProperty, propertyDeclaration) &&
-                            Property.TrySingleReturnedInGetter(inProperty, out var returned) &&
-                            PropertyPath.Uses(backing, returned, context))
-                        {
-                            // We let INPC002 handle this
-                            continue;
-                        }
-
-                        var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
-                    }
-                }
-            }
-        }
-
-        private static bool IsInIgnoredScope(SyntaxNodeAnalysisContext context)
-        {
-            if (context.ContainingSymbol is IMethodSymbol method &&
-                method.Name == "Dispose")
-            {
-                return true;
-            }
-
-            if (!context.ContainingSymbol.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
-            {
-                return true;
-            }
-
-            if (context.Node.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null ||
-                context.Node.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
-            {
-                if (context.Node.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-
-            return false;
         }
 
         private static bool TryGeExpressionBodyOrGetter(PropertyDeclarationSyntax property, out SyntaxNode node)
