@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]

@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]

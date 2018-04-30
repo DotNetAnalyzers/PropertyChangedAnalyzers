@@ -1,6 +1,5 @@
 namespace PropertyChangedAnalyzers.Test.Helpers
 {
-    using System.Linq;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
@@ -194,7 +193,7 @@ namespace RoslynSandbox
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes().Concat(new[] { SpecialMetadataReferences.Stylet }));
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, SpecialMetadataReferences.Stylet);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
                 var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);

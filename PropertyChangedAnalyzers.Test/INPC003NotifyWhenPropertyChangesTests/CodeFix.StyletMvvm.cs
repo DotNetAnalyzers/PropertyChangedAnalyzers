@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
+namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -11,7 +11,7 @@
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]

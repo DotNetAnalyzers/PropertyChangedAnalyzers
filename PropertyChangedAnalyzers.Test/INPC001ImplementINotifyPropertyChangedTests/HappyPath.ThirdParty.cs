@@ -58,7 +58,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
@@ -74,7 +74,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.MvvmCross);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
