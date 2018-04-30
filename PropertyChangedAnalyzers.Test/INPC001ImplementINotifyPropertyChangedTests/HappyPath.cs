@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal partial class HappyPath
     {
-        private static readonly INPC001ImplementINotifyPropertyChanged Analyzer = new INPC001ImplementINotifyPropertyChanged();
+        private static readonly DiagnosticAnalyzer Analyzer = new INPC001ImplementINotifyPropertyChanged();
 
         [TestCase("null")]
         [TestCase("string.Empty")]

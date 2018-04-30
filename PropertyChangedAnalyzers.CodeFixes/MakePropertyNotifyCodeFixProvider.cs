@@ -143,10 +143,12 @@ namespace PropertyChangedAnalyzers
                                             .AppendLine("}")
                                             .Return();
                 var template = ParseProperty(code);
-                editor.ReplaceNode(getter,
+                editor.ReplaceNode(
+                    getter,
                     x => x.WithExpressionBody(template.Getter().ExpressionBody).WithTrailingElasticLineFeed()
                           .WithAdditionalAnnotations(Formatter.Annotation));
-                editor.ReplaceNode(setter,
+                editor.ReplaceNode(
+                    setter,
                     x => x.WithBody(template.Setter().Body)
                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
                           .WithAdditionalAnnotations(Formatter.Annotation));
@@ -191,12 +193,12 @@ namespace PropertyChangedAnalyzers
                                             .AppendLine("}")
                                             .Return();
                 var template = ParseProperty(code);
-                editor.ReplaceNode(getter,
-                    x => x.WithExpressionBody(template.Getter().ExpressionBody).WithLeadingLineFeed());
-
-                editor.ReplaceNode(setter,
-                    x => x.WithExpressionBody(template.Setter().ExpressionBody)
-                          .WithLeadingLineFeed().WithTrailingLineFeed());
+                editor.ReplaceNode(
+                          getter,
+                          x => x.WithExpressionBody(template.Getter().ExpressionBody).WithLeadingLineFeed())
+                      .ReplaceNode(
+                          setter,
+                          x => x.WithExpressionBody(template.Setter().ExpressionBody).WithLeadingLineFeed().WithTrailingLineFeed());
 
                 if (propertyDeclaration.Initializer != null)
                 {

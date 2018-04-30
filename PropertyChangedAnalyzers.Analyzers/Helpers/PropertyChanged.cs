@@ -319,7 +319,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (!IsPotentialOnPropertyChanged(method))
+            if (!IsPotentialOnPropertyChanged(method, semanticModel.Compilation))
             {
                 return AnalysisResult.No;
             }
@@ -469,7 +469,7 @@ namespace PropertyChangedAnalyzers
                 !candidate.IsGenericMethod ||
                 candidate.TypeParameters.Length != 1 ||
                 candidate.Parameters.Length < 3 ||
-                    !candidate.ContainingType.Is(KnownSymbol.INotifyPropertyChanged))
+                !candidate.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation))
             {
                 return AnalysisResult.No;
             }
@@ -552,7 +552,7 @@ namespace PropertyChangedAnalyzers
             return candidate.Parameters.Length == 3 ? AnalysisResult.Maybe : AnalysisResult.No;
         }
 
-        private static bool IsPotentialOnPropertyChanged(IMethodSymbol method)
+        private static bool IsPotentialOnPropertyChanged(IMethodSymbol method, Compilation compilation)
         {
             if (method != null &&
                 method.ReturnsVoid &&
@@ -566,7 +566,7 @@ namespace PropertyChangedAnalyzers
                            @event.IsStatic;
                 }
 
-                return method.ContainingType.Is(KnownSymbol.INotifyPropertyChanged);
+                return method.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, compilation);
             }
 
             return false;

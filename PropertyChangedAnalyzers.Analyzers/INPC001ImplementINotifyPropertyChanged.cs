@@ -45,13 +45,13 @@ namespace PropertyChangedAnalyzers
                 context.Node is ClassDeclarationSyntax classDeclaration)
             {
                 if (type.IsStatic ||
-                    type.Is(KnownSymbol.INotifyPropertyChanged) ||
-                    type.Is(KnownSymbol.MarkupExtension) ||
-                    type.Is(KnownSymbol.Attribute) ||
-                    type.Is(KnownSymbol.IValueConverter) ||
-                    type.Is(KnownSymbol.IMultiValueConverter) ||
-                    type.Is(KnownSymbol.DataTemplateSelector) ||
-                    type.Is(KnownSymbol.DependencyObject))
+                    type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) ||
+                    type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) ||
+                    type.IsAssignableTo(KnownSymbol.Attribute, context.Compilation) ||
+                    type.IsAssignableTo(KnownSymbol.IValueConverter, context.Compilation) ||
+                    type.IsAssignableTo(KnownSymbol.IMultiValueConverter, context.Compilation) ||
+                    type.IsAssignableTo(KnownSymbol.DataTemplateSelector, context.Compilation) ||
+                    type.IsAssignableTo(KnownSymbol.DependencyObject, context.Compilation))
                 {
                     return;
                 }

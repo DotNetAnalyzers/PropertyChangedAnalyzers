@@ -1,7 +1,6 @@
 namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
@@ -27,7 +26,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly.Location));
+                AnalyzerAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
@@ -43,7 +42,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.MetadataReferences.Add(MetadataReference.CreateFromFile(typeof(Caliburn.Micro.PropertyChangedBase).Assembly.Location));
+                AnalyzerAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
 

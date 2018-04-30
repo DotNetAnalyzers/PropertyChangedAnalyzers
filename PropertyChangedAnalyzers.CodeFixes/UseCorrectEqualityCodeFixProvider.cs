@@ -73,12 +73,12 @@ namespace PropertyChangedAnalyzers
                             : $"this.{backingField.Name}";
 
                         var equalsExpression = SyntaxFactory.ParseExpression(
-                            Snippet.EqualityCheck(
-                                property.Type,
-                                "value",
-                                fieldAccess,
-                                semanticModel)).WithSimplifiedNames(
-                        );
+                                                                Snippet.EqualityCheck(
+                                                                    property.Type,
+                                                                    "value",
+                                                                    fieldAccess,
+                                                                    semanticModel))
+                                                            .WithSimplifiedNames();
 
                         context.RegisterCodeFix(
                             $"Use {equalsExpression}",

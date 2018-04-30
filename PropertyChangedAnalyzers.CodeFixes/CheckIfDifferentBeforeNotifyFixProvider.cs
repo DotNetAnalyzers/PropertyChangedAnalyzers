@@ -172,9 +172,9 @@ namespace PropertyChangedAnalyzers
                         ifSetAndRaise,
                         (x, _) => ((IfStatementSyntax)x)
                                   .WithStatement(SyntaxFactory.Block(ifSetAndRaise.Statement, invocation))
-                                  .WithSimplifiedNames().WithTrailingElasticLineFeed(
-                                  )
-                                        .WithAdditionalAnnotations(Formatter.Annotation));
+                                  .WithSimplifiedNames()
+                                  .WithTrailingElasticLineFeed()
+                                  .WithAdditionalAnnotations(Formatter.Annotation));
                 }
                 else
                 {
@@ -199,9 +199,9 @@ namespace PropertyChangedAnalyzers
                       .WithExpressionBody(
                           SyntaxFactory.ArrowExpressionClause(
                               SyntaxFactory.ParseExpression(
-                                  $"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {assignment.Left}, value);"))).WithTrailingElasticLineFeed(
-                      )
-                           .WithAdditionalAnnotations(Formatter.Annotation));
+                                  $"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {assignment.Left}, value);")))
+                      .WithTrailingElasticLineFeed()
+                      .WithAdditionalAnnotations(Formatter.Annotation));
         }
     }
 }
