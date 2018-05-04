@@ -36,6 +36,5 @@ group Test
   nuget Gu.Wpf.Reactive
 
 group Build
-  storage: none
   source http://www.nuget.org/api/v2/
   nuget Microsoft.VSSDK.BuildTools
