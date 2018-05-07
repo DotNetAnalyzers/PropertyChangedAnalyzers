@@ -75,16 +75,12 @@ namespace PropertyChangedAnalyzers
                     foreach (var candidate in walker.Invocations)
                     {
                         if (!candidate.Contains(assignment) &&
-                            candidate.IsExecutedBefore(assignment) == true)
+                            assignment.IsExecutedBefore(candidate) == false)
                         {
                             continue;
                         }
 
-                        switch (TryGetInvokedPropertyChangedName(
-                            candidate,
-                            semanticModel,
-                            cancellationToken,
-                            out var propertyName))
+                        switch (TryGetInvokedPropertyChangedName(candidate, semanticModel, cancellationToken, out var propertyName))
                         {
                             case AnalysisResult.No:
                                 continue;
