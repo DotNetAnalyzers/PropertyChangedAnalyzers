@@ -22,7 +22,16 @@ namespace PropertyChangedAnalyzers
         {
             using (var walker = Borrow(node))
             {
-                return walker.Contains(parameter, semanticModel, cancellationToken);
+                foreach (var identifierName in walker.identifierNames)
+                {
+                    if (parameter.MetadataName == identifierName.Identifier.ValueText &&
+                        semanticModel.GetSymbolSafe(identifierName, cancellationToken) is IParameterSymbol)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         }
 
@@ -30,26 +39,6 @@ namespace PropertyChangedAnalyzers
         {
             this.identifierNames.Add(node);
             base.VisitIdentifierName(node);
-        }
-
-        public bool Contains(IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            this.ThrowIfDisposed();
-            if (parameter is null)
-            {
-                return false;
-            }
-
-            foreach (var identifierName in this.identifierNames)
-            {
-                if (parameter.MetadataName == identifierName.Identifier.ValueText &&
-                    semanticModel.GetSymbolSafe(identifierName, cancellationToken) is IParameterSymbol)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         protected override void Clear()
