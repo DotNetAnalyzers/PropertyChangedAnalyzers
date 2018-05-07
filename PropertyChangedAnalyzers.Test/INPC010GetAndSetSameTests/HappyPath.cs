@@ -267,5 +267,37 @@ namespace RoslynSandbox
             testCode = testCode.AssertReplace("get => Math.Abs(this.speed - 1) < 1E-2;", getter);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void ExplicitImplementationWithCast()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo<T> : IFoo
+    {
+        private T value;
+
+        public T Value
+        {
+            get => this.value;
+            set => this.value = value;
+        }
+
+        object IFoo.Value
+        {
+            get => this.value;
+            set => this.Value = (T)value;
+        }
+    }
+
+    interface IFoo
+    {
+        object Value { get; set; }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
