@@ -49,6 +49,27 @@ namespace RoslynSandbox.Client
 
         public int Value
         {
+            get { return this.value; }
+            set { this.TrySet(ref this.value, value); }
+        }
+    }
+}";
+
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+            }
+
+            [Test]
+            public void SetWithThisGetWithout()
+            {
+                var testCode = @"
+namespace RoslynSandbox.Client
+{
+    public class Foo : RoslynSandbox.Core.ViewModelBase
+    {
+        private int value;
+
+        public int Value
+        {
             get { return value; }
             set { this.TrySet(ref this.value, value); }
         }
