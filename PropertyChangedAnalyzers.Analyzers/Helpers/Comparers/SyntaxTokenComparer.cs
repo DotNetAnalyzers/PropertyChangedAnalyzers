@@ -3,9 +3,13 @@ namespace PropertyChangedAnalyzers
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
 
-    internal sealed class SyntaxTokenValueTextComparer : IEqualityComparer<SyntaxToken>
+    internal sealed class SyntaxTokenComparer : IEqualityComparer<SyntaxToken>
     {
-        public static readonly SyntaxTokenValueTextComparer Default = new SyntaxTokenValueTextComparer();
+        public static readonly SyntaxTokenComparer ByValueText = new SyntaxTokenComparer();
+
+        private SyntaxTokenComparer()
+        {
+        }
 
         public static bool Equals(SyntaxToken x, SyntaxToken y) => x.ValueText == y.ValueText;
 

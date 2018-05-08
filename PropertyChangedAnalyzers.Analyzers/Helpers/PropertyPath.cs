@@ -78,7 +78,7 @@ namespace PropertyChangedAnalyzers
         {
             private readonly List<ExpressionSyntax> usedMembers = new List<ExpressionSyntax>();
             private readonly List<ExpressionSyntax> recursives = new List<ExpressionSyntax>();
-            private readonly HashSet<SyntaxToken> localsAndParameters = new HashSet<SyntaxToken>(SyntaxTokenValueTextComparer.Default);
+            private readonly HashSet<SyntaxToken> localsAndParameters = new HashSet<SyntaxToken>(SyntaxTokenComparer.ByValueText);
             private readonly HashSet<SyntaxNode> visited = new HashSet<SyntaxNode>();
 
             private SemanticModel semanticModel;
