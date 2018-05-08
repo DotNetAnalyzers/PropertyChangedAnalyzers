@@ -25,7 +25,7 @@ namespace PropertyChangedAnalyzers
                 foreach (var identifierName in walker.identifierNames)
                 {
                     if (parameter.MetadataName == identifierName.Identifier.ValueText &&
-                        semanticModel.GetSymbolSafe(identifierName, cancellationToken) is IParameterSymbol)
+                        semanticModel.TryGetSymbol(identifierName, cancellationToken, out IParameterSymbol _))
                     {
                         return true;
                     }

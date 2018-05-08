@@ -30,52 +30,44 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            IFieldSymbol returnedField = null;
             if (propertyDeclaration.TryGetGetter(out var getter))
             {
-                if (getter.Body == null)
+                if (getter.Body == null &&
+                    getter.ExpressionBody == null)
                 {
                     return false;
                 }
 
-                using (var walker = ReturnExpressionsWalker.Borrow(getter.Body))
+                using (var walker = ReturnExpressionsWalker.Borrow(getter))
                 {
-                    if (walker.ReturnValues.Count == 0)
-                    {
-                        return false;
-                    }
-
                     foreach (var returnValue in walker.ReturnValues)
                     {
-                        var returnedSymbol = returnValue?.IsKind(SyntaxKind.CoalesceExpression) == true
-                            ? semanticModel.GetSymbolSafe((returnValue as BinaryExpressionSyntax)?.Left, cancellationToken) as IFieldSymbol
-                            : semanticModel.GetSymbolSafe(returnValue, cancellationToken) as IFieldSymbol;
-                        if (returnedSymbol == null)
+                        if (IsCoalesceAssign(returnValue))
                         {
-                            return false;
+                            return true;
                         }
 
-                        if (returnedField != null &&
-                            !ReferenceEquals(returnedSymbol, returnedField))
+                        if (semanticModel.TryGetSymbol(returnValue, cancellationToken, out IFieldSymbol returnedField) &&
+                            AssignmentExecutionWalker.FirstFor(returnedField, getter, Scope.Instance, semanticModel, cancellationToken, out _))
                         {
-                            return false;
+                            return true;
                         }
-
-                        returnedField = returnedSymbol;
                     }
                 }
 
-                return AssignmentWalker.Assigns(returnedField, getter.Body, semanticModel, cancellationToken);
-            }
-
-            var arrow = propertyDeclaration.ExpressionBody;
-            if (arrow?.Expression?.IsKind(SyntaxKind.CoalesceExpression) != true)
-            {
                 return false;
             }
 
-            returnedField = semanticModel.GetSymbolSafe((arrow.Expression as BinaryExpressionSyntax)?.Left, cancellationToken) as IFieldSymbol;
-            return AssignmentWalker.Assigns(returnedField, arrow.Expression, semanticModel, cancellationToken);
+            return propertyDeclaration.ExpressionBody is ArrowExpressionClauseSyntax arrow &&
+                   IsCoalesceAssign(arrow.Expression);
+
+            bool IsCoalesceAssign(ExpressionSyntax expression)
+            {
+                return expression is BinaryExpressionSyntax binary &&
+                       binary.IsKind(SyntaxKind.CoalesceExpression) &&
+                       semanticModel.TryGetSymbol(binary.Left, cancellationToken, out IFieldSymbol coalesceField) &&
+                       AssignmentExecutionWalker.FirstFor(coalesceField, binary.Right, Scope.Instance, semanticModel, cancellationToken, out _);
+            }
         }
 
         internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, SemanticModel semanticModel, CancellationToken cancellationToken)
