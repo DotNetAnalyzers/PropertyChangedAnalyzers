@@ -15,7 +15,6 @@
 
   <PropertyGroup>
     <PackageId>PropertyChangedAnalyzers</PackageId>
-    <Product>PropertyChangedAnalyzers</Product>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
     <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
