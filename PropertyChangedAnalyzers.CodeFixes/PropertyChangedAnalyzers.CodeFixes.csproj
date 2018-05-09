@@ -3,11 +3,26 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+    <BuildOutputTargetFolder>analyzers\dotnet\cs</BuildOutputTargetFolder>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Version>2.5.10.0</Version>
+    <Authors>Johan Larsson</Authors>
+    <RootNamespace>PropertyChangedAnalyzers</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
     <CodeAnalysisRuleSet>PropertyChangedAnalyzers.CodeFixes.ruleset</CodeAnalysisRuleSet>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <RootNamespace>PropertyChangedAnalyzers</RootNamespace>
-    <NoWarn>NU1605</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>PropertyChangedAnalyzers</PackageId>
+    <Product>PropertyChangedAnalyzers</Product>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
+    <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
+    <PackageReleaseNotes>BUGFIX: Handle nested fields and properties.</PackageReleaseNotes>
+    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -18,6 +33,10 @@
   <ItemGroup>
     <ProjectReference Include="..\PropertyChangedAnalyzers.Analyzers\PropertyChangedAnalyzers.Analyzers.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Exec Command=".paket\paket.exe pack publish --template $(ProjectDir)paket.template" WorkingDirectory="$(SolutionDir)" />
+  </Target>
   
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

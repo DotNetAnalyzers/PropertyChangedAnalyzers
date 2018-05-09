@@ -1,22 +1,12 @@
-﻿type file
-version 2.5.9.0
-title PropertyChangedAnalyzers
+﻿type project
 id PropertyChangedAnalyzers
-authors Johan Larsson
-owners Johan Larsson
-copyright Copyright Johan Larsson 2017
-developmentDependency true
-description Roslyn analyzers for INotifyPropertyChanged.
-tags WPF Roslyn Diagnostic Analyzer DotnetAnalyzers
+include-referenced-projects true
 
-projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
-licenseUrl http://opensource.org/licenses/MIT
-
-releasenotes
-  BUGFIX: Handle nested fields and properties.
+excludedgroups
+  Main
+  Analyzers
 
 files
-  bin/Release/netstandard1.3/PropertyChangedAnalyzers.Analyzers.dll ==> analyzers/dotnet/cs
-  bin/Release/netstandard1.3/PropertyChangedAnalyzers.CodeFixes.dll ==> analyzers/dotnet/cs
-  ../.paket/tools/*.ps1 ==> tools
+  bin/Release/Gu.Roslyn.AnalyzerExtensions.dll ==> analyzers/dotnet/cs
+  bin/Release/Gu.Roslyn.CodeFixExtensions.dll ==> analyzers/dotnet/cs
 
