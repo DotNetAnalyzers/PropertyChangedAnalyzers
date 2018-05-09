@@ -1,7 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
-    using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -26,29 +25,6 @@ namespace PropertyChangedAnalyzers
         }
 
         internal static AssignmentWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new AssignmentWalker());
-
-        internal static bool Assigns(IFieldSymbol field, SyntaxNode scope, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (field == null ||
-                scope == null)
-            {
-                return false;
-            }
-
-            using (var walker = Borrow(scope))
-            {
-                foreach (var assignment in walker.Assignments)
-                {
-                    var assignedSymbol = semanticModel.GetSymbolSafe(assignment.Left, cancellationToken);
-                    if (field.Equals(assignedSymbol))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
 
         protected override void Clear()
         {
