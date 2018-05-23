@@ -2,12 +2,14 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
-        private static readonly IfStatementAnalyzer Analyzer = new IfStatementAnalyzer();
-        private static readonly UseCorrectEqualityCodeFixProvider Fix = new UseCorrectEqualityCodeFixProvider();
+        private static readonly DiagnosticAnalyzer Analyzer = new IfStatementAnalyzer();
+        private static readonly CodeFixProvider Fix = new UseCorrectEqualityCodeFixProvider();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC006_a");
 
         private static readonly IReadOnlyList<TestCase> TestCases = new[]
