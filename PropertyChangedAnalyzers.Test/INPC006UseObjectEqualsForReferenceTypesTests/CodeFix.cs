@@ -40,7 +40,7 @@ namespace RoslynSandbox
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            AnalyzerAssert.SuppressedDiagnostics.Add(INPC006UseReferenceEquals.DiagnosticId);
+            AnalyzerAssert.SuppressedDiagnostics.Add(INPC006UseReferenceEqualsForReferenceTypes.DiagnosticId);
         }
 
         [OneTimeTearDown]

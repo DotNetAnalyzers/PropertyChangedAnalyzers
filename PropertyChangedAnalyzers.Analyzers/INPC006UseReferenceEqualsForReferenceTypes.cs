@@ -2,7 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
-    internal class INPC006UseReferenceEquals
+    internal class INPC006UseReferenceEqualsForReferenceTypes
     {
         public const string DiagnosticId = "INPC006_a";
 

@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            INPC006UseReferenceEquals.Descriptor,
+            INPC006UseReferenceEqualsForReferenceTypes.Descriptor,
             INPC006UseObjectEqualsForReferenceTypes.Descriptor);
 
         /// <inheritdoc/>
@@ -45,7 +45,7 @@ namespace PropertyChangedAnalyzers
                     if (property.Type.IsReferenceType &&
                         property.Type != KnownSymbol.String)
                     {
-                        if (INPC006UseReferenceEquals.Descriptor.IsSuppressed(context.SemanticModel) &&
+                        if (INPC006UseReferenceEqualsForReferenceTypes.Descriptor.IsSuppressed(context.SemanticModel) &&
                             !IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property) &&
                             !IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
@@ -60,7 +60,7 @@ namespace PropertyChangedAnalyzers
                             !IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC006UseReferenceEquals.Descriptor, ifStatement.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(INPC006UseReferenceEqualsForReferenceTypes.Descriptor, ifStatement.GetLocation()));
                         }
                     }
                 }

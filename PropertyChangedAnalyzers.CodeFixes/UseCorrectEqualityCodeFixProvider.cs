@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            INPC006UseReferenceEquals.DiagnosticId,
+            INPC006UseReferenceEqualsForReferenceTypes.DiagnosticId,
             INPC006UseObjectEqualsForReferenceTypes.DiagnosticId);
 
         /// <inheritdoc/>
@@ -108,7 +108,7 @@ namespace PropertyChangedAnalyzers
 
         private static bool CanFix(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
-            if (!INPC006UseReferenceEquals.Descriptor.IsSuppressed(semanticModel) &&
+            if (!INPC006UseReferenceEqualsForReferenceTypes.Descriptor.IsSuppressed(semanticModel) &&
                 Equality.IsEqualityComparerEquals(ifStatement.Condition, semanticModel, cancellationToken, value, member))
             {
                 return true;
