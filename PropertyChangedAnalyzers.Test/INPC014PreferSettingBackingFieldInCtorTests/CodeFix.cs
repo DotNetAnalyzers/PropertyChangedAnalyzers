@@ -1,12 +1,14 @@
 namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
-        private static readonly INPC014PreferSettingBackingFieldInCtor Analyzer = new INPC014PreferSettingBackingFieldInCtor();
-        private static readonly SetBackingFieldCodeFix Fix = new SetBackingFieldCodeFix();
+        private static readonly DiagnosticAnalyzer Analyzer = new INPC014PreferSettingBackingFieldInCtor();
+        private static readonly CodeFixProvider Fix = new SetBackingFieldCodeFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC014");
 
 #pragma warning disable SA1203 // Constants must appear before fields
@@ -138,7 +140,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSettingBackingFieldUnderscoreNames()
+        public void SimplePropertyWithBackingFieldUnderscoreNames()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -188,8 +190,15 @@ namespace RoslynSandbox
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
-        [Test]
-        public void WhenSettingBackingFieldInNotifyingProperty()
+        [TestCase("value == this.value")]
+        [TestCase("this.value == value")]
+        [TestCase("Equals(this.value, value)")]
+        [TestCase("Equals(value, this.value)")]
+        [TestCase("ReferenceEquals(this.value, value)")]
+        [TestCase("ReferenceEquals(value, this.value)")]
+        [TestCase("value.Equals(this.value)")]
+        [TestCase("this.value.Equals(value)")]
+        public void NotifyingProperty(string equals)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -200,17 +209,17 @@ namespace RoslynSandbox
     [DataContract]
     public class ViewModel : INotifyPropertyChanged
     {
-        private int value;
+        private string value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(int value)
+        public ViewModel(string value)
         {
             ↓this.Value = value;
         }
 
         [DataMember]
-        public int Value
+        public string Value
         {
             get => this.value;
             private set
@@ -231,7 +240,7 @@ namespace RoslynSandbox
         }
     }
 }";
-
+            testCode = testCode.AssertReplace("value == this.value", equals);
             var fixedCode = @"
 namespace RoslynSandbox
 {
@@ -241,17 +250,17 @@ namespace RoslynSandbox
     [DataContract]
     public class ViewModel : INotifyPropertyChanged
     {
-        private int value;
+        private string value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(int value)
+        public ViewModel(string value)
         {
             this.value = value;
         }
 
         [DataMember]
-        public int Value
+        public string Value
         {
             get => this.value;
             private set
@@ -272,6 +281,7 @@ namespace RoslynSandbox
         }
     }
 }";
+            fixedCode = fixedCode.AssertReplace("value == this.value", equals);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 

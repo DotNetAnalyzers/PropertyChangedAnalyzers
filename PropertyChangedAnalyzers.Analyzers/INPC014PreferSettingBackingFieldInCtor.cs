@@ -69,7 +69,9 @@ namespace PropertyChangedAnalyzers
                     foreach (var invocation in walker.Invocations)
                     {
                         if (invocation.TryGetMethodName(out var name) &&
-                            (name == "Equals" || name == "nameof"))
+                            (name == nameof(Equals) ||
+                             name == nameof(ReferenceEquals) ||
+                             name == "nameof"))
                         {
                             continue;
                         }
