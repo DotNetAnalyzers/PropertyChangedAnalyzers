@@ -42,7 +42,7 @@ namespace RoslynSandbox.Core
 #pragma warning restore SA1203 // Constants must appear before fields
 
         [Test]
-        public void WhenSettingBackingField()
+        public void SimplePropertyWithBackingFieldStatementBodySetter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -86,6 +86,51 @@ namespace RoslynSandbox
             {
                 this.value = value;
             }
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+        }
+
+        [Test]
+        public void SimplePropertyWithBackingFieldExpressionBodySetter()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel
+    {
+        private int value;
+
+        public ViewModel(int value)
+        {
+            ↓this.Value = value;
+        }
+
+        public int Value
+        {
+            get => this.value;
+            private set => this.value = value;
+        }
+    }
+}";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class ViewModel
+    {
+        private int value;
+
+        public ViewModel(int value)
+        {
+            this.value = value;
+        }
+
+        public int Value
+        {
+            get => this.value;
+            private set => this.value = value;
         }
     }
 }";
