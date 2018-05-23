@@ -251,33 +251,30 @@ namespace PropertyChangedAnalyzers
             var previousStatement = assignStatement;
             for (var i = index + 1; i < block.Statements.Count; i++)
             {
-                var statement = block.Statements[i] as ExpressionStatementSyntax;
-                var invocation = statement?.Expression as InvocationExpressionSyntax;
-                if (invocation == null)
+                if (block.Statements[i] is ExpressionStatementSyntax expressionStatement &&
+                    expressionStatement.Expression is InvocationExpressionSyntax invocation)
                 {
-                    break;
-                }
+                    var identifierName = invocation.Expression as IdentifierNameSyntax;
+                    if (identifierName == null)
+                    {
+                        var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
+                        if (!(memberAccess?.Expression is ThisExpressionSyntax))
+                        {
+                            break;
+                        }
 
-                var identifierName = invocation.Expression as IdentifierNameSyntax;
-                if (identifierName == null)
-                {
-                    var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
-                    if (!(memberAccess?.Expression is ThisExpressionSyntax))
+                        identifierName = memberAccess.Name as IdentifierNameSyntax;
+                    }
+
+                    if (identifierName == null)
                     {
                         break;
                     }
 
-                    identifierName = memberAccess.Name as IdentifierNameSyntax;
-                }
-
-                if (identifierName == null)
-                {
-                    break;
-                }
-
-                if (identifierName.Identifier.ValueText == invoker.Name)
-                {
-                    previousStatement = statement;
+                    if (identifierName.Identifier.ValueText == invoker.Name)
+                    {
+                        previousStatement = expressionStatement;
+                    }
                 }
             }
 

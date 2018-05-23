@@ -37,70 +37,86 @@ namespace PropertyChangedAnalyzers
                     continue;
                 }
 
-                var propertyDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<PropertyDeclarationSyntax>();
-                var classDeclarationSyntax = propertyDeclaration?.Parent as ClassDeclarationSyntax;
-                if (classDeclarationSyntax == null)
+                if (syntaxRoot.TryFindNode<PropertyDeclarationSyntax>(diagnostic, out var propertyDeclaration) &&
+                    propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax)
                 {
-                    continue;
-                }
-
-                var type = semanticModel.GetDeclaredSymbolSafe(classDeclarationSyntax, context.CancellationToken);
-                if (PropertyChanged.TryGetSetAndRaise(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
-                {
-                    var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
-                    if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
+                    var type = semanticModel.GetDeclaredSymbolSafe(classDeclarationSyntax, context.CancellationToken);
+                    if (PropertyChanged.TryGetSetAndRaise(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
                     {
-                        context.RegisterCodeFix(
-                            key,
-                            (editor, cancellationToken) => MakeAutoPropertySet(
-                                editor,
-                                propertyDeclaration,
-                                setAndRaiseMethod,
-                                semanticModel),
-                            key,
-                            diagnostic);
-                    }
-                    else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
-                    {
-                        context.RegisterCodeFix(
-                            key,
-                            (editor, cancellationToken) => MakeWithBackingFieldSet(
-                                editor,
-                                propertyDeclaration,
-                                setAndRaiseMethod,
-                                semanticModel),
-                            key,
-                            diagnostic);
-                    }
-                }
-
-                if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
-                    invoker.Parameters.Length == 1)
-                {
-                    if (invoker.Parameters[0].Type == KnownSymbol.String ||
-                        invoker.Parameters[0].Type == KnownSymbol.PropertyChangedEventArgs)
-                    {
+                        var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
                         if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                         {
                             context.RegisterCodeFix(
-                                NotifyWhenValueChanges,
-                                (editor, cancellationToken) => MakeAutoPropertyNotifyWhenValueChanges(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
-                                NotifyWhenValueChanges,
+                                key,
+                                (editor, cancellationToken) => MakeAutoPropertySet(
+                                    editor,
+                                    propertyDeclaration,
+                                    setAndRaiseMethod,
+                                    semanticModel),
+                                key,
                                 diagnostic);
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
                         {
                             context.RegisterCodeFix(
-                                NotifyWhenValueChanges,
-                                (editor, cancellationToken) => MakeWithBackingFieldNotifyWhenValueChanges(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
-                                NotifyWhenValueChanges,
+                                key,
+                                (editor, cancellationToken) => MakeWithBackingFieldSet(
+                                    editor,
+                                    propertyDeclaration,
+                                    setAndRaiseMethod,
+                                    semanticModel),
+                                key,
                                 diagnostic);
+                        }
+                    }
 
-                            context.RegisterCodeFix(
-                                "Notify.",
-                                (editor, cancellationToken) => MakeWithBackingFieldNotify(editor, propertyDeclaration, invoker, semanticModel, cancellationToken),
-                                "Notify.",
-                                diagnostic);
+                    if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
+                        invoker.Parameters.Length == 1)
+                    {
+                        if (invoker.Parameters[0]
+                                   .Type ==
+                            KnownSymbol.String ||
+                            invoker.Parameters[0]
+                                   .Type ==
+                            KnownSymbol.PropertyChangedEventArgs)
+                        {
+                            if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
+                            {
+                                context.RegisterCodeFix(
+                                    NotifyWhenValueChanges,
+                                    (editor, cancellationToken) => MakeAutoPropertyNotifyWhenValueChanges(
+                                        editor,
+                                        propertyDeclaration,
+                                        invoker,
+                                        semanticModel,
+                                        cancellationToken),
+                                    NotifyWhenValueChanges,
+                                    diagnostic);
+                            }
+                            else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
+                            {
+                                context.RegisterCodeFix(
+                                    NotifyWhenValueChanges,
+                                    (editor, cancellationToken) => MakeWithBackingFieldNotifyWhenValueChanges(
+                                        editor,
+                                        propertyDeclaration,
+                                        invoker,
+                                        semanticModel,
+                                        cancellationToken),
+                                    NotifyWhenValueChanges,
+                                    diagnostic);
+
+                                context.RegisterCodeFix(
+                                    "Notify.",
+                                    (editor, cancellationToken) => MakeWithBackingFieldNotify(
+                                        editor,
+                                        propertyDeclaration,
+                                        invoker,
+                                        semanticModel,
+                                        cancellationToken),
+                                    "Notify.",
+                                    diagnostic);
+                            }
                         }
                     }
                 }
