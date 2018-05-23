@@ -3,7 +3,7 @@ namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal class Codefix
+    internal class CodeFix
     {
         private static readonly INPC011DontShadow Analyzer = new INPC011DontShadow();
         private static readonly RemoveShadowingCodeFix Fix = new RemoveShadowingCodeFix();
