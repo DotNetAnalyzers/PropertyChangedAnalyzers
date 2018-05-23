@@ -1,11 +1,12 @@
-namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
+namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class HappyPath
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
 
         [Test]
         public void NotifyingProperty()
@@ -52,14 +53,45 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void ExpressionBody()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private int value;
+
+        public int Value => this.value;
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void ExpressionBodyWhenKeyword()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private int @default;
+
+        public int Default => this.@default;
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
         public void WithBackingFieldExpressionBodies()
         {
             var testCode = @"
 namespace RoslynSandbox
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class Foo
     {
         private int value;
@@ -218,56 +250,6 @@ namespace RoslynSandbox
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
-        [TestCase("get => Math.Abs(this.speed - 1) < 1E-2;")]
-        [TestCase("get => Math.Abs(this.Speed - 1) < 1E-2;")]
-        public void IsSpeed1(string getter)
-        {
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class Foo : INotifyPropertyChanged
-    {
-        private double speed;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public bool IsSpeed1
-        {
-            get => Math.Abs(this.speed - 1) < 1E-2;
-            set => this.Speed = 1;
-        }
-
-        public double Speed
-        {
-            get => this.speed;
-
-            set
-            {
-                if (value.Equals(this.speed))
-                {
-                    return;
-                }
-
-                this.speed = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.IsSpeed1));
-            }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-            testCode = testCode.AssertReplace("get => Math.Abs(this.speed - 1) < 1E-2;", getter);
-            AnalyzerAssert.Valid(Analyzer, testCode);
-        }
-
         [Test]
         public void ExplicitImplementationWithCast()
         {
@@ -294,6 +276,42 @@ namespace RoslynSandbox
     interface IFoo
     {
         object Value { get; set; }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void BackingFiledSum()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Linq;
+
+    public class Foo
+    {
+        private int[] ints;
+
+        public int Sum => this.ints.Sum();
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void TextLength()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private string text;
+
+        public int TextLength => this.text.Length;
     }
 }";
 

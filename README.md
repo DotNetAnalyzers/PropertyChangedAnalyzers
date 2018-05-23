@@ -81,6 +81,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC016.md">INPC016</a></td>
   <td>Notify after update.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC017.md">INPC017</a></td>
+  <td>Backing field name must match.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

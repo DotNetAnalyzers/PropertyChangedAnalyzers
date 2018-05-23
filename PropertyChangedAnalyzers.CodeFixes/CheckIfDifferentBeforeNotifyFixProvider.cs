@@ -187,13 +187,13 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            editor.FormatNode(ifSetAndRaise);
+            _ = editor.FormatNode(ifSetAndRaise);
         }
 
         private static void UseSetAndRaise(DocumentEditor editor, AccessorDeclarationSyntax setter, AssignmentExpressionSyntax assignment, IMethodSymbol setAndRaise)
         {
             var underscoreFields = editor.SemanticModel.UnderscoreFields();
-            editor.ReplaceNode(
+            _ = editor.ReplaceNode(
                 setter,
                 x => x.WithBody(null)
                       .WithExpressionBody(

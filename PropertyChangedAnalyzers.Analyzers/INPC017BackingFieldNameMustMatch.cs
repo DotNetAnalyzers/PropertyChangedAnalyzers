@@ -2,18 +2,18 @@ namespace PropertyChangedAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
-    internal static class INPC016NotifyAfterUpdate
+    internal static class INPC017BackingFieldNameMustMatch
     {
-        public const string DiagnosticId = "INPC016";
+        public const string DiagnosticId = "INPC017";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
-            title: "Notify after update.",
-            messageFormat: "Notify after updating the backing field.",
+            title: "Backing field name must match.",
+            messageFormat: "Backing field name must match.",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
-            description: "Notify after updating the backing field.",
+            description: "Backing field name must match.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
     }
 }

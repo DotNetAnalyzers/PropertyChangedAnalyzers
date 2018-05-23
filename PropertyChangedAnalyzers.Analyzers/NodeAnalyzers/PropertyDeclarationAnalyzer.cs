@@ -15,7 +15,8 @@ namespace PropertyChangedAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             INPC002MutablePublicPropertyShouldNotify.Descriptor,
             INPC010GetAndSetSame.Descriptor,
-            INPC015PropertyIsRecursive.Descriptor);
+            INPC015PropertyIsRecursive.Descriptor,
+            INPC017BackingFieldNameMustMatch.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -35,19 +36,42 @@ namespace PropertyChangedAnalyzers
             if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 context.ContainingSymbol is IPropertySymbol property)
             {
-                if (propertyDeclaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody &&
-                    IsProperty(expressionBody.Expression, property))
+                if (propertyDeclaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, expressionBody.Expression.GetLocation(), "Expression body returns property, infinite recursion"));
+                    if (IsProperty(expressionBody.Expression, property))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, expressionBody.Expression.GetLocation(), "Expression body returns property, infinite recursion"));
+                    }
+
+                    if (expressionBody.Expression is ExpressionSyntax expression &&
+                        expression.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
+                        MemberPath.TrySingle(expression, out var single) &&
+                        context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol backingField) &&
+                        !HasMatchingName(backingField, property))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor, expressionBody.Expression.GetLocation()));
+                    }
                 }
 
                 if (propertyDeclaration.TryGetGetter(out var getter))
                 {
                     using (var walker = ReturnExpressionsWalker.Borrow(getter))
                     {
-                        if (walker.ReturnValues.TryFirst(x => IsProperty(x, property), out var recursiveReturnValue))
+                        foreach (var returnValue in walker.ReturnValues)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, recursiveReturnValue.GetLocation(), "Getter returns property, infinite recursion"));
+                            if (IsProperty(returnValue, property))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, returnValue.GetLocation(), "Getter returns property, infinite recursion"));
+                            }
+
+                            if (returnValue != null &&
+                                returnValue.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
+                                MemberPath.TrySingle(returnValue, out var single) &&
+                                context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol backingField) &&
+                                !HasMatchingName(backingField, property))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor, returnValue.GetLocation()));
+                            }
                         }
                     }
                 }
@@ -79,6 +103,50 @@ namespace PropertyChangedAnalyzers
                     }
                 }
             }
+        }
+
+        private static bool HasMatchingName(IFieldSymbol backingField, IPropertySymbol property)
+        {
+            if (property.ExplicitInterfaceImplementations.TryFirst(out var explicitProperty))
+            {
+                return HasMatchingName(backingField, explicitProperty);
+            }
+
+            if (backingField.Name.Length < property.Name.Length)
+            {
+                return false;
+            }
+
+            var diff = backingField.Name.Length - property.Name.Length;
+            for (var pi = property.Name.Length - 1; pi >= 0; pi--)
+            {
+                var fi = pi + diff;
+                if (pi == 0)
+                {
+                    if (char.ToLower(property.Name[pi]) != backingField.Name[fi])
+                    {
+                        return false;
+                    }
+
+                    switch (fi)
+                    {
+                        case 0:
+                            return true;
+                        case 1:
+                            return backingField.Name[0] == '_' ||
+                                   backingField.Name[0] == '@';
+                        default:
+                            return false;
+                    }
+                }
+
+                if (property.Name[pi] != backingField.Name[fi])
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static bool IsProperty(ExpressionSyntax expression, IPropertySymbol property)

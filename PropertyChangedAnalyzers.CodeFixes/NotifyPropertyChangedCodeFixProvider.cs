@@ -173,7 +173,7 @@ namespace PropertyChangedAnalyzers
                                             .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                             .WithAdditionalAnnotations(Formatter.Annotation);
                     });
-                editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
+                _ = editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
                 return;
             }
 
@@ -181,7 +181,7 @@ namespace PropertyChangedAnalyzers
                 arrow.Parent is AccessorDeclarationSyntax accessor)
             {
                 editor.RemoveNode(accessor.ExpressionBody);
-                editor.ReplaceNode(
+                _ = editor.ReplaceNode(
                     accessor,
                     x =>
                     {
@@ -199,7 +199,7 @@ namespace PropertyChangedAnalyzers
                         return x.WithBody(SyntaxFactory.Block(body))
                                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                     });
-                editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
+                _ = editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
             }
         }
 

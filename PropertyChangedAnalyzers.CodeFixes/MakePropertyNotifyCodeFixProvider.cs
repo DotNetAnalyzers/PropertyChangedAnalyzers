@@ -143,23 +143,23 @@ namespace PropertyChangedAnalyzers
                                             .AppendLine("}")
                                             .Return();
                 var template = ParseProperty(code);
-                editor.ReplaceNode(
+                _ = editor.ReplaceNode(
                     getter,
                     x => x.WithExpressionBody(template.Getter().ExpressionBody).WithTrailingElasticLineFeed()
                           .WithAdditionalAnnotations(Formatter.Annotation));
-                editor.ReplaceNode(
+                _ = editor.ReplaceNode(
                     setter,
                     x => x.WithBody(template.Setter().Body)
                           .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
                           .WithAdditionalAnnotations(Formatter.Annotation));
                 if (propertyDeclaration.Initializer != null)
                 {
-                    editor.ReplaceNode(
+                    _ = editor.ReplaceNode(
                         propertyDeclaration,
                         x => x.WithoutInitializer());
                 }
 
-                editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
             }
         }
 
@@ -194,7 +194,7 @@ namespace PropertyChangedAnalyzers
                                             .AppendLine("}")
                                             .Return();
                 var template = ParseProperty(code);
-                editor.ReplaceNode(
+                _ = editor.ReplaceNode(
                           getter,
                           x => x.WithExpressionBody(template.Getter().ExpressionBody).WithLeadingLineFeed())
                       .ReplaceNode(
@@ -208,7 +208,7 @@ namespace PropertyChangedAnalyzers
                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
 
-                editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
             }
         }
 
@@ -254,7 +254,7 @@ namespace PropertyChangedAnalyzers
                                       .WithExpressionBody(null)
                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                         });
-                    editor.FormatNode(propertyDeclaration);
+                    _ = editor.FormatNode(propertyDeclaration);
                 }
 
                 if (setter.Body?.Statements.Count == 1 &&
@@ -283,7 +283,7 @@ namespace PropertyChangedAnalyzers
                                           .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
                                           .WithAdditionalAnnotations(Formatter.Annotation);
                     editor.InsertAfter(statement, notifyStatement);
-                    editor.FormatNode(propertyDeclaration);
+                    _ = editor.FormatNode(propertyDeclaration);
                 }
             }
         }
@@ -319,12 +319,12 @@ namespace PropertyChangedAnalyzers
                                       .WithExpressionBody(null)
                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                         });
-                    editor.FormatNode(propertyDeclaration);
+                    _ = editor.FormatNode(propertyDeclaration);
                 }
                 else if (setter.Body != null)
                 {
                     editor.InsertAfter(statement, notifyStatement);
-                    editor.FormatNode(propertyDeclaration);
+                    _ = editor.FormatNode(propertyDeclaration);
                 }
             }
         }
