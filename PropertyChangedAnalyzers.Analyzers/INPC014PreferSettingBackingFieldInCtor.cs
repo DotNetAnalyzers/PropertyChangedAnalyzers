@@ -46,51 +46,10 @@ namespace PropertyChangedAnalyzers
                 Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                 propertyDeclaration.TryGetSetter(out var setter) &&
                 (setter.Body != null || setter.ExpressionBody != null) &&
-                !ThrowWalker.Throws(setter))
+                !ThrowWalker.Throws(setter) &&
+                IsAssignedWithParameter(setter, context) &&
+                !HasSideEffects(setter, context))
             {
-                using (var mutations = MutationWalker.Borrow(setter))
-                {
-                    if (mutations.Count > 1)
-                    {
-                        return;
-                    }
-
-                    if (mutations.TrySingle(out var mutation) &&
-                        mutation is AssignmentExpressionSyntax setAssignment &&
-                        setAssignment.Right is IdentifierNameSyntax identifierName &&
-                        identifierName.Identifier.ValueText != "value")
-                    {
-                        return;
-                    }
-                }
-
-                using (var walker = InvocationWalker.Borrow(setter))
-                {
-                    foreach (var invocation in walker.Invocations)
-                    {
-                        if (invocation.TryGetMethodName(out var name) &&
-                            (name == nameof(Equals) ||
-                             name == nameof(ReferenceEquals) ||
-                             name == "nameof"))
-                        {
-                            continue;
-                        }
-
-                        if (PropertyChanged.IsSetAndRaiseCall(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
-                        {
-                            continue;
-                        }
-
-                        if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
-                            PropertyChanged.IsPropertyChangedInvoke(invocation, context.SemanticModel, context.CancellationToken))
-                        {
-                            continue;
-                        }
-
-                        return;
-                    }
-                }
-
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, assignment.GetLocation()));
             }
         }
@@ -104,6 +63,62 @@ namespace PropertyChangedAnalyzers
 
             // Could be in an event handler in ctor.
             return node.FirstAncestor<AnonymousFunctionExpressionSyntax>() == null;
+        }
+
+        private static bool IsAssignedWithParameter(AccessorDeclarationSyntax setter, SyntaxNodeAnalysisContext context)
+        {
+            using (var mutations = MutationWalker.Borrow(setter, Scope.Member, context.SemanticModel, context.CancellationToken))
+            {
+                if (mutations.TrySingle(out var mutation))
+                {
+                    switch (mutation)
+                    {
+                        case AssignmentExpressionSyntax assignment:
+                            return assignment.Right is IdentifierNameSyntax identifierName &&
+                                   identifierName.Identifier.ValueText == "value";
+                        case ArgumentSyntax argument:
+                            return argument.Parent is ArgumentListSyntax argumentList &&
+                                   argumentList.Parent is InvocationExpressionSyntax invocation &&
+                                   PropertyChanged.IsSetAndRaiseCall(invocation, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes;
+                        default:
+                            return false;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HasSideEffects(AccessorDeclarationSyntax setter, SyntaxNodeAnalysisContext context)
+        {
+            using (var walker = InvocationWalker.Borrow(setter))
+            {
+                foreach (var invocation in walker.Invocations)
+                {
+                    if (invocation.TryGetMethodName(out var name) &&
+                        (name == nameof(Equals) ||
+                         name == nameof(ReferenceEquals) ||
+                         name == "nameof"))
+                    {
+                        continue;
+                    }
+
+                    if (PropertyChanged.IsSetAndRaiseCall(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
+                    {
+                        continue;
+                    }
+
+                    if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
+                        PropertyChanged.IsPropertyChangedInvoke(invocation, context.SemanticModel, context.CancellationToken))
+                    {
+                        continue;
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
