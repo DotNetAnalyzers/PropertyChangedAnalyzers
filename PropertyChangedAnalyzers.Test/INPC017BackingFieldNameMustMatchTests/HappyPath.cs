@@ -402,6 +402,23 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public void StaticPropertyAndField()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private const int StaticValue = 2;
+
+        public static int Value => StaticValue;
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
         public void ConstField()
         {
             var testCode = @"

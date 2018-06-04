@@ -107,8 +107,7 @@ namespace PropertyChangedAnalyzers
 
         private static bool HasMatchingName(IFieldSymbol backingField, IPropertySymbol property)
         {
-            if (!property.IsStatic &&
-                (backingField.IsStatic || backingField.IsConst))
+            if (backingField.IsStatic || backingField.IsConst)
             {
                 return true;
             }
