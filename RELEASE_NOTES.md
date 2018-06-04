@@ -1,3 +1,6 @@
+#### 2.5.12
+* BUGFIXES: INPC017.
+
 #### 2.5.8
 * FEATURE: Re-enabled detecting OnPropertyChanged and TrySet from outside the compilation.
 
