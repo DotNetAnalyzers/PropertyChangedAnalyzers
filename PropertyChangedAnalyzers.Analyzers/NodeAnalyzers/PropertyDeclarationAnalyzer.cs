@@ -63,15 +63,15 @@ namespace PropertyChangedAnalyzers
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, returnValue.GetLocation(), "Getter returns property, infinite recursion"));
                             }
+                        }
 
-                            if (returnValue != null &&
-                                returnValue.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
-                                MemberPath.TrySingle(returnValue, out var single) &&
-                                context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol backingField) &&
-                                !HasMatchingName(backingField, property))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor, returnValue.GetLocation()));
-                            }
+                        if (walker.ReturnValues.TrySingle(out var single) &&
+                            single.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
+                            MemberPath.TrySingle(single, out var path) &&
+                            context.SemanticModel.TryGetSymbol(path, context.CancellationToken, out IFieldSymbol backingField) &&
+                            !HasMatchingName(backingField, property))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor, path.GetLocation()));
                         }
                     }
                 }

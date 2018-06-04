@@ -317,5 +317,71 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void WhenUsingMoreThanOneField()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value1;
+        private int value2;
+        private Baz baz;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Baz Baz
+        {
+            get => this.baz;
+            set
+            {
+                if (value == this.baz)
+                {
+                    return;
+                }
+
+                this.baz = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.CurrentValue));
+            }
+        }
+
+        public int CurrentValue
+        {
+            get
+            {
+                switch (Baz)
+                {
+                    case Baz.Value1:
+                        return this.value1;
+                    case Baz.Value2:
+                        return this.value2;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    enum Baz
+    {
+        Value1,
+        Value2,
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
