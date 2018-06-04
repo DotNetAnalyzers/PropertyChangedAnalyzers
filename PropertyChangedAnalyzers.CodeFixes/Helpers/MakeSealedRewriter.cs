@@ -34,7 +34,7 @@ namespace PropertyChangedAnalyzers
 
         public override SyntaxNode VisitFieldDeclaration(FieldDeclarationSyntax node)
         {
-            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out var modifier))
             {
                 node = node.WithModifiers(node.Modifiers.Remove(modifier));
             }
@@ -49,7 +49,7 @@ namespace PropertyChangedAnalyzers
 
         public override SyntaxNode VisitEventDeclaration(EventDeclarationSyntax node)
         {
-            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out var modifier))
             {
                 node = node.WithModifiers(node.Modifiers.Remove(modifier));
             }
@@ -65,7 +65,7 @@ namespace PropertyChangedAnalyzers
 
         public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out var modifier))
             {
                 node = node.WithModifiers(node.Modifiers.Remove(modifier));
             }
@@ -81,7 +81,7 @@ namespace PropertyChangedAnalyzers
 
         public override SyntaxNode VisitAccessorDeclaration(AccessorDeclarationSyntax node)
         {
-            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out var modifier))
             {
                 node = node.WithModifiers(node.Modifiers.Remove(modifier));
             }
@@ -106,7 +106,7 @@ namespace PropertyChangedAnalyzers
 
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
-            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out SyntaxToken modifier))
+            if (node.Modifiers.TrySingle(x => x.IsKind(SyntaxKind.VirtualKeyword), out var modifier))
             {
                 node = node.WithModifiers(node.Modifiers.Remove(modifier));
             }

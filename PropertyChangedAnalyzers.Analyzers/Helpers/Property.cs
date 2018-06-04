@@ -315,13 +315,10 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var identifierName in walker.IdentifierNames)
                 {
-                    if (identifierName.Identifier.ValueText == "value")
+                    if (identifierName.Identifier.ValueText == "value" &&
+                        semanticModel.TryGetSymbol(identifierName, cancellationToken, out value))
                     {
-                        value = semanticModel.GetSymbolSafe(identifierName, cancellationToken) as IParameterSymbol;
-                        if (value != null)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }

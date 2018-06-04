@@ -1,12 +1,14 @@
 namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class Diagnostics
+    internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly CodeFixProvider Fix = new RenameFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC017");
 
         [TestCase("wrong")]
@@ -26,8 +28,19 @@ namespace RoslynSandbox
         public int Value => ↓this.wrong;
     }
 }";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private int value;
+
+        public int Value => this.value;
+    }
+}";
             testCode = testCode.AssertReplace("wrong", fieldName);
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("_wrong")]
@@ -47,8 +60,19 @@ namespace RoslynSandbox
         public int Value => ↓_wrong;
     }
 }";
+
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private int _value;
+
+        public int Value => _value;
+    }
+}";
             testCode = testCode.AssertReplace("_wrong", fieldName);
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("wrong")]
@@ -71,8 +95,22 @@ namespace RoslynSandbox
         }
     }
 }";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private int value;
+
+        public int Value
+        {
+            get => this.value;
+        }
+    }
+}";
+
             testCode = testCode.AssertReplace("wrong", fieldName);
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("wrong")]
@@ -95,8 +133,21 @@ namespace RoslynSandbox
         }
     }
 }";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private int value;
+
+        public int Value
+        {
+            get { return this.value; }
+        }
+    }
+}";
             testCode = testCode.AssertReplace("wrong", fieldName);
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 
         [TestCase("_wrong")]
@@ -115,12 +166,25 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get => _wrong;
+            get => ↓_wrong;
+        }
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private int _value;
+
+        public int Value
+        {
+            get => _value;
         }
     }
 }";
             testCode = testCode.AssertReplace("_wrong", fieldName);
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }
