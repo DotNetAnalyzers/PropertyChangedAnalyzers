@@ -1,10 +1,10 @@
 STORAGE: NONE
 NUGET
   remote: http://www.nuget.org/api/v2
-    Gu.Roslyn.AnalyzerExtensions (0.3.0-dev)
+    Gu.Roslyn.AnalyzerExtensions (0.3.1.1-dev)
       Microsoft.CodeAnalysis.CSharp (>= 2.0)
-    Gu.Roslyn.CodeFixExtensions (0.3.0-dev)
-      Gu.Roslyn.AnalyzerExtensions (>= 0.3.0-dev)
+    Gu.Roslyn.CodeFixExtensions (0.3.1.1-dev)
+      Gu.Roslyn.AnalyzerExtensions (>= 0.3.1.1-dev)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0)
     ManagedEsent (1.9.4) - restriction: >= net46
     Microsoft.CodeAnalysis.Analyzers (2.6.1) - restriction: >= netstandard1.3
@@ -717,7 +717,7 @@ STORAGE: NONE
 NUGET
   remote: http://www.nuget.org/api/v2
     AsyncUsageAnalyzers (1.0.0-alpha003)
-    Gu.Analyzers (1.2.13-dev)
+    Gu.Analyzers (1.2.15-dev)
     IDisposableAnalyzers (2.0.2.2)
     StyleCop.Analyzers (1.0.2)
 
@@ -758,7 +758,7 @@ NUGET
       System.Resources.ResourceManager (>= 4.0.1-rc2-24027) - restriction: >= netstandard1.5
       System.Runtime (>= 4.1.0-rc2-24027) - restriction: >= netstandard1.5
       System.Runtime.Extensions (>= 4.1.0-rc2-24027) - restriction: >= netstandard1.5
-    Gu.Roslyn.Asserts (2.3.2)
+    Gu.Roslyn.Asserts (2.4.2.1)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0)
     Microsoft.CodeAnalysis.Analyzers (2.6.1) - restriction: >= netstandard1.3
     Microsoft.CodeAnalysis.Common (2.8.2)
@@ -1505,8 +1505,8 @@ NUGET
     Microsoft.VisualStudio.SDK.Analyzers (15.8.33) - restriction: >= net46
       Microsoft.VisualStudio.Threading.Analyzers (>= 15.8.122) - restriction: >= netstandard1.1
     Microsoft.VisualStudio.Threading.Analyzers (15.8.132) - restriction: >= net46
-    Microsoft.VSSDK.BuildTools (15.7.109)
-      Microsoft.VisualStudio.SDK.Analyzers (>= 15.7.3) - restriction: >= net46
+    Microsoft.VSSDK.BuildTools (15.8.3247)
+      Microsoft.VisualStudio.SDK.Analyzers (>= 15.8.33) - restriction: >= net46
 
 GROUP Test
 STORAGE: NONE
@@ -1521,7 +1521,7 @@ NUGET
       System.ComponentModel (>= 4.3) - restriction: && (< net40) (< netcoreapp1.0) (>= netstandard1.0) (< netstandard2.0)
     Gu.Reactive (3.5.2)
       System.Reactive.PlatformServices (>= 3.1.1)
-    Gu.Roslyn.Asserts (2.4)
+    Gu.Roslyn.Asserts (2.4.2.1)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0)
     Gu.Wpf.Reactive (3.5.2)
       Gu.Reactive (>= 3.5.2)
@@ -1594,7 +1594,7 @@ NUGET
       runtime.win10-x86.Microsoft.Net.UWPCoreRuntimeSdk (>= 2.1.2) - restriction: >= uap10.1
     Microsoft.NETCore.Platforms (2.1) - restriction: || (&& (< monoandroid) (< monotouch) (< net46) (>= netstandard1.3) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< net20) (>= net45) (< netstandard1.3) (>= netstandard1.6)) (&& (< net20) (>= net46) (< netstandard1.4) (>= netstandard1.6)) (&& (< net20) (>= net461) (>= netstandard1.6) (< netstandard2.0)) (&& (< net20) (< netstandard1.0) (>= netstandard1.6) (< portable-net45+win8)) (&& (< net20) (< netstandard1.0) (>= netstandard1.6) (< win8)) (&& (< net20) (< netstandard1.2) (>= netstandard1.6) (< win8)) (&& (< net20) (< netstandard1.3) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< net20) (< netstandard1.4) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< net20) (< netstandard1.5) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< net20) (>= netstandard1.6) (< netstandard2.0) (< win8) (< wpa81)) (&& (< net20) (>= netstandard1.6) (< portable-net45+win8+wpa81)) (&& (< net20) (>= netstandard2.0)) (>= netcoreapp2.0) (&& (< netstandard1.0) (>= netstandard1.6) (>= win8)) (&& (< netstandard1.0) (>= netstandard2.0) (>= win8)) (&& (< netstandard1.3) (>= netstandard1.6) (< win8) (>= wpa81)) (&& (< netstandard1.3) (>= netstandard2.0) (< win8) (>= wpa81)) (&& (< netstandard1.5) (>= netstandard1.6) (>= uap10.0)) (&& (< netstandard1.5) (>= netstandard2.0) (>= uap10.0)) (&& (>= netstandard1.6) (< portable-net45+win8+wpa81) (>= uap10.0)) (&& (>= netstandard1.6) (>= wp8)) (&& (>= netstandard2.0) (< portable-net45+win8+wpa81) (>= uap10.0)) (&& (>= netstandard2.0) (>= wp8)) (>= uap10.1)
     Microsoft.NETCore.Targets (2.1) - restriction: || (&& (< monoandroid) (< monotouch) (< net20) (>= netstandard1.6) (< netstandard2.0) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net20) (< netstandard1.2) (>= netstandard1.6) (< win8)) (&& (< monoandroid) (< net20) (< netstandard1.3) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< monoandroid) (< net20) (< netstandard1.4) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< monoandroid) (< net20) (< netstandard1.5) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< net20) (>= net46) (< netstandard1.4) (>= netstandard1.6)) (&& (< net20) (>= net46) (< netstandard1.4) (>= netstandard2.0)) (&& (< net20) (< netstandard1.2) (>= netstandard2.0) (< win8)) (&& (< net20) (< netstandard1.3) (>= netstandard2.0) (< win8) (< wpa81)) (&& (< net20) (< netstandard1.4) (>= netstandard2.0) (< win8) (< wpa81)) (&& (< net20) (< netstandard1.5) (>= netstandard2.0) (< win8) (< wpa81)) (&& (< net20) (>= netstandard1.6) (< portable-net45+win8+wpa81)) (&& (< net20) (< netstandard1.6) (>= netstandard2.0) (< win8) (< wpa81)) (&& (< net20) (>= netstandard2.0) (< portable-net45+win8+wpa81)) (&& (< netstandard1.5) (>= netstandard1.6) (>= uap10.0) (< win8) (< wpa81)) (&& (< netstandard1.5) (>= netstandard2.0) (>= uap10.0) (< win8) (< wpa81)) (&& (>= netstandard1.6) (< portable-net45+win8+wpa81) (>= uap10.0)) (&& (>= netstandard2.0) (< portable-net45+win8+wpa81) (>= uap10.0))
-    Microsoft.NETCore.UniversalWindowsPlatform (6.1.5) - restriction: >= uap10.0
+    Microsoft.NETCore.UniversalWindowsPlatform (6.1.7) - restriction: >= uap10.0
       Microsoft.Net.Native.Compiler (>= 2.1.8) - restriction: >= uap10.1
       Microsoft.Net.UWPCoreRuntimeSdk (>= 2.1.2) - restriction: >= uap10.1
       Microsoft.NETCore.Platforms (>= 2.0) - restriction: >= uap10.1
