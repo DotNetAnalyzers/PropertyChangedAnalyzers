@@ -3,26 +3,26 @@
 
 <!-- start generated table -->
 <table>
-<tr>
-  <td>CheckId</td>
-  <td>INPC008</td>
-</tr>
-<tr>
-  <td>Severity</td>
-  <td>Error</td>
-</tr>
-<tr>
-  <td>Enabled</td>
-  <td>true</td>
-</tr>
-<tr>
-  <td>Category</td>
-  <td>PropertyChangedAnalyzers.PropertyChanged</td>
-</tr>
-<tr>
-  <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC008StructMustNotNotify.cs">INPC008StructMustNotNotify</a></td>
-</tr>
+  <tr>
+    <td>CheckId</td>
+    <td>INPC008</td>
+  </tr>
+  <tr>
+    <td>Severity</td>
+    <td>Error</td>
+  </tr>
+  <tr>
+    <td>Enabled</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>Category</td>
+    <td>PropertyChangedAnalyzers.PropertyChanged</td>
+  </tr>
+  <tr>
+    <td>Code</td>
+    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC008StructMustNotNotify.cs">INPC008StructMustNotNotify</a></td>
+  </tr>
 </table>
 <!-- end generated table -->
 
