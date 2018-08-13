@@ -43,5 +43,8 @@
 	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/Words/=Accessors/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/Words/=Bindable/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/Words/=Caliburn/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/Words/=Comparer/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/Words/=declarator/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/Words/=Linq/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/Words/=nameof/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/Words/=Struct/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

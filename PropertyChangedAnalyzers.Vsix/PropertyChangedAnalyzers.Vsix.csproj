@@ -89,7 +89,7 @@
     </Analyzer>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PropertyChangedAnalyzers.Analyzers\PropertyChangedAnalyzers.csproj" />
+    <ProjectReference Include="..\PropertyChangedAnalyzers\PropertyChangedAnalyzers.csproj" />
   </ItemGroup>
   <Import Project="..\packages\build\Microsoft.VSSDK.BuildTools\build\Microsoft.VSSDK.BuildTools.targets" Condition="Exists('..\packages\build\Microsoft.VSSDK.BuildTools\build\Microsoft.VSSDK.BuildTools.targets')" Label="Paket" />
   <Import Project="..\.paket\Paket.Restore.targets" />
