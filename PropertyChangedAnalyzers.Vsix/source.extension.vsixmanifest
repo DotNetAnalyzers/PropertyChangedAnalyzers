@@ -13,8 +13,8 @@
     <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.LanguageServices" Version="[14.0,16.0)" DisplayName="Roslyn Language Services" />
   </Prerequisites>
   <Assets>
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="PropertyChangedAnalyzers.Analyzers" Path="|PropertyChangedAnalyzers.Analyzers|"/>
-    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="PropertyChangedAnalyzers.Analyzers" Path="|PropertyChangedAnalyzers.Analyzers|"/>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="PropertyChangedAnalyzers" Path="|PropertyChangedAnalyzers|"/>
+    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="PropertyChangedAnalyzers" Path="|PropertyChangedAnalyzers|"/>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="File" Path="Gu.Roslyn.AnalyzerExtensions.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="Gu.Roslyn.AnalyzerExtensions.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Gu.Roslyn.CodeFixExtensions.dll" />
