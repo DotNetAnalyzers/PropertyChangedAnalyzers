@@ -21,7 +21,7 @@
   </tr>
   <tr>
     <td>Code</td>
-    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC008StructMustNotNotify.cs">INPC008StructMustNotNotify</a></td>
+    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC008StructMustNotNotify.cs">INPC008StructMustNotNotify</a></td>
   </tr>
 </table>
 <!-- end generated table -->

@@ -24,7 +24,7 @@ namespace PropertyChangedAnalyzers.Test
             AnalyzerAssert.MetadataReferences);
 
         private static readonly Solution Project = CodeFactory.CreateSolution(
-            ProjectFile.Find("PropertyChangedAnalyzers.Analyzers.csproj"),
+            ProjectFile.Find("PropertyChangedAnalyzers.csproj"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 

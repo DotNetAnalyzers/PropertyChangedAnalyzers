@@ -21,7 +21,7 @@
   </tr>
   <tr>
     <td>Code</td>
-    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC007MissingInvoker.cs">INPC007MissingInvoker</a></td>
+    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC007MissingInvoker.cs">INPC007MissingInvoker</a></td>
   </tr>
 </table>
 <!-- end generated table -->

@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <CodeAnalysisRuleSet>PropertyChangedAnalyzers.Analyzers.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>PropertyChangedAnalyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup>

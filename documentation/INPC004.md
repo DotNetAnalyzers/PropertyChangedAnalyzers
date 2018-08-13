@@ -21,11 +21,11 @@
   </tr>
   <tr>
     <td>Code</td>
-     <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/NodeAnalyzers/ArgumentAnalyzer.cs">ArgumentAnalyzer</a></td>
+     <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/NodeAnalyzers/ArgumentAnalyzer.cs">ArgumentAnalyzer</a></td>
   </tr>
   <tr>
     <td></td>
-     <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC004UseCallerMemberName.cs">INPC004UseCallerMemberName</a></td>
+     <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC004UseCallerMemberName.cs">INPC004UseCallerMemberName</a></td>
   </tr>
 </table>
 <!-- end generated table -->

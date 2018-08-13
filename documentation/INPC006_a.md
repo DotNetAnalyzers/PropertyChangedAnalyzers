@@ -21,7 +21,7 @@
   </tr>
   <tr>
     <td>Code</td>
-    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/NodeAnalyzers/IfStatementAnalyzer.cs">IfStatementAnalyzer</a></td>
+    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/NodeAnalyzers/IfStatementAnalyzer.cs">IfStatementAnalyzer</a></td>
   </tr>
 </table>
 <!-- end generated table -->

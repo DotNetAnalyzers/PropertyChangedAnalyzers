@@ -21,7 +21,7 @@
   </tr>
   <tr>
     <td>Code</td>
-    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC014PreferSettingBackingFieldInCtor.cs">INPC014PreferSettingBackingFieldInCtor</a></td>
+    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC014PreferSettingBackingFieldInCtor.cs">INPC014PreferSettingBackingFieldInCtor</a></td>
   </tr>
 </table>
 <!-- end generated table -->
