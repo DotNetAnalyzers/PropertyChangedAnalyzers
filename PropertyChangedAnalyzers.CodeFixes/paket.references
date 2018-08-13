@@ -1,9 +1,0 @@
-Microsoft.CodeAnalysis.CSharp.Workspaces
-Gu.Roslyn.CodeFixExtensions
-
-group Analyzers
-  StyleCop.Analyzers
-  Gu.Analyzers
-  AsyncUsageAnalyzers
-  IDisposableAnalyzers
-

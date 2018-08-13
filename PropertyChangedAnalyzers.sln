@@ -52,8 +52,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers.Analyzers", "PropertyChangedAnalyzers.Analyzers\PropertyChangedAnalyzers.Analyzers.csproj", "{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers.CodeFixes", "PropertyChangedAnalyzers.CodeFixes\PropertyChangedAnalyzers.CodeFixes.csproj", "{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers.Vsix", "PropertyChangedAnalyzers.Vsix\PropertyChangedAnalyzers.Vsix.csproj", "{A123CB85-BD7F-4C50-8D15-2B3F336D7A8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers.Benchmarks", "PropertyChangedAnalyzers.Benchmarks\PropertyChangedAnalyzers.Benchmarks.csproj", "{1E0EB358-2EEA-485A-A12E-1337F4D3121F}"
@@ -72,10 +70,6 @@ Global
 		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18EB2A1B-98EA-4DCF-A97C-D9E8A5DA747B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDC7833B-5008-4B6C-AD98-DC6ED9DA8398}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A123CB85-BD7F-4C50-8D15-2B3F336D7A8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A123CB85-BD7F-4C50-8D15-2B3F336D7A8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A123CB85-BD7F-4C50-8D15-2B3F336D7A8A}.Release|Any CPU.ActiveCfg = Release|Any CPU

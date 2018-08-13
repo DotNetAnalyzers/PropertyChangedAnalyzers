@@ -15,8 +15,6 @@
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="PropertyChangedAnalyzers.Analyzers" Path="|PropertyChangedAnalyzers.Analyzers|"/>
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="PropertyChangedAnalyzers.Analyzers" Path="|PropertyChangedAnalyzers.Analyzers|"/>
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="PropertyChangedAnalyzers.CodeFixes" Path="|PropertyChangedAnalyzers.CodeFixes|"/>
-    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="PropertyChangedAnalyzers.CodeFixes" Path="|PropertyChangedAnalyzers.CodeFixes|"/>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="File" Path="Gu.Roslyn.AnalyzerExtensions.dll" />
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="Gu.Roslyn.AnalyzerExtensions.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Gu.Roslyn.CodeFixExtensions.dll" />

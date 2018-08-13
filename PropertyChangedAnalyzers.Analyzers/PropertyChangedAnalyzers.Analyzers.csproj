@@ -4,13 +4,28 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>2.5.12.1</Version>
-    <Authors>Johan Larsson</Authors>
-    <RootNamespace>PropertyChangedAnalyzers</RootNamespace>
-    <NeutralLanguage>en-US</NeutralLanguage>
     <CodeAnalysisRuleSet>PropertyChangedAnalyzers.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  
+
+  <PropertyGroup>
+    <BuildOutputTargetFolder>analyzers\dotnet\cs</BuildOutputTargetFolder>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>PropertyChangedAnalyzers</PackageId>
+    <Version>2.5.12.2</Version>
+    <Authors>Johan Larsson</Authors>
+    <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
+    <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
+    <PackageReleaseNotes>BUGFIXES: INPC017.</PackageReleaseNotes>
+    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</RepositoryUrl>
+  </PropertyGroup>
+
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../PropertyChangedAnalyzers.snk</AssemblyOriginatorKeyFile>
@@ -19,6 +34,10 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Exec Command=".paket\paket.exe pack publish" WorkingDirectory="$(SolutionDir)" />
+  </Target>
 
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

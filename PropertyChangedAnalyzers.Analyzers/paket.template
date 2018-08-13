@@ -1,9 +1,11 @@
 ﻿type project
-id PropertyChangedAnalyzers
 include-referenced-projects true
 developmentDependency true
 projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
+
+releasenotes
+  CLEANUP: Only one dll.
 
 excludedgroups
   Main

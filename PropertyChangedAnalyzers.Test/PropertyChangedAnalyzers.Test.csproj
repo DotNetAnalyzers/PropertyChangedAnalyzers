@@ -14,7 +14,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\PropertyChangedAnalyzers.Analyzers\PropertyChangedAnalyzers.Analyzers.csproj" />
-    <ProjectReference Include="..\PropertyChangedAnalyzers.CodeFixes\PropertyChangedAnalyzers.CodeFixes.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />

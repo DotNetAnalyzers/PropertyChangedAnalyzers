@@ -26,7 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PropertyChangedAnalyzers.Analyzers\PropertyChangedAnalyzers.Analyzers.csproj" />
-    <ProjectReference Include="..\PropertyChangedAnalyzers.CodeFixes\PropertyChangedAnalyzers.CodeFixes.csproj" />
   </ItemGroup>
   <ItemGroup>
     <!-- https://github.com/dotnet/sdk/issues/433 -->
