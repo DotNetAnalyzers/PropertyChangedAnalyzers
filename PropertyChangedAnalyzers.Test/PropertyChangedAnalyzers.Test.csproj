@@ -13,7 +13,7 @@
     <AssemblyOriginatorKeyFile>../PropertyChangedAnalyzers.snk</AssemblyOriginatorKeyFile>	
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PropertyChangedAnalyzers.Analyzers\PropertyChangedAnalyzers.Analyzers.csproj" />
+    <ProjectReference Include="..\PropertyChangedAnalyzers.Analyzers\PropertyChangedAnalyzers.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
