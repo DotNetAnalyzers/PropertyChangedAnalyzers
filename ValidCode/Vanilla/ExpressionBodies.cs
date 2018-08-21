@@ -1,4 +1,4 @@
-namespace ValidCode
+namespace ValidCode.Vanilla
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -28,9 +28,6 @@ namespace ValidCode
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
