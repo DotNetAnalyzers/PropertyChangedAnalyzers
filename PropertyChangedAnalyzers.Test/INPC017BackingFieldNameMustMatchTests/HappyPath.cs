@@ -434,5 +434,47 @@ namespace RoslynSandbox
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void SequenceOfUpperCase()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private string inpcEnabled;
+
+        public string INPCEnabled
+        {
+            get => this.inpcEnabled;
+            set => this.inpcEnabled = value;
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void SequenceOfUpperCaseUnderscore()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+        private string _inpcEnabled;
+
+        public string INPCEnabled
+        {
+            get => _inpcEnabled;
+            set => _inpcEnabled = value;
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
