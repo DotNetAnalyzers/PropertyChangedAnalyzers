@@ -36,7 +36,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DisposableFoo.cs" />
+    <Compile Include="ExpressionBodies.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatementBodies.cs" />
+    <Compile Include="UnderscoreNames.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
