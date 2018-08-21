@@ -23,8 +23,8 @@ namespace PropertyChangedAnalyzers.Test
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 
-        private static readonly Solution Project = CodeFactory.CreateSolution(
-            ProjectFile.Find("PropertyChangedAnalyzers.csproj"),
+        private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
+            ProjectFile.Find("ValidCode.csproj"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 
@@ -42,9 +42,9 @@ namespace PropertyChangedAnalyzers.Test
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void PropertyChangedAnalyzersProject(DiagnosticAnalyzer analyzer)
+        public void ValidCodeProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, Project);
+            AnalyzerAssert.Valid(analyzer, ValidCodeProjectSln);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]

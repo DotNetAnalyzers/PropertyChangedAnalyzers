@@ -56,6 +56,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers.Be
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers", "PropertyChangedAnalyzers\PropertyChangedAnalyzers.csproj", "{FAF511FD-0791-4260-9C23-9A53795F6D45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidCode", "ValidCode\ValidCode.csproj", "{87E6ABA1-68A8-4895-A63C-67B9AF4A88DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{FAF511FD-0791-4260-9C23-9A53795F6D45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAF511FD-0791-4260-9C23-9A53795F6D45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAF511FD-0791-4260-9C23-9A53795F6D45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87E6ABA1-68A8-4895-A63C-67B9AF4A88DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87E6ABA1-68A8-4895-A63C-67B9AF4A88DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87E6ABA1-68A8-4895-A63C-67B9AF4A88DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87E6ABA1-68A8-4895-A63C-67B9AF4A88DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
