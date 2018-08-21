@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.5.12.4</Version>
+    <Version>2.5.12.5</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
     <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
