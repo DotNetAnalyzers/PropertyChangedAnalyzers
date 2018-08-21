@@ -426,9 +426,9 @@ namespace RoslynSandbox
 {
     public class Foo
     {
-        private const int StaticValue = 2;
+        private const int ConstValue = 2;
 
-        public int Value => StaticValue;
+        public int Value => ConstValue;
     }
 }";
 
