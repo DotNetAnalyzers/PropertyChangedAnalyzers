@@ -147,7 +147,12 @@ namespace PropertyChangedAnalyzers
 
                 if (property.Name[pi] != backingField.Name[fi])
                 {
-                    return false;
+                    if (pi == 0 ||
+                        !char.IsUpper(property.Name[pi - 1]) ||
+                        char.ToUpper(backingField.Name[fi]) != property.Name[pi])
+                    {
+                        return false;
+                    }
                 }
             }
 
