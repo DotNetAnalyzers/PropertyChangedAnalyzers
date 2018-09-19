@@ -371,6 +371,13 @@ namespace RoslynSandbox
         [Test]
         public void IgnoreEqualityComparerEquals()
         {
+            var fooCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+    }
+}";
             var testCode = @"
 namespace RoslynSandbox
 {
@@ -379,22 +386,22 @@ namespace RoslynSandbox
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private Foo foo;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public Foo Foo
         {
-            get { return this.bar; }
+            get { return this.foo; }
             set
             {
-                if (System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.bar))
+                if (System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.foo))
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.foo = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Foo)));
             }
         }
 
@@ -405,12 +412,20 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            AnalyzerAssert.Valid(Analyzer, fooCode, testCode);
         }
 
         [Test]
         public void IgnoreNegatedEqualityComparerEquals()
         {
+            var fooCode = @"
+namespace RoslynSandbox
+{
+    public class Foo
+    {
+    }
+}";
+
             var testCode = @"
 namespace RoslynSandbox
 {
@@ -420,19 +435,19 @@ namespace RoslynSandbox
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private Foo foo;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public Foo Foo
         {
-            get { return this.bar; }
+            get { return this.foo; }
             set
             {
-                if (!System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.bar))
+                if (!System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.foo))
                 {
-                    this.bar = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                    this.foo = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Foo)));
                 }
             }
         }
@@ -443,7 +458,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            AnalyzerAssert.Valid(Analyzer, fooCode, testCode);
         }
 
         public class TestCase

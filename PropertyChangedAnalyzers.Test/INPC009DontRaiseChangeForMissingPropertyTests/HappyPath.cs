@@ -550,7 +550,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, vmBaseCode, vmCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, vmBaseCode, vmCode, testCode);
         }
 
         [Test]

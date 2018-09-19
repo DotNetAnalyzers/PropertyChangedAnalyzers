@@ -179,8 +179,7 @@ namespace RoslynSandbox
         private static void GreaterThan<T>(T value, T min, string parameterName)
             where T : IComparable<T>
         {
-            Debug.Assert(!string.IsNullOrEmpty(parameterName), $""{ nameof(parameterName)}
-            cannot be null"");
+            Debug.Assert(!string.IsNullOrEmpty(parameterName), nameof(parameterName));
             if (Comparer<T>.Default.Compare(value, min) <= 0)
             {
                 string message = $""Expected {parameterName} to be greater than {min}, {parameterName} was {value}"";

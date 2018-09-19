@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
+namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -37,7 +37,7 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(↓nameof(Value));
+                this.OnPropertyChanged(nameof(Value));
             }
         }
 
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         public void OverridingEvent()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
