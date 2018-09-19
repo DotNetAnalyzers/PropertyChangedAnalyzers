@@ -322,6 +322,12 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
+            // not using known symbol here as both jetbrains & mvvm cross defines a NotifyPropertyChangedInvocatorAttribute
+            if (method.GetAttributes().TryFirst(x => x.AttributeClass.Name == "NotifyPropertyChangedInvocatorAttribute", out _))
+            {
+                return AnalysisResult.Yes;
+            }
+
             var result = AnalysisResult.No;
             if (method.Parameters.TrySingle(out var parameter) &&
                 method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax declaration))
@@ -546,6 +552,15 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsPotentialOnPropertyChanged(IMethodSymbol method, Compilation compilation)
         {
+            if (method == KnownSymbol.MvvmCrossMvxNotifyPropertyChanged.RaisePropertyChanged ||
+                method == KnownSymbol.MvvmCrossMvxNotifyPropertyChanged.RaisePropertyChangedOfT ||
+                method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChanged ||
+                method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChangedOfT)
+            {
+                // They changed return type to task, special casing it like this here.
+                return true;
+            }
+
             if (method != null &&
                 method.ReturnsVoid &&
                 method.MethodKind == MethodKind.Ordinary &&

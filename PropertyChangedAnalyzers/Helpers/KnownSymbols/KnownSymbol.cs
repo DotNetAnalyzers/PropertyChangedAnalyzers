@@ -33,6 +33,8 @@ namespace PropertyChangedAnalyzers
         internal static readonly MvvmCrossCoreMvxNotifyPropertyChanged MvvmCrossCoreMvxNotifyPropertyChanged = new MvvmCrossCoreMvxNotifyPropertyChanged();
         internal static readonly MicrosoftPracticesPrismMvvmBindableBase MicrosoftPracticesPrismMvvmBindableBase = new MicrosoftPracticesPrismMvvmBindableBase();
 
+        internal static readonly QualifiedType JetbrainsNotifyPropertyChangedInvocatorAttribute = new QualifiedType("Jetbrains.Annotations.NotifyPropertyChangedInvocatorAttribute");
+
         private static QualifiedType Create(string qualifiedName, string alias = null)
         {
             return new QualifiedType(qualifiedName, alias);
