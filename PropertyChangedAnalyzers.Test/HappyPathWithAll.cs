@@ -19,8 +19,8 @@ namespace PropertyChangedAnalyzers.Test
             .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
             .ToArray();
 
-        private static readonly Solution Solution = CodeFactory.CreateSolution(
-            SolutionFile.Find("PropertyChangedAnalyzers.sln"),
+        private static readonly Solution AnalyzersProjectSolution = CodeFactory.CreateSolution(
+            ProjectFile.Find("PropertyChangedAnalyzers.csproj"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 
@@ -51,9 +51,9 @@ namespace PropertyChangedAnalyzers.Test
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void PropertyChangedAnalyzersSln(DiagnosticAnalyzer analyzer)
+        public void AnalyzersProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, Solution);
+            AnalyzerAssert.Valid(analyzer, AnalyzersProjectSolution);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]

@@ -374,7 +374,7 @@ namespace RoslynSandbox
         }
     }
 
-    enum Baz
+    public enum Baz
     {
         Value1,
         Value2,
