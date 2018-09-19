@@ -231,10 +231,7 @@ namespace PropertyChangedAnalyzers
             {
                 _ = editor.AddEvent(
                     classDeclaration,
-                    (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration(
-                        "PropertyChanged",
-                        PropertyChangedEventHandlerType,
-                        Accessibility.Public));
+                    (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration("PropertyChanged", PropertyChangedEventHandlerType, Accessibility.Public));
             }
 
             if (!type.TryFindFirstMethodRecursive(

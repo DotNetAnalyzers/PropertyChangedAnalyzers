@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly T Analyzer = new T();
-        // ReSharper disable once StaticMemberInGenericType
+        //// ReSharper disable once StaticMemberInGenericType
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor);
 
         [TestCase("null")]
