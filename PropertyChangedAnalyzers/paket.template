@@ -4,7 +4,8 @@ projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  CLEANUP: Only one dll.
+  FEATURE: Support new MvvmCross.
+  FEATURE: Recognize [NotifyPropertyChangedInvocatorAttribute]
 
 excludedgroups
   Main

@@ -1,3 +1,7 @@
+#### 2.6.0
+* FEATURE: Support new MvvmCross.
+* FEATURE: Recognize [NotifyPropertyChangedInvocatorAttribute]
+
 #### 2.5.12
 * BUGFIXES: INPC017.
 
