@@ -32,7 +32,7 @@ namespace RoslynSandbox
         public string Name
         {
             get { return this.name; }
-            set { this.SetProperty(ref this.name, value) }
+            set { this.SetProperty(ref this.name, value); }
         }
     }
 }";
@@ -51,8 +51,8 @@ namespace RoslynSandbox
 
         public string Name
         {
-            get => return this.name;
-            set => this.SetProperty(ref this.name, value)
+            get => this.name;
+            set => this.SetProperty(ref this.name, value);
         }
     }
 }";

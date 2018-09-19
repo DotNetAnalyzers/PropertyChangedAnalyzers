@@ -7,7 +7,7 @@ namespace ValidCode
         public Ignores(int only)
         {
             this.GetOnly = only;
-            this.SetOnly = only;
+            this.setOnly = only;
             this.PublicGetPrivateSet = only;
         }
 

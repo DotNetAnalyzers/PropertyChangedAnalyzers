@@ -33,7 +33,7 @@ namespace RoslynSandbox
         public string Name
         {
             get { return this.name; }
-            set { this.SetProperty(ref this.name, value) }
+            set { this.SetProperty(ref this.name, value); }
         }
     }
 }";
@@ -52,8 +52,8 @@ namespace RoslynSandbox
 
         public string Name
         {
-            get => return this.name;
-            set => this.SetProperty(ref this.name, value)
+            get => this.name;
+            set => this.SetProperty(ref this.name, value);
         }
     }
 }";
@@ -124,7 +124,7 @@ namespace RoslynSandbox
 {
     public abstract class FooBase : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
-        public override bool Set<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected override bool SetProperty<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             return base.SetProperty(ref oldValue, newValue, propertyName);
         }

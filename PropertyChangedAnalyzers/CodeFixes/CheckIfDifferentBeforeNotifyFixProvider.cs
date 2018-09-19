@@ -67,7 +67,7 @@ namespace PropertyChangedAnalyzers
                     {
                         context.RegisterCodeFix(
                             $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",
-                            (editor, cancellationToken) => UseSetAndRaise(editor, setter, assignment, setAndRaiseMethod),
+                            (editor, _) => UseSetAndRaise(editor, setter, assignment, setAndRaiseMethod),
                             $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",
                             diagnostic);
                     }
@@ -81,9 +81,9 @@ namespace PropertyChangedAnalyzers
                             block.Statements.IndexOf(setAndRaiseStatement) == block.Statements.IndexOf(invocationStatement) - 1)
                         {
                             context.RegisterCodeFix(
-                                    "Check that value is different before notifying.",
-                                    (editor, cancellationToken) => CreateIf(editor, setAndRaiseStatement, invocationStatement),
-                                    this.GetType(),
+                                "Check that value is different before notifying.",
+                                (editor, _) => CreateIf(editor, setAndRaiseStatement, invocationStatement),
+                                this.GetType(),
                                 diagnostic);
                         }
                     }
@@ -94,7 +94,7 @@ namespace PropertyChangedAnalyzers
                         {
                             context.RegisterCodeFix(
                                 "Check that value is different before notifying.",
-                                (editor, cancellationToken) => AddToIf(editor, ifSetAndRaiseStatement, invocationStatement),
+                                (editor, _) => AddToIf(editor, ifSetAndRaiseStatement, invocationStatement),
                                 this.GetType(),
                                 diagnostic);
                         }

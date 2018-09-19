@@ -83,7 +83,7 @@ namespace RoslynSandbox.Client
             public void SetExpressionBodies()
             {
                 var testCode = @"
-namespace RoslynSandbox
+namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
     {
@@ -91,13 +91,13 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get => return value;
+            get => value;
             set => this.TrySet(ref this.value, value);
         }
     }
 }";
 
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [TestCase("null")]

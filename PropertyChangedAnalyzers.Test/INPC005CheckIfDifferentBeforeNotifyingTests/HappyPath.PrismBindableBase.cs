@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -165,7 +165,7 @@ namespace RoslynSandbox
                 }
 
                 this.firstName = value;
-                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.FirstName));
                 this.OnPropertyChanged(nameof(this.FullName));
             }
         }
@@ -185,7 +185,7 @@ namespace RoslynSandbox
                 }
 
                 this.lastName = value;
-                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.LastName));
                 this.OnPropertyChanged(nameof(this.FullName));
             }
         }

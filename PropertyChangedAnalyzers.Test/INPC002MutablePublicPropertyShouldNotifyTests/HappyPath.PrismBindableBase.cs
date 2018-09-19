@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -52,7 +52,7 @@ namespace RoslynSandbox
 
         public int Value
         {
-            get => return value;
+            get => value;
             set => this.SetProperty(ref this.value, value);
         }
     }

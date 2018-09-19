@@ -33,7 +33,7 @@ namespace RoslynSandbox
         public string Name
         {
             get { return this.name; }
-            set { this.SetAndNotify(ref this.name, value) }
+            set { this.SetAndNotify(ref this.name, value); }
         }
     }
 }";
@@ -52,8 +52,8 @@ namespace RoslynSandbox
 
         public string Name
         {
-            get => return this.name;
-            set => this.SetAndNotify(ref this.name, value)
+            get => this.name;
+            set => this.SetAndNotify(ref this.name, value);
         }
     }
 }";
@@ -102,7 +102,7 @@ namespace RoslynSandbox
 
         public string Name
         {
-            get => return this.name;
+            get => this.name;
             set => this.SetAndNotify(ref this.name, value, string.Empty);
         }
     }
@@ -146,7 +146,7 @@ namespace RoslynSandbox
 {
     public abstract class FooBase : Stylet.PropertyChangedBase
     {
-        public override bool Set<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected override bool SetAndNotify<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             return base.SetAndNotify(ref oldValue, newValue, propertyName);
         }

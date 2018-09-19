@@ -57,7 +57,7 @@ namespace RoslynSandbox.Client
         public string Name
         {
             get { return this.name; }
-            set { this.TrySet(ref this.name, value) }
+            set { this.TrySet(ref this.name, value); }
         }
     }
 }";
@@ -100,14 +100,14 @@ namespace RoslynSandbox.Core
                 var testCode = @"
 namespace RoslynSandbox.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase<int>
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
         public string Name
         {
             get { return this.name; }
-            set { this.TrySet(ref this.name, value) }
+            set { this.TrySet(ref this.name, value); }
         }
     }
 }";
@@ -126,12 +126,12 @@ namespace RoslynSandbox.Client
 
         public string Name
         {
-            get => return this.name;
-            set => this.TrySet(ref this.name, value)
+            get => this.name;
+            set => this.TrySet(ref this.name, value);
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -204,12 +204,12 @@ namespace RoslynSandbox
 
         public string Name
         {
-            get => return this.name;
+            get => this.name;
             set => this.TrySet(ref this.name, value, string.Empty);
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -248,7 +248,7 @@ namespace RoslynSandbox.Client
 {
     public abstract class FooBase : RoslynSandbox.Core.ViewModelBase<int>
     {
-        public override bool Set<T>(ref T oldValue, T newValue, string propertyName = null)
+        protected override bool TrySet<T>(ref T oldValue, T newValue, string propertyName = null)
         {
             return base.TrySet(ref oldValue, newValue, propertyName);
         }
@@ -270,7 +270,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.Valid(Analyzer, fooBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, fooBaseCode, testCode);
             }
         }
     }

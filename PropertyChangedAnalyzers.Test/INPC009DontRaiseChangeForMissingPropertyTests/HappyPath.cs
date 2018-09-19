@@ -10,6 +10,8 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly T Analyzer = new T();
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor);
 
         [TestCase("null")]
         [TestCase("string.Empty")]
@@ -263,7 +265,7 @@ namespace RoslynSandBox
             var testCode = @"
 namespace RoslynSandBox
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : ViewModelBase
     {
         private int value;
 
@@ -287,7 +289,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, vmCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, vmCode, testCode);
         }
 
         [Test]
@@ -446,6 +448,7 @@ namespace RoslynSandbox
 namespace RoslynSandBox
 {
     using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
     public class ViewModel : INotifyPropertyChanged
     {
@@ -510,7 +513,7 @@ namespace RoslynSandBox
             var vmCode = @"
 namespace RoslynSandBox
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : ViewModelBase
     {
         private int value;
 

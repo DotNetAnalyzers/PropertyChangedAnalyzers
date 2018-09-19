@@ -15,6 +15,6 @@ namespace PropertyChangedAnalyzers
         /// <summary>
         /// Analysis determined that PropertyChanged is potentially invoked in this path.
         /// </summary>
-        Maybe
+        Maybe,
     }
 }
