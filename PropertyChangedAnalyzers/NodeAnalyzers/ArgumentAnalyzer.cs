@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.Argument);
+            context.RegisterSyntaxNodeAction(c => Handle(c), SyntaxKind.Argument);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)

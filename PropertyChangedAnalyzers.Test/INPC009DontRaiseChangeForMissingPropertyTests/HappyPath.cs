@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingPropertyTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
@@ -11,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
     {
         private static readonly T Analyzer = new T();
         //// ReSharper disable once StaticMemberInGenericType
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor);
+        private static readonly DiagnosticDescriptor Descriptor = INPC009DontRaiseChangeForMissingProperty.Descriptor;
 
         [TestCase("null")]
         [TestCase("string.Empty")]
@@ -289,7 +290,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, vmCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, vmCode, testCode);
         }
 
         [Test]
@@ -550,7 +551,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            AnalyzerAssert.Valid(Analyzer, ExpectedDiagnostic, vmBaseCode, vmCode, testCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, vmBaseCode, vmCode, testCode);
         }
 
         [Test]

@@ -217,7 +217,7 @@ namespace PropertyChangedAnalyzers
                     classDeclaration.BaseList.Types.TryFirst(
                         x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true,
                         out var baseType) &&
-                    context.Diagnostics.Any(IsINotifyPropertyChangedMissing))
+                    context.Diagnostics.Any(d => IsINotifyPropertyChangedMissing(d)))
                 {
                     editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(INotifyPropertyChangedType));
                 }
@@ -289,7 +289,7 @@ namespace PropertyChangedAnalyzers
                 classDeclaration.BaseList.Types.TryFirst(
                     x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true,
                     out var baseType) &&
-                context.Diagnostics.Any(IsINotifyPropertyChangedMissing))
+                context.Diagnostics.Any(x => IsINotifyPropertyChangedMissing(x)))
             {
                 editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(viewModelBaseType));
             }

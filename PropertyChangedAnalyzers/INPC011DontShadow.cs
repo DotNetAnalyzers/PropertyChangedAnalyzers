@@ -28,18 +28,13 @@ namespace PropertyChangedAnalyzers
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.EventFieldDeclaration);
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(c => Handle(c), SyntaxKind.EventFieldDeclaration, SyntaxKind.EventDeclaration);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.ContainingSymbol is IEventSymbol eventSymbol &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.ContainingSymbol is IEventSymbol eventSymbol &&
                 eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
                !eventSymbol.IsOverride &&
                 eventSymbol.ContainingType.BaseType.TryFindEventRecursive("PropertyChanged", out _))

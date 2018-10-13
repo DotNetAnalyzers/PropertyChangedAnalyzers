@@ -23,17 +23,13 @@ namespace PropertyChangedAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(c => Handle(c), SyntaxKind.PropertyDeclaration);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is PropertyDeclarationSyntax propertyDeclaration &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 context.ContainingSymbol is IPropertySymbol property)
             {
                 if (propertyDeclaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)

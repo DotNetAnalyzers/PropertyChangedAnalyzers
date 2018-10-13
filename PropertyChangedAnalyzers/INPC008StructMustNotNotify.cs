@@ -30,10 +30,10 @@ namespace PropertyChangedAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(HandleDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(c => Handle(c), SyntaxKind.StructDeclaration);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (context.IsExcludedFromAnalysis())
             {

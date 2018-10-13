@@ -21,17 +21,13 @@ namespace PropertyChangedAnalyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeAction(c => Handle(c), SyntaxKind.IfStatement);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is IfStatementSyntax ifStatement &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is IfStatementSyntax ifStatement &&
                 ifStatement.Condition != null)
             {
                 if (ifStatement.FirstAncestorOrSelf<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&

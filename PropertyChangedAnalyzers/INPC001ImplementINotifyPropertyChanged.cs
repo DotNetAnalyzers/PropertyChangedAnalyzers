@@ -31,7 +31,7 @@ namespace PropertyChangedAnalyzers
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterSyntaxNodeAction(Handle, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(c => Handle(c), SyntaxKind.ClassDeclaration);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)

@@ -31,25 +31,25 @@ namespace PropertyChangedAnalyzers
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterSyntaxNodeAction(HandlePrefixUnaryExpression, SyntaxKind.PreIncrementExpression);
-            context.RegisterSyntaxNodeAction(HandlePrefixUnaryExpression, SyntaxKind.PreDecrementExpression);
+            context.RegisterSyntaxNodeAction(c => HandlePrefixUnaryExpression(c), SyntaxKind.PreIncrementExpression);
+            context.RegisterSyntaxNodeAction(c => HandlePrefixUnaryExpression(c), SyntaxKind.PreDecrementExpression);
 
-            context.RegisterSyntaxNodeAction(HandlePostfixUnaryExpression, SyntaxKind.PostIncrementExpression);
-            context.RegisterSyntaxNodeAction(HandlePostfixUnaryExpression, SyntaxKind.PostDecrementExpression);
+            context.RegisterSyntaxNodeAction(c => HandlePostfixUnaryExpression(c), SyntaxKind.PostIncrementExpression);
+            context.RegisterSyntaxNodeAction(c => HandlePostfixUnaryExpression(c), SyntaxKind.PostDecrementExpression);
 
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.AndAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.OrAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.ExclusiveOrAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.AddAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.DivideAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.LeftShiftAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.ModuloAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.MultiplyAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.RightShiftAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.SubtractAssignmentExpression);
-            context.RegisterSyntaxNodeAction(HandleAssignmentExpression, SyntaxKind.SimpleAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.AndAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.OrAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.ExclusiveOrAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.AddAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.DivideAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.LeftShiftAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.ModuloAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.MultiplyAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.RightShiftAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.SubtractAssignmentExpression);
+            context.RegisterSyntaxNodeAction(c => HandleAssignmentExpression(c), SyntaxKind.SimpleAssignmentExpression);
 
-            context.RegisterSyntaxNodeAction(HandleArgument, SyntaxKind.Argument);
+            context.RegisterSyntaxNodeAction(c => HandleArgument(c), SyntaxKind.Argument);
         }
 
         private static void HandlePostfixUnaryExpression(SyntaxNodeAnalysisContext context)
