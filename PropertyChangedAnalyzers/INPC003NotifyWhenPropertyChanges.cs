@@ -54,76 +54,54 @@ namespace PropertyChangedAnalyzers
 
         private static void HandlePostfixUnaryExpression(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis() ||
-                IsInIgnoredScope(context))
+            if (!context.IsExcludedFromAnalysis() &&
+                !IsInIgnoredScope(context) &&
+                context.Node is PostfixUnaryExpressionSyntax postfix &&
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, postfix.Operand, out var backing))
             {
-                return;
-            }
-
-            if (context.Node is PostfixUnaryExpressionSyntax expression &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, expression.Operand, out var backing))
-            {
-                Handle(context, backing);
+                Handle(postfix, backing, context);
             }
         }
 
         private static void HandlePrefixUnaryExpression(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis() ||
-                IsInIgnoredScope(context))
+            if (!context.IsExcludedFromAnalysis() &&
+                !IsInIgnoredScope(context) &&
+                context.Node is PrefixUnaryExpressionSyntax prefix &&
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, prefix.Operand, out var backing))
             {
-                return;
-            }
-
-            if (context.Node is PrefixUnaryExpressionSyntax expression &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, expression.Operand, out var backing))
-            {
-                Handle(context, backing);
+                Handle(prefix, backing, context);
             }
         }
 
         private static void HandleAssignmentExpression(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis() ||
-                IsInIgnoredScope(context))
+            if (!context.IsExcludedFromAnalysis() &&
+                !IsInIgnoredScope(context) &&
+                context.Node is AssignmentExpressionSyntax assignment &&
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, assignment.Left, out var backing))
             {
-                return;
-            }
-
-            if (context.Node is AssignmentExpressionSyntax expression &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, expression.Left, out var backing))
-            {
-                Handle(context, backing);
+                Handle(assignment, backing, context);
             }
         }
 
         private static void HandleArgument(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis() ||
-                IsInIgnoredScope(context))
-            {
-                return;
-            }
-
-            if (context.Node is ArgumentSyntax argument &&
+            if (!context.IsExcludedFromAnalysis() &&
+                !IsInIgnoredScope(context) &&
+                context.Node is ArgumentSyntax argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
                 TryGetAssignedExpression(context.ContainingSymbol.ContainingType, argument.Expression, out var backing))
             {
-                Handle(context, backing);
+                Handle(argument.Expression, backing, context);
             }
         }
 
-        private static void Handle(SyntaxNodeAnalysisContext context, ExpressionSyntax backing)
+        private static void Handle(ExpressionSyntax mutation, ExpressionSyntax backing, SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis() ||
-                IsInIgnoredScope(context))
-            {
-                return;
-            }
-
             if (context.ContainingSymbol.ContainingType is INamedTypeSymbol containingType &&
                 containingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) &&
-                context.Node.TryFirstAncestorOrSelf<TypeDeclarationSyntax>(out var typeDeclaration))
+                mutation.TryFirstAncestorOrSelf<TypeDeclarationSyntax>(out var typeDeclaration))
             {
                 using (var pathWalker = MemberPath.PathWalker.Borrow(backing))
                 {
@@ -141,7 +119,7 @@ namespace PropertyChangedAnalyzers
                             PropertyPath.Uses(getter, pathWalker, context) &&
                             !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
                             context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
-                            PropertyChanged.InvokesPropertyChangedFor(context.Node, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
+                            PropertyChanged.InvokesPropertyChangedFor(mutation, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                         {
                             if (context.Node.FirstAncestorOrSelf<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax inProperty &&
                                 ReferenceEquals(inProperty, propertyDeclaration) &&

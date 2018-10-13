@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers
 
     internal static class PropertyChanged
     {
-        internal static AnalysisResult InvokesPropertyChangedFor(SyntaxNode assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static AnalysisResult InvokesPropertyChangedFor(ExpressionSyntax assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (assignment.FirstAncestorOrSelf<ArgumentSyntax>() is ArgumentSyntax argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
@@ -75,7 +75,7 @@ namespace PropertyChangedAnalyzers
                     foreach (var candidate in walker.Invocations)
                     {
                         if (!candidate.Contains(assignment) &&
-                            assignment.IsExecutedBefore(candidate) == false)
+                            assignment.IsExecutedBefore(candidate) == ExecutedBefore.No)
                         {
                             continue;
                         }
