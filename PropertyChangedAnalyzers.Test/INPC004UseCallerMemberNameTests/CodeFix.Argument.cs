@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         public class Argument
         {
             private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
-            private static readonly UseCallerMemberNameCodeFixProvider Fix = new UseCallerMemberNameCodeFixProvider();
+            private static readonly UseCallerMemberNameFix Fix = new UseCallerMemberNameFix();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC004");
 
             [OneTimeSetUp]

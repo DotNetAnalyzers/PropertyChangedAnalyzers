@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         public class Method
         {
             private static readonly INPC004UseCallerMemberName Analyzer = new INPC004UseCallerMemberName();
-            private static readonly UseCallerMemberNameCodeFixProvider Fix = new UseCallerMemberNameCodeFixProvider();
+            private static readonly UseCallerMemberNameFix Fix = new UseCallerMemberNameFix();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC004");
 
             [TestCase("this.PropertyChanged")]

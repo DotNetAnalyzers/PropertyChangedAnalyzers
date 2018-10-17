@@ -10,9 +10,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SetBackingFieldCodeFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SetBackingFieldFix))]
     [Shared]
-    internal class SetBackingFieldCodeFix : DocumentEditorCodeFixProvider
+    internal class SetBackingFieldFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC014PreferSettingBackingFieldInCtor.DiagnosticId);

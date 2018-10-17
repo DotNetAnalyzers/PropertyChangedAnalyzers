@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
     internal class CodeFix
     {
         private static readonly INPC007MissingInvoker Analyzer = new INPC007MissingInvoker();
-        private static readonly MissingInvokerCodeFix Fix = new MissingInvokerCodeFix();
+        private static readonly MissingInvokerFix Fix = new MissingInvokerFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC007");
 
         [Test]

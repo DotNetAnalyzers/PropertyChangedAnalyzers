@@ -1,3 +1,4 @@
+// ReSharper disable All
 namespace ValidCode.InheritanceTrySet
 {
     using System.Collections.Generic;

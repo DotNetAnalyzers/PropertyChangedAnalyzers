@@ -14,9 +14,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MissingInvokerCodeFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MissingInvokerFix))]
     [Shared]
-    internal class MissingInvokerCodeFix : CodeFixProvider
+    internal class MissingInvokerFix : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC007MissingInvoker.DiagnosticId);

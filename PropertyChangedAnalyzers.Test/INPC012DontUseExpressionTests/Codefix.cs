@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     internal partial class CodeFix
     {
         private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
-        private static readonly RemoveExpressionCodeFix Fix = new RemoveExpressionCodeFix();
+        private static readonly RemoveExpressionFix Fix = new RemoveExpressionFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC012");
 
         [Test]

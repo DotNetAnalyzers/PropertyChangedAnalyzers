@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     internal partial class CodeFix
     {
         private static readonly InvocationAnalyzer Analyzer = new InvocationAnalyzer();
-        private static readonly CheckIfDifferentBeforeNotifyFixProvider Fix = new CheckIfDifferentBeforeNotifyFixProvider();
+        private static readonly CheckIfDifferentBeforeNotifyFix Fix = new CheckIfDifferentBeforeNotifyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC005");
     }
 }

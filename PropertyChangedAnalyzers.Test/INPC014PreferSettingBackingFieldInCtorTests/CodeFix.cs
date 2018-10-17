@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
     internal class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC014PreferSettingBackingFieldInCtor();
-        private static readonly CodeFixProvider Fix = new SetBackingFieldCodeFix();
+        private static readonly CodeFixProvider Fix = new SetBackingFieldFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC014");
 
 #pragma warning disable SA1203 // Constants must appear before fields

@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
     internal class CodeFix
     {
         private static readonly IfStatementAnalyzer Analyzer = new IfStatementAnalyzer();
-        private static readonly UseCorrectEqualityCodeFixProvider Fix = new UseCorrectEqualityCodeFixProvider();
+        private static readonly UseCorrectEqualityFix Fix = new UseCorrectEqualityFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC006_b");
 
         private static readonly IReadOnlyList<TestCase> TestCases = new[]

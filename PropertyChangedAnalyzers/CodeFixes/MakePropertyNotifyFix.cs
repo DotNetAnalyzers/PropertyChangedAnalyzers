@@ -13,9 +13,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakePropertyNotifyCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakePropertyNotifyFix))]
     [Shared]
-    internal class MakePropertyNotifyCodeFixProvider : DocumentEditorCodeFixProvider
+    internal class MakePropertyNotifyFix : DocumentEditorCodeFixProvider
     {
         private const string NotifyWhenValueChanges = "Notify when value changes.";
 

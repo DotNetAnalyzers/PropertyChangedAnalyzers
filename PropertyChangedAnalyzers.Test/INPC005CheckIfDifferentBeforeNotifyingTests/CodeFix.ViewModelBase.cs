@@ -219,8 +219,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
             }
 
             [Test]
@@ -273,8 +273,8 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
-                AnalyzerAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                AnalyzerAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
             }
 
             [Test]
@@ -303,7 +303,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.NoFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFixProvider>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode });
+                AnalyzerAssert.NoFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode });
             }
 
             [Test]

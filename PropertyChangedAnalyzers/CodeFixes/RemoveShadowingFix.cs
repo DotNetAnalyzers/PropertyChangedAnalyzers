@@ -10,9 +10,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveShadowingCodeFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveShadowingFix))]
     [Shared]
-    internal class RemoveShadowingCodeFix : CodeFixProvider
+    internal class RemoveShadowingFix : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC011DontShadow.DiagnosticId);

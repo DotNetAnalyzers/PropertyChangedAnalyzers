@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     internal class CodeFixAll
     {
         private static readonly INPC003NotifyWhenPropertyChanges Analyzer = new INPC003NotifyWhenPropertyChanges();
-        private static readonly NotifyPropertyChangedCodeFixProvider Fix = new NotifyPropertyChangedCodeFixProvider();
+        private static readonly NotifyPropertyChangedFix Fix = new NotifyPropertyChangedFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC003");
 
         [Test]

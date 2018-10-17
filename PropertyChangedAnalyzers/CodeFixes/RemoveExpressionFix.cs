@@ -13,9 +13,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveExpressionCodeFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveExpressionFix))]
     [Shared]
-    internal class RemoveExpressionCodeFix : DocumentEditorCodeFixProvider
+    internal class RemoveExpressionFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC012DontUseExpression.DiagnosticId);

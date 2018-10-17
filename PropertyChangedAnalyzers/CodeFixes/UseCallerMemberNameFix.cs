@@ -11,9 +11,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Simplification;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCallerMemberNameCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCallerMemberNameFix))]
     [Shared]
-    internal class UseCallerMemberNameCodeFixProvider : DocumentEditorCodeFixProvider
+    internal class UseCallerMemberNameFix : DocumentEditorCodeFixProvider
     {
         private static readonly AttributeListSyntax CallerMemberName =
             SyntaxFactory.AttributeList(
