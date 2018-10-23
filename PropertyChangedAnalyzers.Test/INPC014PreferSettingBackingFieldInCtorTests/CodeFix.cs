@@ -390,7 +390,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public void WhenShadowingLocal()
+        public void WhenShadowingParameter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -441,6 +441,90 @@ namespace RoslynSandbox
         public A(bool x)
         {
             this.x = x;
+        }
+
+        private bool x;
+
+        public bool X
+        {
+            get => x;
+            set
+            {
+                if (value == x)
+                {
+                    return;
+                }
+
+                x = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+        }
+
+        [Test]
+        public void WhenShadowingLocal()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class A : INotifyPropertyChanged
+    {
+        public A(bool a)
+        {
+            var x = a;
+            ↓X = a;
+        }
+
+        private bool x;
+
+        public bool X
+        {
+            get => x;
+            set
+            {
+                if (value == x)
+                {
+                    return;
+                }
+
+                x = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class A : INotifyPropertyChanged
+    {
+        public A(bool a)
+        {
+            var x = a;
+            this.x = a;
         }
 
         private bool x;

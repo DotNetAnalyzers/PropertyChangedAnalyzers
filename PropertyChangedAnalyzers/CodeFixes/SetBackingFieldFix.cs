@@ -30,7 +30,8 @@ namespace PropertyChangedAnalyzers
                 if (syntaxRoot.TryFindNode(diagnostic, out AssignmentExpressionSyntax assignment) &&
                     assignment.TryFirstAncestor(out ConstructorDeclarationSyntax ctor) &&
                     Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
-                    Property.TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, context.CancellationToken, out var field))
+                    Property.TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, context.CancellationToken,
+                                                          out var field))
                 {
                     context.RegisterCodeFix(
                         "Set backing field.",
@@ -42,14 +43,30 @@ namespace PropertyChangedAnalyzers
                     {
                         switch (x)
                         {
-                            case IdentifierNameSyntax _ when ctor.ParameterList.Parameters.TryFirst(p => p.Identifier.ValueText == field.Name, out _):
-                                return SyntaxFactory.ParseExpression($"this.{field.Name}").WithTriviaFrom(x);
+                            case IdentifierNameSyntax _ when IsShadowed():
+                                return SyntaxFactory.ParseExpression($"this.{field.Name}")
+                                                    .WithTriviaFrom(x);
                             case IdentifierNameSyntax identifierName:
                                 return identifierName.WithIdentifier(SyntaxFactory.Identifier(field.Name));
-                            case MemberAccessExpressionSyntax memberAccess when memberAccess.Name is IdentifierNameSyntax name:
-                                return memberAccess.ReplaceNode(name, name.WithIdentifier(SyntaxFactory.Identifier(field.Name)));
+                            case MemberAccessExpressionSyntax memberAccess
+                                when memberAccess.Name is IdentifierNameSyntax name:
+                                return memberAccess.ReplaceNode(
+                                    name, name.WithIdentifier(SyntaxFactory.Identifier(field.Name)));
                             default:
                                 return x;
+                        }
+                    }
+
+                    bool IsShadowed()
+                    {
+                        if (ctor.ParameterList.Parameters.TryFirst(x => x.Identifier.ValueText == field.Name, out _))
+                        {
+                            return true;
+                        }
+
+                        using (var walker = VariableDeclaratorWalker.Borrow(ctor))
+                        {
+                            return walker.VariableDeclarators.TryFirst(x => x.Identifier.ValueText == field.Name, out _);
                         }
                     }
                 }
