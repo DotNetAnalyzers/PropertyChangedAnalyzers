@@ -15,9 +15,9 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC011DontShadowBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC011DontShadow());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC014SetBackingFieldBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC014SetBackingField());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark ArgumentAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.ArgumentAnalyzer());
+
+        private static readonly Gu.Roslyn.Asserts.Benchmark AssignmentAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.AssignmentAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark IfStatementAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.IfStatementAnalyzer());
 
@@ -62,15 +62,15 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC014SetBackingField()
-        {
-            INPC014SetBackingFieldBenchmark.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
         public void ArgumentAnalyzer()
         {
             ArgumentAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void AssignmentAnalyzer()
+        {
+            AssignmentAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

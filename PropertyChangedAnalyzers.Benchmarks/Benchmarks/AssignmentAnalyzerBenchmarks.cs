@@ -2,9 +2,9 @@
 // ReSharper disable InconsistentNaming
 namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
-    public class INPC014PreferSettingBackingFieldInCtorBenchmarks
+    public class AssignmentAnalyzerBenchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC014SetBackingField());
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.AssignmentAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RunOnPropertyChangedAnalyzers()

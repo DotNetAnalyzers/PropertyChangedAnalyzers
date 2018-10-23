@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
 
     internal class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC014SetBackingField();
+        private static readonly DiagnosticAnalyzer Analyzer = new AssignmentAnalyzer();
         private static readonly CodeFixProvider Fix = new SetBackingFieldFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC014SetBackingField.Descriptor);
 
