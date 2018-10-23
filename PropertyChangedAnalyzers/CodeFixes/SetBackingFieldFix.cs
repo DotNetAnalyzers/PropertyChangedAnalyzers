@@ -3,19 +3,19 @@ namespace PropertyChangedAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SetBackingFieldFix))]
     [Shared]
     internal class SetBackingFieldFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC014PreferSettingBackingFieldInCtor.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC014SetBackingField.DiagnosticId);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -27,47 +27,33 @@ namespace PropertyChangedAnalyzers
                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-                if (node is AssignmentExpressionSyntax assignment &&
+                if (syntaxRoot.TryFindNode(diagnostic, out AssignmentExpressionSyntax assignment) &&
+                    assignment.TryFirstAncestor(out ConstructorDeclarationSyntax ctor) &&
                     Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                     Property.TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, context.CancellationToken, out var field))
                 {
                     context.RegisterCodeFix(
                         "Set backing field.",
-                        (e, cancellationToken) => SetBackingField(e, assignment, field),
+                        (e, cancellationToken) => e.ReplaceNode(assignment.Left, x => Replacement(x)),
                         "Set backing field.",
                         diagnostic);
+
+                    ExpressionSyntax Replacement(ExpressionSyntax x)
+                    {
+                        switch (x)
+                        {
+                            case IdentifierNameSyntax _ when ctor.ParameterList.Parameters.TryFirst(p => p.Identifier.ValueText == field.Name, out _):
+                                return SyntaxFactory.ParseExpression($"this.{field.Name}").WithTriviaFrom(x);
+                            case IdentifierNameSyntax identifierName:
+                                return identifierName.WithIdentifier(SyntaxFactory.Identifier(field.Name));
+                            case MemberAccessExpressionSyntax memberAccess when memberAccess.Name is IdentifierNameSyntax name:
+                                return memberAccess.ReplaceNode(name, name.WithIdentifier(SyntaxFactory.Identifier(field.Name)));
+                            default:
+                                return x;
+                        }
+                    }
                 }
             }
-        }
-
-        private static void SetBackingField(DocumentEditor editor, AssignmentExpressionSyntax oldAssignment, IFieldSymbol field)
-        {
-            editor.ReplaceNode(
-                oldAssignment.Left,
-                (x, _) =>
-                {
-                    if (x is IdentifierNameSyntax identifierName)
-                    {
-                        return identifierName.WithIdentifier(SyntaxFactory.Identifier(field.Name));
-                    }
-
-                    if (x is MemberAccessExpressionSyntax memberAccess &&
-                        memberAccess.Name is IdentifierNameSyntax name)
-                    {
-                        return memberAccess.ReplaceNode(
-                            name,
-                            name.WithIdentifier(SyntaxFactory.Identifier(field.Name)));
-                    }
-
-                    return x;
-                });
         }
     }
 }

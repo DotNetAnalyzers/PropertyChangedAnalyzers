@@ -8,11 +8,11 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class INPC014PreferSettingBackingFieldInCtor : DiagnosticAnalyzer
+    internal class INPC014SetBackingField : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "INPC014";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Prefer setting backing field in constructor.",
             messageFormat: "Prefer setting backing field in constructor.",
@@ -35,12 +35,8 @@ namespace PropertyChangedAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is AssignmentExpressionSyntax assignment &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is AssignmentExpressionSyntax assignment &&
                 !context.ContainingSymbol.IsStatic &&
                 IsInConstructor(assignment) &&
                 Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&

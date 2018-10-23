@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
 
     internal class ValidCode
     {
-        private static readonly INPC014PreferSettingBackingFieldInCtor Analyzer = new INPC014PreferSettingBackingFieldInCtor();
+        private static readonly INPC014SetBackingField Analyzer = new INPC014SetBackingField();
 
         [Test]
         public void WhenSettingField()

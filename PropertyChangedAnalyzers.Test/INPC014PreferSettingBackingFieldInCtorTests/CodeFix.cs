@@ -7,9 +7,9 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
 
     internal class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC014PreferSettingBackingFieldInCtor();
+        private static readonly DiagnosticAnalyzer Analyzer = new INPC014SetBackingField();
         private static readonly CodeFixProvider Fix = new SetBackingFieldFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC014");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC014SetBackingField.Descriptor);
 
 #pragma warning disable SA1203 // Constants must appear before fields
         private const string ViewModelBaseCode = @"
@@ -383,6 +383,88 @@ namespace RoslynSandbox.Client
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }
             }
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+        }
+
+        [Test]
+        public void WhenShadowingLocal()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class A : INotifyPropertyChanged
+    {
+        public A(bool x)
+        {
+            ↓X = x;
+        }
+
+        private bool x;
+
+        public bool X
+        {
+            get => x;
+            set
+            {
+                if (value == x)
+                {
+                    return;
+                }
+
+                x = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class A : INotifyPropertyChanged
+    {
+        public A(bool x)
+        {
+            this.x = x;
+        }
+
+        private bool x;
+
+        public bool X
+        {
+            get => x;
+            set
+            {
+                if (value == x)
+                {
+                    return;
+                }
+
+                x = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";

@@ -15,19 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{A1A965
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{BAD2A4EE-6739-4830-BC74-2F8CF785A572}"
 	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
-		.paket\Readme.paket.md = .paket\Readme.paket.md
-		RELEASE_NOTES.md = RELEASE_NOTES.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{AB970A83-4723-44EA-95EC-D591AF6EC75D}"
-	ProjectSection(SolutionItems) = preProject
-		.paket\tools\install.ps1 = .paket\tools\install.ps1
-		.paket\tools\uninstall.ps1 = .paket\tools\uninstall.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916-2704-452C-9FD4-8EA6247E6589}"
-	ProjectSection(SolutionItems) = preProject
 		documentation\INPC001.md = documentation\INPC001.md
 		documentation\INPC002.md = documentation\INPC002.md
 		documentation\INPC003.md = documentation\INPC003.md
@@ -46,6 +33,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rules", "rules", "{700F1916
 		documentation\INPC015.md = documentation\INPC015.md
 		documentation\INPC016.md = documentation\INPC016.md
 		documentation\INPC017.md = documentation\INPC017.md
+		README.md = README.md
+		.paket\Readme.paket.md = .paket\Readme.paket.md
+		RELEASE_NOTES.md = RELEASE_NOTES.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{AB970A83-4723-44EA-95EC-D591AF6EC75D}"
+	ProjectSection(SolutionItems) = preProject
+		.paket\tools\install.ps1 = .paket\tools\install.ps1
+		.paket\tools\uninstall.ps1 = .paket\tools\uninstall.ps1
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers.Test", "PropertyChangedAnalyzers.Test\PropertyChangedAnalyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
@@ -56,7 +52,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers.Be
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyChangedAnalyzers", "PropertyChangedAnalyzers\PropertyChangedAnalyzers.csproj", "{FAF511FD-0791-4260-9C23-9A53795F6D45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidCode", "ValidCode\ValidCode.csproj", "{87E6ABA1-68A8-4895-A63C-67B9AF4A88DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidCode", "ValidCode\ValidCode.csproj", "{87E6ABA1-68A8-4895-A63C-67B9AF4A88DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,7 +86,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AB970A83-4723-44EA-95EC-D591AF6EC75D} = {A1A96555-15B1-4A0C-ADC1-059CEAA3F788}
-		{700F1916-2704-452C-9FD4-8EA6247E6589} = {BAD2A4EE-6739-4830-BC74-2F8CF785A572}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B4810C1D-E897-4BF1-AF81-48DA8A66F172}
