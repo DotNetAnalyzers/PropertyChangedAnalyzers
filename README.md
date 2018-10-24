@@ -89,6 +89,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC018.md">INPC018</a></td>
   <td>PropertyChanged invoker should be protected when the class is not sealed.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC019.md">INPC019</a></td>
+  <td>Getter should return backing field.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

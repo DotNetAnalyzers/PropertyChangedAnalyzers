@@ -178,7 +178,10 @@ namespace RoslynSandbox
     public class FooControl : Control
     {
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            ""Bar"", typeof(int), typeof(FooControl), new PropertyMetadata(default(int)));
+            nameof(Bar),
+            typeof(int),
+            typeof(FooControl),
+            new PropertyMetadata(default(int)));
 
         public int Bar
         {

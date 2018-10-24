@@ -16,7 +16,8 @@ namespace PropertyChangedAnalyzers
             INPC002MutablePublicPropertyShouldNotify.Descriptor,
             INPC010GetAndSetSame.Descriptor,
             INPC015PropertyIsRecursive.Descriptor,
-            INPC017BackingFieldNameMustMatch.Descriptor);
+            INPC017BackingFieldNameMustMatch.Descriptor,
+            INPC019GetBackingField.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -42,13 +43,22 @@ namespace PropertyChangedAnalyzers
                         }
                     }
 
-                    if (walker.ReturnValues.TrySingle(out var single) &&
-                        single.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
-                        MemberPath.TrySingle(single, out var path) &&
-                        context.SemanticModel.TryGetSymbol(path, context.CancellationToken, out IFieldSymbol backingField) &&
-                        !HasMatchingName(backingField, property))
+                    if (walker.ReturnValues.TrySingle(out var single))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor, path.GetLocation()));
+                        if (single.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
+                            MemberPath.TrySingle(single, out var path) &&
+                            context.SemanticModel.TryGetSymbol(path, context.CancellationToken, out IFieldSymbol backingField) &&
+                            !HasMatchingName(backingField, property))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor, path.GetLocation()));
+                        }
+
+                        if (single is LiteralExpressionSyntax &&
+                            propertyDeclaration.TryGetGetter(out var getter) &&
+                            Property.TryGetBackingFieldFromSetter(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var field))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(INPC019GetBackingField.Descriptor, single.GetLocation()));
+                        }
                     }
                 }
 
