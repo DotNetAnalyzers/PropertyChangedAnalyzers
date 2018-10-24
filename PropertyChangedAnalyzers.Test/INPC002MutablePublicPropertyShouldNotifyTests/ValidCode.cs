@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal partial class ValidCode
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
 
         [TestCase("null")]
         [TestCase("string.Empty")]

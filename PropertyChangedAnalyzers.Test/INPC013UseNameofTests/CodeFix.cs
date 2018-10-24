@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class Codefix
     {
-        private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
         private static readonly UseNameofFix Fix = new UseNameofFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC013");
 

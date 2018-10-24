@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
     using NUnit.Framework;
 
     [TestFixture(typeof(ArgumentAnalyzer))]
-    [TestFixture(typeof(INPC004UseCallerMemberName))]
+    [TestFixture(typeof(MethodDeclarationAnalyzer))]
     internal class ValidCode<T>
         where T : DiagnosticAnalyzer, new()
     {

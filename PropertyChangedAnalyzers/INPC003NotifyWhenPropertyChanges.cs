@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers
         public const string DiagnosticId = "INPC003";
         public static readonly string PropertyNameKey = "PropertyName";
 
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Notify when property changes.",
             messageFormat: "Notify that property '{0}' changes.",

@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class ValidCode
     {
-        private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
 
         [Test]
         public void NoBaseClass()

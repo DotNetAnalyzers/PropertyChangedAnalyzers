@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class ValidCode
     {
-        private static readonly INPC011DontShadow Analyzer = new INPC011DontShadow();
+        private static readonly DiagnosticAnalyzer Analyzer = new INPC011DontShadow();
 
         [Test]
         public void NoBaseClass()

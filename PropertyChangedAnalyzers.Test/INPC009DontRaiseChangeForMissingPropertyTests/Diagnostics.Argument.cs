@@ -1,13 +1,14 @@
 namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingPropertyTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal partial class Diagnostics
     {
         internal class Argument
         {
-            private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
+            private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC009");
 
             [TestCase(@"""Missing""")]

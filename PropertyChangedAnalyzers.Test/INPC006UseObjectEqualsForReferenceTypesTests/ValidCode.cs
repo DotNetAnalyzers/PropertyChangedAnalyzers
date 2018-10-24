@@ -2,11 +2,12 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class ValidCode
     {
-        private static readonly IfStatementAnalyzer Analyzer = new IfStatementAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new IfStatementAnalyzer();
 
         private static readonly IReadOnlyList<TestCase> TestCases = new[]
         {

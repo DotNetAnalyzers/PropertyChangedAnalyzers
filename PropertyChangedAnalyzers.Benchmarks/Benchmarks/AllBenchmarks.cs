@@ -7,8 +7,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC003NotifyWhenPropertyChangesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC003NotifyWhenPropertyChanges());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC004UseCallerMemberNameBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC004UseCallerMemberName());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC007MissingInvokerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC007MissingInvoker());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC008StructMustNotNotifyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC008StructMustNotNotify());
@@ -23,6 +21,8 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark InvocationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.InvocationAnalyzer());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark MethodDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.MethodDeclarationAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark PropertyDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.PropertyDeclarationAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
@@ -35,12 +35,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void INPC003NotifyWhenPropertyChanges()
         {
             INPC003NotifyWhenPropertyChangesBenchmark.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC004UseCallerMemberName()
-        {
-            INPC004UseCallerMemberNameBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
@@ -83,6 +77,12 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void InvocationAnalyzer()
         {
             InvocationAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void MethodDeclarationAnalyzer()
+        {
+            MethodDeclarationAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

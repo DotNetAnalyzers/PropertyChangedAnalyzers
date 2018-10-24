@@ -2,11 +2,12 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal partial class ValidCode
     {
-        private static readonly InvocationAnalyzer Analyzer = new InvocationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
 
         private static readonly IReadOnlyList<TestCase> TestCases = new[]
         {

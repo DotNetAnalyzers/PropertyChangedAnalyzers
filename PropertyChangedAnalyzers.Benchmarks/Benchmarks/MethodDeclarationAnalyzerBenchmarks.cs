@@ -2,9 +2,9 @@
 // ReSharper disable InconsistentNaming
 namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
-    public class INPC004UseCallerMemberNameBenchmarks
+    public class MethodDeclarationAnalyzerBenchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC004UseCallerMemberName());
+        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.MethodDeclarationAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void RunOnPropertyChangedAnalyzers()

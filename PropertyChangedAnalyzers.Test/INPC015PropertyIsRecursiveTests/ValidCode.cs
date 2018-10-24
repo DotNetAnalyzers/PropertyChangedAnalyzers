@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class ValidCode
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
 
         [Test]
         public void NotifyingProperty()

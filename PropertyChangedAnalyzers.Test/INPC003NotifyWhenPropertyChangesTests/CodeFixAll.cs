@@ -1,13 +1,15 @@
 namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFixAll
     {
-        private static readonly INPC003NotifyWhenPropertyChanges Analyzer = new INPC003NotifyWhenPropertyChanges();
-        private static readonly NotifyPropertyChangedFix Fix = new NotifyPropertyChangedFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC003");
+        private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
+        private static readonly CodeFixProvider Fix = new NotifyPropertyChangedFix();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC003NotifyWhenPropertyChanges.Descriptor);
 
         [Test]
         public void WhenUsingPropertiesExpressionBody()

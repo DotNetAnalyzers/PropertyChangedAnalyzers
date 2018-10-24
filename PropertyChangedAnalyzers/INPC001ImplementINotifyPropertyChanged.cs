@@ -31,17 +31,14 @@ namespace PropertyChangedAnalyzers
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(c => Handle(c), SyntaxKind.ClassDeclaration);
         }
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.ContainingSymbol is INamedTypeSymbol type &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.ContainingSymbol is INamedTypeSymbol type &&
                 context.Node is ClassDeclarationSyntax classDeclaration)
             {
                 if (type.IsStatic ||

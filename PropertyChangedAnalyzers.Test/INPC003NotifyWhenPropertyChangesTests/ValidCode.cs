@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal partial class ValidCode
     {
-        private static readonly INPC003NotifyWhenPropertyChanges Analyzer = new INPC003NotifyWhenPropertyChanges();
+        private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
 
         [TestCase("null")]
         [TestCase("string.Empty")]

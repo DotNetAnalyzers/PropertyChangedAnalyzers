@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class ValidCode
     {
-        private static readonly InvocationAnalyzer Analyzer = new InvocationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
 
         [Test]
         public void OnPropertyChangedAfterAssign()
