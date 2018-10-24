@@ -55,7 +55,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -76,7 +76,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -127,7 +127,7 @@ namespace RoslynSandbox.Client
     }
 }".AssertReplace(@"nameof(Bar)", propertyName);
 
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, testCode);
             }
         }
     }

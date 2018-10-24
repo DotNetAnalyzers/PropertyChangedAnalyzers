@@ -17,7 +17,8 @@ namespace PropertyChangedAnalyzers
             INPC010GetAndSetSame.Descriptor,
             INPC015PropertyIsRecursive.Descriptor,
             INPC017BackingFieldNameMustMatch.Descriptor,
-            INPC019GetBackingField.Descriptor);
+            INPC019GetBackingField.Descriptor,
+            INPC020PreferExpressionBodyAccessor.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -64,6 +65,11 @@ namespace PropertyChangedAnalyzers
 
                 if (propertyDeclaration.TryGetSetter(out var setter))
                 {
+                    if (ShouldBeExpressionBody(setter))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(INPC020PreferExpressionBodyAccessor.Descriptor, setter.GetLocation()));
+                    }
+
                     using (var assignmentWalker = AssignmentWalker.Borrow(setter))
                     {
                         if (assignmentWalker.Assignments.TryFirst(x => IsProperty(x.Left, property), out var recursiveAssignment))
@@ -84,6 +90,11 @@ namespace PropertyChangedAnalyzers
                                 !PropertyPath.Uses(singleAssignment.Left, singleReturnValue, context))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(INPC010GetAndSetSame.Descriptor, propertyDeclaration.GetLocation()));
+                            }
+
+                            if (ShouldBeExpressionBody(getter))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC020PreferExpressionBodyAccessor.Descriptor, getter.GetLocation()));
                             }
                         }
                     }
@@ -199,6 +210,13 @@ namespace PropertyChangedAnalyzers
 
             name = null;
             return false;
+        }
+
+        private static bool ShouldBeExpressionBody(AccessorDeclarationSyntax accessor)
+        {
+            return accessor.Body is BlockSyntax block &&
+                   block.Statements.TrySingle(out var statement) &&
+                   statement.IsEither(SyntaxKind.ReturnStatement, SyntaxKind.ExpressionStatement);
         }
     }
 }

@@ -118,11 +118,12 @@ namespace RoslynSandbox.Client
 
         public int Value
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
                 return this.value;
             }
-
+#pragma warning restore INPC020 // Prefer expression body accessor.
             set
             {
                 if (value == this.value)
@@ -167,11 +168,12 @@ namespace RoslynSandbox
 
         public int Value
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
                 return this.value;
             }
-
+#pragma warning restore INPC020 // Prefer expression body accessor.
             set
             {
                 if (value == this.value)
@@ -508,11 +510,12 @@ namespace RoslynSandbox.Client
 
         public int Value
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
                 return this.value;
             }
-
+#pragma warning restore INPC020 // Prefer expression body accessor.
             set
             {
                 if (value == this.value)
@@ -557,10 +560,12 @@ namespace RoslynSandbox
 
         public T Value
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
                 return this.value;
             }
+#pragma warning restore INPC020 // Prefer expression body accessor.
 
             set
             {

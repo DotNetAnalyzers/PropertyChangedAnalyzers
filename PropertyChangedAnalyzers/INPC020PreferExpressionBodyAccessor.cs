@@ -2,18 +2,18 @@ namespace PropertyChangedAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
-    internal static class INPC019GetBackingField
+    internal static class INPC020PreferExpressionBodyAccessor
     {
-        public const string DiagnosticId = "INPC019";
+        public const string DiagnosticId = "INPC020";
 
         internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
-            title: "Getter should return backing field.",
-            messageFormat: "Getter should return backing field.",
+            title: "Prefer expression body accessor.",
+            messageFormat: "Prefer expression body accessor.",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
-            description: "Getter should return backing field.",
+            description: "Prefer expression body accessor.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
     }
 }

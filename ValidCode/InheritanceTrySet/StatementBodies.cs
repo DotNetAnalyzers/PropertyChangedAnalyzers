@@ -1,4 +1,5 @@
 // ReSharper disable All
+#pragma warning disable INPC020 // Prefer expression body accessor.
 namespace ValidCode.InheritanceTrySet
 {
     public sealed class StatementBodies : StatementBodiesViewModelBase

@@ -20,8 +20,10 @@ namespace ValidCode
 
         public int Value1
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get { return (int)this.GetValue(Value1Property); }
             set { this.SetValue(Value1Property, value); }
+#pragma warning restore INPC020 // Prefer expression body accessor.
         }
 
         public int Value2

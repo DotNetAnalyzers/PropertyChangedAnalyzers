@@ -1,4 +1,5 @@
-﻿// ReSharper disable All
+// ReSharper disable All
+#pragma warning disable INPC020 // Prefer expression body accessor.
 namespace ValidCode.Vanilla
 {
     using System.ComponentModel;

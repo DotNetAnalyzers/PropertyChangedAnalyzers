@@ -1,12 +1,14 @@
 namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly DiagnosticDescriptor Descriptor = INPC010GetAndSetSame.Descriptor;
 
         [Test]
         public void NotifyingProperty()
@@ -49,7 +51,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Valid(Analyzer, testCode);
+            AnalyzerAssert.Valid(Analyzer, Descriptor, testCode);
         }
 
         [Test]
