@@ -30,8 +30,7 @@ namespace PropertyChangedAnalyzers
                 if (syntaxRoot.TryFindNode(diagnostic, out AssignmentExpressionSyntax assignment) &&
                     assignment.TryFirstAncestor(out ConstructorDeclarationSyntax ctor) &&
                     Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
-                    Property.TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, context.CancellationToken,
-                                                          out var field))
+                    Property.TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, context.CancellationToken, out var field))
                 {
                     context.RegisterCodeFix(
                         "Set backing field.",

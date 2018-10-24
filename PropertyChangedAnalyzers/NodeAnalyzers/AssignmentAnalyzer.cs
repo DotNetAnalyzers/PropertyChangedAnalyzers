@@ -36,25 +36,17 @@ namespace PropertyChangedAnalyzers
 
         private static bool ShouldSetBackingField(AssignmentExpressionSyntax assignment, SyntaxNodeAnalysisContext context)
         {
-            return !context.ContainingSymbol.IsStatic &&
-                   IsInConstructor(assignment) &&
+            return context.ContainingSymbol is IMethodSymbol ctor &&
+                   !ctor.IsStatic &&
+                   ctor.MethodKind == MethodKind.Constructor &&
+                   !assignment.TryFirstAncestor(out AnonymousFunctionExpressionSyntax _) &&
+                   !assignment.TryFirstAncestor(out LocalFunctionStatementSyntax _) &&
                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                    propertyDeclaration.TryGetSetter(out var setter) &&
                    (setter.Body != null || setter.ExpressionBody != null) &&
                    !ThrowWalker.Throws(setter) &&
                    IsAssignedWithParameter(setter, context) &&
                    !HasSideEffects(setter, context);
-        }
-
-        private static bool IsInConstructor(SyntaxNode node)
-        {
-            if (node.FirstAncestor<ConstructorDeclarationSyntax>() == null)
-            {
-                return false;
-            }
-
-            // Could be in an event handler in ctor.
-            return node.FirstAncestor<AnonymousFunctionExpressionSyntax>() == null;
         }
 
         private static bool IsAssignedWithParameter(AccessorDeclarationSyntax setter, SyntaxNodeAnalysisContext context)

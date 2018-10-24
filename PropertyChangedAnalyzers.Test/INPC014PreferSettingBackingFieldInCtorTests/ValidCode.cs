@@ -236,5 +236,96 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [TestCase("(_, __) => this.Value = value;")]
+        [TestCase("delegate { this.Value = value; };")]
+        public void SettingNotifyingPropertyInLambda(string lambda)
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public ViewModel(string value)
+        {
+            this.PropertyChanged += (_, __) => this.Value = value;
+        }
+
+        public string Value
+        {
+            get => this.value;
+            private set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("(_, __) => this.Value = value;", lambda);
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void SettingNotifyingPropertyInLocalFunction()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public ViewModel(string value)
+        {
+            void OnChanged(object _, PropertyChangedEventArgs __) => this.Value = value;
+
+            this.PropertyChanged += OnChanged;
+        }
+
+        public string Value
+        {
+            get => this.value;
+            private set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
