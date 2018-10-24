@@ -85,6 +85,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC017.md">INPC017</a></td>
   <td>Backing field name must match.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC018.md">INPC018</a></td>
+  <td>PropertyChanged invoker should be protected when the class is not sealed.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

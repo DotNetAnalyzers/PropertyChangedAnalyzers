@@ -12,7 +12,8 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            INPC004UseCallerMemberName.Descriptor);
+            INPC004UseCallerMemberName.Descriptor,
+            INPC018InvokerShouldBeProtected.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -27,15 +28,21 @@ namespace PropertyChangedAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.Parameters.TrySingle(out var parameter) &&
-                parameter.Type == KnownSymbol.String &&
                 context.Node is MethodDeclarationSyntax methodDeclaration &&
-                methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
-                parameterList.Parameters.TrySingle(out var parameterSyntax) &&
                 PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
             {
-                if (!parameter.IsCallerMemberName())
+                if (parameter.Type == KnownSymbol.String &&
+                    !parameter.IsCallerMemberName() &&
+                    methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
+                    parameterList.Parameters.TrySingle(out var parameterSyntax))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, parameterSyntax.GetLocation()));
+                }
+
+                if (methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier) &&
+                    !method.ContainingType.IsSealed)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(INPC018InvokerShouldBeProtected.Descriptor, modifier.GetLocation()));
                 }
             }
         }
