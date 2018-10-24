@@ -15,12 +15,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.6.0.1</Version>
+    <Version>2.7.0.0</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
     <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
-    <PackageReleaseNotes>FEATURE: Support new MvvmCross.
-FEATURE: Recognize [NotifyPropertyChangedInvocatorAttribute]</PackageReleaseNotes>
+    <PackageReleaseNotes>INPC021 Setter should set backing field.
+INPC020 Prefer expression body accessor.
+INPC019 Getter should return backing field.
+INPC018 PropertyChanged invoker should be protected when class is not sealed.</PackageReleaseNotes>
     <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</RepositoryUrl>

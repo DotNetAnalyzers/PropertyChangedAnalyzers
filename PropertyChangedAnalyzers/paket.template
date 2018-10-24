@@ -4,8 +4,10 @@ projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  FEATURE: Support new MvvmCross.
-  FEATURE: Recognize [NotifyPropertyChangedInvocatorAttribute]
+  INPC021 Setter should set backing field.
+  INPC020 Prefer expression body accessor.
+  INPC019 Getter should return backing field.
+  INPC018 PropertyChanged invoker should be protected when class is not sealed.
 
 excludedgroups
   Main

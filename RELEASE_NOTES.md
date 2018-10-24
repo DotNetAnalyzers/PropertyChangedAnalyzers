@@ -1,3 +1,9 @@
+#### 2.7.0
+* INPC021 Setter should set backing field.
+* INPC020 Prefer expression body accessor.
+* INPC019 Getter should return backing field.
+* INPC018 PropertyChanged invoker should be protected when class is not sealed.
+
 #### 2.6.0
 * FEATURE: Support new MvvmCross.
 * FEATURE: Recognize [NotifyPropertyChangedInvocatorAttribute]
