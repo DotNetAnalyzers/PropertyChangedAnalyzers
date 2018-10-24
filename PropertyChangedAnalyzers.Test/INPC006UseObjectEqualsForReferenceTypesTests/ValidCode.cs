@@ -83,8 +83,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+}".AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -122,8 +122,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+}".AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

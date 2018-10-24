@@ -264,8 +264,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("get => Math.Abs(this.speed - 1) < 1E-2;", getter);
+}".AssertReplace("get => Math.Abs(this.speed - 1) < 1E-2;", getter);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

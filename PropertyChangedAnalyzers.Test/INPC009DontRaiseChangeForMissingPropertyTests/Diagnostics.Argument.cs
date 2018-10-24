@@ -52,9 +52,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace(@"nameof(Value)", propertyName);
 
-                testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
                 AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
             }
 
@@ -91,9 +90,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
+}".AssertReplace(@"nameof(Bar)", propertyName);
 
-                testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
                 AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
             }
 
@@ -138,9 +136,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace(@"nameof(Value)", propertyName);
 
-                testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
                 AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
             }
 
@@ -465,8 +462,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-                testCode = testCode.AssertReplace("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")", cached);
+}".AssertReplace("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")", cached);
+
                 AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
             }
         }

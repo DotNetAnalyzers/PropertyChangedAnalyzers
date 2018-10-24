@@ -125,9 +125,8 @@ namespace RoslynSandbox.Client
             }
         }
     }
-}";
+}".AssertReplace(@"nameof(Bar)", propertyName);
 
-                testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
                 AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
         }

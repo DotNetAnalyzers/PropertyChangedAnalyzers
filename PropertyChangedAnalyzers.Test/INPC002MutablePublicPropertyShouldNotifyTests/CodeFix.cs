@@ -268,8 +268,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.Value = 1", assignCode);
+
             var fixedCode = @"
 namespace RoslynSandbox
 {

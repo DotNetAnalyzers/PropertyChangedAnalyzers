@@ -43,9 +43,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace(@"nameof(Bar)", propertyName);
 
-            testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -214,9 +213,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
+}".AssertReplace(@"nameof(Bar)", propertyName);
 
-            testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -532,8 +530,8 @@ namespace RoslynSandbox
             }
         }
     }
-}";
-            testCode = testCode.AssertReplace(@"nameof(this.Bar))", propertyName);
+}".AssertReplace(@"nameof(this.Bar))", propertyName);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

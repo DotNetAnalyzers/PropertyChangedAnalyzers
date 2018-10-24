@@ -31,7 +31,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace("this.PropertyChanged", member);
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -47,9 +47,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-                testCode = testCode.AssertReplace("this.PropertyChanged", member);
-                fixedCode = fixedCode.AssertReplace("this.PropertyChanged", member);
+}".AssertReplace("this.PropertyChanged", member);
+
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
                 AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
@@ -77,7 +76,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
+}".AssertReplace("this.OnPropertyChanged", member);
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -98,9 +97,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-                testCode = testCode.AssertReplace("this.OnPropertyChanged", member);
-                fixedCode = fixedCode.AssertReplace("this.OnPropertyChanged", member);
+}".AssertReplace("this.OnPropertyChanged", member);
+
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
                 AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }

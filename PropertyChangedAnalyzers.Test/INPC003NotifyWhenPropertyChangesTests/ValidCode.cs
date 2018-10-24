@@ -43,8 +43,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace(@"nameof(Bar)", propertyName);
+}".AssertReplace(@"nameof(Bar)", propertyName);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -698,8 +698,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("string.Empty", arg);
+}".AssertReplace("string.Empty", arg);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -889,8 +889,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.Value * this.Value", square);
+}".AssertReplace("this.Value * this.Value", square);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 
@@ -938,8 +938,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.Value = newValue;", code);
+}".AssertReplace("this.Value = newValue;", code);
+
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
 

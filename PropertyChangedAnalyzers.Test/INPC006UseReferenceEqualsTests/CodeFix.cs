@@ -295,7 +295,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode });
+            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, testCode);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -333,7 +333,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
+}".AssertReplace("Equals(value, this.bar)", check.Call);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -367,11 +367,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call);
-            fixedCode = check.FixedCall == null
-                            ? fixedCode.AssertReplace("Equals(value, this.bar)", check.Call)
-                            : fixedCode.AssertReplace("Equals(value, this.bar)", check.FixedCall);
+}".AssertReplace("Equals(value, this.bar)", check.FixedCall ?? check.Call);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }
@@ -410,9 +407,9 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call);
-            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode });
+}".AssertReplace("Equals(value, this.bar)", check.Call);
+
+            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, testCode);
         }
 
         public class TestCase

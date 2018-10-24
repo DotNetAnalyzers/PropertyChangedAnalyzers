@@ -31,8 +31,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-                testCode = testCode.AssertReplace("int", typeCode);
+}".AssertReplace("int", typeCode);
 
                 var fixedCode = @"
 namespace RoslynSandbox

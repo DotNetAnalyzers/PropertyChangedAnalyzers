@@ -335,8 +335,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-                testCode = testCode.AssertReplace("Value = value;", code);
+}".AssertReplace("Value = value;", code);
+
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
         }

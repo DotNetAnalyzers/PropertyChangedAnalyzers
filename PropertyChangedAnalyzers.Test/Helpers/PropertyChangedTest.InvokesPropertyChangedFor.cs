@@ -156,8 +156,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-                testCode = testCode.AssertReplace("this.TrySet(ref this.value, value)", trySetCode);
+}".AssertReplace("this.TrySet(ref this.value, value)", trySetCode);
+
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -210,8 +210,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-                testCode = testCode.AssertReplace("this.TrySet(ref this.value, value, nameof(Value))", trySetCode);
+}".AssertReplace("this.TrySet(ref this.value, value, nameof(Value))", trySetCode);
+
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);

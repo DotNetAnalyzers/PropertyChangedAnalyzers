@@ -15,6 +15,8 @@ namespace PropertyChangedAnalyzers
 
         public IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
 
+        public static ReturnExpressionsWalker Empty() => Borrow(() => new ReturnExpressionsWalker());
+
         public static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
 
         public static bool TryGetSingle(SyntaxNode node, out ExpressionSyntax returnValue)

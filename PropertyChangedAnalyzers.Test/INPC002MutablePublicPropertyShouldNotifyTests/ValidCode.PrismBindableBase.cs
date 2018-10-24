@@ -86,9 +86,8 @@ namespace RoslynSandbox
             }
         }
     }
-}";
+}".AssertReplace(@"nameof(this.Bar)", propertyName);
 
-                testCode = testCode.AssertReplace(@"nameof(this.Bar)", propertyName);
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
         }

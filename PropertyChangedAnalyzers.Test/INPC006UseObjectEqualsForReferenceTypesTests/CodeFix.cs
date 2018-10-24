@@ -86,7 +86,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
+}".AssertReplace("ReferenceEquals(value, this.bar)", check.Call);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -121,7 +121,6 @@ namespace RoslynSandbox
         }
     }
 }";
-            testCode = testCode.AssertReplace("ReferenceEquals(value, this.bar)", check.Call);
             fixedCode = check.FixedCall == null
                             ? fixedCode.AssertReplace("Equals(value, this.bar)", check.Call)
                             : fixedCode.AssertReplace("Equals(value, this.bar)", check.FixedCall);
@@ -163,9 +162,9 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call);
-            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode });
+}".AssertReplace("Equals(value, this.bar)", check.Call);
+
+            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, testCode);
         }
 
         [Test]

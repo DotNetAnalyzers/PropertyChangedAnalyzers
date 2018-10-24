@@ -359,8 +359,8 @@ namespace RoslynSandbox
 
         public int Value { get; private set; }
     }
-}";
-            testCode = testCode.AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.Value = 1", assignCode);
+
             var fixedCode = @"
 namespace RoslynSandbox
 {

@@ -239,8 +239,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("value == this.value", equals);
+}".AssertReplace("value == this.value", equals);
+
             var fixedCode = @"
 namespace RoslynSandbox
 {

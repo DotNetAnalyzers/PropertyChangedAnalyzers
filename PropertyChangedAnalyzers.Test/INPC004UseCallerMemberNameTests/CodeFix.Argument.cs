@@ -66,7 +66,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace(@"nameof(Value)", propertyName);
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -105,7 +105,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
+
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
                 AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
@@ -151,7 +151,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace(@"nameof(Value)", propertyName);
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -190,7 +190,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
+
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
                 AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
