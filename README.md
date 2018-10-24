@@ -97,6 +97,10 @@ Roslyn analyzers for WPF.
   <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC020.md">INPC020</a></td>
   <td>Prefer expression body accessor.</td>
 </tr>
+<tr>
+  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC021.md">INPC021</a></td>
+  <td>Setter should set backing field.</td>
+</tr>
 <table>
 <!-- end generated table -->
 

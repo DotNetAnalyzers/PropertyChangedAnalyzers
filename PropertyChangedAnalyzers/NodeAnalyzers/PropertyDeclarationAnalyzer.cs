@@ -18,7 +18,8 @@ namespace PropertyChangedAnalyzers
             INPC015PropertyIsRecursive.Descriptor,
             INPC017BackingFieldNameMustMatch.Descriptor,
             INPC019GetBackingField.Descriptor,
-            INPC020PreferExpressionBodyAccessor.Descriptor);
+            INPC020PreferExpressionBodyAccessor.Descriptor,
+            INPC021SetBackingField.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -48,15 +49,28 @@ namespace PropertyChangedAnalyzers
                     {
                         if (single.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
                             MemberPath.TrySingle(single, out var path) &&
-                            context.SemanticModel.TryGetSymbol(path, context.CancellationToken, out IFieldSymbol backingField) &&
-                            !HasMatchingName(backingField, property))
+                            context.SemanticModel.TryGetSymbol(path, context.CancellationToken, out IFieldSymbol backingField))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor, path.GetLocation()));
+                            if (!HasMatchingName(backingField, property))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor, path.GetLocation()));
+                            }
+
+                            if (propertyDeclaration.TryGetSetter(out var setAccessor))
+                            {
+                                using (var mutationWalker = MutationWalker.Borrow(setAccessor, Scope.Member, context.SemanticModel, context.CancellationToken))
+                                {
+                                    if (mutationWalker.IsEmpty)
+                                    {
+                                        context.ReportDiagnostic(Diagnostic.Create(INPC021SetBackingField.Descriptor, setAccessor.GetLocation()));
+                                    }
+                                }
+                            }
                         }
 
                         if (single is LiteralExpressionSyntax &&
-                            propertyDeclaration.TryGetGetter(out var getter) &&
-                            Property.TryGetBackingFieldFromSetter(propertyDeclaration, context.SemanticModel, context.CancellationToken, out var field))
+                            propertyDeclaration.TryGetGetter(out _) &&
+                            Property.TryGetBackingFieldFromSetter(propertyDeclaration, context.SemanticModel, context.CancellationToken, out _))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(INPC019GetBackingField.Descriptor, single.GetLocation()));
                         }
