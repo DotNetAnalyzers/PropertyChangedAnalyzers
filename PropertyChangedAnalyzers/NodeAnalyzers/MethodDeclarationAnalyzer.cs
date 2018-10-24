@@ -11,7 +11,8 @@ namespace PropertyChangedAnalyzers
     internal class MethodDeclarationAnalyzer : DiagnosticAnalyzer
     {
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(INPC004UseCallerMemberName.Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            INPC004UseCallerMemberName.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -25,15 +26,17 @@ namespace PropertyChangedAnalyzers
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.ContainingSymbol is IMethodSymbol method &&
+                method.Parameters.TrySingle(out var parameter) &&
+                parameter.Type == KnownSymbol.String &&
                 context.Node is MethodDeclarationSyntax methodDeclaration &&
                 methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
                 parameterList.Parameters.TrySingle(out var parameterSyntax) &&
-                method.Parameters.TrySingle(out var parameter) &&
-                parameter.Type == KnownSymbol.String &&
-                !parameter.IsCallerMemberName() &&
                 PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
             {
-                context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, parameterSyntax.GetLocation()));
+                if (!parameter.IsCallerMemberName())
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, parameterSyntax.GetLocation()));
+                }
             }
         }
     }
