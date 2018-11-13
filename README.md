@@ -5,7 +5,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/0d5ipb8hm82eiqmi/branch/master?svg=true)](https://ci.appveyor.com/project/JohanLarsson/propertychangedanalyzers/branch/master)
 [![NuGet](https://img.shields.io/nuget/v/PropertyChangedAnalyzers.svg)](https://www.nuget.org/packages/PropertyChangedAnalyzers/)
 
-Roslyn analyzers for WPF.
+Roslyn analyzers for `INotifyPropertyChanged`.
 * 1.x versions are for Visual Studio 2015.
 * 2.x versions are for Visual Studio 2017.
 
