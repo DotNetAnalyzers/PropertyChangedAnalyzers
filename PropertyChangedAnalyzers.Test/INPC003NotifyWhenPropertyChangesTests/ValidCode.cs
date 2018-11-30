@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal partial class ValidCode
+    public partial class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
 

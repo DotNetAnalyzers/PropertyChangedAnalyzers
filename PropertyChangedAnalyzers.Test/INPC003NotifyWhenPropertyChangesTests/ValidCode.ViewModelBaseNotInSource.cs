@@ -5,9 +5,12 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 
     public partial class ValidCode
     {
-        internal class GenericViewModelBase
+        public class ViewModelBaseNotInSource
         {
-            private const string ViewModelBaseCode = @"
+            [OneTimeSetUp]
+            public void OneTimeSetup()
+            {
+                AnalyzerAssert.MetadataReferences.Add(MetadataReferences.CreateBinary(@"
 namespace RoslynSandbox.Core
 {
     using System;
@@ -16,7 +19,7 @@ namespace RoslynSandbox.Core
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public abstract class ViewModelBase<TFoo> : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -42,61 +45,18 @@ namespace RoslynSandbox.Core
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}"));
+            }
+
+            [OneTimeTearDown]
+            public void OneTimeTearDown()
+            {
+                AnalyzerAssert.ResetAll();
+            }
 
             [Test]
             public void SetProperty()
             {
-                var testCode = @"
-namespace RoslynSandbox.Client
-{
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase<int>
-    {
-        private string name;
-
-        public string Name
-        {
-            get { return this.name; }
-            set { this.TrySet(ref this.name, value); }
-        }
-    }
-}";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
-            }
-
-            [Test]
-            public void SetPropertyWhenNullCoalescingInTrySet()
-            {
-                var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
-{
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public abstract class ViewModelBase : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
-            {
-                return false;
-            }
-
-            field = newValue;
-            this.OnPropertyChanged(propertyName ?? string.Empty);
-            return true;
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
                 var testCode = @"
 namespace RoslynSandbox.Client
 {
@@ -111,7 +71,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, viewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -120,7 +80,7 @@ namespace RoslynSandbox.Client
                 var testCode = @"
 namespace RoslynSandbox.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase<int>
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -131,7 +91,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -140,7 +100,7 @@ namespace RoslynSandbox.Client
                 var testCode = @"
 namespace RoslynSandbox.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase<int>
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -159,7 +119,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -168,7 +128,7 @@ namespace RoslynSandbox.Client
                 var testCode = @"
 namespace RoslynSandbox.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase<int>
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -187,7 +147,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -196,7 +156,7 @@ namespace RoslynSandbox.Client
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase<int>
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private string name;
 
@@ -209,7 +169,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -218,7 +178,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase<int>
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
     {
         private int name;
 
@@ -237,7 +197,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -246,7 +206,7 @@ namespace RoslynSandbox.Client
                 var fooBaseCode = @"
 namespace RoslynSandbox.Client
 {
-    public abstract class FooBase : RoslynSandbox.Core.ViewModelBase<int>
+    public abstract class FooBase : RoslynSandbox.Core.ViewModelBase
     {
         protected override bool TrySet<T>(ref T oldValue, T newValue, string propertyName = null)
         {
@@ -270,7 +230,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, fooBaseCode, testCode);
+                AnalyzerAssert.Valid(Analyzer, fooBaseCode, testCode);
             }
         }
     }
