@@ -173,34 +173,6 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpression()
-            {
-                var testCode = @"
-namespace RoslynSandbox.Client
-{
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
-    {
-        private int name;
-
-        public string Greeting => $""Hello{this.Name}"";
-
-        public int Name
-        {
-            get { return this.name; }
-            set
-            {
-                if (this.TrySet(ref this.name, value))
-                {
-                    this.OnPropertyChanged(() => this.Greeting);
-                }
-            }
-        }
-    }
-}";
-                AnalyzerAssert.Valid(Analyzer, testCode);
-            }
-
-            [Test]
             public void WhenOverriddenSet()
             {
                 var fooBaseCode = @"

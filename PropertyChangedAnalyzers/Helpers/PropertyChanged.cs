@@ -32,8 +32,7 @@ namespace PropertyChangedAnalyzers
                             }
                         }
                     }
-                    else if (invocation.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax
-                                 propertyDeclaration &&
+                    else if (invocation.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax propertyDeclaration &&
                              propertyDeclaration.Identifier.ValueText == property.Name)
                     {
                         return AnalysisResult.Yes;

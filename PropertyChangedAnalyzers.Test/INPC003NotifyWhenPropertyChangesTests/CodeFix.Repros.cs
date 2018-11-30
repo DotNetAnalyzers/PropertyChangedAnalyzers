@@ -3,7 +3,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
         [Test]
         public void Vanguard_MVVM_ViewModels_MainWindowViewModel()
