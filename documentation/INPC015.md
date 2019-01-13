@@ -37,7 +37,7 @@ Detects silly mistakes like:
 ```cs
 public class Foo
 {
-    public int Bar => ↓this.Bar;
+    public int Bar => this.Bar;
 }
 ```
 
