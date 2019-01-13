@@ -32,11 +32,14 @@ Property is recursive.
 
 ## Motivation
 
-ADD MOTIVATION HERE
+Detects silly mistakes like:
 
-## How to fix violations
-
-ADD HOW TO FIX VIOLATIONS HERE
+```cs
+public class Foo
+{
+    public int Bar => ↓this.Bar;
+}
+```
 
 <!-- start generated config severity -->
 ## Configure severity
