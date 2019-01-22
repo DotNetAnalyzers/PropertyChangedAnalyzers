@@ -120,10 +120,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-            fixedCode = check.FixedCall == null
-                            ? fixedCode.AssertReplace("Equals(value, this.bar)", check.Call)
-                            : fixedCode.AssertReplace("Equals(value, this.bar)", check.FixedCall);
+}".AssertReplace("Equals(value, this.bar)", check.FixedCall ?? check.Call);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }

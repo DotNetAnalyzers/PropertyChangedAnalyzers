@@ -310,8 +310,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            fixedCode = fixedCode.AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.Value = 1", assignCode);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
 

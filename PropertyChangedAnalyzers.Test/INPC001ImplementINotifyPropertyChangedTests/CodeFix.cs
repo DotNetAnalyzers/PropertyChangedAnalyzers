@@ -383,8 +383,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            fixedCode = fixedCode.AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.Value = 1", assignCode);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
     }
