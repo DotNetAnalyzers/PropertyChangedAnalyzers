@@ -13,7 +13,7 @@
   </tr>
   <tr>
     <td>Enabled</td>
-    <td>false</td>
+    <td>False</td>
   </tr>
   <tr>
     <td>Category</td>
