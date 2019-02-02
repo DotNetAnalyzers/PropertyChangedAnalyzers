@@ -1,30 +1,13 @@
 # INPC006_b
 ## Check if value is different using object.Equals before notifying.
 
-<!-- start generated table -->
-<table>
-  <tr>
-    <td>CheckId</td>
-    <td>INPC006_b</td>
-  </tr>
-  <tr>
-    <td>Severity</td>
-    <td>Hidden</td>
-  </tr>
-  <tr>
-    <td>Enabled</td>
-    <td>False</td>
-  </tr>
-  <tr>
-    <td>Category</td>
-    <td>PropertyChangedAnalyzers.PropertyChanged</td>
-  </tr>
-  <tr>
-    <td>Code</td>
-    <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/NodeAnalyzers/IfStatementAnalyzer.cs">IfStatementAnalyzer</a></td>
-  </tr>
-</table>
-<!-- end generated table -->
+| Topic    | Value
+| :--      | :--
+| Id       | INPC006_b
+| Severity | Hidden
+| Enabled  | False
+| Category | PropertyChangedAnalyzers.PropertyChanged
+| Code     | [IfStatementAnalyzer]([IfStatementAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/NodeAnalyzers/IfStatementAnalyzer.cs))
 
 ## Description
 
