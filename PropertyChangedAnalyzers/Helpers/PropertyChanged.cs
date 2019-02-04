@@ -247,29 +247,14 @@ namespace PropertyChangedAnalyzers
                 invocation.TryGetMethodName(out var name) &&
                 invocation.IsPotentialReturnVoid())
             {
-                if (name == "Invoke")
+                switch (invocation.Parent)
                 {
-                    if (invocation.Parent is ConditionalAccessExpressionSyntax conditionalAccess &&
-                        conditionalAccess.Expression is MemberAccessExpressionSyntax memberAccess &&
-                        memberAccess.Name.Identifier.ValueText != "PropertyChanged")
-                    {
+                    case ConditionalAccessExpressionSyntax conditionalAccess:
+                        return semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _);
+                    case ExpressionStatementSyntax _ when semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol):
+                        return symbol == KnownSymbol.PropertyChangedEventHandler.Invoke;
+                    default:
                         return false;
-                    }
-
-                    if (semanticModel.TryGetSymbol(invocation, cancellationToken, out var invokeMethod))
-                    {
-                        return invokeMethod == KnownSymbol.PropertyChangedEventHandler.Invoke;
-                    }
-                }
-                else if (name == "PropertyChanged" &&
-                         semanticModel.TryGetSymbol(invocation, cancellationToken, out var method))
-                {
-                    return method == KnownSymbol.PropertyChangedEventHandler.Invoke;
-                }
-                else if (invocation.Expression is IdentifierNameSyntax &&
-                         semanticModel.TryGetSymbol(invocation, cancellationToken, out var handler))
-                {
-                    return handler == KnownSymbol.PropertyChangedEventHandler.Invoke;
                 }
             }
 
