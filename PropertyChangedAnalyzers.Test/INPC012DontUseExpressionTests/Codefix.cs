@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
         private static readonly CodeFixProvider Fix = new RemoveExpressionFix();

@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal partial class ValidCode
+    public partial class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly DiagnosticDescriptor Descriptor = INPC002MutablePublicPropertyShouldNotify.Descriptor;

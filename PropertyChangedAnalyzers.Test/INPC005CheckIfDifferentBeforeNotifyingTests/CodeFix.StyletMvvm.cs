@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
         internal class StyletMvvm
         {

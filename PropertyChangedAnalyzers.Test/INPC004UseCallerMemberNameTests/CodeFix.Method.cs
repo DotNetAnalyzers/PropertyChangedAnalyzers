@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
         public class Method
         {

@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 
     [TestFixture(typeof(ArgumentAnalyzer))]
     [TestFixture(typeof(MethodDeclarationAnalyzer))]
-    internal class ValidCode<T>
+    public class ValidCode<T>
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly T Analyzer = new T();

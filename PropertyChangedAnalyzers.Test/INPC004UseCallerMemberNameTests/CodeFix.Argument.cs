@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
         public class Argument
         {

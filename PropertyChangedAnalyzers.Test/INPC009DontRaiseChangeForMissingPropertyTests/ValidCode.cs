@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
 
     [TestFixture(typeof(ArgumentAnalyzer))]
     [TestFixture(typeof(InvocationAnalyzer))]
-    internal class ValidCode<T>
+    public class ValidCode<T>
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly T Analyzer = new T();

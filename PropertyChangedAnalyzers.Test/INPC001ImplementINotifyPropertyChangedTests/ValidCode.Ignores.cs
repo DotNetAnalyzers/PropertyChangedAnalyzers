@@ -3,7 +3,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal partial class ValidCode
+    public partial class ValidCode
     {
         internal class Ignores
         {

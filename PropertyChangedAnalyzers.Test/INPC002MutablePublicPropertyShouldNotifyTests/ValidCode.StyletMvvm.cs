@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    internal partial class ValidCode
+    public partial class ValidCode
     {
         internal class StyletMvvm
         {

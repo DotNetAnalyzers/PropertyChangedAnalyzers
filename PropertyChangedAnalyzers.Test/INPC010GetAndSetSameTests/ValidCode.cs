@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class ValidCode
+    public class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly DiagnosticDescriptor Descriptor = INPC010GetAndSetSame.Descriptor;
