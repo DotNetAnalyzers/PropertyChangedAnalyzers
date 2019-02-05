@@ -99,9 +99,7 @@ namespace PropertyChangedAnalyzers
                                 context.ReportDiagnostic(Diagnostic.Create(INPC002MutablePublicPropertyShouldNotify.Descriptor, propertyDeclaration.GetLocation(), property.Name));
                             }
 
-                            if (assignmentWalker.Assignments.TrySingle(out var singleAssignment) &&
-                                ReturnExpressionsWalker.TryGetSingle(getter, out var singleReturnValue) &&
-                                !PropertyPath.Uses(singleAssignment.Left, singleReturnValue, context))
+                            if (GetAndSetsSameField(assignmentWalker, getter, context) == false)
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(INPC010GetAndSetSame.Descriptor, propertyDeclaration.GetLocation()));
                             }
@@ -231,6 +229,22 @@ namespace PropertyChangedAnalyzers
             return accessor.Body is BlockSyntax block &&
                    block.Statements.TrySingle(out var statement) &&
                    statement.IsEither(SyntaxKind.ReturnStatement, SyntaxKind.ExpressionStatement);
+        }
+
+        private static bool? GetAndSetsSameField(AssignmentWalker assignmentWalker, AccessorDeclarationSyntax getter, SyntaxNodeAnalysisContext context)
+        {
+            if (assignmentWalker.Assignments.TrySingle(out var singleAssignment) &&
+                context.SemanticModel.TryGetSymbol(singleAssignment.Left, context.CancellationToken, out ISymbol setSymbol) &&
+                ReturnExpressionsWalker.TryGetSingle(getter, out var singleReturnValue) &&
+                context.SemanticModel.TryGetSymbol(singleReturnValue, context.CancellationToken, out ISymbol getSymbol))
+            {
+                if (getSymbol.Kind == setSymbol.Kind)
+                {
+                    return PropertyPath.Uses(singleAssignment.Left, singleReturnValue, context);
+                }
+            }
+
+            return null;
         }
     }
 }
