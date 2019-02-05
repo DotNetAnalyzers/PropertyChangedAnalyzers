@@ -231,16 +231,37 @@ namespace PropertyChangedAnalyzers
                    statement.IsEither(SyntaxKind.ReturnStatement, SyntaxKind.ExpressionStatement);
         }
 
-        private static bool? GetAndSetsSameField(AssignmentWalker assignmentWalker, AccessorDeclarationSyntax getter, SyntaxNodeAnalysisContext context)
+        private static bool? GetAndSetsSameField(AssignmentWalker assignmentWalker, AccessorDeclarationSyntax getter, SyntaxNodeAnalysisContext context, PooledSet<ISymbol> visited = null)
         {
             if (assignmentWalker.Assignments.TrySingle(out var singleAssignment) &&
-                context.SemanticModel.TryGetSymbol(singleAssignment.Left, context.CancellationToken, out ISymbol setSymbol) &&
-                ReturnExpressionsWalker.TryGetSingle(getter, out var singleReturnValue) &&
-                context.SemanticModel.TryGetSymbol(singleReturnValue, context.CancellationToken, out ISymbol getSymbol))
+                ReturnExpressionsWalker.TryGetSingle(getter, out var singleReturnValue))
             {
-                if (getSymbol.Kind == setSymbol.Kind)
+                if (PropertyPath.Uses(singleAssignment.Left, singleReturnValue, context))
                 {
-                    return PropertyPath.Uses(singleAssignment.Left, singleReturnValue, context);
+                    return true;
+                }
+
+                if (context.SemanticModel.TryGetSymbol(singleAssignment.Left, context.CancellationToken, out ISymbol setSymbol) &&
+                    context.SemanticModel.TryGetSymbol(singleReturnValue, context.CancellationToken, out ISymbol getSymbol))
+                {
+                    if (getSymbol.Kind == setSymbol.Kind)
+                    {
+                        return false;
+                    }
+
+                    if (getSymbol.Kind == SymbolKind.Property)
+                    {
+                        using (visited = visited.IncrementUsage())
+                        {
+                            if (visited.Add(getSymbol) &&
+                                getSymbol.TrySingleDeclaration(context.CancellationToken, out AccessorDeclarationSyntax otherGetter))
+                            {
+                                return GetAndSetsSameField(assignmentWalker, otherGetter, context);
+                            }
+                        }
+
+                        return false;
+                    }
                 }
             }
 

@@ -79,7 +79,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSettingNestedField()
+        public void NestedField()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -111,6 +111,54 @@ namespace RoslynSandbox
                 }
 
                 this.bar.BarValue = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.Valid(Analyzer, barCode, testCode);
+        }
+
+        [Test]
+        public void NestedProperties()
+        {
+            var barCode = @"
+namespace RoslynSandbox
+{
+    public class Bar
+    {
+        public int P1 { get; set; }
+        public int P2 { get; set; }
+    }
+}";
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private readonly Bar bar = new Bar();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get => this.bar.P2;
+            set
+            {
+                if (value == this.bar.P2)
+                {
+                    return;
+                }
+
+                this.bar.P2 = value;
                 this.OnPropertyChanged();
             }
         }
@@ -304,7 +352,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IntAndStringProperty()
+        public void IntAndStringPropertyReturnFieldInGetter()
         {
             var testCode = @"
 namespace ValidCode
@@ -350,6 +398,150 @@ namespace ValidCode
 ";
 
             AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void IntAndStringPropertyReturnPropertyInGetter()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Runtime.CompilerServices;
+
+    public class IntAndStringProperty : INotifyPropertyChanged
+    {
+        private int p1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1
+        {
+            get => this.p1;
+            set
+            {
+                if (value == this.p1)
+                {
+                    return;
+                }
+
+                this.p1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P2));
+            }
+        }
+
+        public string P2
+        {
+            get => this.P1.ToString(CultureInfo.InvariantCulture);
+            set => this.P1 = int.Parse(value, CultureInfo.InvariantCulture);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}
+";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void IntPropertiesReturnFieldInGetter()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1
+        {
+            get => this.p1;
+            set
+            {
+                if (value == this.p1)
+                {
+                    return;
+                }
+
+                this.p1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P2));
+            }
+        }
+
+        public int P2
+        {
+            get => this.p1;
+            set => this.P1 = value;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, Descriptor, testCode);
+        }
+
+        [Test]
+        public void IntPropertiesReturnPropertyInGetter()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1
+        {
+            get => this.p1;
+            set
+            {
+                if (value == this.p1)
+                {
+                    return;
+                }
+
+                this.p1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P2));
+            }
+        }
+
+        public int P2
+        {
+            get => this.P1;
+            set => this.P1 = value;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, Descriptor, testCode);
         }
 
         [Test]
