@@ -249,7 +249,7 @@ namespace PropertyChangedAnalyzers
             {
                 switch (invocation.Parent)
                 {
-                    case ConditionalAccessExpressionSyntax conditionalAccess:
+                    case ConditionalAccessExpressionSyntax conditionalAccess when IsPotential(conditionalAccess):
                         return semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _);
                     case ExpressionStatementSyntax _ when semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol):
                         return symbol == KnownSymbol.PropertyChangedEventHandler.Invoke;
@@ -259,6 +259,13 @@ namespace PropertyChangedAnalyzers
             }
 
             return false;
+
+            bool IsPotential(ConditionalAccessExpressionSyntax candidate)
+            {
+                return candidate.Expression is IdentifierNameSyntax ||
+                       (candidate.Expression is MemberAccessExpressionSyntax memberAccess &&
+                        memberAccess.Expression is ThisExpressionSyntax);
+            }
         }
 
         internal static AnalysisResult IsOnPropertyChanged(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
