@@ -7,7 +7,7 @@
 | Severity | Warning
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [ArgumentAnalyzer]([ArgumentAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/NodeAnalyzers/ArgumentAnalyzer.cs))
+| Code     | [ArgumentAnalyzer]([ArgumentAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/ArgumentAnalyzer.cs))
 
 ## Description
 

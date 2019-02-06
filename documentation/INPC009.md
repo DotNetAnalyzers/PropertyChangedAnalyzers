@@ -7,8 +7,8 @@
 | Severity | Warning
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [ArgumentAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/NodeAnalyzers/ArgumentAnalyzer.cs)
-|          | [InvocationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/NodeAnalyzers/InvocationAnalyzer.cs)
+| Code     | [ArgumentAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/ArgumentAnalyzer.cs)
+|          | [InvocationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/InvocationAnalyzer.cs)
 
 
 ## Description

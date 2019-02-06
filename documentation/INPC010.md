@@ -7,7 +7,7 @@
 | Severity | Warning
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [PropertyDeclarationAnalyzer]([PropertyDeclarationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/NodeAnalyzers/PropertyDeclarationAnalyzer.cs))
+| Code     | [PropertyDeclarationAnalyzer]([PropertyDeclarationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/PropertyDeclarationAnalyzer.cs))
 
 ## Description
 

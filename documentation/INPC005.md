@@ -7,7 +7,7 @@
 | Severity | Warning
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [InvocationAnalyzer]([InvocationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/NodeAnalyzers/InvocationAnalyzer.cs))
+| Code     | [InvocationAnalyzer]([InvocationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/InvocationAnalyzer.cs))
 
 ## Description
 

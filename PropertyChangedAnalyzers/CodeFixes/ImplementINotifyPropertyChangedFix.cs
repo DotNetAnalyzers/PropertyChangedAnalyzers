@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -17,9 +17,9 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Simplification;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ImplementINotifyPropertyChangedCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ImplementINotifyPropertyChangedFix))]
     [Shared]
-    internal class ImplementINotifyPropertyChangedCodeFixProvider : CodeFixProvider
+    internal class ImplementINotifyPropertyChangedFix : CodeFixProvider
     {
         // ReSharper disable once InconsistentNaming
         private static readonly QualifiedNameSyntax INotifyPropertyChangedType = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("System.ComponentModel.INotifyPropertyChanged")

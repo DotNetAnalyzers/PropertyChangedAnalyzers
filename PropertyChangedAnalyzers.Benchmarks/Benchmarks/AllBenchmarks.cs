@@ -3,16 +3,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
     public class AllBenchmarks
     {
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC001ImplementINotifyPropertyChangedBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC001ImplementINotifyPropertyChanged());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC003NotifyWhenPropertyChangesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC003NotifyWhenPropertyChanges());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC007MissingInvokerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC007MissingInvoker());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC008StructMustNotNotifyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC008StructMustNotNotify());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC011DontShadowBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC011DontShadow());
-
         private static readonly Gu.Roslyn.Asserts.Benchmark ArgumentAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.ArgumentAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark AssignmentAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.AssignmentAnalyzer());
@@ -25,35 +15,15 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark PropertyDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.PropertyDeclarationAnalyzer());
 
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC001ImplementINotifyPropertyChanged()
-        {
-            INPC001ImplementINotifyPropertyChangedBenchmark.Run();
-        }
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC001ImplementINotifyPropertyChangedBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC001ImplementINotifyPropertyChanged());
 
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC003NotifyWhenPropertyChanges()
-        {
-            INPC003NotifyWhenPropertyChangesBenchmark.Run();
-        }
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC003NotifyWhenPropertyChangesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC003NotifyWhenPropertyChanges());
 
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC007MissingInvoker()
-        {
-            INPC007MissingInvokerBenchmark.Run();
-        }
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC007MissingInvokerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC007MissingInvoker());
 
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC008StructMustNotNotify()
-        {
-            INPC008StructMustNotNotifyBenchmark.Run();
-        }
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC008StructMustNotNotifyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC008StructMustNotNotify());
 
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC011DontShadow()
-        {
-            INPC011DontShadowBenchmark.Run();
-        }
+        private static readonly Gu.Roslyn.Asserts.Benchmark INPC011DontShadowBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new PropertyChangedAnalyzers.INPC011DontShadow());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void ArgumentAnalyzer()
@@ -89,6 +59,36 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void PropertyDeclarationAnalyzer()
         {
             PropertyDeclarationAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void INPC001ImplementINotifyPropertyChanged()
+        {
+            INPC001ImplementINotifyPropertyChangedBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void INPC003NotifyWhenPropertyChanges()
+        {
+            INPC003NotifyWhenPropertyChangesBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void INPC007MissingInvoker()
+        {
+            INPC007MissingInvokerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void INPC008StructMustNotNotify()
+        {
+            INPC008StructMustNotNotifyBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void INPC011DontShadow()
+        {
+            INPC011DontShadowBenchmark.Run();
         }
     }
 }
