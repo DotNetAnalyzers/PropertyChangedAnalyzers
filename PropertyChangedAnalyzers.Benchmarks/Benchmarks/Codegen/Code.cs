@@ -6,7 +6,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Reflection;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -25,31 +24,19 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
             MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location),
         };
 
-        public static Solution Solution { get; } = CodeFactory.CreateSolution(SlnFile, new DiagnosticAnalyzer[0], MetadataReferences);
+        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(KnownSymbol).Assembly
+                                                                                                    .GetTypes()
+                                                                                                    .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
+                                                                                                    .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+                                                                                                    .ToArray();
 
-        public static Project AnalyzersProject { get; } = Solution.Projects.First(x => x.Name == "PropertyChangedAnalyzers");
+        public static string ProjectDirectory { get; } = ProjectFile.Find("PropertyChangedAnalyzers.Benchmarks.csproj").DirectoryName;
 
-        private static FileInfo SlnFile
-        {
-            get
-            {
-                var directory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "PropertyChangedAnalyzers"));
-                if (directory.Exists)
-                {
-                    // Run at 1f8febc0999f6720c8c068a649a6e2831616b15d
-                    return new FileInfo(Path.Combine(directory.FullName, "PropertyChangedAnalyzers.sln"));
-                }
+        public static string BenchmarksDirectory { get; } = Path.Combine(ProjectDirectory, "Benchmarks");
 
-                if (CodeFactory.TryFindFileInParentDirectory(
-                    new FileInfo(new Uri(Assembly.GetExecutingAssembly().CodeBase, UriKind.Absolute).LocalPath).Directory,
-                    "PropertyChangedAnalyzers.sln",
-                    out FileInfo solutionFile))
-                {
-                    return solutionFile;
-                }
-
-                throw new InvalidOperationException("Did not find sln file.");
-            }
-        }
+        public static Solution ValidCodeProject { get; } = CodeFactory.CreateSolution(
+            ProjectFile.Find("ValidCode.csproj"),
+            AllAnalyzers,
+            MetadataReferences);
     }
 }

@@ -9,39 +9,29 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
+    [Explicit("Script")]
     public class CodeGen
     {
-        public static string ProjectDirectory { get; } = ProjectFile.Find("PropertyChangedAnalyzers.Benchmarks.csproj").DirectoryName;
-
-        public static string BenchmarksDirectory { get; } = Path.Combine(ProjectDirectory, "Benchmarks");
-
         private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } = typeof(KnownSymbol).Assembly
                                                                                                     .GetTypes()
                                                                                                     .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
                                                                                                     .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
                                                                                                     .ToArray();
 
-        [Test]
-        public void BenchmarksDirectoryExists()
-        {
-            Assert.AreEqual(true, Directory.Exists(BenchmarksDirectory), BenchmarksDirectory);
-        }
-
         [TestCaseSource(nameof(AllAnalyzers))]
         public void AnalyzersBenchmark(DiagnosticAnalyzer analyzer)
         {
             var expectedName = analyzer.GetType().Name + "Benchmarks";
-            var fileName = Path.Combine(BenchmarksDirectory, expectedName + ".cs");
+            var fileName = Path.Combine(Code.BenchmarksDirectory, expectedName + ".cs");
             var code = new StringBuilder().AppendLine("// ReSharper disable RedundantNameQualifier")
-                                          .AppendLine("// ReSharper disable InconsistentNaming")
                                           .AppendLine($"namespace {this.GetType().Namespace}")
                                           .AppendLine("{")
                                           .AppendLine($"    public class {expectedName}")
                                           .AppendLine("    {")
-                                          .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
+                                          .AppendLine($"        private static readonly Gu.Roslyn.Asserts.Benchmark Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new {analyzer.GetType().FullName}());")
                                           .AppendLine()
                                           .AppendLine("        [BenchmarkDotNet.Attributes.Benchmark]")
-                                          .AppendLine("        public void RunOnPropertyChangedAnalyzers()")
+                                          .AppendLine("        public void RunOnValidCodeProject()")
                                           .AppendLine("        {")
                                           .AppendLine("            Benchmark.Run();")
                                           .AppendLine("        }")
@@ -59,7 +49,7 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         [Test]
         public void AllBenchmarks()
         {
-            var fileName = Path.Combine(BenchmarksDirectory, "AllBenchmarks.cs");
+            var fileName = Path.Combine(Code.BenchmarksDirectory, "AllBenchmarks.cs");
             var builder = new StringBuilder();
             builder.AppendLine("// ReSharper disable RedundantNameQualifier")
                    .AppendLine($"namespace {this.GetType().Namespace}")
@@ -69,7 +59,7 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
             foreach (var analyzer in AllAnalyzers)
             {
                 builder.AppendLine(
-                           $"        private static readonly Gu.Roslyn.Asserts.Benchmark {analyzer.GetType().Name}Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.AnalyzersProject, new {analyzer.GetType().FullName}());")
+                           $"        private static readonly Gu.Roslyn.Asserts.Benchmark {analyzer.GetType().Name}Benchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new {analyzer.GetType().FullName}());")
                        .AppendLine();
             }
 
