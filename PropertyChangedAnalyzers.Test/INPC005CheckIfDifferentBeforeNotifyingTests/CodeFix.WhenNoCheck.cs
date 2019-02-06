@@ -361,6 +361,73 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public void PropertyChangedInvokeStaticClass()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public static class C
+    {
+        private static int value;
+
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        public static int Value
+        {
+            get
+            {
+                return value;
+            }
+
+            set
+            {
+                value = value;
+                ↓PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public static class C
+    {
+        private static int value;
+
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        public static int Value
+        {
+            get
+            {
+                return value;
+            }
+
+            set
+            {
+                if (value == value)
+                {
+                    return;
+                }
+
+                value = value;
+                PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            }
+
+            [Test]
             public void PropertyChangedInvokeUnderscore()
             {
                 var testCode = @"
