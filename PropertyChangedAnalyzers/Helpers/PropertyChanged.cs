@@ -9,9 +9,9 @@ namespace PropertyChangedAnalyzers
 
     internal static class PropertyChanged
     {
-        internal static AnalysisResult InvokesPropertyChangedFor(ExpressionSyntax assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static AnalysisResult InvokesPropertyChangedFor(ExpressionSyntax mutation, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (assignment.Parent is ArgumentSyntax argument &&
+            if (mutation.Parent is ArgumentSyntax argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
                 argument.Parent is ArgumentListSyntax argumentList &&
                 argumentList.Parent is InvocationExpressionSyntax invocation &&
@@ -54,10 +54,20 @@ namespace PropertyChangedAnalyzers
                     }
                 }
             }
+            else if (mutation is AssignmentExpressionSyntax assignmentExpression &&
+                     (assignmentExpression.Left is IdentifierNameSyntax ||
+                      (assignmentExpression.Left is MemberAccessExpressionSyntax memberAccess &&
+                       memberAccess.Expression is ThisExpressionSyntax)) &&
+                      semanticModel.TryGetSymbol(assignmentExpression.Left, cancellationToken, out IPropertySymbol otherProperty) &&
+                      otherProperty.SetMethod.TrySingleDeclaration(cancellationToken, out AccessorDeclarationSyntax otherSetter) &&
+                    Notifies(otherSetter) == AnalysisResult.Yes)
+            {
+                return AnalysisResult.Yes;
+            }
 
-            var block = assignment.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Body ??
-                        assignment.FirstAncestorOrSelf<AccessorDeclarationSyntax>()?.Body ??
-                        assignment.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>()?.Body;
+            var block = mutation.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Body ??
+                        mutation.FirstAncestorOrSelf<AccessorDeclarationSyntax>()?.Body ??
+                        mutation.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>()?.Body;
 
             return Notifies(block);
 
@@ -73,8 +83,8 @@ namespace PropertyChangedAnalyzers
                 {
                     foreach (var candidate in walker.Invocations)
                     {
-                        if (!candidate.Contains(assignment) &&
-                            assignment.IsExecutedBefore(candidate) == ExecutedBefore.No)
+                        if (!candidate.Contains(mutation) &&
+                            mutation.IsExecutedBefore(candidate) == ExecutedBefore.No)
                         {
                             continue;
                         }

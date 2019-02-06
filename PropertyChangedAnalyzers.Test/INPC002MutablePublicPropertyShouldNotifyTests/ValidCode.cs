@@ -799,5 +799,198 @@ namespace ValidCode
 
             AnalyzerAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public void IntAndStringPropertyReturnFieldInGetter()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Runtime.CompilerServices;
+
+    public class IntAndStringProperty : INotifyPropertyChanged
+    {
+        private int p1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1
+        {
+            get => this.p1;
+            set
+            {
+                if (value == this.p1)
+                {
+                    return;
+                }
+
+                this.p1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P2));
+            }
+        }
+
+        public string P2
+        {
+            get => this.p1.ToString(CultureInfo.InvariantCulture);
+            set => this.P1 = int.Parse(value, CultureInfo.InvariantCulture);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}
+";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void IntAndStringPropertyReturnPropertyInGetter()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Runtime.CompilerServices;
+
+    public class IntAndStringProperty : INotifyPropertyChanged
+    {
+        private int p1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1
+        {
+            get => this.p1;
+            set
+            {
+                if (value == this.p1)
+                {
+                    return;
+                }
+
+                this.p1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P2));
+            }
+        }
+
+        public string P2
+        {
+            get => this.P1.ToString(CultureInfo.InvariantCulture);
+            set => this.P1 = int.Parse(value, CultureInfo.InvariantCulture);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}
+";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public void IntPropertiesReturnFieldInGetter()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1
+        {
+            get => this.p1;
+            set
+            {
+                if (value == this.p1)
+                {
+                    return;
+                }
+
+                this.p1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P2));
+            }
+        }
+
+        public int P2
+        {
+            get => this.p1;
+            set => this.P1 = value;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, Descriptor, testCode);
+        }
+
+        [Test]
+        public void IntPropertiesReturnPropertyInGetter()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1
+        {
+            get => this.p1;
+            set
+            {
+                if (value == this.p1)
+                {
+                    return;
+                }
+
+                this.p1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P2));
+            }
+        }
+
+        public int P2
+        {
+            get => this.P1;
+            set => this.P1 = value;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.Valid(Analyzer, testCode);
+        }
     }
 }
