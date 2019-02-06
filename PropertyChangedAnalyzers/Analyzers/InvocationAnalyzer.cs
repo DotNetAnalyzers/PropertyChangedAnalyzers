@@ -30,81 +30,45 @@ namespace PropertyChangedAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation)
             {
-                if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
+                if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes ||
+                    PropertyChanged.IsPropertyChangedInvoke(invocation, context.SemanticModel, context.CancellationToken))
                 {
-                    if ((invocation.ArgumentList == null ||
-                         invocation.ArgumentList.Arguments.Count == 0) &&
-                        invocation.FirstAncestor<AccessorDeclarationSyntax>() == null)
+                    if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
+                        setter.IsKind(SyntaxKind.SetAccessorDeclaration))
+                    {
+                        if (Property.TrySingleAssignmentInSetter(setter, out var assignment))
+                        {
+                            if (!AreInSameBlock(assignment, invocation) ||
+                                assignment.SpanStart > invocation.SpanStart)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, GetLocation()));
+                            }
+
+                            if (IsFirstCall(invocation) &&
+                                IncorrectOrMissingCheckIfDifferent(context, setter, invocation, assignment))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, GetLocation()));
+                            }
+                        }
+                        else if (Property.TryFindSingleSetAndRaise(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
+                        {
+                            if (!AreInSameBlock(setAndRaise, invocation) ||
+                                setAndRaise.SpanStart > invocation.SpanStart)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, GetLocation()));
+                            }
+
+                            if (IsFirstCall(invocation) &&
+                                IncorrectOrMissingCheckIfDifferent(setAndRaise, invocation))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, GetLocation()));
+                            }
+                        }
+                    }
+                    else if (invocation.ArgumentList is ArgumentListSyntax argumentList &&
+                             argumentList.Arguments.Count == 0)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, GetLocation()));
-                    }
-
-                    if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
-                        setter.IsKind(SyntaxKind.SetAccessorDeclaration))
-                    {
-                        if (Property.TrySingleAssignmentInSetter(setter, out var assignment))
-                        {
-                            if (!AreInSameBlock(assignment, invocation) ||
-                                assignment.SpanStart > invocation.SpanStart)
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, GetLocation()));
-                            }
-
-                            if (IsFirstCall(invocation) &&
-                                IncorrectOrMissingCheckIfDifferent(context, setter, invocation, assignment))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, GetLocation()));
-                            }
-                        }
-                        else if (Property.TryFindSingleSetAndRaise(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
-                        {
-                            if (!AreInSameBlock(setAndRaise, invocation) ||
-                                setAndRaise.SpanStart > invocation.SpanStart)
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, GetLocation()));
-                            }
-
-                            if (IsFirstCall(invocation) &&
-                                IncorrectOrMissingCheckIfDifferent(setAndRaise, invocation))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, GetLocation()));
-                            }
-                        }
-                    }
-                }
-                else if (PropertyChanged.IsPropertyChangedInvoke(invocation, context.SemanticModel, context.CancellationToken))
-                {
-                    if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
-                        setter.IsKind(SyntaxKind.SetAccessorDeclaration))
-                    {
-                        if (Property.TrySingleAssignmentInSetter(setter, out var assignment))
-                        {
-                            if (!AreInSameBlock(assignment, invocation) ||
-                                assignment.SpanStart > invocation.SpanStart)
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, GetLocation()));
-                            }
-
-                            if (IsFirstCall(invocation) &&
-                                IncorrectOrMissingCheckIfDifferent(context, setter, invocation, assignment))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, GetLocation()));
-                            }
-                        }
-                        else if (Property.TryFindSingleSetAndRaise(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
-                        {
-                            if (!AreInSameBlock(setAndRaise, invocation) ||
-                                setAndRaise.SpanStart > invocation.SpanStart)
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, GetLocation()));
-                            }
-
-                            if (IsFirstCall(invocation) &&
-                                IncorrectOrMissingCheckIfDifferent(setAndRaise, invocation))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, GetLocation()));
-                            }
-                        }
                     }
                 }
             }
