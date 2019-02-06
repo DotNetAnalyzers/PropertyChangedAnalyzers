@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers
     {
         internal static AnalysisResult InvokesPropertyChangedFor(ExpressionSyntax assignment, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (assignment.FirstAncestorOrSelf<ArgumentSyntax>() is ArgumentSyntax argument &&
+            if (assignment.Parent is ArgumentSyntax argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
                 argument.Parent is ArgumentListSyntax argumentList &&
                 argumentList.Parent is InvocationExpressionSyntax invocation &&
@@ -41,7 +41,7 @@ namespace PropertyChangedAnalyzers
                 else if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
                          method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax declaration))
                 {
-                    switch (Invokes(declaration))
+                    switch (Notifies(declaration))
                     {
                         case AnalysisResult.No:
                             break;
@@ -59,9 +59,9 @@ namespace PropertyChangedAnalyzers
                         assignment.FirstAncestorOrSelf<AccessorDeclarationSyntax>()?.Body ??
                         assignment.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>()?.Body;
 
-            return Invokes(block);
+            return Notifies(block);
 
-            AnalysisResult Invokes(SyntaxNode scope)
+            AnalysisResult Notifies(SyntaxNode scope)
             {
                 if (scope == null)
                 {
