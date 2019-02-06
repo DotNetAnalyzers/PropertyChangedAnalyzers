@@ -30,8 +30,7 @@ namespace PropertyChangedAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation)
             {
-                if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes ||
-                    PropertyChanged.IsPropertyChangedInvoke(invocation, context.SemanticModel, context.CancellationToken))
+                if (PropertyChanged.TryGetName(invocation, context.SemanticModel, context.CancellationToken, out var name) != AnalysisResult.No)
                 {
                     if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
                         setter.IsKind(SyntaxKind.SetAccessorDeclaration))

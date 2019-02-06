@@ -89,7 +89,7 @@ namespace PropertyChangedAnalyzers
                             continue;
                         }
 
-                        switch (TryGetInvokedPropertyChangedName(candidate, semanticModel, cancellationToken, out var propertyName))
+                        switch (TryGetName(candidate, semanticModel, cancellationToken, out var propertyName))
                         {
                             case AnalysisResult.No:
                                 continue;
@@ -114,15 +114,9 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static AnalysisResult TryGetInvokedPropertyChangedName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
+        internal static AnalysisResult TryGetName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
         {
             propertyName = null;
-            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                !(memberAccess.Expression is InstanceExpressionSyntax))
-            {
-                return AnalysisResult.No;
-            }
-
             if (IsPropertyChangedInvoke(invocation, semanticModel, cancellationToken))
             {
                 if (invocation.ArgumentList.Arguments.TryElementAt(1, out var propertyChangedArg) &&
@@ -254,7 +248,6 @@ namespace PropertyChangedAnalyzers
         {
             if (invocation.ArgumentList?.Arguments.Count == 2 &&
                 invocation.ArgumentList.Arguments[0].Expression.IsEither(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
-                invocation.TryGetMethodName(out var name) &&
                 invocation.IsPotentialReturnVoid())
             {
                 switch (invocation.Parent)

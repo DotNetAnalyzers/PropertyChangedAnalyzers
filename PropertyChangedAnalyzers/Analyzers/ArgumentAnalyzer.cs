@@ -108,7 +108,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (invokeCandidate.ArgumentList?.Arguments.Count == 1 &&
                         PropertyChanged.IsOnPropertyChanged(invokeCandidate, context.SemanticModel, context.CancellationToken) != AnalysisResult.No &&
-                        PropertyChanged.TryGetInvokedPropertyChangedName(invokeCandidate, context.SemanticModel, context.CancellationToken, out var propertyName) == AnalysisResult.Yes &&
+                        PropertyChanged.TryGetName(invokeCandidate, context.SemanticModel, context.CancellationToken, out var propertyName) == AnalysisResult.Yes &&
                         !string.IsNullOrEmpty(propertyName) &&
                         !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _))
                     {
@@ -118,7 +118,7 @@ namespace PropertyChangedAnalyzers
                     if (PropertyChanged.IsPropertyChangedInvoke(invokeCandidate, context.SemanticModel, context.CancellationToken) &&
                          argumentList.Arguments[1] == argument &&
                          context.SemanticModel.TryGetSymbol(invokeCandidate, context.CancellationToken, out _) &&
-                         PropertyChanged.TryGetInvokedPropertyChangedName(invokeCandidate, context.SemanticModel, context.CancellationToken, out propertyName) == AnalysisResult.Yes &&
+                         PropertyChanged.TryGetName(invokeCandidate, context.SemanticModel, context.CancellationToken, out propertyName) == AnalysisResult.Yes &&
                          !string.IsNullOrEmpty(propertyName) &&
                          !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _))
                     {

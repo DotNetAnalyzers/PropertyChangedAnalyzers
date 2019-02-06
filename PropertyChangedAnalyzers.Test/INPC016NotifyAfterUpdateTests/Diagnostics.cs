@@ -73,7 +73,7 @@ namespace RoslynSandbox
                     return;
                 }
 
-                ↓this.OnPropertyChanged();
+                ↓this.OnPropertyChanged(nameof(this.Bar));
                 this.bar = value;
             }
         }

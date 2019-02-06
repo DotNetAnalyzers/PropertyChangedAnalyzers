@@ -89,7 +89,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation(call);
                 Assert.AreEqual(call, invocation.ToString());
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out var name));
+                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetName(invocation, semanticModel, CancellationToken.None, out var name));
                 Assert.AreEqual("Bar", name);
             }
 
@@ -168,7 +168,7 @@ namespace RoslynSandbox
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation(call);
                 Assert.AreEqual(call, invocation.ToString());
-                Assert.AreEqual(AnalysisResult.No, PropertyChanged.TryGetInvokedPropertyChangedName(invocation, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(AnalysisResult.No, PropertyChanged.TryGetName(invocation, semanticModel, CancellationToken.None, out _));
             }
         }
     }
