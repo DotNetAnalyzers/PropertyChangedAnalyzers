@@ -49,7 +49,7 @@
 * FEATURE: Support Prism.Mvvm
 
 #### 2.2.1
-* BUGFIX: Handle arbitraty check if different.
+* BUGFIX: Handle arbitrary check if different.
 * FEATURE: Suggest refactor to set and raise method.
 
 #### 2.2.1
