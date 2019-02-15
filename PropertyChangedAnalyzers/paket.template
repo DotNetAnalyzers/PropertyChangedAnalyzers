@@ -4,10 +4,9 @@ projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  INPC021 Setter should set backing field.
-  INPC020 Prefer expression body accessor.
-  INPC019 Getter should return backing field.
-  INPC018 PropertyChanged invoker should be protected when class is not sealed.
+  BUGFIX INPC002 when event accessors.
+  BUGFIX INPC010 when side effects in setter.
+  BUGFIX INPC002 when setting other property that notifies.
 
 excludedgroups
   Main

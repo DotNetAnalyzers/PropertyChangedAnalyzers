@@ -1,3 +1,8 @@
+#### 2.7.1
+* BUGFIX INPC002 when event accessors.
+* BUGFIX INPC010 when side effects in setter.
+* BUGFIX INPC002 when setting other property that notifies.
+
 #### 2.7.0
 * INPC021 Setter should set backing field.
 * INPC020 Prefer expression body accessor.
