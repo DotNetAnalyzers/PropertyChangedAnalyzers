@@ -13,7 +13,7 @@ Roslyn analyzers for `INotifyPropertyChanged`.
 
 | Id       | Title
 | :--      | :--
-| [INPC001](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC001.md)| Implement INotifyPropertyChanged.
+| [INPC001](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC001.md)| The class has mutable properties and should implement INotifyPropertyChanged.
 | [INPC002](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC002.md)| Mutable public property should notify.
 | [INPC003](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC003.md)| Notify when property changes.
 | [INPC004](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC004.md)| Use [CallerMemberName]

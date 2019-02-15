@@ -16,12 +16,12 @@ namespace PropertyChangedAnalyzers
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
-            title: "Implement INotifyPropertyChanged.",
+            title: "The class has mutable properties and should implement INotifyPropertyChanged.",
             messageFormat: "{0}",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
-            description: "Implement INotifyPropertyChanged.",
+            description: "The class has mutable properties and should implement INotifyPropertyChanged.",
             helpLinkUri: HelpLink.ForId(DiagnosticId));
 
         /// <inheritdoc/>

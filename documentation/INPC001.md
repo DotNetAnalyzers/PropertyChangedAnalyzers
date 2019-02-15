@@ -1,5 +1,5 @@
 # INPC001
-## Implement INotifyPropertyChanged.
+## The class has mutable properties and should implement INotifyPropertyChanged.
 
 | Topic    | Value
 | :--      | :--
@@ -11,11 +11,11 @@
 
 ## Description
 
-Implement INotifyPropertyChanged.
+The class has mutable properties and should implement INotifyPropertyChanged.
 
 ## Motivation
 
-This nag is helpful in finding and fixing places where we have forgotten to implement `INotifyPropertyChanged`
+This nag is helpful for finding and fixing places where we have forgotten to implement `INotifyPropertyChanged`
 
 ## How to fix violations
 
@@ -30,21 +30,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC001 // Implement INotifyPropertyChanged.
+#pragma warning disable INPC001 // The class has mutable properties and should implement INotifyPropertyChanged.
 Code violating the rule here
-#pragma warning restore INPC001 // Implement INotifyPropertyChanged.
+#pragma warning restore INPC001 // The class has mutable properties and should implement INotifyPropertyChanged.
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC001 // Implement INotifyPropertyChanged.
+#pragma warning disable INPC001 // The class has mutable properties and should implement INotifyPropertyChanged.
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC001:Implement INotifyPropertyChanged.", 
+    "INPC001:The class has mutable properties and should implement INotifyPropertyChanged.", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->
