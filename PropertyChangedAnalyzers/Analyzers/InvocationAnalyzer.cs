@@ -15,7 +15,8 @@ namespace PropertyChangedAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             INPC005CheckIfDifferentBeforeNotifying.Descriptor,
             INPC009DontRaiseChangeForMissingProperty.Descriptor,
-            INPC016NotifyAfterUpdate.Descriptor);
+            INPC016NotifyAfterUpdate.Descriptor,
+            INPC022NotifiesTwice.Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
