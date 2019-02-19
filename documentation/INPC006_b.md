@@ -7,7 +7,7 @@
 | Severity | Hidden
 | Enabled  | False
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [IfStatementAnalyzer]([IfStatementAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/IfStatementAnalyzer.cs))
+| Code     | [IfStatementAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/IfStatementAnalyzer.cs)
 
 ## Description
 

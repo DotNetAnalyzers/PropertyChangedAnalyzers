@@ -7,7 +7,7 @@
 | Severity | Warning
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [INPC007MissingInvoker]([INPC007MissingInvoker](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC007MissingInvoker.cs))
+| Code     | [INPC007MissingInvoker](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC007MissingInvoker.cs)
 
 ## Description
 

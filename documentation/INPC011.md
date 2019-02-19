@@ -7,7 +7,7 @@
 | Severity | Error
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [INPC011DontShadow]([INPC011DontShadow](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC011DontShadow.cs))
+| Code     | [INPC011DontShadow](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC011DontShadow.cs)
 
 ## Description
 

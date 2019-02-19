@@ -7,7 +7,7 @@
 | Severity | Warning
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [INPC001ImplementINotifyPropertyChanged]([INPC001ImplementINotifyPropertyChanged](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC001ImplementINotifyPropertyChanged.cs))
+| Code     | [INPC001ImplementINotifyPropertyChanged](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC001ImplementINotifyPropertyChanged.cs)
 
 ## Description
 

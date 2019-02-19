@@ -7,7 +7,7 @@
 | Severity | Info
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [AssignmentAnalyzer]([AssignmentAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/AssignmentAnalyzer.cs))
+| Code     | [AssignmentAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/AssignmentAnalyzer.cs)
 
 ## Description
 
