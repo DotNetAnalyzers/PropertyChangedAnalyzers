@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
         internal class WhenError
         {
@@ -59,9 +59,9 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-                testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
-                                   .AssertReplace("string", check.Type);
+}".AssertReplace("Equals(value, this.bar)", check.Call)
+  .AssertReplace("string", check.Type);
+
                 AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
@@ -101,9 +101,9 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-                testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call)
-                                   .AssertReplace("string", check.Type);
+}".AssertReplace("Equals(value, this.bar)", check.Call)
+  .AssertReplace("string", check.Type);
+
                 AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 

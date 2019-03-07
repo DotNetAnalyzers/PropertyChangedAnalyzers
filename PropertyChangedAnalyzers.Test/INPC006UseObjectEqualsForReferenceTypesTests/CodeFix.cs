@@ -2,12 +2,14 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     internal class CodeFix
     {
-        private static readonly IfStatementAnalyzer Analyzer = new IfStatementAnalyzer();
-        private static readonly UseCorrectEqualityCodeFixProvider Fix = new UseCorrectEqualityCodeFixProvider();
+        private static readonly DiagnosticAnalyzer Analyzer = new IfStatementAnalyzer();
+        private static readonly CodeFixProvider Fix = new UseCorrectEqualityFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC006_b");
 
         private static readonly IReadOnlyList<TestCase> TestCases = new[]
@@ -40,7 +42,7 @@ namespace RoslynSandbox
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            AnalyzerAssert.SuppressedDiagnostics.Add(INPC006UseReferenceEquals.DiagnosticId);
+            AnalyzerAssert.SuppressedDiagnostics.Add(INPC006UseReferenceEqualsForReferenceTypes.DiagnosticId);
         }
 
         [OneTimeTearDown]
@@ -84,7 +86,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
+}".AssertReplace("ReferenceEquals(value, this.bar)", check.Call);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -118,11 +120,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-            testCode = testCode.AssertReplace("ReferenceEquals(value, this.bar)", check.Call);
-            fixedCode = check.FixedCall == null
-                            ? fixedCode.AssertReplace("Equals(value, this.bar)", check.Call)
-                            : fixedCode.AssertReplace("Equals(value, this.bar)", check.FixedCall);
+}".AssertReplace("Equals(value, this.bar)", check.FixedCall ?? check.Call);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }
@@ -161,9 +159,9 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-            testCode = testCode.AssertReplace("Equals(value, this.bar)", check.Call);
-            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode });
+}".AssertReplace("Equals(value, this.bar)", check.Call);
+
+            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, testCode);
         }
 
         [Test]

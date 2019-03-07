@@ -1,11 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public class Diagnostics
     {
-        private static readonly INPC008StructMustNotNotify Analyzer = new INPC008StructMustNotNotify();
+        private static readonly DiagnosticAnalyzer Analyzer = new INPC008StructMustNotNotify();
 
         [Test]
         public void WhenNotifying()

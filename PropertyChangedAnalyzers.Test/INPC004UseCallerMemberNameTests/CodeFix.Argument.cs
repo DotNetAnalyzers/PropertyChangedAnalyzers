@@ -1,21 +1,22 @@
 namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
         public class Argument
         {
-            private static readonly ArgumentAnalyzer Analyzer = new ArgumentAnalyzer();
-            private static readonly UseCallerMemberNameCodeFixProvider Fix = new UseCallerMemberNameCodeFixProvider();
+            private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
+            private static readonly UseCallerMemberNameFix Fix = new UseCallerMemberNameFix();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC004");
 
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.Stylet);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]
@@ -65,7 +66,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace(@"nameof(Value)", propertyName);
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -104,7 +105,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
+
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
                 AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
@@ -150,7 +151,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace(@"nameof(Value)", propertyName);
 
                 var fixedCode = @"
 namespace RoslynSandbox
@@ -189,7 +190,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                testCode = testCode.AssertReplace(@"nameof(Value)", propertyName);
+
                 AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
                 AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }

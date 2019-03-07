@@ -1,30 +1,13 @@
 # INPC016
 ## Notify after update.
 
-<!-- start generated table -->
-<table>
-<tr>
-  <td>CheckId</td>
-  <td>INPC016</td>
-</tr>
-<tr>
-  <td>Severity</td>
-  <td>Warning</td>
-</tr>
-<tr>
-  <td>Enabled</td>
-  <td>true</td>
-</tr>
-<tr>
-  <td>Category</td>
-  <td>PropertyChangedAnalyzers.PropertyChanged</td>
-</tr>
-<tr>
-  <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/NodeAnalyzers/InvocationAnalyzer.cs">InvocationAnalyzer</a></td>
-</tr>
-</table>
-<!-- end generated table -->
+| Topic    | Value
+| :--      | :--
+| Id       | INPC016
+| Severity | Warning
+| Enabled  | True
+| Category | PropertyChangedAnalyzers.PropertyChanged
+| Code     | [InvocationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/InvocationAnalyzer.cs)
 
 ## Description
 

@@ -1,0 +1,18 @@
+﻿type project
+developmentDependency true
+projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
+licenseUrl http://opensource.org/licenses/MIT
+
+releasenotes
+  BUGFIX INPC002 when event accessors.
+  BUGFIX INPC010 when side effects in setter.
+  BUGFIX INPC002 when setting other property that notifies.
+
+excludedgroups
+  Main
+  Analyzers
+
+files
+  bin/Release/Gu.Roslyn.Extensions.dll ==> analyzers/dotnet/cs
+  ../.paket/tools/*.ps1 ==> tools
+

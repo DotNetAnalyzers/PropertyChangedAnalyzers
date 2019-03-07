@@ -3,7 +3,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
         internal class WhenNoCheck
         {
@@ -318,7 +318,7 @@ namespace RoslynSandbox
             set
             {
                 this.value = value;
-                ↓this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                ↓this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
             }
         }
     }
@@ -351,7 +351,210 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            }
+
+            [Test]
+            public void PropertyChangedInvokeStaticClass()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public static class C
+    {
+        private static int value;
+
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        public static int Value
+        {
+            get
+            {
+                return value;
+            }
+
+            set
+            {
+                value = value;
+                ↓PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public static class C
+    {
+        private static int value;
+
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        public static int Value
+        {
+            get
+            {
+                return value;
+            }
+
+            set
+            {
+                if (value == value)
+                {
+                    return;
+                }
+
+                value = value;
+                PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            }
+
+            [Test]
+            public void PropertyChangedInvokeUnderscore()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int _value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return _value;
+            }
+
+            set
+            {
+                _value = value;
+                ↓PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int _value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return _value;
+            }
+
+            set
+            {
+                if (value == _value)
+                {
+                    return;
+                }
+
+                _value = value;
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+            }
+        }
+    }
+}";
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            }
+
+            [Test]
+            public void PropertyChangedInvokeCachedEventArgs()
+            {
+                var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private static readonly PropertyChangedEventArgs ValuePropertyChangedEventArgs = new PropertyChangedEventArgs(nameof(Value));
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                this.value = value;
+                ↓this.PropertyChanged.Invoke(this, ValuePropertyChangedEventArgs);
+            }
+        }
+    }
+}";
+
+                var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private static readonly PropertyChangedEventArgs ValuePropertyChangedEventArgs = new PropertyChangedEventArgs(nameof(Value));
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.PropertyChanged.Invoke(this, ValuePropertyChangedEventArgs);
             }
         }
     }

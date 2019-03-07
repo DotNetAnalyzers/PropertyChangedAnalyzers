@@ -145,8 +145,8 @@ namespace RoslynSandbox
 
         public int Value { get; private set; }
     }
-}";
-                testCode = testCode.AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.Value = 1", assignCode);
+
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);

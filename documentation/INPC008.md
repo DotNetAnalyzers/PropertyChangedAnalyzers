@@ -1,30 +1,13 @@
 # INPC008
 ## Struct must not implement INotifyPropertyChanged
 
-<!-- start generated table -->
-<table>
-<tr>
-  <td>CheckId</td>
-  <td>INPC008</td>
-</tr>
-<tr>
-  <td>Severity</td>
-  <td>Error</td>
-</tr>
-<tr>
-  <td>Enabled</td>
-  <td>true</td>
-</tr>
-<tr>
-  <td>Category</td>
-  <td>PropertyChangedAnalyzers.PropertyChanged</td>
-</tr>
-<tr>
-  <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC008StructMustNotNotify.cs">INPC008StructMustNotNotify</a></td>
-</tr>
-</table>
-<!-- end generated table -->
+| Topic    | Value
+| :--      | :--
+| Id       | INPC008
+| Severity | Error
+| Enabled  | True
+| Category | PropertyChangedAnalyzers.PropertyChanged
+| Code     | [INPC008StructMustNotNotify](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC008StructMustNotNotify.cs)
 
 ## Description
 

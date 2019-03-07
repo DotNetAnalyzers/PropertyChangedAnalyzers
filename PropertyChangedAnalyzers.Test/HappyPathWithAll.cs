@@ -3,6 +3,7 @@ namespace PropertyChangedAnalyzers.Test
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -18,15 +19,29 @@ namespace PropertyChangedAnalyzers.Test
             .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
             .ToArray();
 
-        private static readonly Solution Solution = CodeFactory.CreateSolution(
-            CodeFactory.FindSolutionFile("PropertyChangedAnalyzers.sln"),
+        private static readonly Solution AnalyzersProjectSolution = CodeFactory.CreateSolution(
+            ProjectFile.Find("PropertyChangedAnalyzers.csproj"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
 
-        private static readonly Solution PropertyChangedAnalyzersProjectSln = CodeFactory.CreateSolution(
-            CodeFactory.FindProjectFile("PropertyChangedAnalyzers.Analyzers.csproj"),
+        private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
+            ProjectFile.Find("ValidCode.csproj"),
             AllAnalyzers,
             AnalyzerAssert.MetadataReferences);
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            // The cache will be enabled when running in VS.
+            // It speeds up the tests and makes them more realistic
+            Cache<SyntaxTree, SemanticModel>.Begin();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            Cache<SyntaxTree, SemanticModel>.End();
+        }
 
         [Test]
         public void NotEmpty()
@@ -36,15 +51,15 @@ namespace PropertyChangedAnalyzers.Test
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void PropertyChangedAnalyzersSln(DiagnosticAnalyzer analyzer)
+        public void AnalyzersProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, Solution);
+            AnalyzerAssert.Valid(analyzer, AnalyzersProjectSolution);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void PropertyChangedAnalyzersProject(DiagnosticAnalyzer analyzer)
+        public void ValidCodeProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, PropertyChangedAnalyzersProjectSln);
+            AnalyzerAssert.Valid(analyzer, ValidCodeProjectSln);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
@@ -103,11 +118,12 @@ namespace RoslynSandbox.Client
 
         public int Value
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
                 return this.value;
             }
-
+#pragma warning restore INPC020 // Prefer expression body accessor.
             set
             {
                 if (value == this.value)
@@ -152,11 +168,12 @@ namespace RoslynSandbox
 
         public int Value
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
                 return this.value;
             }
-
+#pragma warning restore INPC020 // Prefer expression body accessor.
             set
             {
                 if (value == this.value)
@@ -493,11 +510,12 @@ namespace RoslynSandbox.Client
 
         public int Value
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
                 return this.value;
             }
-
+#pragma warning restore INPC020 // Prefer expression body accessor.
             set
             {
                 if (value == this.value)
@@ -542,10 +560,12 @@ namespace RoslynSandbox
 
         public T Value
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
                 return this.value;
             }
+#pragma warning restore INPC020 // Prefer expression body accessor.
 
             set
             {

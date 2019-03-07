@@ -1,12 +1,14 @@
 namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class Codefix
+    internal class CodeFix
     {
-        private static readonly INPC011DontShadow Analyzer = new INPC011DontShadow();
-        private static readonly RemoveShadowingCodeFix Fix = new RemoveShadowingCodeFix();
+        private static readonly DiagnosticAnalyzer Analyzer = new INPC011DontShadow();
+        private static readonly CodeFixProvider Fix = new RemoveShadowingFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC011");
 
         [Test]

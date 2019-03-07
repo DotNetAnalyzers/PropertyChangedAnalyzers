@@ -1,30 +1,13 @@
 # INPC007
 ## The class has PropertyChangedEvent but no invoker.
 
-<!-- start generated table -->
-<table>
-<tr>
-  <td>CheckId</td>
-  <td>INPC007</td>
-</tr>
-<tr>
-  <td>Severity</td>
-  <td>Warning</td>
-</tr>
-<tr>
-  <td>Enabled</td>
-  <td>true</td>
-</tr>
-<tr>
-  <td>Category</td>
-  <td>PropertyChangedAnalyzers.PropertyChanged</td>
-</tr>
-<tr>
-  <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/INPC007MissingInvoker.cs">INPC007MissingInvoker</a></td>
-</tr>
-</table>
-<!-- end generated table -->
+| Topic    | Value
+| :--      | :--
+| Id       | INPC007
+| Severity | Warning
+| Enabled  | True
+| Category | PropertyChangedAnalyzers.PropertyChanged
+| Code     | [INPC007MissingInvoker](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC007MissingInvoker.cs)
 
 ## Description
 

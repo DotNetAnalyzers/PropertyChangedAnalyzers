@@ -2,8 +2,8 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using NUnit.Framework;
 
     internal partial class PropertyChangedTest
@@ -106,7 +106,7 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var node = syntaxTree.Find<SyntaxNode>(signature);
+                var node = syntaxTree.Find<ExpressionSyntax>(signature);
                 var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration(propertyName));
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
             }
@@ -156,14 +156,14 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-                testCode = testCode.AssertReplace("this.TrySet(ref this.value, value)", trySetCode);
+}".AssertReplace("this.TrySet(ref this.value, value)", trySetCode);
+
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var node = syntaxTree.FindArgument("ref this.value");
                 var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("Value"));
-                Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
+                Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node.Expression, property, semanticModel, CancellationToken.None));
             }
 
             [TestCase("this.TrySet(ref this.value, value, \"Value\")", AnalysisResult.Yes)]
@@ -210,14 +210,14 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-                testCode = testCode.AssertReplace("this.TrySet(ref this.value, value, nameof(Value))", trySetCode);
+}".AssertReplace("this.TrySet(ref this.value, value, nameof(Value))", trySetCode);
+
                 var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var node = syntaxTree.FindArgument("ref this.value");
                 var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("Value"));
-                Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
+                Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node.Expression, property, semanticModel, CancellationToken.None));
             }
 
             [TestCase("_value1 = value", "Value1")]
@@ -316,7 +316,7 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var node = syntaxTree.Find<SyntaxNode>(signature);
+                var node = syntaxTree.Find<ExpressionSyntax>(signature);
                 var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration(propertyName));
                 Assert.AreEqual(AnalysisResult.No, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
             }

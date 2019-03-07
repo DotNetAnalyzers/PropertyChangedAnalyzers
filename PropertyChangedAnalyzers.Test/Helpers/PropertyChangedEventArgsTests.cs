@@ -47,8 +47,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}";
-            testCode = testCode.AssertReplace("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(\"Bar\");", cached);
+}".AssertReplace("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(\"Bar\");", cached);
+
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);

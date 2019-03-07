@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -35,9 +36,8 @@ namespace RoslynSandbox
 
         public int? Bar1 => this.bar1;
     }
-}";
+}".AssertReplace("this.bar1 == this.bar1", check);
 
-            testCode = testCode.AssertReplace("this.bar1 == this.bar1", check);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -75,9 +75,8 @@ namespace RoslynSandbox
 
         public int? Bar1 => this.bar1;
     }
-}";
+}".AssertReplace("this.bar1 == this.bar1", check);
 
-            testCode = testCode.AssertReplace("this.bar1 == this.bar1", check);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -124,9 +123,8 @@ namespace RoslynSandbox
 
         public int? Bar1 => this.bar1;
     }
-}";
+}".AssertReplace("Nullable.Equals(this.bar1, this.bar1)", check);
 
-            testCode = testCode.AssertReplace("Nullable.Equals(this.bar1, this.bar1)", check);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -179,9 +177,8 @@ namespace RoslynSandbox
 
         public int? Bar1 => this.bar1;
     }
-}";
+}".AssertReplace("Equals(this.bar1, this.bar1)", check);
 
-            testCode = testCode.AssertReplace("Equals(this.bar1, this.bar1)", check);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -219,9 +216,8 @@ namespace RoslynSandbox
 
         public string Bar1 => this.bar1;
     }
-}";
+}".AssertReplace("ReferenceEquals(this.bar1, this.bar1)", check);
 
-            testCode = testCode.AssertReplace("ReferenceEquals(this.bar1, this.bar1)", check);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -258,9 +254,8 @@ namespace RoslynSandbox
             string.Equals(this.bar1, this.bar1);
         }
     }
-}";
+}".AssertReplace("string.Equals(this.bar1, this.bar1)", check);
 
-            testCode = testCode.AssertReplace("string.Equals(this.bar1, this.bar1)", check);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -294,9 +289,8 @@ namespace RoslynSandbox
             this.bar1.Equals(this.bar1);
         }
     }
-}";
+}".AssertReplace("this.bar1.Equals(this.bar1)", check);
 
-            testCode = testCode.AssertReplace("this.bar1.Equals(this.bar1)", check);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -335,9 +329,8 @@ namespace RoslynSandbox
 
         public int? Bar1 => this.bar1;
     }
-}";
+}".AssertReplace("EqualityComparer<int>.Default.Equals(this.bar1, this.bar1)", check);
 
-            testCode = testCode.AssertReplace("EqualityComparer<int>.Default.Equals(this.bar1, this.bar1)", check);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -369,9 +362,8 @@ namespace RoslynSandbox
 
         public int? Bar1 => this.bar1;
     }
-}";
+}".AssertReplace("EqualityComparer<T>.Default.Equals(arg1, arg1)", check);
 
-            testCode = testCode.AssertReplace("EqualityComparer<T>.Default.Equals(arg1, arg1)", check);
             var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);

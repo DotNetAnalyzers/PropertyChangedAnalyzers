@@ -1,30 +1,13 @@
 # INPC015
 ## Property is recursive.
 
-<!-- start generated table -->
-<table>
-<tr>
-  <td>CheckId</td>
-  <td>INPC015</td>
-</tr>
-<tr>
-  <td>Severity</td>
-  <td>Warning</td>
-</tr>
-<tr>
-  <td>Enabled</td>
-  <td>true</td>
-</tr>
-<tr>
-  <td>Category</td>
-  <td>PropertyChangedAnalyzers.PropertyChanged</td>
-</tr>
-<tr>
-  <td>TypeName</td>
-  <td><a href="https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers.Analyzers/NodeAnalyzers/PropertyDeclarationAnalyzer.cs">PropertyDeclarationAnalyzer</a></td>
-</tr>
-</table>
-<!-- end generated table -->
+| Topic    | Value
+| :--      | :--
+| Id       | INPC015
+| Severity | Warning
+| Enabled  | True
+| Category | PropertyChangedAnalyzers.PropertyChanged
+| Code     | [PropertyDeclarationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/PropertyDeclarationAnalyzer.cs)
 
 ## Description
 
@@ -32,11 +15,14 @@ Property is recursive.
 
 ## Motivation
 
-ADD MOTIVATION HERE
+Detects silly mistakes like:
 
-## How to fix violations
-
-ADD HOW TO FIX VIOLATIONS HERE
+```cs
+public class Foo
+{
+    public int Bar => this.Bar;
+}
+```
 
 <!-- start generated config severity -->
 ## Configure severity

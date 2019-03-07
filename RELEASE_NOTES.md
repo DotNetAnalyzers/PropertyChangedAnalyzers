@@ -1,3 +1,21 @@
+#### 2.7.1
+* BUGFIX INPC002 when event accessors.
+* BUGFIX INPC010 when side effects in setter.
+* BUGFIX INPC002 when setting other property that notifies.
+
+#### 2.7.0
+* INPC021 Setter should set backing field.
+* INPC020 Prefer expression body accessor.
+* INPC019 Getter should return backing field.
+* INPC018 PropertyChanged invoker should be protected when class is not sealed.
+
+#### 2.6.0
+* FEATURE: Support new MvvmCross.
+* FEATURE: Recognize [NotifyPropertyChangedInvocatorAttribute]
+
+#### 2.5.12
+* BUGFIXES: INPC017.
+
 #### 2.5.8
 * FEATURE: Re-enabled detecting OnPropertyChanged and TrySet from outside the compilation.
 
@@ -31,7 +49,7 @@
 * FEATURE: Support Prism.Mvvm
 
 #### 2.2.1
-* BUGFIX: Handle arbitraty check if different.
+* BUGFIX: Handle arbitrary check if different.
 * FEATURE: Suggest refactor to set and raise method.
 
 #### 2.2.1

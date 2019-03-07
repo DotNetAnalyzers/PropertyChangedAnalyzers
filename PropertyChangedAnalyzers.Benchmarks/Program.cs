@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Benchmarks
             if (false)
             {
                 var benchmark = Gu.Roslyn.Asserts.Benchmark.Create(
-                    Code.AnalyzersProject,
+                    Code.ValidCodeProject,
                     new INPC001ImplementINotifyPropertyChanged());
 
                 // Warmup
@@ -26,13 +26,6 @@ namespace PropertyChangedAnalyzers.Benchmarks
                 Console.WriteLine("Attach profiler and press any key to continue...");
                 Console.ReadKey();
                 benchmark.Run();
-            }
-            else if (false)
-            {
-                foreach (var summary in RunSingle<AllBenchmarks>())
-                {
-                    CopyResult(summary);
-                }
             }
             else
             {
@@ -57,13 +50,21 @@ namespace PropertyChangedAnalyzers.Benchmarks
 
         private static void CopyResult(Summary summary)
         {
-            var fileName = $"{summary.Title}-report-github.md";
-            Console.WriteLine(fileName);
-            var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath, fileName)
+            var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath, $"*{summary.Title}-report-github.md")
                                           .Single();
-            var destinationFileName = Path.Combine(summary.ResultsDirectoryPath, "..\\..\\..\\..\\..\\Benchmarks", summary.Title + ".md");
-            Console.WriteLine($"Copy: {sourceFileName} -> {destinationFileName}");
+            var destinationFileName = Path.ChangeExtension(FindCsFile(), ".md");
+            Console.WriteLine($"Copy: {sourceFileName}");
+            Console.WriteLine($"   -> {destinationFileName}");
             File.Copy(sourceFileName, destinationFileName, overwrite: true);
+
+            string FindCsFile()
+            {
+                return Directory.EnumerateFiles(
+                                    AppDomain.CurrentDomain.BaseDirectory.Split(new[] { "\\bin\\" }, StringSplitOptions.RemoveEmptyEntries).First(),
+                                    $"{summary.Title.Split('.').Last()}.cs",
+                                    SearchOption.AllDirectories)
+                                .Single();
+            }
         }
     }
 }

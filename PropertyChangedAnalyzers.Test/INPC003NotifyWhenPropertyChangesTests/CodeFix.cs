@@ -1,12 +1,14 @@
 namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal partial class CodeFix
+    public partial class CodeFix
     {
-        private static readonly INPC003NotifyWhenPropertyChanges Analyzer = new INPC003NotifyWhenPropertyChanges();
-        private static readonly NotifyPropertyChangedCodeFixProvider Fix = new NotifyPropertyChangedCodeFixProvider();
+        private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
+        private static readonly CodeFixProvider Fix = new NotifyPropertyChangedFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC003");
 
         [TestCase("this.value = value;")]
@@ -45,7 +47,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace("this.value = value;", update);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -72,9 +74,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.value = value;", update);
-            fixedCode = fixedCode.AssertReplace("this.value = value;", update);
+}".AssertReplace("this.value = value;", update);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
@@ -116,7 +117,7 @@ namespace RoslynSandbox
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace("_value = value;", update);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -144,9 +145,8 @@ namespace RoslynSandbox
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("_value = value;", update);
-            fixedCode = fixedCode.AssertReplace("_value = value;", update);
+}".AssertReplace("_value = value;", update);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
@@ -180,7 +180,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace("this.value = value;", update);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -207,9 +207,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.value = value;", update);
-            fixedCode = fixedCode.AssertReplace("this.value = value;", update);
+}".AssertReplace("this.value = value;", update);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
@@ -1025,7 +1024,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace("=> CreateGreeting()", call);
 
             var fixedCode = @"
 namespace RoslynSandbox
@@ -1099,10 +1098,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace("=> CreateGreeting()", call);
 
-            testCode = testCode.AssertReplace("=> CreateGreeting()", call);
-            fixedCode = fixedCode.AssertReplace("=> CreateGreeting()", call);
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
@@ -1820,7 +1817,7 @@ namespace RoslynSandBox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace("this.name", path);
 
             var fixedCode = @"
 namespace RoslynSandBox
@@ -1861,9 +1858,8 @@ namespace RoslynSandBox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.name", path);
-            fixedCode = fixedCode.AssertReplace("this.name", path);
+}".AssertReplace("this.name", path);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
@@ -3065,7 +3061,7 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
+}".AssertReplace("this.bar.BarValue", path);
             var fixedCode = @"
 namespace RoslynSandbox
 {
@@ -3091,9 +3087,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}";
-            testCode = testCode.AssertReplace("this.bar.BarValue", path);
-            fixedCode = fixedCode.AssertReplace("this.bar.BarValue", path);
+}".AssertReplace("this.bar.BarValue", path);
+
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
         }
@@ -3284,6 +3279,80 @@ namespace RoslynSandbox
 }";
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
             AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, fixedCode);
+        }
+
+        [Test]
+        public void WhenNotifyingInElseOnly()
+        {
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public sealed class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value => this.value;
+
+        public void Update(bool up)
+        {
+            if (up)
+            {
+                ↓this.value++;
+            }
+            else
+            {
+                this.value--;
+                this.OnPropertyChanged(nameof(this.Value));
+            }
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public sealed class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value => this.value;
+
+        public void Update(bool up)
+        {
+            if (up)
+            {
+                this.value++;
+                this.OnPropertyChanged(nameof(this.Value));
+            }
+            else
+            {
+                this.value--;
+                this.OnPropertyChanged(nameof(this.Value));
+            }
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
         }
     }
 }

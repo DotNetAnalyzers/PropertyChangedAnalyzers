@@ -3,47 +3,31 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
 
     internal class SpecialMetadataReferences
     {
-        /// <summary>
-        /// This is needed as stylet is not signed.
-        /// </summary>
-        internal static MetadataReference Stylet { get; } = CreateDllReference("Stylet.dll");
+        private static readonly DirectoryInfo ProjectDirectory = ProjectFile.Find("PropertyChangedAnalyzers.Test.csproj").Directory;
 
-        /// <summary>
-        /// This is needed as MvvmCross is not signed.
-        /// </summary>
-        internal static MetadataReference MvvmCross { get; } = CreateDllReference("MvvmCross.Core.dll");
+        internal static IReadOnlyList<MetadataReference> Stylet { get; } = MetadataReferences.Transitive(LoadUnsigned("Stylet.dll")).ToArray();
 
-        internal static MetadataReference MvvmCrossPlatform { get; } = CreateDllReference("MvvmCross.Platform.dll");
-
-        internal static IReadOnlyList<MetadataReference> MvvmCrossReferences { get; } = CreateMvvmCrossReferences();
+        internal static IReadOnlyList<MetadataReference> MvvmCross { get; } = MetadataReferences.Transitive(LoadUnsigned("MvvmCross.dll")).ToArray();
 
         internal static MetadataReference ReactiveUIReferences { get; } = CreateDllReference("ReactiveUI.dll");
 
-        private static MetadataReference CreateDllReference(string dllName)
+        // Use this if the dll is not signed
+        private static Assembly LoadUnsigned(string dllName)
         {
-            // ReSharper disable once PossibleNullReferenceException
-            var dll = CodeFactory.FindSolutionFile("PropertyChangedAnalyzers.sln")
-                                 .Directory.EnumerateFiles(dllName, SearchOption.AllDirectories)
-                                 .First();
-            return MetadataReference.CreateFromFile(dll.FullName);
-        }
+            if (ProjectDirectory.EnumerateFiles(dllName, SearchOption.AllDirectories)
+                                .TryFirst(out var dll))
+            {
+                return Assembly.ReflectionOnlyLoadFrom(dll.FullName);
+            }
 
-        private static IReadOnlyList<MetadataReference> CreateMvvmCrossReferences()
-        {
-            return new[]
-                   {
-                       MvvmCross,
-                       MvvmCrossPlatform,
-                       CreateDllReference("System.Runtime.dll"),
-                       CreateDllReference("netstandard.dll"),
-                       CreateDllReference("System.Linq.Expressions.dll"),
-                       CreateDllReference("System.ObjectModel.dll"),
-                   };
+            throw new FileNotFoundException(dllName);
         }
     }
 }

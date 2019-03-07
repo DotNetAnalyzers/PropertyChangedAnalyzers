@@ -4,14 +4,14 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    internal partial class Codefix
+    public partial class CodeFix
     {
         internal class MvvmCrossCore
         {
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCrossReferences);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
             }
 
             [OneTimeTearDown]
@@ -26,7 +26,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
                 var testCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -49,7 +49,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -68,7 +68,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -77,7 +77,7 @@ namespace RoslynSandbox
                 var testCode = @"
 namespace RoslynSandbox
 {
-    internal class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    internal class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -100,7 +100,7 @@ namespace RoslynSandbox
                 var fixedCode = @"
 namespace RoslynSandbox
 {
-    internal class ViewModel : MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged
+    internal class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -119,7 +119,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix(Analyzer, CodeFix, ExpectedDiagnostic, testCode, fixedCode);
+                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
         }
     }
