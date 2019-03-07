@@ -4,14 +4,14 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    internal partial class HappyPath
+    public partial class ValidCode
     {
         internal class ReactiveUI
         {
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.ReactiveUIReferences);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.ReactiveUIReferences);
             }
 
             [OneTimeTearDown]
@@ -28,7 +28,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
                 var testCode = @"
 namespace RoslynSandbox
 {
-    using ReativeUI;
+    using ReactiveUI;
     public class ViewModel : ReactiveObject
     {
         private string name;

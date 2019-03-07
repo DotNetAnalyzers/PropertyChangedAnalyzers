@@ -1,5 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
+    using Gu.Roslyn.AnalyzerExtensions;
     internal class IReactiveObject : QualifiedType
     {
         internal QualifiedMethod SetAndRaiseIfChanged;

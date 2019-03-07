@@ -104,7 +104,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.MetadataReferences.Add(SpecialMetadataReferences.ReactiveUIReferences);
+                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.ReactiveUIReferences);
                 AnalyzerAssert.Valid(Analyzer, testCode);
             }
         }

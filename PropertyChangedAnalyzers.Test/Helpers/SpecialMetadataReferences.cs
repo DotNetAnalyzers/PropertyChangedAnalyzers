@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 
         internal static IReadOnlyList<MetadataReference> MvvmCross { get; } = MetadataReferences.Transitive(LoadUnsigned("MvvmCross.dll")).ToArray();
 
-        internal static MetadataReference ReactiveUIReferences { get; } = CreateDllReference("ReactiveUI.dll");
+        internal static IReadOnlyList<MetadataReference> ReactiveUIReferences { get; } = MetadataReferences.Transitive(LoadUnsigned("ReactiveUI.dll")).ToArray();
 
         // Use this if the dll is not signed
         private static Assembly LoadUnsigned(string dllName)
