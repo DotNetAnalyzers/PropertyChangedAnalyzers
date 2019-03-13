@@ -39,10 +39,13 @@ namespace PropertyChangedAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, parameterSyntax.GetLocation()));
                 }
 
-                if (methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier) &&
+                if (method.DeclaredAccessibility == Accessibility.Private &&
                     !method.ContainingType.IsSealed)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(INPC018InvokerShouldBeProtected.Descriptor, modifier.GetLocation()));
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            INPC018InvokerShouldBeProtected.Descriptor,
+                            methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier) ? modifier.GetLocation() : methodDeclaration.Identifier.GetLocation()));
                 }
             }
         }
