@@ -318,59 +318,6 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Removeee()
-        {
-            var fooCode = @"
-namespace RoslynSandbox
-{
-    public class Foo : INotifyPropertyChanged
-    {
-        public int Value {get; set; }
-    }
-}";
-
-            var testCode = @"
-namespace RoslynSandbox
-{
-    using System.Collections.Generic;
-    using System.ComponentModel;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        ↓public event PropertyChangedEventHandler PropertyChanged;
-
-        public List<Foo> Items { get; } = new List<Foo>
-        {
-            new Foo { Value = 2 },
-        };
-    }
-}";
-            var fixedCode = @"
-namespace RoslynSandbox
-{
-    using System.Collections.Generic;
-    using System.ComponentModel;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public List<Foo> Items { get; } = new List<Foo>
-        {
-            new Foo { Value = 2 },
-        };
-
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
-        }
-
-        [Test]
         public void UsesCorrectStyleIssue107()
         {
             var fooCode = @"
