@@ -316,5 +316,136 @@ namespace RoslynSandbox
 
             AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode, fixTitle: "Seal class.");
         }
+
+        [Test]
+        public void Removeee()
+        {
+            var fooCode = @"
+namespace RoslynSandbox
+{
+    public class Foo : INotifyPropertyChanged
+    {
+        public int Value {get; set; }
+    }
+}";
+
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        ↓public event PropertyChangedEventHandler PropertyChanged;
+
+        public List<Foo> Items { get; } = new List<Foo>
+        {
+            new Foo { Value = 2 },
+        };
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public List<Foo> Items { get; } = new List<Foo>
+        {
+            new Foo { Value = 2 },
+        };
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
+        }
+
+        [Test]
+        public void UsesCorrectStyleIssue107()
+        {
+            var fooCode = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Value
+        {
+            get => this.value;
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var testCode = @"
+namespace RoslynSandbox
+{
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        ↓public event PropertyChangedEventHandler PropertyChanged;
+
+        public ObservableCollection<Foo> Items { get; } = new ObservableCollection<Foo>
+        {
+            new Foo { Value = 2 },
+        };
+    }
+}";
+            var fixedCode = @"
+namespace RoslynSandbox
+{
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public ObservableCollection<Foo> Items { get; } = new ObservableCollection<Foo>
+        {
+            new Foo { Value = 2 },
+        };
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, testCode }, fixedCode, fixTitle: "Add OnPropertyChanged invoker.");
+        }
     }
 }

@@ -115,9 +115,9 @@ protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.Caller
             return editor.GetChangedDocument();
         }
 
-        private static MethodDeclarationSyntax ParseMethod(string code, bool usesUnderscoreNames)
+        private static MethodDeclarationSyntax ParseMethod(string code, bool underscoreFields)
         {
-            if (usesUnderscoreNames)
+            if (underscoreFields)
             {
                 code = code.Replace("this.", string.Empty);
             }
