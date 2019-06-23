@@ -21,7 +21,7 @@ namespace RoslynSandbox
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }";
-            AnalyzerAssert.Diagnostics(Analyzer, testCode);
+            RoslynAssert.Diagnostics(Analyzer, testCode);
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace RoslynSandbox
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
     }
 }";
-            AnalyzerAssert.Diagnostics(Analyzer, testCode);
+            RoslynAssert.Diagnostics(Analyzer, testCode);
         }
     }
 }

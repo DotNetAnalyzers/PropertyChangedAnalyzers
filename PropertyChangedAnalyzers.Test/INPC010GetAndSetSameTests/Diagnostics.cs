@@ -51,7 +51,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace RoslynSandbox
     }
 }";
 
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
         }
 
         [Test]
@@ -143,7 +143,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
         }
 
         [Test]
@@ -190,7 +190,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
         }
 
         [Test]
@@ -237,7 +237,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
         }
     }
 }

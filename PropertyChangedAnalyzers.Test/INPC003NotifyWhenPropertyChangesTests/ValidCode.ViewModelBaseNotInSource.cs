@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
             [OneTimeSetUp]
             public void OneTimeSetup()
             {
-                AnalyzerAssert.MetadataReferences.Add(MetadataReferences.CreateBinary(@"
+                RoslynAssert.MetadataReferences.Add(MetadataReferences.CreateBinary(@"
 namespace RoslynSandbox.Core
 {
     using System;
@@ -51,7 +51,7 @@ namespace RoslynSandbox.Core
             [OneTimeTearDown]
             public void OneTimeTearDown()
             {
-                AnalyzerAssert.ResetAll();
+                RoslynAssert.ResetAll();
             }
 
             [Test]
@@ -71,7 +71,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -91,7 +91,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -119,7 +119,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -147,7 +147,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -169,7 +169,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -202,7 +202,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.Valid(Analyzer, fooBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, fooBaseCode, testCode);
             }
         }
     }

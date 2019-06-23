@@ -22,12 +22,12 @@ namespace PropertyChangedAnalyzers.Test
         private static readonly Solution AnalyzersProjectSolution = CodeFactory.CreateSolution(
             ProjectFile.Find("PropertyChangedAnalyzers.csproj"),
             AllAnalyzers,
-            AnalyzerAssert.MetadataReferences);
+            RoslynAssert.MetadataReferences);
 
         private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
             ProjectFile.Find("ValidCode.csproj"),
             AllAnalyzers,
-            AnalyzerAssert.MetadataReferences);
+            RoslynAssert.MetadataReferences);
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -53,13 +53,13 @@ namespace PropertyChangedAnalyzers.Test
         [TestCaseSource(nameof(AllAnalyzers))]
         public void AnalyzersProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, AnalyzersProjectSolution);
+            RoslynAssert.Valid(analyzer, AnalyzersProjectSolution);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
         public void ValidCodeProject(DiagnosticAnalyzer analyzer)
         {
-            AnalyzerAssert.Valid(analyzer, ValidCodeProjectSln);
+            RoslynAssert.Valid(analyzer, ValidCodeProjectSln);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
@@ -449,7 +449,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(
+            RoslynAssert.Valid(
                 analyzer,
                 viewModelBaseCode,
                 barCode,
@@ -586,7 +586,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(analyzer, viewModelBaseCode, viewModelSubclassCode, viewModelCode);
+            RoslynAssert.Valid(analyzer, viewModelBaseCode, viewModelSubclassCode, viewModelCode);
         }
     }
 }

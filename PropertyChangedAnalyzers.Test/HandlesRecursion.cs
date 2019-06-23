@@ -65,7 +65,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            await Analyze.GetDiagnosticsAsync(analyzer, new[] { viewModelBaseCode, testCode }, AnalyzerAssert.MetadataReferences).ConfigureAwait(false);
+            await Analyze.GetDiagnosticsAsync(analyzer, new[] { viewModelBaseCode, testCode }, RoslynAssert.MetadataReferences).ConfigureAwait(false);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
@@ -117,7 +117,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            await Analyze.GetDiagnosticsAsync(analyzer, new[] { viewModelBaseCode, testCode }, AnalyzerAssert.MetadataReferences).ConfigureAwait(false);
+            await Analyze.GetDiagnosticsAsync(analyzer, new[] { viewModelBaseCode, testCode }, RoslynAssert.MetadataReferences).ConfigureAwait(false);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
@@ -266,7 +266,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            await Analyze.GetDiagnosticsAsync(analyzer, new[] { fooCode }, AnalyzerAssert.MetadataReferences).ConfigureAwait(false);
+            await Analyze.GetDiagnosticsAsync(analyzer, new[] { fooCode }, RoslynAssert.MetadataReferences).ConfigureAwait(false);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
@@ -315,7 +315,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.Valid(analyzer, testCode);
+            RoslynAssert.Valid(analyzer, testCode);
         }
     }
 }

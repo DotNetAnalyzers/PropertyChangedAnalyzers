@@ -11,13 +11,13 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
+                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]
             public void TearDown()
             {
-                AnalyzerAssert.ResetAll();
+                RoslynAssert.ResetAll();
             }
 
             [Test]
@@ -68,7 +68,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
 
             [Test]
@@ -119,7 +119,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
             }
         }
     }

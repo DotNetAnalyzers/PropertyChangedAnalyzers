@@ -42,13 +42,13 @@ namespace RoslynSandbox
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            AnalyzerAssert.SuppressedDiagnostics.Add(INPC006UseReferenceEqualsForReferenceTypes.DiagnosticId);
+            RoslynAssert.SuppressedDiagnostics.Add(INPC006UseReferenceEqualsForReferenceTypes.DiagnosticId);
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            AnalyzerAssert.ResetAll();
+            RoslynAssert.ResetAll();
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -121,8 +121,8 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("Equals(value, this.bar)", check.FixedCall ?? check.Call);
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
-            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -161,7 +161,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("Equals(value, this.bar)", check.Call);
 
-            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, testCode);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, testCode);
         }
 
         [Test]
@@ -234,8 +234,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
-            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -308,8 +308,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
-            AnalyzerAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, fixedCode);
         }
 
         [Test]
@@ -346,7 +346,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode });
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode });
         }
 
         public class TestCase

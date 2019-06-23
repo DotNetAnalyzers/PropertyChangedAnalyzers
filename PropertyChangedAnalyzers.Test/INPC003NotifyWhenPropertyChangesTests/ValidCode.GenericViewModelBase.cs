@@ -61,7 +61,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -111,7 +111,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, viewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, viewModelBaseCode, testCode);
             }
 
             [Test]
@@ -131,7 +131,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -159,7 +159,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -187,7 +187,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -209,7 +209,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -237,7 +237,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
             }
 
             [Test]
@@ -270,7 +270,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                AnalyzerAssert.Valid(Analyzer, ViewModelBaseCode, fooBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, fooBaseCode, testCode);
             }
         }
     }

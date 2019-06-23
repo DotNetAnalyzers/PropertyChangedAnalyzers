@@ -62,7 +62,7 @@ namespace RoslynSandbox
 }".AssertReplace("Equals(value, this.bar)", check.Call)
   .AssertReplace("string", check.Type);
 
-                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [TestCaseSource(nameof(TestCases))]
@@ -104,7 +104,7 @@ namespace RoslynSandbox
 }".AssertReplace("Equals(value, this.bar)", check.Call)
   .AssertReplace("string", check.Type);
 
-                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -144,7 +144,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -184,7 +184,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -222,7 +222,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             [Test]
@@ -261,7 +261,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
             }
 
             public class TestCase

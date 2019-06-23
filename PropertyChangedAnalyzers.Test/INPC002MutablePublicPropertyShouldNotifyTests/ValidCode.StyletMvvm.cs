@@ -11,13 +11,13 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             [OneTimeSetUp]
             public void OneTimeSetUp()
             {
-                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
+                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]
             public void TearDown()
             {
-                AnalyzerAssert.ResetAll();
+                RoslynAssert.ResetAll();
             }
 
             [Test]
@@ -38,7 +38,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid(Analyzer, Descriptor, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, testCode);
             }
 
             [Test]
@@ -59,7 +59,7 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [TestCase("null")]
@@ -89,7 +89,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace(@"nameof(Bar)", propertyName);
 
-                AnalyzerAssert.Valid(Analyzer, Descriptor, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, testCode);
             }
         }
     }

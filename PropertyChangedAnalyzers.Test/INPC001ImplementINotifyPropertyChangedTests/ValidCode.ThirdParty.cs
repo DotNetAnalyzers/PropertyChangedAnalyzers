@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             [TearDown]
             public void TearDown()
             {
-                AnalyzerAssert.ResetMetadataReferences();
+                RoslynAssert.ResetMetadataReferences();
             }
 
             [Test]
@@ -26,8 +26,8 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -42,8 +42,8 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -58,8 +58,8 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -74,8 +74,8 @@ namespace RoslynSandbox
     }
 }";
 
-                AnalyzerAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
+                RoslynAssert.Valid(Analyzer, testCode);
             }
 
             [Test]
@@ -89,8 +89,8 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                AnalyzerAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
-                AnalyzerAssert.Valid(Analyzer, testCode);
+                RoslynAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
+                RoslynAssert.Valid(Analyzer, testCode);
             }
         }
     }
