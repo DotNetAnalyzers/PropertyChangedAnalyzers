@@ -745,7 +745,7 @@ NUGET
       BenchmarkDotNet (>= 0.11.5) - restriction: >= netstandard2.0
       Microsoft.Diagnostics.Tracing.TraceEvent (>= 2.0.34) - restriction: >= netstandard2.0
     CommandLineParser (2.5) - restriction: >= netstandard2.0
-    Gu.Roslyn.Asserts (2.7)
+    Gu.Roslyn.Asserts (2.7.1)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0)
     Microsoft.CodeAnalysis.Analyzers (2.9.3) - restriction: >= netstandard1.3
     Microsoft.CodeAnalysis.Common (2.10)
@@ -1641,7 +1641,7 @@ NUGET
       System.ComponentModel (>= 4.3) - restriction: && (< net40) (< netcoreapp1.0) (>= netstandard1.0) (< netstandard2.0)
     Gu.Reactive (4.0)
       System.Reactive (>= 4.0 < 5.0)
-    Gu.Roslyn.Asserts (2.7)
+    Gu.Roslyn.Asserts (2.7.1)
       Microsoft.CodeAnalysis.CSharp.Workspaces (>= 2.0)
     Gu.Wpf.Reactive (4.0)
       Gu.Reactive (>= 4.0)
