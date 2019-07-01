@@ -204,7 +204,7 @@ namespace PropertyChangedAnalyzers
                         candidate.MethodKind == MethodKind.Ordinary &&
                         candidate.IsStatic == propertyChangedEvent.IsStatic)
                     {
-                        if (candidate.ContainingType != containingType &&
+                        if (!Equals(candidate.ContainingType, containingType) &&
                             candidate.DeclaredAccessibility == Accessibility.Private)
                         {
                             continue;
