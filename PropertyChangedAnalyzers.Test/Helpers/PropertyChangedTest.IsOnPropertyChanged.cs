@@ -6,12 +6,12 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    internal partial class PropertyChangedTest
+    public partial class PropertyChangedTest
     {
-        internal class IsOnPropertyChanged
+        public static class IsOnPropertyChanged
         {
             [Test]
-            public void Elvis()
+            public static void Elvis()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -37,7 +37,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CopyLocalInvoke()
+            public static void CopyLocalInvoke()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -64,7 +64,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenCreatingPropertyChangedEventArgsSeparately()
+            public static void WhenCreatingPropertyChangedEventArgsSeparately()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -114,7 +114,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IgnoreWhenRaiseForOtherInstance()
+            public static void IgnoreWhenRaiseForOtherInstance()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -167,7 +167,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Stylet()
+            public static void Stylet()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -201,7 +201,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CaliburnMicro()
+            public static void CaliburnMicro()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -238,7 +238,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void MvvmLight()
+            public static void MvvmLight()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -275,7 +275,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenNotInvoker()
+            public static void WhenNotInvoker()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -304,7 +304,7 @@ namespace RoslynSandbox
             [TestCase("Bar3()", AnalysisResult.No)]
             [TestCase("Bar4()", AnalysisResult.No)]
             [TestCase("OnPropertyChanged();", AnalysisResult.Yes)]
-            public void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, AnalysisResult expected)
+            public static void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, AnalysisResult expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -351,7 +351,7 @@ namespace RoslynSandbox
             [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
             [TestCase("protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)")]
             [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
-            public void WhenTrue(string signature)
+            public static void WhenTrue(string signature)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -392,7 +392,7 @@ namespace RoslynSandbox
             [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
             [TestCase("protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)")]
             [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
-            public void WhenRecursive(string signature)
+            public static void WhenRecursive(string signature)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -430,7 +430,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExceptionHandlingRelayCommand()
+            public static void ExceptionHandlingRelayCommand()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox

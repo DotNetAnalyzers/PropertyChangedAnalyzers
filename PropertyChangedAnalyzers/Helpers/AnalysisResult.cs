@@ -1,6 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
-    internal enum AnalysisResult
+    public enum AnalysisResult
     {
         /// <summary>
         /// Analysis determined that PropertyChanged was not invoked in this path.

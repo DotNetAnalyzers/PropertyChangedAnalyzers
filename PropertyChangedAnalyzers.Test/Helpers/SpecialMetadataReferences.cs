@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
 
-    internal class SpecialMetadataReferences
+    public static class SpecialMetadataReferences
     {
         private static readonly DirectoryInfo ProjectDirectory = ProjectFile.Find("PropertyChangedAnalyzers.Test.csproj").Directory;
 

@@ -5,12 +5,12 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public class PropertyChangedEventArgsTests
+    public static class PropertyChangedEventArgsTests
     {
         [TestCase("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(\"Bar\");")]
         [TestCase("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(nameof(Bar));")]
         [TestCase("public static PropertyChangedEventArgs Cached { get; } = new PropertyChangedEventArgs(nameof(Bar));")]
-        public void Cached(string cached)
+        public static void Cached(string cached)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Local()
+        public static void Local()
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(
                 @"

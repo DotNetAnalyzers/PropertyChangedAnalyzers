@@ -1,16 +1,16 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    internal partial class PropertyChangedTest
+    public partial class PropertyChangedTest
     {
-        internal class TryGetBackingFieldAssignedInSetter
+        public static class TryGetBackingFieldAssignedInSetter
         {
             [Test]
-            public void Simple()
+            public static void Simple()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -37,7 +37,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAndRaise()
+            public static void SetAndRaise()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -86,7 +86,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void RecursiveSetAndRaise()
+            public static void RecursiveSetAndRaise()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"

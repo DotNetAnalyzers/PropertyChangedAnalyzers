@@ -5,12 +5,12 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    internal partial class PropertyChangedTest
+    public static partial class PropertyChangedTest
     {
-        internal class TryGetOnPropertyChanged
+        public static class TryGetOnPropertyChanged
         {
             [Test]
-            public void ElvisCallerMemberName()
+            public static void ElvisCallerMemberName()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -38,7 +38,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CopyLocalNullCheckCallerMemberName()
+            public static void CopyLocalNullCheckCallerMemberName()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -67,7 +67,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedEventArgsBeforeCallerMemberName()
+            public static void PropertyChangedEventArgsBeforeCallerMemberName()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -102,7 +102,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CallerMemberNameBeforePropertyChangedEventArgs()
+            public static void CallerMemberNameBeforePropertyChangedEventArgs()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -137,7 +137,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void OverridingEvent()
+            public static void OverridingEvent()
             {
                 var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -176,7 +176,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void OverridingEventPrivateInvokerInBase()
+            public static void OverridingEventPrivateInvokerInBase()
             {
                 var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -214,7 +214,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenCreatingPropertyChangedEventArgsSeparately()
+            public static void WhenCreatingPropertyChangedEventArgsSeparately()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -265,7 +265,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Static()
+            public static void Static()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -293,7 +293,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Recursive()
+            public static void Recursive()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"

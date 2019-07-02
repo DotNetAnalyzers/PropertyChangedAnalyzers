@@ -6,12 +6,12 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    internal partial class PropertyChangedTest
+    public static partial class PropertyChangedTest
     {
-        internal class TryGetSetAndRaise
+        public static class TryGetSetAndRaise
         {
             [Test]
-            public void CustomImplementation1()
+            public static void CustomImplementation1()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -55,7 +55,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CustomImplementation2()
+            public static void CustomImplementation2()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -114,7 +114,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void OverridingCaliburnMicroPropertyChangedBase()
+            public static void OverridingCaliburnMicroPropertyChangedBase()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -140,7 +140,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CallingCaliburnMicroPropertyChangedBase()
+            public static void CallingCaliburnMicroPropertyChangedBase()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -166,7 +166,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Recursive1()
+            public static void Recursive1()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -206,7 +206,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Recursive2()
+            public static void Recursive2()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"

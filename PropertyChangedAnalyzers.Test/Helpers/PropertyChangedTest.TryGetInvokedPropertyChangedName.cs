@@ -5,9 +5,9 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    internal partial class PropertyChangedTest
+    public partial class PropertyChangedTest
     {
-        internal class TryGetInvokedPropertyChangedName
+        public static class TryGetInvokedPropertyChangedName
         {
             [TestCase("this.OnPropertyChanged()")]
             [TestCase("this.OnPropertyChanged(\"Bar\")")]
@@ -20,7 +20,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)))")]
             [TestCase("this.OnPropertyChanged(Cached)")]
             [TestCase("this.OnPropertyChanged(args)")]
-            public void WhenTrue(string call)
+            public static void WhenTrue(string call)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -103,7 +103,7 @@ namespace RoslynSandbox
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)))")]
             [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)))")]
             [TestCase("this.OnPropertyChanged(Cached)")]
-            public void WhenRecursive(string call)
+            public static void WhenRecursive(string call)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"

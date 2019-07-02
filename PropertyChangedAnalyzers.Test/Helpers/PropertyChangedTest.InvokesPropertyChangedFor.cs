@@ -6,13 +6,13 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using NUnit.Framework;
 
-    internal partial class PropertyChangedTest
+    public static partial class PropertyChangedTest
     {
-        internal class InvokesPropertyChangedFor
+        public static class InvokesPropertyChangedFor
         {
             [TestCase("_value1 = value", "Value1")]
             [TestCase("_value2 = value", "Value2")]
-            public void Assignment(string signature, string propertyName)
+            public static void Assignment(string signature, string propertyName)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -118,7 +118,7 @@ namespace RoslynSandbox
             [TestCase("this.TrySet(ref this.value, value, null)", AnalysisResult.Yes)]
             [TestCase("this.TrySet(ref this.value, value, string.Empty)", AnalysisResult.Yes)]
             [TestCase("this.TrySet(ref this.value, value, \"Wrong\")", AnalysisResult.No)]
-            public void TrySetCallerMemberName(string trySetCode, AnalysisResult expected)
+            public static void TrySetCallerMemberName(string trySetCode, AnalysisResult expected)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -172,7 +172,7 @@ namespace RoslynSandbox
             [TestCase("this.TrySet(ref this.value, value, null)", AnalysisResult.Yes)]
             [TestCase("this.TrySet(ref this.value, value, string.Empty)", AnalysisResult.Yes)]
             [TestCase("this.TrySet(ref this.value, value, \"Wrong\")", AnalysisResult.No)]
-            public void TrySet(string trySetCode, AnalysisResult expected)
+            public static void TrySet(string trySetCode, AnalysisResult expected)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -223,7 +223,7 @@ namespace RoslynSandbox
             [TestCase("_value1 = value", "Value1")]
             [TestCase("_value2 = value", "Value2")]
             [TestCase("TrySet(ref _value3, value);", "Value3")]
-            public void WhenRecursive(string signature, string propertyName)
+            public static void WhenRecursive(string signature, string propertyName)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"

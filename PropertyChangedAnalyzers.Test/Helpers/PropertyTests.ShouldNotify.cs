@@ -5,9 +5,9 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    internal partial class PropertyTests
+    public static partial class PropertyTests
     {
-        internal class ShouldNotify
+        public static class ShouldNotify
         {
             [TestCase("Value1", false)]
             [TestCase("Value2", true)]
@@ -19,7 +19,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             [TestCase("Value8", true)]
             [TestCase("Value9", true)]
             [TestCase("Value10", true)]
-            public void MiscProperties(string propertyName, bool expected)
+            public static void MiscProperties(string propertyName, bool expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
     public class Foo
@@ -75,7 +75,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             [TestCase("Value8", true)]
             [TestCase("Value9", true)]
             [TestCase("Value10", true)]
-            public void MiscPropertiesUnderscoreNames(string propertyName, bool expected)
+            public static void MiscPropertiesUnderscoreNames(string propertyName, bool expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
@@ -127,7 +127,7 @@ namespace RoslynSandbox
             [TestCase("this.Value = 1;")]
             [TestCase("this.Value++")]
             [TestCase("this.Value--")]
-            public void PrivateSetAssignedInLambdaInCtor(string assignCode)
+            public static void PrivateSetAssignedInLambdaInCtor(string assignCode)
             {
                 var testCode = @"
 namespace RoslynSandbox

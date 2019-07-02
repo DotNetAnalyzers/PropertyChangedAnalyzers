@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    internal partial class PropertyTests
+    public partial class PropertyTests
     {
         [TestCase("Value1", false)]
         [TestCase("Value2", false)]
@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
         [TestCase("Lazy3", true)]
         [TestCase("Lazy4", true)]
         [TestCase("Lazy5", true)]
-        public void IsLazy(string code, bool expected)
+        public static void IsLazy(string code, bool expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandBox
@@ -106,7 +106,7 @@ namespace RoslynSandBox
         [TestCase("Value4", false, null)]
         [TestCase("Value5", true, "value5")]
         [TestCase("Value6", true, "value6")]
-        public void TryGetBackingField(string propertyName, bool expected, string fieldName)
+        public static void TryGetBackingField(string propertyName, bool expected, string fieldName)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandBox
@@ -162,7 +162,7 @@ namespace RoslynSandBox
         [TestCase("Value4", false)]
         [TestCase("Value5", false)]
         [TestCase("Value6", false)]
-        public void IsMutableAutoProperty(string propertyName, bool expected)
+        public static void IsMutableAutoProperty(string propertyName, bool expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandBox
@@ -213,7 +213,7 @@ namespace RoslynSandBox
         [TestCase("Value12", "this.value1")]
         [TestCase("Value1", "this.value1")]
         [TestCase("Value2", "this.value2")]
-        public void TrySingleReturnedInGetter(string propertyName, string expected)
+        public static void TrySingleReturnedInGetter(string propertyName, string expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(
                 @"

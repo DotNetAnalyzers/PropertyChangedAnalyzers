@@ -7,14 +7,14 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using NUnit.Framework;
 
-    public class EqualityTests
+    public static class EqualityTests
     {
         [TestCase("this.bar1 == this.bar1", true)]
         [TestCase("this.bar1 == bar1", true)]
         [TestCase("this.bar1 == bar2", true)]
         [TestCase("this.bar1 != bar2", false)]
         [TestCase("this.bar1 == missing", false)]
-        public void IsOperatorEquals(string check, bool expected)
+        public static void IsOperatorEquals(string check, bool expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -53,7 +53,7 @@ namespace RoslynSandbox
         [TestCase("this.bar1 != bar2", true)]
         [TestCase("this.bar1 == bar2", false)]
         [TestCase("this.bar1 != missing", false)]
-        public void IsOperatorNotEquals(string check, bool expected)
+        public static void IsOperatorNotEquals(string check, bool expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -101,7 +101,7 @@ namespace RoslynSandbox
         [TestCase("System.Nullable.Equals(this.bar1, this.bar4)", false)]
         [TestCase("System.Nullable.Equals(this.bar1, this.bar5)", false)]
         [TestCase("System.Nullable.Equals(this.bar1, missing)", false)]
-        public void IsNullableEquals(string check, bool expected)
+        public static void IsNullableEquals(string check, bool expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -155,7 +155,7 @@ namespace RoslynSandbox
         [TestCase("System.Nullable.Equals(this.bar1, this.bar4)", false)]
         [TestCase("System.Nullable.Equals(this.bar1, this.bar5)", true)]
         [TestCase("System.Nullable.Equals(this.bar1, missing)", false)]
-        public void IsObjectEquals(string check, bool expected)
+        public static void IsObjectEquals(string check, bool expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -197,7 +197,7 @@ namespace RoslynSandbox
         [TestCase("ReferenceEquals(this.bar1, missing)", false)]
         [TestCase("object.ReferenceEquals(this.bar1, missing)", false)]
         [TestCase("Object.ReferenceEquals(this.bar1, missing)", false)]
-        public void IsReferenceEquals(string check, bool expected)
+        public static void IsReferenceEquals(string check, bool expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -236,7 +236,7 @@ namespace RoslynSandbox
         [TestCase("System.String.Equals(this.bar1, this.bar1, StringComparison.OrdinalIgnoreCase)", true)]
         [TestCase("string.Equals(this.bar1, missing)", false)]
         [TestCase("string.Equals(this.bar1, this.bar3)", false)]
-        public void IsStringEquals(string check, bool expected)
+        public static void IsStringEquals(string check, bool expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -271,7 +271,7 @@ namespace RoslynSandbox
         [TestCase("bar1.Equals(bar2)", true)]
         [TestCase("this.bar1.Equals(missing)", false)]
         [TestCase("missing.Equals(this.bar1)", false)]
-        public void IsInstanceEquals(string check, bool expected)
+        public static void IsInstanceEquals(string check, bool expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -308,7 +308,7 @@ namespace RoslynSandbox
         [TestCase("EqualityComparer.Equals(missing, this.bar3)", false)]
         [TestCase("EqualityComparer<int>.Default.Equals(missing, this.bar1)", false)]
         [TestCase("EqualityComparer<int>.Default.Equals(this.bar1, missing)", false)]
-        public void IsEqualityComparerEquals(string check, bool expected)
+        public static void IsEqualityComparerEquals(string check, bool expected)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -342,7 +342,7 @@ namespace RoslynSandbox
         }
 
         [TestCase("EqualityComparer<T>.Default.Equals(arg1, arg1)", true)]
-        public void IsEqualityComparerEqualsGeneric(string check, bool expected)
+        public static void IsEqualityComparerEqualsGeneric(string check, bool expected)
         {
             var testCode = @"
 namespace RoslynSandbox
