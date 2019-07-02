@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC001ImplementINotifyPropertyChanged();
 
@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void CallsOnPropertyChanged(string propertyName)
+        public static void CallsOnPropertyChanged(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -54,7 +54,7 @@ namespace RoslynSandBox
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void CallsRaisePropertyChangedWithEventArgs(string propertyName)
+        public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -90,7 +90,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void CallsRaisePropertyChangedCallerMemberName()
+        public static void CallsRaisePropertyChangedCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -131,7 +131,7 @@ namespace RoslynSandBox
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void Invokes(string propertyName)
+        public static void Invokes(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -164,7 +164,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void InvokesCached()
+        public static void InvokesCached()
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -197,7 +197,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void TimeSpanTicks()
+        public static void TimeSpanTicks()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -238,7 +238,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExceptionHandlingRelayCommand()
+        public static void ExceptionHandlingRelayCommand()
         {
             var testCode = @"
 namespace RoslynSandbox

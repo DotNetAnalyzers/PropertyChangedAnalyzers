@@ -3,24 +3,24 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class PrismBindableBase
+        public static class PrismBindableBase
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SubclassBindableBaseAddUsing()
+            public static void SubclassBindableBaseAddUsing()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -45,7 +45,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SubclassBindableBaseFullyQualified()
+            public static void SubclassBindableBaseFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -68,7 +68,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ImplementINotifyPropertyChangedAddUsings()
+            public static void ImplementINotifyPropertyChangedAddUsings()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -101,7 +101,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ImplementINotifyPropertyChangedFullyQualified()
+            public static void ImplementINotifyPropertyChangedFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox

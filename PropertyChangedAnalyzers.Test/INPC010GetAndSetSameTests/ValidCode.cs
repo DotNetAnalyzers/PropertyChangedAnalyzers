@@ -5,13 +5,13 @@ namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly DiagnosticDescriptor Descriptor = INPC010GetAndSetSame.Descriptor;
 
         [Test]
-        public void NotifyingProperty()
+        public static void NotifyingProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WithBackingFieldExpressionBodies()
+        public static void WithBackingFieldExpressionBodies()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -79,7 +79,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void NestedField()
+        public static void NestedField()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -125,7 +125,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void NestedProperties()
+        public static void NestedProperties()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -173,7 +173,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void TimeSpanTicks()
+        public static void TimeSpanTicks()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -214,7 +214,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WrappingPoint()
+        public static void WrappingPoint()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -271,7 +271,7 @@ namespace RoslynSandbox
 
         [TestCase("get => Math.Abs(this.speed - 1) < 1E-2;")]
         [TestCase("get => Math.Abs(this.Speed - 1) < 1E-2;")]
-        public void IsSpeed1(string getter)
+        public static void IsSpeed1(string getter)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -320,7 +320,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExplicitImplementationWithCast()
+        public static void ExplicitImplementationWithCast()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -352,7 +352,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IntAndStringPropertyReturnFieldInGetter()
+        public static void IntAndStringPropertyReturnFieldInGetter()
         {
             var testCode = @"
 namespace ValidCode
@@ -401,7 +401,7 @@ namespace ValidCode
         }
 
         [Test]
-        public void IntAndStringPropertyReturnPropertyInGetter()
+        public static void IntAndStringPropertyReturnPropertyInGetter()
         {
             var testCode = @"
 namespace ValidCode
@@ -450,7 +450,7 @@ namespace ValidCode
         }
 
         [Test]
-        public void IntPropertiesReturnFieldInGetter()
+        public static void IntPropertiesReturnFieldInGetter()
         {
             var testCode = @"
 namespace ValidCode
@@ -498,7 +498,7 @@ namespace ValidCode
         }
 
         [Test]
-        public void IntPropertiesReturnPropertyInGetter()
+        public static void IntPropertiesReturnPropertyInGetter()
         {
             var testCode = @"
 namespace ValidCode
@@ -545,7 +545,7 @@ namespace ValidCode
         }
 
         [Test]
-        public void Issue102()
+        public static void Issue102()
         {
             var testCode = @"
 namespace ValidCode.Repros

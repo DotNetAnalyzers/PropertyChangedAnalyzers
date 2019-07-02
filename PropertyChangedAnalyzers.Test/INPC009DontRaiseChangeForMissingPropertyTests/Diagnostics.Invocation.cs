@@ -4,15 +4,15 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal partial class Diagnostics
+    public static partial class Diagnostics
     {
-        internal class Invocation
+        public static class Invocation
         {
             private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC009");
 
             [Test]
-            public void CallsCallerMemberNameFromMethod()
+            public static void CallsCallerMemberNameFromMethod()
             {
                 var testCode = @"
 namespace RoslynSandbox

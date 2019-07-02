@@ -4,12 +4,12 @@ namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC007MissingInvoker();
 
         [Test]
-        public void OnPropertyChangedCallerMemberName()
+        public static void OnPropertyChangedCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -53,7 +53,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OnPropertyChangedCallerMemberNameSealed()
+        public static void OnPropertyChangedCallerMemberNameSealed()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -97,7 +97,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OverridingEvent()
+        public static void OverridingEvent()
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -132,7 +132,7 @@ namespace RoslynSandbox.Client
 
         [Test]
         [Explicit("Not sure how we want this.")]
-        public void Set()
+        public static void Set()
         {
             var testCode = @"
 namespace RoslynSandbox.Client
@@ -171,7 +171,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public void Interface()
+        public static void Interface()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -188,7 +188,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InterfaceRepro()
+        public static void InterfaceRepro()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -227,7 +227,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SealedWithNoMutableProperties()
+        public static void SealedWithNoMutableProperties()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -253,7 +253,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCreatingPropertyChangedEventArgsSeparately()
+        public static void WhenCreatingPropertyChangedEventArgsSeparately()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -299,7 +299,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void StaticWithInvoker()
+        public static void StaticWithInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -322,7 +322,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WrappingPoint()
+        public static void WrappingPoint()
         {
             var testCode = @"
 namespace RoslynSandbox

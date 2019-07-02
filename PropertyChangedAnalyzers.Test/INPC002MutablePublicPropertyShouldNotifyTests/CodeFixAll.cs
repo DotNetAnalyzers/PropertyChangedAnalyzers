@@ -5,14 +5,14 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class CodeFixAll
+    public static class CodeFixAll
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new MakePropertyNotifyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC002MutablePublicPropertyShouldNotify.Descriptor);
 
         [Test]
-        public void TwoAutoPropertiesCallerMemberName()
+        public static void TwoAutoPropertiesCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -95,7 +95,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AutoPropertiesCallerMemberName()
+        public static void AutoPropertiesCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -196,7 +196,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AutoPropertiesCallerMemberNameUnderscoreNames()
+        public static void AutoPropertiesCallerMemberNameUnderscoreNames()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -297,7 +297,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying1()
+        public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying1()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -406,7 +406,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying2()
+        public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying2()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -515,7 +515,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying3()
+        public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying3()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -624,7 +624,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AutoPropertiesCallerMemberNameUnderscoreNamesTwoClassesInDocument()
+        public static void AutoPropertiesCallerMemberNameUnderscoreNamesTwoClassesInDocument()
         {
             var testCode = @"
 namespace RoslynSandbox

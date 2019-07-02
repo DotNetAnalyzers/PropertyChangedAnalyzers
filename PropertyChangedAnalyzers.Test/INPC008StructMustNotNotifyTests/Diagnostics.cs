@@ -4,12 +4,12 @@ namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC008StructMustNotNotify();
 
         [Test]
-        public void WhenNotifying()
+        public static void WhenNotifying()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -25,7 +25,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotifyingFullyQualified()
+        public static void WhenNotifyingFullyQualified()
         {
             var testCode = @"
 namespace RoslynSandbox

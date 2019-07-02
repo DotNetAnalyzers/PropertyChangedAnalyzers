@@ -4,12 +4,12 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AssignmentAnalyzer();
 
         [Test]
-        public void WhenSettingField()
+        public static void WhenSettingField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AutoProperty()
+        public static void AutoProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -86,7 +86,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreWhenValidationThrows()
+        public static void IgnoreWhenValidationThrows()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -135,7 +135,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreWhenValidationCall()
+        public static void IgnoreWhenValidationCall()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -193,7 +193,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreWhenSideEffect()
+        public static void IgnoreWhenSideEffect()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -239,7 +239,7 @@ namespace RoslynSandbox
 
         [TestCase("(_, __) => this.Value = value;")]
         [TestCase("delegate { this.Value = value; };")]
-        public void SettingNotifyingPropertyInLambda(string lambda)
+        public static void SettingNotifyingPropertyInLambda(string lambda)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -283,7 +283,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SettingNotifyingPropertyInLocalFunction()
+        public static void SettingNotifyingPropertyInLocalFunction()
         {
             var testCode = @"
 namespace RoslynSandbox

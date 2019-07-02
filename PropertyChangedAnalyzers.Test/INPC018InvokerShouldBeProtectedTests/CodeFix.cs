@@ -5,14 +5,14 @@ namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtectedTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new MethodDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new MakeProtectedFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC018InvokerShouldBeProtected.Descriptor);
 
         [Test]
-        public void ProtectedPropertyName()
+        public static void ProtectedPropertyName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -51,7 +51,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ProtectedPropertyChangedEventArgs()
+        public static void ProtectedPropertyChangedEventArgs()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -90,7 +90,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void MissingAccessModifier()
+        public static void MissingAccessModifier()
         {
             var testCode = @"
 namespace RoslynSandbox

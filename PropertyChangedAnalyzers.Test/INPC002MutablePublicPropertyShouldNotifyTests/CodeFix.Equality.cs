@@ -3,16 +3,16 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class CodeFixEquality
+        public static class Equality
         {
             [TestCase("int")]
             [TestCase("int?")]
             [TestCase("Nullable<int>")]
             [TestCase("string")]
             [TestCase("StringComparison")]
-            public void OpEqualsFor(string typeCode)
+            public static void OpEqualsFor(string typeCode)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ReferenceType()
+            public static void ReferenceType()
             {
                 var refTypeCode = @"
 namespace RoslynSandbox
@@ -135,7 +135,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void EquatableStruct()
+            public static void EquatableStruct()
             {
                 var equatableStruct = @"
 namespace RoslynSandbox
@@ -224,7 +224,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void NullableEquatableStruct()
+            public static void NullableEquatableStruct()
             {
                 var equatableStruct = @"
 namespace RoslynSandbox
@@ -312,7 +312,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void EquatableStructWithOpEquals()
+            public static void EquatableStructWithOpEquals()
             {
                 var equatableStruct = @"
 namespace RoslynSandbox
@@ -411,7 +411,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void NullableEquatableStructOpEquals()
+            public static void NullableEquatableStructOpEquals()
             {
                 var equatableStruct = @"
 namespace RoslynSandbox
@@ -509,7 +509,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void NotEquatableStruct()
+            public static void NotEquatableStruct()
             {
                 var equatableStruct = @"
 namespace RoslynSandbox
@@ -579,7 +579,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void NullableNotEquatableStruct()
+            public static void NullableNotEquatableStruct()
             {
                 var equatableStruct = @"
 namespace RoslynSandbox

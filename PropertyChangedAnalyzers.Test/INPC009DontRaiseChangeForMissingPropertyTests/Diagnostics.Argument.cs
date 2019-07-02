@@ -4,9 +4,9 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal partial class Diagnostics
+    public static partial class Diagnostics
     {
-        internal class Argument
+        public static class Argument
         {
             private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC009");
@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
             [TestCase(@"""Missing""")]
             [TestCase(@"nameof(PropertyChanged)")]
             [TestCase(@"nameof(this.PropertyChanged)")]
-            public void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
+            public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -60,7 +60,7 @@ namespace RoslynSandbox
             [TestCase(@"""Missing""")]
             [TestCase(@"nameof(PropertyChanged)")]
             [TestCase(@"nameof(this.PropertyChanged)")]
-            public void CallsRaisePropertyChangedWithEventArgs(string propertyName)
+            public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -98,7 +98,7 @@ namespace RoslynSandbox
             [TestCase(@"""Missing""")]
             [TestCase(@"nameof(PropertyChanged)")]
             [TestCase(@"nameof(this.PropertyChanged)")]
-            public void Invokes(string propertyName)
+            public static void Invokes(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -142,7 +142,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InvokesSimple()
+            public static void InvokesSimple()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -180,7 +180,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExpressionInvokerWithMethod()
+            public static void ExpressionInvokerWithMethod()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -233,7 +233,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExpressionInvokerWithThisEvent()
+            public static void ExpressionInvokerWithThisEvent()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -284,7 +284,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExpressionInvokerWithEvent()
+            public static void ExpressionInvokerWithEvent()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -335,7 +335,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExpressionInvokerWithStringEmpty()
+            public static void ExpressionInvokerWithStringEmpty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -386,7 +386,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedInvokeWithCachedEventArgs()
+            public static void PropertyChangedInvokeWithCachedEventArgs()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -431,7 +431,7 @@ namespace RoslynSandbox
 
             [TestCase("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")")]
             [TestCase("private static PropertyChangedEventArgs CachedArgs { get; } = new PropertyChangedEventArgs(\"Missing\")")]
-            public void CallsOnPropertyChangedWithCachedEventArgs(string cached)
+            public static void CallsOnPropertyChangedWithCachedEventArgs(string cached)
             {
                 var testCode = @"
 namespace RoslynSandbox

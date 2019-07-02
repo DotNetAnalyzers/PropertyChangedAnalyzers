@@ -3,13 +3,13 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class Repros
+        public static class Repros
         {
             [Explicit("#70")]
             [Test]
-            public void UglyViewModelBase()
+            public static void UglyViewModelBase()
             {
                 var barCode = @"
 namespace RoslynSandbox

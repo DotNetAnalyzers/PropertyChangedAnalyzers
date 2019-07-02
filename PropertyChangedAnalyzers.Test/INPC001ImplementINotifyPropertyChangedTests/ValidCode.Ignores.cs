@@ -3,12 +3,12 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class Ignores
+        public static class Ignores
         {
             [Test]
-            public void Struct()
+            public static void Struct()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -22,7 +22,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void GetOnly()
+            public static void GetOnly()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -37,7 +37,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void ExpressionBody()
+            public static void ExpressionBody()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -52,7 +52,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void CalculatedBody()
+            public static void CalculatedBody()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -70,7 +70,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void Abstract()
+            public static void Abstract()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -85,7 +85,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void Static()
+            public static void Static()
             {
                 // maybe this should notify?
                 var testCode = @"
@@ -101,7 +101,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void StaticEvent()
+            public static void StaticEvent()
             {
                 // maybe this should notify?
                 var testCode = @"
@@ -119,7 +119,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyProperty()
+            public static void DependencyProperty()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -146,7 +146,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void Event()
+            public static void Event()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -162,7 +162,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void MarkupExtension()
+            public static void MarkupExtension()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -219,7 +219,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void Attribute()
+            public static void Attribute()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -236,7 +236,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void DataTemplateSelector()
+            public static void DataTemplateSelector()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -288,7 +288,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void WhenBaseHasPropertyChangedEventButNoInterface()
+            public static void WhenBaseHasPropertyChangedEventButNoInterface()
             {
                 Assert.Inconclusive("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D");
                 //// ReSharper disable once HeuristicUnreachableCode
@@ -309,7 +309,7 @@ namespace RoslynSandBox
             [TestCase("Value = value;")]
             [TestCase("Value++;")]
             [TestCase("Value--;")]
-            public void PrivateSetterOnlyAssignedInCtor(string code)
+            public static void PrivateSetterOnlyAssignedInCtor(string code)
             {
                 var testCode = @"
 namespace RoslynSandbox

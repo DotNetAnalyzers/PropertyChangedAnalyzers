@@ -3,24 +3,24 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class CaliburnMicroScreen
+        public static class CaliburnMicroScreen
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.Screen).Assembly);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void AutoPropertyToNotifyWhenValueChanges()
+            public static void AutoPropertyToNotifyWhenValueChanges()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -59,7 +59,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void AutoPropertyToSet()
+            public static void AutoPropertyToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +89,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void AutoPropertyInitializedToSet()
+            public static void AutoPropertyInitializedToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -119,7 +119,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void AutoPropertyVirtualToSet()
+            public static void AutoPropertyVirtualToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -149,7 +149,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void AutoPropertyPrivateSetToSet()
+            public static void AutoPropertyPrivateSetToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -189,7 +189,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void AutoPropertyToSetUnderscoreNames()
+            public static void AutoPropertyToSetUnderscoreNames()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -229,7 +229,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WithBackingFieldToSet()
+            public static void WithBackingFieldToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -265,7 +265,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WithBackingFieldToSetUnderscoreNames()
+            public static void WithBackingFieldToSetUnderscoreNames()
             {
                 var testCode = @"
 namespace RoslynSandbox

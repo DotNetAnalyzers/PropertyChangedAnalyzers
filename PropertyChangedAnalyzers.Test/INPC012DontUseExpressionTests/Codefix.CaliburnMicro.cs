@@ -3,24 +3,24 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class CaliburnMicro
+        public static class CaliburnMicro
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.PropertyChangedBase).Assembly);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetMetadataReferences();
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpression()
+            public static void SetAffectsCalculatedPropertyExpression()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
+            public static void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox

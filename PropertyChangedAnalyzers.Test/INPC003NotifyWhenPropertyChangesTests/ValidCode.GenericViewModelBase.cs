@@ -3,9 +3,9 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class GenericViewModelBase
+        public static class GenericViewModelBase
         {
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -45,7 +45,7 @@ namespace RoslynSandbox.Core
 }";
 
             [Test]
-            public void SetProperty()
+            public static void SetProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -65,7 +65,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetPropertyWhenNullCoalescingInTrySet()
+            public static void SetPropertyWhenNullCoalescingInTrySet()
             {
                 var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -115,7 +115,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetPropertyExpressionBodies()
+            public static void SetPropertyExpressionBodies()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -135,7 +135,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExplicitNameOf()
+            public static void SetAffectsCalculatedPropertyExplicitNameOf()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -163,7 +163,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyNameOf()
+            public static void SetAffectsCalculatedPropertyNameOf()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -191,7 +191,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyStringEmpty()
+            public static void SetAffectsCalculatedPropertyStringEmpty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -213,7 +213,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpression()
+            public static void SetAffectsCalculatedPropertyExpression()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -241,7 +241,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void WhenOverriddenSet()
+            public static void WhenOverriddenSet()
             {
                 var fooBaseCode = @"
 namespace RoslynSandbox.Client

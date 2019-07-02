@@ -3,24 +3,24 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class PrismBindableBase
+        public static class PrismBindableBase
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SetAffectsCalculatedProperty()
+            public static void SetAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -48,7 +48,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyEmptyIf()
+            public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -76,7 +76,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedProperty()
+            public static void SetAffectsSecondCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -107,7 +107,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedPropertyMissingBraces()
+            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -138,7 +138,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void OnPropertyChangedAffectsCalculatedProperty()
+            public static void OnPropertyChangedAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -195,7 +195,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IfNotSetReturnCalculatedProperty()
+            public static void IfNotSetReturnCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox

@@ -3,12 +3,12 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class UnknownBinary
+        public static class UnknownBinary
         {
             [Test]
-            public void ExceptionHandlingRelayCommandGetSet()
+            public static void ExceptionHandlingRelayCommandGetSet()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -66,7 +66,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExceptionHandlingRelayCommand()
+            public static void ExceptionHandlingRelayCommand()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -135,7 +135,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExceptionHandlingRelayCommandNotify()
+            public static void ExceptionHandlingRelayCommandNotify()
             {
                 var testCode = @"
 namespace RoslynSandbox

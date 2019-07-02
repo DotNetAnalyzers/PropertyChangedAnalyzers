@@ -4,13 +4,13 @@ namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC010GetAndSetSame.Descriptor);
 
         [Test]
-        public void DifferentFields()
+        public static void DifferentFields()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DifferentFieldsInternal()
+        public static void DifferentFieldsInternal()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -100,7 +100,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DifferentNestedFields()
+        public static void DifferentNestedFields()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -147,7 +147,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void DifferentNestedProperties()
+        public static void DifferentNestedProperties()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -194,7 +194,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSettingNestedFieldRootLevel()
+        public static void WhenSettingNestedFieldRootLevel()
         {
             var barCode = @"
 namespace RoslynSandbox

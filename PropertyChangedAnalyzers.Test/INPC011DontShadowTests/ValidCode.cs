@@ -4,12 +4,12 @@ namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC011DontShadow();
 
         [Test]
-        public void NoBaseClass()
+        public static void NoBaseClass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -53,7 +53,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OverridingEvent()
+        public static void OverridingEvent()
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core

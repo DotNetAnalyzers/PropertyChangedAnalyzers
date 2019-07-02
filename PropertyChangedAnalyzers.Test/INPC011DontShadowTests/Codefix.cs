@@ -5,14 +5,14 @@ namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC011DontShadow();
         private static readonly CodeFixProvider Fix = new RemoveShadowingFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC011");
 
         [Test]
-        public void ShadowingEvent()
+        public static void ShadowingEvent()
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core

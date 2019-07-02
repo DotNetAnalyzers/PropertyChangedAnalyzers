@@ -4,13 +4,13 @@ namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC015PropertyIsRecursive.Descriptor);
 
         [Test]
-        public void ExpressionBody()
+        public static void ExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -25,7 +25,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void GetterStatementBody()
+        public static void GetterStatementBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -43,7 +43,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void GetterExpressionBody()
+        public static void GetterExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -61,7 +61,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SetterStatementBody()
+        public static void SetterStatementBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -82,7 +82,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SetterExpressionBody()
+        public static void SetterExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox

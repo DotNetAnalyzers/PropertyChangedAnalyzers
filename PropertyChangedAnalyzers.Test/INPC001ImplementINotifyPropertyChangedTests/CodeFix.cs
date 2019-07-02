@@ -5,14 +5,14 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC001ImplementINotifyPropertyChanged();
         private static readonly CodeFixProvider Fix = new ImplementINotifyPropertyChangedFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC001");
 
         [Test]
-        public void Message()
+        public static void Message()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -34,7 +34,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenPublicClassPublicAutoProperty()
+        public static void WhenPublicClassPublicAutoProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -66,7 +66,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenInternalClassInternalAutoProperty()
+        public static void WhenInternalClassInternalAutoProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -97,7 +97,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotNotifyingWithBackingField()
+        public static void WhenNotNotifyingWithBackingField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -152,7 +152,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotNotifyingWithBackingFieldExpressionBodies()
+        public static void WhenNotNotifyingWithBackingFieldExpressionBodies()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -195,7 +195,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotNotifyingWithBackingFieldUnderscoreNames()
+        public static void WhenNotNotifyingWithBackingFieldUnderscoreNames()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -250,7 +250,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenEventOnly()
+        public static void WhenEventOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -282,7 +282,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenEventAndInvokerOnly()
+        public static void WhenEventAndInvokerOnly()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -322,7 +322,7 @@ namespace RoslynSandbox
 
         [Test]
         [Explicit("Not sure how we want this.")]
-        public void IgnoresWhenBaseIsMouseGesture()
+        public static void IgnoresWhenBaseIsMouseGesture()
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -341,7 +341,7 @@ namespace RoslynSandBox
         [TestCase("this.Value = 1;")]
         [TestCase("this.Value++")]
         [TestCase("this.Value--")]
-        public void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
+        public static void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class HandlesRecursion
+    public static class HandlesRecursion
     {
         private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(AnalyzerConstants)
             .Assembly
@@ -18,14 +18,14 @@ namespace PropertyChangedAnalyzers.Test
             .ToArray();
 
         [Test]
-        public void NotEmpty()
+        public static void NotEmpty()
         {
             CollectionAssert.IsNotEmpty(AllAnalyzers);
             Assert.Pass($"Count: {AllAnalyzers.Count}");
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public async Task InSetAndRaise(DiagnosticAnalyzer analyzer)
+        public async static Task InSetAndRaise(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -69,7 +69,7 @@ namespace RoslynSandbox.Client
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public async Task InOnPropertyChanged(DiagnosticAnalyzer analyzer)
+        public async static Task InOnPropertyChanged(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -121,7 +121,7 @@ namespace RoslynSandbox.Client
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public async Task InProperty(DiagnosticAnalyzer analyzer)
+        public async static Task InProperty(DiagnosticAnalyzer analyzer)
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -270,7 +270,7 @@ namespace RoslynSandbox
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public void Repro(DiagnosticAnalyzer analyzer)
+        public static void Repro(DiagnosticAnalyzer analyzer)
         {
             var testCode = @"
 namespace RoslynSandbox

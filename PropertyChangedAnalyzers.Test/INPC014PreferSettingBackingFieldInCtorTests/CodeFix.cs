@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AssignmentAnalyzer();
         private static readonly CodeFixProvider Fix = new SetBackingFieldFix();
@@ -44,7 +44,7 @@ namespace RoslynSandbox.Core
 #pragma warning restore SA1203 // Constants must appear before fields
 
         [Test]
-        public void SimplePropertyWithBackingFieldStatementBodySetter()
+        public static void SimplePropertyWithBackingFieldStatementBodySetter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -95,7 +95,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SimplePropertyWithBackingFieldExpressionBodySetter()
+        public static void SimplePropertyWithBackingFieldExpressionBodySetter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -140,7 +140,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SimplePropertyWithBackingFieldUnderscoreNames()
+        public static void SimplePropertyWithBackingFieldUnderscoreNames()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -198,7 +198,7 @@ namespace RoslynSandbox
         [TestCase("ReferenceEquals(value, this.value)")]
         [TestCase("value.Equals(this.value)")]
         [TestCase("this.value.Equals(value)")]
-        public void NotifyingProperty(string equals)
+        public static void NotifyingProperty(string equals)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -285,7 +285,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSettingFieldUsingTrySet()
+        public static void WhenSettingFieldUsingTrySet()
         {
             var testCode = @"
 namespace RoslynSandbox.Client
@@ -329,7 +329,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public void WhenSettingFieldUsingTrySetAndNotifyForOther()
+        public static void WhenSettingFieldUsingTrySetAndNotifyForOther()
         {
             var testCode = @"
 namespace RoslynSandbox.Client
@@ -389,7 +389,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public void WhenShadowingParameter()
+        public static void WhenShadowingParameter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -471,7 +471,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenShadowingLocal()
+        public static void WhenShadowingLocal()
         {
             var testCode = @"
 namespace RoslynSandbox

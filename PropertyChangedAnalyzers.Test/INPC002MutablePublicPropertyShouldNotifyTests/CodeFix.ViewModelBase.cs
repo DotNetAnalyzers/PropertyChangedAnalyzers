@@ -3,9 +3,9 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class ViewModelBase
+        public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -38,7 +38,7 @@ namespace RoslynSandbox.Core
 }";
 
             [Test]
-            public void AutoPropertyToNotifyWhenValueChanges()
+            public static void AutoPropertyToNotifyWhenValueChanges()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -77,7 +77,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void AutoPropertyToSet()
+            public static void AutoPropertyToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -107,7 +107,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void AutoPropertyInitializedToSet()
+            public static void AutoPropertyInitializedToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -137,7 +137,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void AutoPropertyVirtualToSet()
+            public static void AutoPropertyVirtualToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -167,7 +167,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void AutoPropertyPrivateSetToSet()
+            public static void AutoPropertyPrivateSetToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -207,7 +207,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void AutoPropertyToSetUnderscoreNames()
+            public static void AutoPropertyToSetUnderscoreNames()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -247,7 +247,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void WithBackingFieldToSet()
+            public static void WithBackingFieldToSet()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -283,7 +283,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void WithBackingFieldToSetUnderscoreNames()
+            public static void WithBackingFieldToSetUnderscoreNames()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -319,7 +319,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void AutoPropertyWhenRecursionInTrySet()
+            public static void AutoPropertyWhenRecursionInTrySet()
             {
                 var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -381,7 +381,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void AutoPropertyWhenNullCoalescingInTrySet()
+            public static void AutoPropertyWhenNullCoalescingInTrySet()
             {
                 var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -441,7 +441,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void UglyViewModelBase()
+            public static void UglyViewModelBase()
             {
                 var barCode = @"
 namespace RoslynSandbox
@@ -665,7 +665,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ViewModelBaseWithPropertyChangedEventArgsParameter()
+            public static void ViewModelBaseWithPropertyChangedEventArgsParameter()
             {
                 var viewModelBaseCode = @"
 namespace RoslynSandbox

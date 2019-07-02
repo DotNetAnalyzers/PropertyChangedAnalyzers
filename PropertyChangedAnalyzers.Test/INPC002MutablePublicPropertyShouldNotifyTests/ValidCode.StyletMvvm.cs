@@ -6,22 +6,22 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 
     public partial class ValidCode
     {
-        internal class StyletMvvm
+        public static class StyletMvvm
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void Set()
+            public static void Set()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -42,7 +42,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetExpressionBodies()
+            public static void SetExpressionBodies()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -67,7 +67,7 @@ namespace RoslynSandbox
             [TestCase(@"""Bar""")]
             [TestCase(@"nameof(Bar)")]
             [TestCase(@"nameof(this.Bar)")]
-            public void RaisePropertyChanged(string propertyName)
+            public static void RaisePropertyChanged(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox

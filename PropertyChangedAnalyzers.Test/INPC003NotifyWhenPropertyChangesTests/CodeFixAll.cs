@@ -5,14 +5,14 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFixAll
+    public static class CodeFixAll
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
         private static readonly CodeFixProvider Fix = new NotifyPropertyChangedFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC003NotifyWhenPropertyChanges.Descriptor);
 
         [Test]
-        public void WhenUsingPropertiesExpressionBody()
+        public static void WhenUsingPropertiesExpressionBody()
         {
             var testCode = @"
 using System.ComponentModel;
@@ -134,7 +134,7 @@ public class ViewModel : INotifyPropertyChanged
         }
 
         [Test]
-        public void WhenTwoCalculatedProperties()
+        public static void WhenTwoCalculatedProperties()
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -1,26 +1,26 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class CaliburnMicro
+        public static class CaliburnMicro
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.PropertyChangedBase).Assembly);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetMetadataReferences();
             }
 
             [Test]
-            public void SetAffectsCalculatedProperty()
+            public static void SetAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -48,7 +48,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyEmptyIf()
+            public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -76,7 +76,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedProperty()
+            public static void SetAffectsSecondCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -107,7 +107,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedPropertyMissingBraces()
+            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -138,7 +138,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void NotifyOfPropertyChangeAffectsCalculatedProperty()
+            public static void NotifyOfPropertyChangeAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -195,7 +195,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IfNotSetReturnCalculatedProperty()
+            public static void IfNotSetReturnCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox

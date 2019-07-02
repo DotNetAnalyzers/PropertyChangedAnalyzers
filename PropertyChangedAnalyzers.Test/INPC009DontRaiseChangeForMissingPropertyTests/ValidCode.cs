@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
 
     [TestFixture(typeof(ArgumentAnalyzer))]
     [TestFixture(typeof(InvocationAnalyzer))]
-    public class ValidCode<T>
+    public static class ValidCode<T>
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly T Analyzer = new T();
@@ -20,7 +20,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void OnPropertyChangedWithEventArgs(string propertyName)
+        public static void OnPropertyChangedWithEventArgs(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OnPropertyChangedCallerMemberName()
+        public static void OnPropertyChangedCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -94,7 +94,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OnPropertyChangedCallerMemberNameCopyLocalNullCheckInvoke()
+        public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckInvoke()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -134,7 +134,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OnPropertyChangedCallerMemberNameCopyLocalNullCheckImplicitInvoke()
+        public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckImplicitInvoke()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -179,7 +179,7 @@ namespace RoslynSandbox
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void Invokes(string propertyName)
+        public static void Invokes(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -214,7 +214,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InvokesCached()
+        public static void InvokesCached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -247,7 +247,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OnPropertyChangedInBaseClass()
+        public static void OnPropertyChangedInBaseClass()
         {
             var vmCode = @"
 namespace RoslynSandBox
@@ -293,7 +293,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void RaisesForIndexer()
+        public static void RaisesForIndexer()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -323,7 +323,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresWhenNotInvokingReproIssue122()
+        public static void IgnoresWhenNotInvokingReproIssue122()
         {
             var extCode = @"
 namespace RoslynSandbox
@@ -393,7 +393,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RaiseForOtherInstance()
+        public static void RaiseForOtherInstance()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -442,7 +442,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void RaiseForOtherInstanceOfOtherType()
+        public static void RaiseForOtherInstanceOfOtherType()
         {
             var vmCode = @"
 namespace RoslynSandBox
@@ -495,7 +495,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void RaiseForOtherInstanceOfOtherTypeWithBaseClass()
+        public static void RaiseForOtherInstanceOfOtherTypeWithBaseClass()
         {
             var vmBaseCode = @"
 namespace RoslynSandBox
@@ -554,7 +554,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void WhenNotAnInvoker()
+        public static void WhenNotAnInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -595,7 +595,7 @@ namespace RoslynSandbox
         [TestCase("\"\"")]
         [TestCase("string.Empty")]
         [TestCase("null")]
-        public void NotifyThatAllPropertiesChanges(string arg)
+        public static void NotifyThatAllPropertiesChanges(string arg)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -629,7 +629,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WithViewModelBase()
+        public static void WithViewModelBase()
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -710,7 +710,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public void OverriddenProperty()
+        public static void OverriddenProperty()
         {
             var fooBase = @"
 namespace RoslynSandbox.Core

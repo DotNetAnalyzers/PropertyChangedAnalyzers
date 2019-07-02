@@ -4,24 +4,24 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class MvvmCrossCore
+        public static class MvvmCrossCore
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SetProperty()
+            public static void SetProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetPropertyExpressionBodies()
+            public static void SetPropertyExpressionBodies()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -61,7 +61,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedProperty()
+            public static void SetAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +89,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpression()
+            public static void SetAffectsCalculatedPropertyExpression()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -117,7 +117,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenOverriddenSetProperty()
+            public static void WhenOverriddenSetProperty()
             {
                 var fooBaseCode = @"
 namespace RoslynSandbox

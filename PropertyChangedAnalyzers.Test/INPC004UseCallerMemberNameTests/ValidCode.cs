@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 
     [TestFixture(typeof(ArgumentAnalyzer))]
     [TestFixture(typeof(MethodDeclarationAnalyzer))]
-    public class ValidCode<T>
+    public static class ValidCode<T>
         where T : DiagnosticAnalyzer, new()
     {
         private static readonly T Analyzer = new T();
@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void CallsRaisePropertyChangedWithEventArgs(string propertyName)
+        public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsRaisePropertyChangedCallerMemberName()
+        public static void CallsRaisePropertyChangedCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -96,7 +96,7 @@ namespace RoslynSandbox
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void Invokes(string propertyName)
+        public static void Invokes(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -131,7 +131,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InvokesCached()
+        public static void InvokesCached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -164,7 +164,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void UpdateMethod()
+        public static void UpdateMethod()
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -213,7 +213,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void IgnoreWhenRaiseForOtherInstance()
+        public static void IgnoreWhenRaiseForOtherInstance()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -262,7 +262,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreWhenRaiseForOtherInstanceOfOtherType()
+        public static void IgnoreWhenRaiseForOtherInstanceOfOtherType()
         {
             var viewModelCode = @"
 namespace RoslynSandbox
@@ -318,7 +318,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreWhenCallingFrameworkBaseClass()
+        public static void IgnoreWhenCallingFrameworkBaseClass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -420,7 +420,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void TimeSpanTicks()
+        public static void TimeSpanTicks()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -461,7 +461,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExceptionHandlingRelayCommand()
+        public static void ExceptionHandlingRelayCommand()
         {
             var testCode = @"
 namespace RoslynSandbox

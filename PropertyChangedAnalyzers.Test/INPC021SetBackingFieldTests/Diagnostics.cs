@@ -4,13 +4,13 @@ namespace PropertyChangedAnalyzers.Test.INPC021SetBackingFieldTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC021SetBackingField.Descriptor);
 
         [Test]
-        public void ExpressionBody()
+        public static void ExpressionBody()
         {
             var code = @"
 namespace RoslynSandbox
@@ -51,7 +51,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void TrySetExpressionBody()
+        public static void TrySetExpressionBody()
         {
             var code = @"
 namespace ValidCode.TrySet
@@ -108,7 +108,7 @@ namespace ValidCode.TrySet
         }
 
         [Test]
-        public void StatementBody()
+        public static void StatementBody()
         {
             var code = @"
 namespace RoslynSandbox

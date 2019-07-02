@@ -4,24 +4,24 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class MvvmCrossCore
+        public static class MvvmCrossCore
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SetProperty()
+            public static void SetProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -42,7 +42,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetExpressionBodies()
+            public static void SetExpressionBodies()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -67,7 +67,7 @@ namespace RoslynSandbox
             [TestCase(@"""Bar""")]
             [TestCase(@"nameof(Bar)")]
             [TestCase(@"nameof(this.Bar)")]
-            public void RaisePropertyChanged(string propertyName)
+            public static void RaisePropertyChanged(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox

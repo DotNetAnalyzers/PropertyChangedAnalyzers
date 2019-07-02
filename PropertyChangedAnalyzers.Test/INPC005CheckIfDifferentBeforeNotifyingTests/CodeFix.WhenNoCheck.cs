@@ -3,12 +3,12 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class WhenNoCheck
+        public static class WhenNoCheck
         {
             [Test]
-            public void CallsOnPropertyChanged()
+            public static void CallsOnPropertyChanged()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -85,7 +85,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CallsOnPropertyChangedInternalClassInternalProperty()
+            public static void CallsOnPropertyChangedInternalClassInternalProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -162,7 +162,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CallsRaisePropertyChangedWithEventArgs()
+            public static void CallsRaisePropertyChangedWithEventArgs()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -229,7 +229,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedInvokeElvis()
+            public static void PropertyChangedInvokeElvis()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -294,7 +294,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedInvoke()
+            public static void PropertyChangedInvoke()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -361,7 +361,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedInvokeStaticClass()
+            public static void PropertyChangedInvokeStaticClass()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -428,7 +428,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedInvokeUnderscore()
+            public static void PropertyChangedInvokeUnderscore()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -495,7 +495,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedInvokeCachedEventArgs()
+            public static void PropertyChangedInvokeCachedEventArgs()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -564,7 +564,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedInvokeNoNullCheck()
+            public static void PropertyChangedInvokeNoNullCheck()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -631,7 +631,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WarnOnlyOnFirst()
+            public static void WarnOnlyOnFirst()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -714,7 +714,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenSettingNestedField()
+            public static void WhenSettingNestedField()
             {
                 var barCode = @"
 namespace RoslynSandbox

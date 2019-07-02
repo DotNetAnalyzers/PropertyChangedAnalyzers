@@ -5,14 +5,14 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new MakePropertyNotifyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC002");
 
         [Test]
-        public void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
+        public static void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -73,7 +73,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AutoPropertyExplicitNameHandlesRecursionInInvoker()
+        public static void AutoPropertyExplicitNameHandlesRecursionInInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -97,7 +97,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InternalClass()
+        public static void InternalClass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InternalProperty()
+        public static void InternalProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -222,7 +222,7 @@ namespace RoslynSandbox
 
         [Test]
         [Explicit("Not sure how we want this.")]
-        public void NoFixWhenBaseHasInternalOnPropertyChanged()
+        public static void NoFixWhenBaseHasInternalOnPropertyChanged()
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -241,7 +241,7 @@ namespace RoslynSandBox
         [TestCase("this.Value = 1;")]
         [TestCase("this.Value++")]
         [TestCase("this.Value--")]
-        public void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
+        public static void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -316,7 +316,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenBackingFieldNotifyWhenValueChanged()
+        public static void WhenBackingFieldNotifyWhenValueChanged()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -378,7 +378,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenBackingFieldNotifyCallerMemberName()
+        public static void WhenBackingFieldNotifyCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -432,7 +432,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenBackingFieldExpressionBodyAccessors()
+        public static void WhenBackingFieldExpressionBodyAccessors()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -491,7 +491,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenBackingFieldNotify()
+        public static void WhenBackingFieldNotify()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -548,7 +548,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenBackingFieldExpressionBodyAccessorsNotify()
+        public static void WhenBackingFieldExpressionBodyAccessorsNotify()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -602,7 +602,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSettingNestedField()
+        public static void WhenSettingNestedField()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -672,7 +672,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSettingNestedFieldNotify()
+        public static void WhenSettingNestedFieldNotify()
         {
             var barCode = @"
 namespace RoslynSandbox

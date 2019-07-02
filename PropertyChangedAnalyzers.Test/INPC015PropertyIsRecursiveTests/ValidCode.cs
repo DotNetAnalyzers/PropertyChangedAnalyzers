@@ -5,13 +5,13 @@ namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly DiagnosticDescriptor Descriptor = INPC015PropertyIsRecursive.Descriptor;
 
         [Test]
-        public void NotifyingProperty()
+        public static void NotifyingProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void GetSetExpressionBodyAccessors()
+        public static void GetSetExpressionBodyAccessors()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -79,7 +79,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void BaseCall()
+        public static void BaseCall()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -99,7 +99,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExplicitInterfaceImplementation()
+        public static void ExplicitInterfaceImplementation()
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -4,24 +4,24 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class StyletMvvm
+        public static class StyletMvvm
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SubclassPropertyChangedBaseAddUsing()
+            public static void SubclassPropertyChangedBaseAddUsing()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SubclassPropertyChangedBaseFullyQualified()
+            public static void SubclassPropertyChangedBaseFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -69,7 +69,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ImplementINotifyPropertyChangedAddUsings()
+            public static void ImplementINotifyPropertyChangedAddUsings()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -102,7 +102,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ImplementINotifyPropertyChangedFullyQualified()
+            public static void ImplementINotifyPropertyChangedFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox

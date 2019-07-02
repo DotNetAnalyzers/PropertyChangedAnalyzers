@@ -4,24 +4,24 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class MvvmCrossCore
+        public static class MvvmCrossCore
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpression()
+            public static void SetAffectsCalculatedPropertyExpression()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -72,7 +72,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
+            public static void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox

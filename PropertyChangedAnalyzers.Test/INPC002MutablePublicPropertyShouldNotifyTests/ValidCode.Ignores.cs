@@ -3,12 +3,12 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class Ignores
+        public static class Ignores
         {
             [Test]
-            public void Struct()
+            public static void Struct()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -23,7 +23,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void GetOnly()
+            public static void GetOnly()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -38,7 +38,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetOnly()
+            public static void SetOnly()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExpressionBody()
+            public static void ExpressionBody()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -86,7 +86,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CalculatedBody()
+            public static void CalculatedBody()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -104,7 +104,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Abstract()
+            public static void Abstract()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -119,7 +119,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Static()
+            public static void Static()
             {
                 // maybe this should notify?
                 var testCode = @"
@@ -135,7 +135,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InternalClass()
+            public static void InternalClass()
             {
                 // maybe this should notify?
                 var testCode = @"
@@ -151,7 +151,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InternalProperty()
+            public static void InternalProperty()
             {
                 // maybe this should notify?
                 var testCode = @"
@@ -167,7 +167,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void DependencyProperty()
+            public static void DependencyProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -194,7 +194,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PrivateSetterOnlyAssignedInCtor()
+            public static void PrivateSetterOnlyAssignedInCtor()
             {
                 var testCode = @"
 namespace RoslynSandbox

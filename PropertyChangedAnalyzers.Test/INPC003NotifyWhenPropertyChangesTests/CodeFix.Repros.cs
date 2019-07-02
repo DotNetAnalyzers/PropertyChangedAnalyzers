@@ -3,10 +3,10 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
         [Test]
-        public void Vanguard_MVVM_ViewModels_MainWindowViewModel()
+        public static void Vanguard_MVVM_ViewModels_MainWindowViewModel()
         {
             var childDataContext = @"
 namespace Vanguard_MVVM.ViewModels
@@ -102,7 +102,7 @@ namespace Vanguard_MVVM.ViewModels
         }
 
         [Test]
-        public void Vanguard_MVVM_ViewModels_MainWindowViewModelCommentedOut()
+        public static void Vanguard_MVVM_ViewModels_MainWindowViewModelCommentedOut()
         {
             var childDataContext = @"namespace Vanguard_MVVM.ViewModels
 {

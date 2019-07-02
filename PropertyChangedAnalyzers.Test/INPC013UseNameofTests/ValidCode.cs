@@ -4,12 +4,12 @@ namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
 
         [Test]
-        public void WhenThrowingArgumentException()
+        public static void WhenThrowingArgumentException()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -31,7 +31,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ArgumentOutOfRangeException()
+        public static void ArgumentOutOfRangeException()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -54,7 +54,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresDebuggerDisplay()
+        public static void IgnoresDebuggerDisplay()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -69,7 +69,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresTypeName()
+        public static void IgnoresTypeName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -93,7 +93,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresVariableDeclaredAfter()
+        public static void IgnoresVariableDeclaredAfter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -117,7 +117,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoresNamespaceName()
+        public static void IgnoresNamespaceName()
         {
             var testCode = @"
 namespace RoslynSandbox

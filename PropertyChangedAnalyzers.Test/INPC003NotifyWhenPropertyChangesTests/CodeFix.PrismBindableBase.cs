@@ -3,24 +3,24 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class PrismBindableBase
+        public static class PrismBindableBase
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SetAffectsCalculatedProperty()
+            public static void SetAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -66,7 +66,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyInternalClassInternalProperty()
+            public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -112,7 +112,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpressionBodyGetter()
+            public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -164,7 +164,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetExpressionBodiesAffectsCalculatedProperty()
+            public static void SetExpressionBodiesAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -210,7 +210,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyEmptyIf()
+            public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -261,7 +261,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedProperty()
+            public static void SetAffectsSecondCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -318,7 +318,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedPropertyMissingBraces()
+            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -373,7 +373,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void OnPropertyChangedAffectsCalculatedProperty()
+            public static void OnPropertyChangedAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -482,7 +482,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IfNotSetReturnSetAffectsSecondCalculatedProperty()
+            public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -543,7 +543,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
+            public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
             {
                 var testCode = @"
 namespace RoslynSandbox

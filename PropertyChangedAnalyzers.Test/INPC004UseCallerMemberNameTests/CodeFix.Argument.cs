@@ -5,22 +5,22 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        public class Argument
+        public static class Argument
         {
             private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
             private static readonly UseCallerMemberNameFix Fix = new UseCallerMemberNameFix();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC004");
 
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
@@ -28,7 +28,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             [TestCase(@"""Value""")]
             [TestCase(@"nameof(Value)")]
             [TestCase(@"nameof(this.Value)")]
-            public void CallsOnPropertyChangedWithExplicitNameOfCallerWhenParameterIsCallerMemberName(string propertyName)
+            public static void CallsOnPropertyChangedWithExplicitNameOfCallerWhenParameterIsCallerMemberName(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -113,7 +113,7 @@ namespace RoslynSandbox
             [TestCase(@"""Value""")]
             [TestCase(@"nameof(Value)")]
             [TestCase(@"nameof(this.Value)")]
-            public void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
+            public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -196,7 +196,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InternalClassInternalProperty()
+            public static void InternalClassInternalProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -278,7 +278,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SecondArgument()
+            public static void SecondArgument()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -360,7 +360,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void StyletSetAndNotify()
+            public static void StyletSetAndNotify()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -396,7 +396,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void FixAll()
+            public static void FixAll()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -523,7 +523,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExplicitNameOf()
+            public static void SetAffectsCalculatedPropertyExplicitNameOf()
             {
                 var viewModelBaseCode = @"
 namespace RoslynSandbox.Core

@@ -3,12 +3,12 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class Ignore
+        public static class Ignore
         {
             [Test]
-            public void Lazy1()
+            public static void Lazy1()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -88,7 +88,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void Lazy2()
+            public static void Lazy2()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -168,7 +168,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void LazyNullCoalesce()
+            public static void LazyNullCoalesce()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -243,7 +243,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void LazyNullCoalesceExpressionBody()
+            public static void LazyNullCoalesceExpressionBody()
             {
                 var commandCode = @"
 namespace RoslynSandBox
@@ -312,7 +312,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void InCtor()
+            public static void InCtor()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -344,7 +344,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void InInitializer()
+            public static void InInitializer()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -376,7 +376,7 @@ namespace RoslynSandBox
             }
 
             [Test(Description = "We let INPC002 nag about this.")]
-            public void SimplePropertyWithBackingField()
+            public static void SimplePropertyWithBackingField()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -407,7 +407,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void AssigningFieldsInGetter()
+            public static void AssigningFieldsInGetter()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -442,7 +442,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void LazyGetter()
+            public static void LazyGetter()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -480,7 +480,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void LazyGetterExpressionBody()
+            public static void LazyGetterExpressionBody()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -507,7 +507,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void DisposeMethod()
+            public static void DisposeMethod()
             {
                 var testCode = @"
 namespace RoslynSandBox
@@ -561,7 +561,7 @@ namespace RoslynSandBox
             }
 
             [Test]
-            public void Recursive()
+            public static void Recursive()
             {
                 var testCode = @"
 namespace RoslynSandbox

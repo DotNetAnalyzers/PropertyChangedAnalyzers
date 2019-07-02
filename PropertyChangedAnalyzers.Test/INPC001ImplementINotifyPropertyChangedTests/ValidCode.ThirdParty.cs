@@ -4,18 +4,18 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class ThirdParty
+        public static class ThirdParty
         {
             [TearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetMetadataReferences();
             }
 
             [Test]
-            public void MvvmLight()
+            public static void MvvmLight()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -31,7 +31,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CaliburnMicro()
+            public static void CaliburnMicro()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -47,7 +47,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Stylet()
+            public static void Stylet()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -63,7 +63,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void MvvmCross()
+            public static void MvvmCross()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -79,7 +79,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SubclassBindableBase()
+            public static void SubclassBindableBase()
             {
                 var testCode = @"
 namespace RoslynSandbox

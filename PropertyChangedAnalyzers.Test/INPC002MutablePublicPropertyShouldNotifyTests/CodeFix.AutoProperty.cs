@@ -3,12 +3,12 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class AutoProperty
+        public static class AutoProperty
         {
             [Test]
-            public void Message()
+            public static void Message()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -38,7 +38,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CallerMemberName()
+            public static void CallerMemberName()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -97,7 +97,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InternalClassInternalPropertyCallerMemberName()
+            public static void InternalClassInternalPropertyCallerMemberName()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -156,7 +156,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExplicitName()
+            public static void ExplicitName()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -213,7 +213,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedEventArgs()
+            public static void PropertyChangedEventArgs()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -271,7 +271,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PropertyChangedEventArgsBeforeCallerMemberName()
+            public static void PropertyChangedEventArgsBeforeCallerMemberName()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -341,7 +341,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CallerMemberNameBeforePropertyChangedEventArgs()
+            public static void CallerMemberNameBeforePropertyChangedEventArgs()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -411,7 +411,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CallerMemberNameUnderscoreNames()
+            public static void CallerMemberNameUnderscoreNames()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -477,7 +477,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WithTrivia()
+            public static void WithTrivia()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -542,7 +542,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Vanilla()
+            public static void Vanilla()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -601,7 +601,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SeparateLines()
+            public static void SeparateLines()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -664,7 +664,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Virtual()
+            public static void Virtual()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -723,7 +723,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PrivateSet()
+            public static void PrivateSet()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -790,7 +790,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Initialized()
+            public static void Initialized()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -849,7 +849,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Generic()
+            public static void Generic()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -900,7 +900,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ConstrainedGenericReferenceType()
+            public static void ConstrainedGenericReferenceType()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -953,7 +953,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ConstrainedGenericValueType()
+            public static void ConstrainedGenericValueType()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -1006,7 +1006,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InsertCreatedFieldSorted()
+            public static void InsertCreatedFieldSorted()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -1128,7 +1128,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenFieldExists()
+            public static void WhenFieldExists()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -1188,7 +1188,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InsertsFieldAfterPreviousBackingField()
+            public static void InsertsFieldAfterPreviousBackingField()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -1280,7 +1280,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InsertsFieldBeforeNextBackingField()
+            public static void InsertsFieldBeforeNextBackingField()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -1372,7 +1372,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void HandlesFieldNamedAsKeyword()
+            public static void HandlesFieldNamedAsKeyword()
             {
                 var testCode = @"
 namespace RoslynSandbox

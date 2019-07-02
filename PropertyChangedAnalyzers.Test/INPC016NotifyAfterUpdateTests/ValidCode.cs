@@ -4,12 +4,12 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
 
         [Test]
-        public void OnPropertyChangedAfterAssign()
+        public static void OnPropertyChangedAfterAssign()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -53,7 +53,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void PropertyChangedInvokeAfterAssign()
+        public static void PropertyChangedInvokeAfterAssign()
         {
             var testCode = @"
 namespace RoslynSandbox

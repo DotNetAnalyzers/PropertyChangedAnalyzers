@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new IfStatementAnalyzer();
 
@@ -36,19 +36,19 @@ namespace RoslynSandbox
 }";
 
         [OneTimeSetUp]
-        public void OneTimeSetUp()
+        public static void OneTimeSetUp()
         {
             RoslynAssert.SuppressedDiagnostics.Add(INPC006UseReferenceEqualsForReferenceTypes.DiagnosticId);
         }
 
         [OneTimeTearDown]
-        public void OneTimeTearDown()
+        public static void OneTimeTearDown()
         {
             RoslynAssert.ResetAll();
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public void Check(TestCase check)
+        public static void Check(TestCase check)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +89,7 @@ namespace RoslynSandbox
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public void NegatedCheck(TestCase check)
+        public static void NegatedCheck(TestCase check)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -128,7 +128,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SimpleProperty()
+        public static void SimpleProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsRaisePropertyChangedWithEventArgsIfReturn()
+        public static void CallsRaisePropertyChangedWithEventArgsIfReturn()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -195,7 +195,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
+        public static void CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -231,7 +231,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsRaisePropertyChangedWithEventArgsIfBody()
+        public static void CallsRaisePropertyChangedWithEventArgsIfBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -269,7 +269,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsRaisePropertyChangedCallerMemberName()
+        public static void CallsRaisePropertyChangedCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -305,7 +305,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Invokes()
+        public static void Invokes()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -337,7 +337,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InvokesCached()
+        public static void InvokesCached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -370,7 +370,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreEqualityComparerEquals()
+        public static void IgnoreEqualityComparerEquals()
         {
             var fooCode = @"
 namespace RoslynSandbox
@@ -417,7 +417,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void IgnoreNegatedEqualityComparerEquals()
+        public static void IgnoreNegatedEqualityComparerEquals()
         {
             var fooCode = @"
 namespace RoslynSandbox

@@ -5,14 +5,14 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
         private static readonly CodeFixProvider Fix = new RemoveExpressionFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC012DontUseExpression.Descriptor);
 
         [Test]
-        public void ExpressionInvokerToCallerMemberName()
+        public static void ExpressionInvokerToCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -108,7 +108,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExpressionInvokerToCallerMemberNameInternalClassInternalProperty()
+        public static void ExpressionInvokerToCallerMemberNameInternalClassInternalProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -204,7 +204,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExpressionInvokerToCallerMemberNameCalculatedProperty()
+        public static void ExpressionInvokerToCallerMemberNameCalculatedProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -306,7 +306,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExpressionInvokerToNameOf()
+        public static void ExpressionInvokerToNameOf()
         {
             var testCode = @"
 namespace RoslynSandbox

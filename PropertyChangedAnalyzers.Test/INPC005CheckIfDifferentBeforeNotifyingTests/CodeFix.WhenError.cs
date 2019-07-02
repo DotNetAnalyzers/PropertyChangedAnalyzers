@@ -4,9 +4,9 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class WhenError
+        public static class WhenError
         {
             private static readonly IReadOnlyList<TestCase> TestCases = new[]
             {
@@ -26,7 +26,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
             };
 
             [TestCaseSource(nameof(TestCases))]
-            public void Check(TestCase check)
+            public static void Check(TestCase check)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -66,7 +66,7 @@ namespace RoslynSandbox
             }
 
             [TestCaseSource(nameof(TestCases))]
-            public void NegatedCheckReturn(TestCase check)
+            public static void NegatedCheckReturn(TestCase check)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -108,7 +108,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void OperatorNotEquals()
+            public static void OperatorNotEquals()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -148,7 +148,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void OperatorNotEqualsReturn()
+            public static void OperatorNotEqualsReturn()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -188,7 +188,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void OperatorEquals()
+            public static void OperatorEquals()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -226,7 +226,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void OperatorEqualsNoReturn()
+            public static void OperatorEqualsNoReturn()
             {
                 var testCode = @"
 namespace RoslynSandbox

@@ -3,15 +3,15 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class CS0535
+        public static class CS0535
         {
             // ReSharper disable once MemberHidesStaticFromOuterClass
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0535");
 
             [Test]
-            public void WhenInterfaceAndUsingSealedAddUsings()
+            public static void WhenInterfaceAndUsingSealedAddUsings()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -43,7 +43,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceAndUsingSealedFullyQualified()
+            public static void WhenInterfaceAndUsingSealedFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -74,7 +74,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceOnlyWithUsingAddUsing()
+            public static void WhenInterfaceOnlyWithUsingAddUsing()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -106,7 +106,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceOnlyWithUsingFullyQualified()
+            public static void WhenInterfaceOnlyWithUsingFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -137,7 +137,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceOnlyWithUsingUnderscoreAddUsings()
+            public static void WhenInterfaceOnlyWithUsingUnderscoreAddUsings()
             {
                 var testCode = @"
 #pragma warning disable 169
@@ -174,7 +174,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceOnlyWithUsingUnderscoreFullyQualified()
+            public static void WhenInterfaceOnlyWithUsingUnderscoreFullyQualified()
             {
                 var testCode = @"
 #pragma warning disable 169
@@ -210,7 +210,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceOnlyAndUsingsAddUsing()
+            public static void WhenInterfaceOnlyAndUsingsAddUsing()
             {
                 var testCode = @"
 #pragma warning disable 8019
@@ -245,7 +245,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceOnlyAndUsingsFullyQualified()
+            public static void WhenInterfaceOnlyAndUsingsFullyQualified()
             {
                 var testCode = @"
 #pragma warning disable 8019

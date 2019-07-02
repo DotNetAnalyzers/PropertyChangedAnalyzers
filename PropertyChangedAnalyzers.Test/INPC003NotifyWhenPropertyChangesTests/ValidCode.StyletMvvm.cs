@@ -4,24 +4,24 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class StyletMvvm
+        public static class StyletMvvm
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SetProperty()
+            public static void SetProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetPropertyExpressionBodies()
+            public static void SetPropertyExpressionBodies()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -61,7 +61,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedProperty()
+            public static void SetAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +89,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyStringEmpty()
+            public static void SetAffectsCalculatedPropertyStringEmpty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -111,7 +111,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpression()
+            public static void SetAffectsCalculatedPropertyExpression()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -139,7 +139,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenOverriddenSetAndNotify()
+            public static void WhenOverriddenSetAndNotify()
             {
                 var fooBaseCode = @"
 namespace RoslynSandbox

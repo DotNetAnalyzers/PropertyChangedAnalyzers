@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
 
@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void NoCalculated(string propertyName)
+        public static void NoCalculated(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -49,7 +49,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotifyingCallerMemberName()
+        public static void WhenNotifyingCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -117,7 +117,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
+        public static void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -186,7 +186,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsOnPropertyChangedWithExpression()
+        public static void CallsOnPropertyChangedWithExpression()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -237,7 +237,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExpressionInvokerCalculatedProperty()
+        public static void ExpressionInvokerCalculatedProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -312,7 +312,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotifyingCallerMemberNameExpressionBody()
+        public static void WhenNotifyingCallerMemberNameExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -378,7 +378,7 @@ namespace RoslynSandbox
 
         [Explicit("Looks like the binary got lost.")]
         [Test]
-        public void WhenNotifyingMvvmFramework()
+        public static void WhenNotifyingMvvmFramework()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -440,7 +440,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsOnPropertyChangedWithCachedEventArgs()
+        public static void CallsOnPropertyChangedWithCachedEventArgs()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -512,7 +512,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsChainedOnPropertyChanged()
+        public static void CallsChainedOnPropertyChanged()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -561,7 +561,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotifyingSettingFieldInMethod()
+        public static void WhenNotifyingSettingFieldInMethod()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -594,7 +594,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotifyingSettingFieldInMethodOutsideLock()
+        public static void WhenNotifyingSettingFieldInMethodOutsideLock()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -632,7 +632,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void NotifyingInLambda()
+        public static void NotifyingInLambda()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -670,7 +670,7 @@ namespace RoslynSandbox
         [TestCase("\"\"")]
         [TestCase("string.Empty")]
         [TestCase("null")]
-        public void NotifyThatAllPropertiesChanges(string arg)
+        public static void NotifyThatAllPropertiesChanges(string arg)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -704,7 +704,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void NoFieldTouched()
+        public static void NoFieldTouched()
         {
             //// This test is mostly for debugging when optimizing avoiding using syntax model.
             var testCode = @"
@@ -745,7 +745,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSettingNestedField()
+        public static void WhenSettingNestedField()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -791,7 +791,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenCreatingPropertyChangedEventArgsSeparately()
+        public static void WhenCreatingPropertyChangedEventArgsSeparately()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -848,7 +848,7 @@ namespace RoslynSandbox
         [TestCase("this.value * value")]
         [TestCase("value * this.value")]
         [TestCase("value * value")]
-        public void Squared(string square)
+        public static void Squared(string square)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -896,7 +896,7 @@ namespace RoslynSandbox
 
         [TestCase("Value = newValue;")]
         [TestCase("this.Value = newValue;")]
-        public void WhenSettingPropertyThatNotifies(string code)
+        public static void WhenSettingPropertyThatNotifies(string code)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -944,7 +944,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WeirdRefCase()
+        public static void WeirdRefCase()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -981,7 +981,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void Nested()
+        public static void Nested()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1026,7 +1026,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void TimeSpanTicks()
+        public static void TimeSpanTicks()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1067,7 +1067,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExceptionHandlingRelayCommand()
+        public static void ExceptionHandlingRelayCommand()
         {
             var testCode = @"
 namespace RoslynSandbox

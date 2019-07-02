@@ -3,9 +3,9 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class ViewModelBase
+        public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -38,7 +38,7 @@ namespace RoslynSandbox.Core
 }";
 
             [Test]
-            public void AssignedAffectsCalculatedPropertyOnPropertyChanged()
+            public static void AssignedAffectsCalculatedPropertyOnPropertyChanged()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -147,7 +147,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void IfNotSetReturnSetAffectsSecondCalculatedProperty()
+            public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -208,7 +208,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
+            public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -265,7 +265,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedProperty()
+            public static void SetAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -311,7 +311,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpressionBodyGetter()
+            public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -363,7 +363,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetExpressionBodiesAffectsCalculatedProperty()
+            public static void SetExpressionBodiesAffectsCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -409,7 +409,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyEmptyIf()
+            public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -460,7 +460,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedProperty()
+            public static void SetAffectsSecondCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -517,7 +517,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedPropertyMissingBraces()
+            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client

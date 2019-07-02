@@ -4,24 +4,24 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class MvvmCrossCore
+        public static class MvvmCrossCore
         {
             [OneTimeSetUp]
-            public void OneTimeSetUp()
+            public static void OneTimeSetUp()
             {
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SubclassMvxNotifyPropertyChangedAddUsing()
+            public static void SubclassMvxNotifyPropertyChangedAddUsing()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -46,7 +46,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SubclassMvxNotifyPropertyChangedFullyQualified()
+            public static void SubclassMvxNotifyPropertyChangedFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -69,7 +69,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SubclassMvxViewModelAddUsing()
+            public static void SubclassMvxViewModelAddUsing()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -94,7 +94,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SubclassMvxViewModelFullyQualified()
+            public static void SubclassMvxViewModelFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -117,7 +117,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ImplementINotifyPropertyChangedAddUsings()
+            public static void ImplementINotifyPropertyChangedAddUsings()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -150,7 +150,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ImplementINotifyPropertyChangedFullyQualified()
+            public static void ImplementINotifyPropertyChangedFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox

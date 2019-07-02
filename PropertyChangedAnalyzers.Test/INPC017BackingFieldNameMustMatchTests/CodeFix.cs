@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameFix();
@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
         [TestCase("valuee")]
         [TestCase("alue")]
         [TestCase("vvalue")]
-        public void ExpressionBody(string fieldName)
+        public static void ExpressionBody(string fieldName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -47,7 +47,7 @@ namespace RoslynSandbox
         [TestCase("_valuee")]
         [TestCase("_alue")]
         [TestCase("_vvalue")]
-        public void ExpressionBodyUnderscore(string fieldName)
+        public static void ExpressionBodyUnderscore(string fieldName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -78,7 +78,7 @@ namespace RoslynSandbox
         [TestCase("valuee")]
         [TestCase("alue")]
         [TestCase("vvalue")]
-        public void ExpressionBodyGetter(string fieldName)
+        public static void ExpressionBodyGetter(string fieldName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -115,7 +115,7 @@ namespace RoslynSandbox
         [TestCase("valuee")]
         [TestCase("alue")]
         [TestCase("vvalue")]
-        public void StatementBodyGetter(string fieldName)
+        public static void StatementBodyGetter(string fieldName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -153,7 +153,7 @@ namespace RoslynSandbox
         [TestCase("_valuee")]
         [TestCase("_alue")]
         [TestCase("_vvalue")]
-        public void ExpressionBodyGetterUnderscore(string fieldName)
+        public static void ExpressionBodyGetterUnderscore(string fieldName)
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -3,15 +3,15 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class CS0246
+        public static class CS0246
         {
             // ReSharper disable once MemberHidesStaticFromOuterClass
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0246");
 
             [Test]
-            public void WhenInterfaceOnlyAddUsings()
+            public static void WhenInterfaceOnlyAddUsings()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceOnlyFullyQualified()
+            public static void WhenInterfaceOnlyFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -68,7 +68,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceOnlySealedAddUsings()
+            public static void WhenInterfaceOnlySealedAddUsings()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -98,7 +98,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WhenInterfaceOnlySealedFullyQualified()
+            public static void WhenInterfaceOnlySealedFullyQualified()
             {
                 var testCode = @"
 namespace RoslynSandbox

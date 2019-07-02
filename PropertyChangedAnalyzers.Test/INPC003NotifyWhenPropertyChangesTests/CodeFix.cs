@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
         private static readonly CodeFixProvider Fix = new NotifyPropertyChangedFix();
@@ -21,7 +21,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
         [TestCase("this.value--;")]
         [TestCase("--this.value;")]
         [TestCase("++this.value;")]
-        public void IntFieldUpdatedInMethod(string update)
+        public static void IntFieldUpdatedInMethod(string update)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -90,7 +90,7 @@ namespace RoslynSandbox
         [TestCase("_value--;")]
         [TestCase("--_value;")]
         [TestCase("++_value;")]
-        public void IntFieldUpdatedInMethodUnderscoreNames(string update)
+        public static void IntFieldUpdatedInMethodUnderscoreNames(string update)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -154,7 +154,7 @@ namespace RoslynSandbox
         [TestCase("this.value |= value;")]
         [TestCase("this.value ^= value;")]
         [TestCase("this.value &= value;")]
-        public void BoolFieldUpdatedInMethod(string update)
+        public static void BoolFieldUpdatedInMethod(string update)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -214,7 +214,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingPropertiesExpressionBodyStringInterpolation()
+        public static void WhenUsingPropertiesExpressionBodyStringInterpolation()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -344,7 +344,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingPropertiesExpressionBodyStringInterpolationInternalClassInternalProperty()
+        public static void WhenUsingPropertiesExpressionBodyStringInterpolationInternalClassInternalProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -474,7 +474,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingPropertiesCopyLocalNullCheckInvoke()
+        public static void WhenUsingPropertiesCopyLocalNullCheckInvoke()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -606,7 +606,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingPropertiesExpressionBodyTernarySimple()
+        public static void WhenUsingPropertiesExpressionBodyTernarySimple()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -694,7 +694,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingPropertiesExpressionBodyNested()
+        public static void WhenUsingPropertiesExpressionBodyNested()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -844,7 +844,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingPropertiesExpressionBodyNestedSimple()
+        public static void WhenUsingPropertiesExpressionBodyNestedSimple()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -951,7 +951,7 @@ namespace RoslynSandbox
 
         [TestCase("=> CreateGreeting()")]
         [TestCase("=> this.CreateGreeting()")]
-        public void WhenUsingPropertiesExpressionCallingMethod(string call)
+        public static void WhenUsingPropertiesExpressionCallingMethod(string call)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1105,7 +1105,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingPropertiesExpressionBodyTernary()
+        public static void WhenUsingPropertiesExpressionBodyTernary()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1235,7 +1235,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingPropertiesStatementBody()
+        public static void WhenUsingPropertiesStatementBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1377,7 +1377,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingPropertiesStatementBodyUnderscoreNames()
+        public static void WhenUsingPropertiesStatementBodyUnderscoreNames()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1518,7 +1518,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingBackingFieldsExpressionBodyStringInterpolation()
+        public static void WhenUsingBackingFieldsExpressionBodyStringInterpolation()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1647,7 +1647,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingBackingFieldsExpressionBodyStringFormat()
+        public static void WhenUsingBackingFieldsExpressionBodyStringFormat()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -1777,7 +1777,7 @@ namespace RoslynSandbox
 
         [TestCase("this.name")]
         [TestCase("name")]
-        public void WhenUsingBackingFieldExpressionBodyStringToUpper(string path)
+        public static void WhenUsingBackingFieldExpressionBodyStringToUpper(string path)
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -1865,7 +1865,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void WhenUsingBackingFieldExpressionBodyStringElvisToUpper()
+        public static void WhenUsingBackingFieldExpressionBodyStringElvisToUpper()
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -1952,7 +1952,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void WhenUsingBackingFieldsExpressionBodyReturningCreatedObject()
+        public static void WhenUsingBackingFieldsExpressionBodyReturningCreatedObject()
         {
             var personCode = @"
 namespace RoslynSandBox
@@ -2099,7 +2099,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void WhenUsingBackingFieldsExpressionBodyReturningArray()
+        public static void WhenUsingBackingFieldsExpressionBodyReturningArray()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -2229,7 +2229,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingBackingFieldsYieldReturning()
+        public static void WhenUsingBackingFieldsYieldReturning()
         {
             var testCode = @"
 namespace RoslynSandBox
@@ -2375,7 +2375,7 @@ namespace RoslynSandBox
         }
 
         [Test]
-        public void WhenUsingBackingFieldsStatementBody()
+        public static void WhenUsingBackingFieldsStatementBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -2516,7 +2516,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingBackingFieldsStatementBodyWithSwitch()
+        public static void WhenUsingBackingFieldsStatementBodyWithSwitch()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -2627,7 +2627,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingBackingFieldsStatementBodyUnderscoreNames()
+        public static void WhenUsingBackingFieldsStatementBodyUnderscoreNames()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -2768,7 +2768,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void FieldUpdatedInMethodWithInvokerInBaseClass()
+        public static void FieldUpdatedInMethodWithInvokerInBaseClass()
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -2830,7 +2830,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public void InLambda1()
+        public static void InLambda1()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -2892,7 +2892,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InLambda2()
+        public static void InLambda2()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -2957,7 +2957,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void AssigningFieldsInGetter()
+        public static void AssigningFieldsInGetter()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -3027,7 +3027,7 @@ namespace RoslynSandbox
 
         [TestCase("this.bar.BarValue")]
         [TestCase("bar.BarValue")]
-        public void WhenAssigningNestedField(string path)
+        public static void WhenAssigningNestedField(string path)
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -3094,7 +3094,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenAssigningNestedFieldRoot()
+        public static void WhenAssigningNestedFieldRoot()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -3160,7 +3160,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenAssigningRootForNestedField()
+        public static void WhenAssigningRootForNestedField()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -3226,7 +3226,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OverriddenProperty()
+        public static void OverriddenProperty()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -3282,7 +3282,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenNotifyingInElseOnly()
+        public static void WhenNotifyingInElseOnly()
         {
             var testCode = @"
 namespace RoslynSandbox

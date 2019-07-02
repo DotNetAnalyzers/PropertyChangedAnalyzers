@@ -3,12 +3,12 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class WithBackingFieldNotify
+        public static class WithBackingFieldNotify
         {
             [Test]
-            public void CallerMemberName()
+            public static void CallerMemberName()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -79,7 +79,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void InternalClassInternalPropertyCallerMemberName()
+            public static void InternalClassInternalPropertyCallerMemberName()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -150,7 +150,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void ExplicitName()
+            public static void ExplicitName()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -217,7 +217,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WithTrivia()
+            public static void WithTrivia()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -298,7 +298,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void PrivateSetSingeLine()
+            public static void PrivateSetSingeLine()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -346,7 +346,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Private()
+            public static void Private()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -406,7 +406,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void Virtual()
+            public static void Virtual()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -466,7 +466,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WithNestedBackingField()
+            public static void WithNestedBackingField()
             {
                 var barCode = @"
 namespace RoslynSandbox
@@ -564,7 +564,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void WithNestedBackingFieldUnderScore()
+            public static void WithNestedBackingFieldUnderScore()
             {
                 var barCode = @"
 namespace RoslynSandbox
@@ -662,7 +662,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void CallerMemberNameAccessorsOnOneLine()
+            public static void CallerMemberNameAccessorsOnOneLine()
             {
                 var testCode = @"
 namespace RoslynSandbox

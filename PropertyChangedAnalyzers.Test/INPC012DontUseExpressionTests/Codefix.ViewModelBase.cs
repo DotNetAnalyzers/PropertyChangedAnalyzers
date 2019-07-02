@@ -3,9 +3,9 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class ViewModelBase
+        public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -45,7 +45,7 @@ namespace RoslynSandbox.Core
 }";
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpression()
+            public static void SetAffectsCalculatedPropertyExpression()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -96,7 +96,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
+            public static void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client

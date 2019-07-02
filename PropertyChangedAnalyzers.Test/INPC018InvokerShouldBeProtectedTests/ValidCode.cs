@@ -4,12 +4,12 @@ namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtectedTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new MethodDeclarationAnalyzer();
 
         [Test]
-        public void Protected()
+        public static void Protected()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -32,7 +32,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void PrivateInSealed()
+        public static void PrivateInSealed()
         {
             var testCode = @"
 namespace RoslynSandbox

@@ -5,22 +5,22 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 
     public partial class ValidCode
     {
-        internal class PrismBindableBase
+        public static class PrismBindableBase
         {
             [OneTimeSetUp]
-            public void OneTimeSetPropertyUp()
+            public static void OneTimeSetPropertyUp()
             {
                 RoslynAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
             }
 
             [OneTimeTearDown]
-            public void TearDown()
+            public static void TearDown()
             {
                 RoslynAssert.ResetAll();
             }
 
             [Test]
-            public void SetProperty()
+            public static void SetProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -41,7 +41,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public void SetPropertyExpressionBodies()
+            public static void SetPropertyExpressionBodies()
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -66,7 +66,7 @@ namespace RoslynSandbox
             [TestCase(@"""Bar""")]
             [TestCase(@"nameof(Bar)")]
             [TestCase(@"nameof(this.Bar)")]
-            public void OnPropertyChanged(string propertyName)
+            public static void OnPropertyChanged(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox

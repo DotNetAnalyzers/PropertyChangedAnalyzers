@@ -4,12 +4,12 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
 
         [Test]
-        public void NoBaseClass()
+        public static void NoBaseClass()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -56,7 +56,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallerMemberName()
+        public static void CallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -100,7 +100,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void NotInvoker()
+        public static void NotInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox

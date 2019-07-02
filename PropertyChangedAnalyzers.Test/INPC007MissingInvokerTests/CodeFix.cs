@@ -5,14 +5,14 @@ namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC007MissingInvoker();
         private static readonly CodeFixProvider Fix = new MissingInvokerFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC007");
 
         [Test]
-        public void EventOnlyAddInvoker()
+        public static void EventOnlyAddInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -44,7 +44,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventOnlyMakeSealed()
+        public static void EventOnlyMakeSealed()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -71,7 +71,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventOnlyWithUsing()
+        public static void EventOnlyWithUsing()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -105,7 +105,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventOnlySealed()
+        public static void EventOnlySealed()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -141,7 +141,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventOnlyStatic()
+        public static void EventOnlyStatic()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -173,7 +173,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OverridingEvent()
+        public static void OverridingEvent()
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -223,7 +223,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public void WithNoMutablePropertiesAddInvoker()
+        public static void WithNoMutablePropertiesAddInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -273,7 +273,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WithNoMutablePropertiesSeal()
+        public static void WithNoMutablePropertiesSeal()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -318,7 +318,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void UsesCorrectStyleIssue107()
+        public static void UsesCorrectStyleIssue107()
         {
             var fooCode = @"
 namespace RoslynSandbox

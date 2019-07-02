@@ -5,9 +5,9 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        public class Method
+        public static class Method
         {
             private static readonly DiagnosticAnalyzer Analyzer = new MethodDeclarationAnalyzer();
             private static readonly CodeFixProvider Fix = new UseCallerMemberNameFix();
@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 
             [TestCase("this.PropertyChanged")]
             [TestCase("PropertyChanged")]
-            public void Invoker(string member)
+            public static void Invoker(string member)
             {
                 var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
 
             [TestCase("this.OnPropertyChanged")]
             [TestCase("OnPropertyChanged")]
-            public void ChainedInvoker(string member)
+            public static void ChainedInvoker(string member)
             {
                 var testCode = @"
 namespace RoslynSandbox

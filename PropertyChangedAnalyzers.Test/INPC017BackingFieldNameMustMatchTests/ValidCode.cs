@@ -5,13 +5,13 @@ namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class ValidCode
+    public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly DiagnosticDescriptor Descriptor = INPC017BackingFieldNameMustMatch.Descriptor;
 
         [Test]
-        public void NotifyingProperty()
+        public static void NotifyingProperty()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExpressionBody()
+        public static void ExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -72,7 +72,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExpressionBodyWhenKeyword()
+        public static void ExpressionBodyWhenKeyword()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +89,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WithBackingFieldExpressionBodies()
+        public static void WithBackingFieldExpressionBodies()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -110,7 +110,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSettingNestedField()
+        public static void WhenSettingNestedField()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -156,7 +156,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void TimeSpanTicks()
+        public static void TimeSpanTicks()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -197,7 +197,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WrappingPoint()
+        public static void WrappingPoint()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -253,7 +253,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExplicitImplementationWithCast()
+        public static void ExplicitImplementationWithCast()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -285,7 +285,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void BackingFiledSum()
+        public static void BackingFiledSum()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -304,7 +304,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void TextLength()
+        public static void TextLength()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -321,7 +321,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenUsingMoreThanOneField()
+        public static void WhenUsingMoreThanOneField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -387,7 +387,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void StaticField()
+        public static void StaticField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -404,7 +404,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void StaticPropertyAndField()
+        public static void StaticPropertyAndField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -421,7 +421,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ConstField()
+        public static void ConstField()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -438,7 +438,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SequenceOfUpperCase()
+        public static void SequenceOfUpperCase()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -459,7 +459,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void SequenceOfUpperCaseUnderscore()
+        public static void SequenceOfUpperCaseUnderscore()
         {
             var testCode = @"
 namespace RoslynSandbox

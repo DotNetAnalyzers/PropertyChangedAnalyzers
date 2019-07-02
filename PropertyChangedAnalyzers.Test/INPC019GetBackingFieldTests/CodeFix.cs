@@ -5,14 +5,14 @@ namespace PropertyChangedAnalyzers.Test.INPC019GetBackingFieldTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    internal class CodeFix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new GetBackingFieldFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC019GetBackingField.Descriptor);
 
         [Test]
-        public void ExpressionBody()
+        public static void ExpressionBody()
         {
             var code = @"
 namespace RoslynSandbox
@@ -87,7 +87,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void TrySetExpressionBody()
+        public static void TrySetExpressionBody()
         {
             var code = @"
 namespace ValidCode.TrySet
@@ -194,7 +194,7 @@ namespace ValidCode.TrySet
         }
 
         [Test]
-        public void StatementBody()
+        public static void StatementBody()
         {
             var code = @"
 namespace RoslynSandbox

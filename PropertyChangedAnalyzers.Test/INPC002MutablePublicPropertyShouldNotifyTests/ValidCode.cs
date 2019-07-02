@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly DiagnosticDescriptor Descriptor = INPC002MutablePublicPropertyShouldNotify.Descriptor;
@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void CallsOnPropertyChanged(string propertyName)
+        public static void CallsOnPropertyChanged(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -51,7 +51,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
+        public static void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -96,7 +96,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsOnPropertyChangedExpressionBody()
+        public static void CallsOnPropertyChangedExpressionBody()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -129,7 +129,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExpressionInvoker()
+        public static void ExpressionInvoker()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -185,7 +185,7 @@ namespace RoslynSandbox
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void CallsRaisePropertyChangedWithEventArgs(string propertyName)
+        public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -221,7 +221,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsOnPropertyChangedWithCachedEventArgs()
+        public static void CallsOnPropertyChangedWithCachedEventArgs()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -258,7 +258,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsRaisePropertyChangedCallerMemberName()
+        public static void CallsRaisePropertyChangedCallerMemberName()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -294,7 +294,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsChainedOnPropertyChanged()
+        public static void CallsChainedOnPropertyChanged()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -343,7 +343,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void CallsChainedOnPropertyChangedInBase()
+        public static void CallsChainedOnPropertyChangedInBase()
         {
             var baseCode = @"
 namespace RoslynSandbox.Core
@@ -398,7 +398,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public void CallsChainedOnPropertyChangedInGenericBase()
+        public static void CallsChainedOnPropertyChangedInGenericBase()
         {
             var baseCode = @"
 namespace RoslynSandbox.Core
@@ -454,7 +454,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public void WhenCreatingPropertyChangedEventArgsSeparately()
+        public static void WhenCreatingPropertyChangedEventArgsSeparately()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -505,7 +505,7 @@ namespace RoslynSandbox
         [TestCase(@"""Bar""")]
         [TestCase(@"nameof(Bar)")]
         [TestCase(@"nameof(this.Bar)")]
-        public void Invokes(string propertyName)
+        public static void Invokes(string propertyName)
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -538,7 +538,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void InvokesCached()
+        public static void InvokesCached()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -571,7 +571,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WhenSettingNestedField()
+        public static void WhenSettingNestedField()
         {
             var barCode = @"
 namespace RoslynSandbox
@@ -617,7 +617,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void WrappingPoint()
+        public static void WrappingPoint()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -673,7 +673,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void TimeSpanTicks()
+        public static void TimeSpanTicks()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -714,7 +714,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void ExceptionHandlingRelayCommand()
+        public static void ExceptionHandlingRelayCommand()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -754,7 +754,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void EventDeclaration()
+        public static void EventDeclaration()
         {
             var testCode = @"
 namespace ValidCode
@@ -801,7 +801,7 @@ namespace ValidCode
         }
 
         [Test]
-        public void IntAndStringPropertyReturnFieldInGetter()
+        public static void IntAndStringPropertyReturnFieldInGetter()
         {
             var testCode = @"
 namespace ValidCode
@@ -850,7 +850,7 @@ namespace ValidCode
         }
 
         [Test]
-        public void IntAndStringPropertyReturnPropertyInGetter()
+        public static void IntAndStringPropertyReturnPropertyInGetter()
         {
             var testCode = @"
 namespace ValidCode
@@ -899,7 +899,7 @@ namespace ValidCode
         }
 
         [Test]
-        public void IntPropertiesReturnFieldInGetter()
+        public static void IntPropertiesReturnFieldInGetter()
         {
             var testCode = @"
 namespace ValidCode
@@ -947,7 +947,7 @@ namespace ValidCode
         }
 
         [Test]
-        public void IntPropertiesReturnPropertyInGetter()
+        public static void IntPropertiesReturnPropertyInGetter()
         {
             var testCode = @"
 namespace ValidCode

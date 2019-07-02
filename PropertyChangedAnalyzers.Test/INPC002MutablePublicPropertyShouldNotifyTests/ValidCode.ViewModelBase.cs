@@ -3,9 +3,9 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class ValidCode
+    public static partial class ValidCode
     {
-        internal class ViewModelBase
+        public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -38,7 +38,7 @@ namespace RoslynSandbox.Core
 }";
 
             [Test]
-            public void Set()
+            public static void Set()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -59,7 +59,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetWithThisGetWithout()
+            public static void SetWithThisGetWithout()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -80,7 +80,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetExpressionBodies()
+            public static void SetExpressionBodies()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -105,7 +105,7 @@ namespace RoslynSandbox.Client
             [TestCase(@"""Bar""")]
             [TestCase(@"nameof(Bar)")]
             [TestCase(@"nameof(this.Bar)")]
-            public void RaisePropertyChanged(string propertyName)
+            public static void RaisePropertyChanged(string propertyName)
             {
                 var testCode = @"
 namespace RoslynSandbox.Client

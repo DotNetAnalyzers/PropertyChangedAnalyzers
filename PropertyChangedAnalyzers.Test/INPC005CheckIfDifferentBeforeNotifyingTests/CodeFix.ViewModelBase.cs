@@ -3,9 +3,9 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public partial class CodeFix
+    public static partial class CodeFix
     {
-        internal class ViewModelBase
+        public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -45,7 +45,7 @@ namespace RoslynSandbox.Core
 }";
 
             [Test]
-            public void NoCheckAddIfReturn()
+            public static void NoCheckAddIfReturn()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client 
@@ -94,7 +94,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void NoCheckToUseSetAndRaise()
+            public static void NoCheckToUseSetAndRaise()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client 
@@ -134,7 +134,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void NoCheckExpressionToUseSetAndRaise()
+            public static void NoCheckExpressionToUseSetAndRaise()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client 
@@ -174,7 +174,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void NoIfForTrySet()
+            public static void NoIfForTrySet()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -224,7 +224,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void OutsideIfTrySet()
+            public static void OutsideIfTrySet()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -278,7 +278,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void InsideIfNegatedTrySet()
+            public static void InsideIfNegatedTrySet()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -307,7 +307,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyInternalClassInternalProperty()
+            public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -357,7 +357,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsCalculatedPropertyEmptyIf()
+            public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -410,7 +410,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedProperty()
+            public static void SetAffectsSecondCalculatedProperty()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client
@@ -469,7 +469,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public void SetAffectsSecondCalculatedPropertyMissingBraces()
+            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var testCode = @"
 namespace RoslynSandbox.Client

@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public class Diagnostics
+    public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC016");
@@ -49,7 +49,7 @@ namespace RoslynSandbox.Core
 #pragma warning restore SA1203 // Constants must appear before fields
 
         [Test]
-        public void OnPropertyChangedBeforeAssign()
+        public static void OnPropertyChangedBeforeAssign()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -89,7 +89,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void OnPropertyChangedPropertyChangedEventArgsBeforeAssign()
+        public static void OnPropertyChangedPropertyChangedEventArgsBeforeAssign()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -129,7 +129,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void PropertyChangedInvokeBeforeAssign()
+        public static void PropertyChangedInvokeBeforeAssign()
         {
             var testCode = @"
 namespace RoslynSandbox
@@ -169,7 +169,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public void BeforeTrySet()
+        public static void BeforeTrySet()
         {
             var testCode = @"
 namespace RoslynSandbox.Client
