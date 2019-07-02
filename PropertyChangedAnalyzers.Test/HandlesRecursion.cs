@@ -25,7 +25,7 @@ namespace PropertyChangedAnalyzers.Test
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public async static Task InSetAndRaise(DiagnosticAnalyzer analyzer)
+        public static async Task InSetAndRaise(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -69,7 +69,7 @@ namespace RoslynSandbox.Client
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public async static Task InOnPropertyChanged(DiagnosticAnalyzer analyzer)
+        public static async Task InOnPropertyChanged(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -121,7 +121,7 @@ namespace RoslynSandbox.Client
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public async static Task InProperty(DiagnosticAnalyzer analyzer)
+        public static async Task InProperty(DiagnosticAnalyzer analyzer)
         {
             var fooCode = @"
 namespace RoslynSandbox
