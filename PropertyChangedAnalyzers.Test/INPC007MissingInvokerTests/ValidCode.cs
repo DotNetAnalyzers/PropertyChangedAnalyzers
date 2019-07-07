@@ -376,5 +376,85 @@ namespace RoslynSandbox
 
             RoslynAssert.Valid(Analyzer, testCode);
         }
+
+        [Test]
+        public static void CachingInConcurrentDictionary1()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.Collections.Concurrent;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class CachingInConcurrentDictionary : INotifyPropertyChanged
+    {
+        private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> Cache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, Cache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public static void CachingInConcurrentDictionary2()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.Collections.Concurrent;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class CachingInConcurrentDictionary : INotifyPropertyChanged
+    {
+        private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> Cache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, Cache.GetOrAdd(propertyName, name => new PropertyChangedEventArgs(name)));
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, testCode);
+        }
+
+        [Test]
+        public static void CachingInConcurrentDictionaryLocal()
+        {
+            var testCode = @"
+namespace ValidCode
+{
+    using System.Collections.Concurrent;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class CachingInConcurrentDictionary : INotifyPropertyChanged
+    {
+        private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> _propertyChangedCache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            var args = _propertyChangedCache.GetOrAdd(propertyName, name => new PropertyChangedEventArgs(propertyName));
+
+            PropertyChanged?.Invoke(this, args);
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, testCode);
+        }
     }
 }

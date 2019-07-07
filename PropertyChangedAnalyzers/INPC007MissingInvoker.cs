@@ -4,7 +4,6 @@ namespace PropertyChangedAnalyzers
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -35,12 +34,7 @@ namespace PropertyChangedAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is EventFieldDeclarationSyntax eventFieldDeclaration &&
+            if (!context.IsExcludedFromAnalysis() &&
                 context.ContainingSymbol is IEventSymbol eventSymbol &&
                 eventSymbol.Type == KnownSymbol.PropertyChangedEventHandler &&
                 eventSymbol.Name == "PropertyChanged")
@@ -56,12 +50,12 @@ namespace PropertyChangedAnalyzers
                         return;
                     }
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
                 }
                 else if (eventSymbol.IsStatic &&
                          !PropertyChanged.TryGetOnPropertyChanged(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, eventFieldDeclaration.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
                 }
             }
         }
