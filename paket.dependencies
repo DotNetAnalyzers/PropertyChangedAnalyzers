@@ -20,7 +20,7 @@ group Benchmarks
   source http://www.nuget.org/api/v2/
   nuget Microsoft.NET.Test.Sdk
   nuget BenchmarkDotNet.Diagnostics.Windows
-  nuget Microsoft.CodeAnalysis.CSharp.Workspaces 2.10
+  nuget Microsoft.CodeAnalysis.CSharp.Workspaces
   nuget Gu.Roslyn.Asserts
   nuget NUnit
   nuget NUnit3TestAdapter
@@ -31,7 +31,7 @@ group Test
   nuget Microsoft.NET.Test.Sdk
   nuget NUnit
   nuget NUnit3TestAdapter
-  nuget Microsoft.CodeAnalysis.CSharp.Workspaces 2.10
+  nuget Microsoft.CodeAnalysis.CSharp.Workspaces
   nuget Gu.Roslyn.Asserts
   nuget MvvmLight
   nuget Caliburn.Micro
