@@ -15,15 +15,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.7.1.0</Version>
+    <Version>2.7.2.0</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
     <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
-    <PackageReleaseNotes>BUGFIX INPC002 when event accessors.
-BUGFIX INPC010 when side effects in setter.
-BUGFIX INPC002 when setting other property that notifies.
-INPC018 PropertyChanged invoker should be protected when class is not sealed.</PackageReleaseNotes>
-    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageReleaseNotes>BUGFIX: Figure out caching in ConcurrentDictionary</PackageReleaseNotes>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</RepositoryUrl>
   </PropertyGroup>

@@ -4,9 +4,7 @@ projectUrl https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers
 licenseUrl http://opensource.org/licenses/MIT
 
 releasenotes
-  BUGFIX INPC002 when event accessors.
-  BUGFIX INPC010 when side effects in setter.
-  BUGFIX INPC002 when setting other property that notifies.
+  BUGFIX: Figure out caching in ConcurrentDictionary
 
 excludedgroups
   Main

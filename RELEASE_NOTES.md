@@ -1,3 +1,6 @@
+#### 2.7.2
+* BUGFIX: Figure out caching in ConcurrentDictionary
+
 #### 2.7.1
 * BUGFIX INPC002 when event accessors.
 * BUGFIX INPC010 when side effects in setter.
