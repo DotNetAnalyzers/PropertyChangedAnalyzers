@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             [Test]
             public static void SetProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -37,13 +37,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, code);
             }
 
             [Test]
             public static void SetPropertyExpressionBodies()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -58,7 +58,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [TestCase("null")]
@@ -68,7 +68,7 @@ namespace RoslynSandbox
             [TestCase(@"nameof(this.Bar)")]
             public static void OnPropertyChanged(string propertyName)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -88,7 +88,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace(@"nameof(this.Bar)", propertyName);
 
-                RoslynAssert.Valid(Analyzer, Descriptor, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, code);
             }
         }
     }

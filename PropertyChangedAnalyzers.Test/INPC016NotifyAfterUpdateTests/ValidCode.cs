@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
         [Test]
         public static void OnPropertyChangedAfterAssign()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -49,13 +49,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void PropertyChangedInvokeAfterAssign()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -93,7 +93,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

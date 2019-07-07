@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
         [TestCase("public static PropertyChangedEventArgs Cached { get; } = new PropertyChangedEventArgs(nameof(Bar));")]
         public static void Cached(string cached)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -49,7 +49,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(\"Bar\");", cached);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var argument = syntaxTree.FindInvocation("this.OnPropertyChanged(Cached)").ArgumentList.Arguments[0];

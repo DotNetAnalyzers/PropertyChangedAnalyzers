@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
         [Test]
         public static void DifferentFields()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -51,13 +51,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
         public static void DifferentFieldsInternal()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -96,7 +96,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
         [Test]
@@ -111,7 +111,7 @@ namespace RoslynSandbox
         public int OtherValue;
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -143,7 +143,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, code);
         }
 
         [Test]
@@ -158,7 +158,7 @@ namespace RoslynSandbox
         public int P2 { get; set; }
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -190,7 +190,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, code);
         }
 
         [Test]
@@ -204,7 +204,7 @@ namespace RoslynSandbox
         public int BarValue;
     }
 }";
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -237,7 +237,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, testCode);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, code);
         }
     }
 }

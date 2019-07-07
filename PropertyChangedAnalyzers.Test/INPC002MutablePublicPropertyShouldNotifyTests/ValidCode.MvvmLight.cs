@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             [Test]
             public static void Set()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
@@ -37,13 +37,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, code);
             }
 
             [Test]
             public static void SetExpressionBodies()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
@@ -58,7 +58,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [TestCase("null")]
@@ -68,7 +68,7 @@ namespace RoslynSandbox
             [TestCase(@"nameof(this.Bar)")]
             public static void RaisePropertyChanged(string propertyName)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
@@ -88,7 +88,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace(@"nameof(Bar)", propertyName);
 
-                RoslynAssert.Valid(Analyzer, Descriptor, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, code);
             }
         }
     }

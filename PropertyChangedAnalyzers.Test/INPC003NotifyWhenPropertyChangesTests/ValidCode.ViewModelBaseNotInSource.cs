@@ -57,7 +57,7 @@ namespace RoslynSandbox.Core
             [Test]
             public static void SetProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -71,13 +71,13 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void SetPropertyExpressionBodies()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -91,13 +91,13 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyExplicitNameOf()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -119,13 +119,13 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyNameOf()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -147,13 +147,13 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyStringEmpty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -169,7 +169,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
@@ -187,7 +187,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : FooBase
@@ -202,7 +202,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, fooBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, fooBaseCode, code);
             }
         }
     }

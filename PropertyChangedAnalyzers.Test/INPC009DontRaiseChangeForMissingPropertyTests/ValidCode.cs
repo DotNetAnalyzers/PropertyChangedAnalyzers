@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
         [TestCase(@"nameof(this.Bar)")]
         public static void OnPropertyChangedWithEventArgs(string propertyName)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -54,13 +54,13 @@ namespace RoslynSandbox
     }
 }".AssertReplace(@"nameof(Bar)", propertyName);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void OnPropertyChangedCallerMemberName()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -90,13 +90,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckInvoke()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -130,13 +130,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckImplicitInvoke()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -170,7 +170,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("null")]
@@ -181,7 +181,7 @@ namespace RoslynSandbox
         [TestCase(@"nameof(this.Bar)")]
         public static void Invokes(string propertyName)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -210,13 +210,13 @@ namespace RoslynSandbox
     }
 }".AssertReplace(@"nameof(this.Bar))", propertyName);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
         public static void InvokesCached()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -243,7 +243,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -262,7 +262,7 @@ namespace RoslynSandBox
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace RoslynSandBox
 {
     public class ViewModel : ViewModelBase
@@ -289,13 +289,13 @@ namespace RoslynSandBox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, vmCode, testCode);
+            RoslynAssert.Valid(Analyzer, Descriptor, vmCode, code);
         }
 
         [Test]
         public static void RaisesForIndexer()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.Collections.ObjectModel;
@@ -319,7 +319,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -339,7 +339,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -389,13 +389,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, extCode, testCode);
+            RoslynAssert.Valid(Analyzer, extCode, code);
         }
 
         [Test]
         public static void RaiseForOtherInstance()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -438,7 +438,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -479,7 +479,7 @@ namespace RoslynSandBox
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace RoslynSandBox
 {
     internal class Foo
@@ -491,7 +491,7 @@ namespace RoslynSandBox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, vmCode, testCode);
+            RoslynAssert.Valid(Analyzer, vmCode, code);
         }
 
         [Test]
@@ -538,7 +538,7 @@ namespace RoslynSandBox
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace RoslynSandBox
 {
     internal class Foo
@@ -550,13 +550,13 @@ namespace RoslynSandBox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, vmBaseCode, vmCode, testCode);
+            RoslynAssert.Valid(Analyzer, Descriptor, vmBaseCode, vmCode, code);
         }
 
         [Test]
         public static void WhenNotAnInvoker()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -589,7 +589,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCase("\"\"")]
@@ -597,7 +597,7 @@ namespace RoslynSandbox
         [TestCase("null")]
         public static void NotifyThatAllPropertiesChanges(string arg)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.Collections.Generic;
@@ -625,7 +625,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("string.Empty", arg);
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]

@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
         [Test]
         public static void WhenNotifying()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -21,13 +21,13 @@ namespace RoslynSandbox
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, testCode);
+            RoslynAssert.Diagnostics(Analyzer, code);
         }
 
         [Test]
         public static void WhenNotifyingFullyQualified()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     public struct Foo : ↓System.ComponentModel.INotifyPropertyChanged
@@ -35,7 +35,7 @@ namespace RoslynSandbox
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, testCode);
+            RoslynAssert.Diagnostics(Analyzer, code);
         }
     }
 }

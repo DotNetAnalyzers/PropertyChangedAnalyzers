@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             [Test]
             public static void MvvmLight()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
@@ -27,13 +27,13 @@ namespace RoslynSandbox
 }";
 
                 RoslynAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void CaliburnMicro()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
@@ -43,13 +43,13 @@ namespace RoslynSandbox
 }";
 
                 RoslynAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void Stylet()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : Stylet.PropertyChangedBase
@@ -59,13 +59,13 @@ namespace RoslynSandbox
 }";
 
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void MvvmCross()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -75,13 +75,13 @@ namespace RoslynSandbox
 }";
 
                 RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void SubclassBindableBase()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -90,7 +90,7 @@ namespace RoslynSandbox
     }
 }";
                 RoslynAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
         }
     }

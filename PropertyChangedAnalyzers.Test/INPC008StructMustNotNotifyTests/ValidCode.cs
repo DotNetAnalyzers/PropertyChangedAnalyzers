@@ -11,14 +11,14 @@ namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
         [Test]
         public static void SimpleStruct()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     public struct Foo
     {
     }
 }";
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

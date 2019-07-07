@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
             [TestCase(@"nameof(this.PropertyChanged)")]
             public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -54,7 +54,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace(@"nameof(Value)", propertyName);
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
             [TestCase(@"""Missing""")]
@@ -62,7 +62,7 @@ namespace RoslynSandbox
             [TestCase(@"nameof(this.PropertyChanged)")]
             public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -92,7 +92,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace(@"nameof(Bar)", propertyName);
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
             [TestCase(@"""Missing""")]
@@ -100,7 +100,7 @@ namespace RoslynSandbox
             [TestCase(@"nameof(this.PropertyChanged)")]
             public static void Invokes(string propertyName)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -138,13 +138,13 @@ namespace RoslynSandbox
     }
 }".AssertReplace(@"nameof(Value)", propertyName);
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
             [Test]
             public static void InvokesSimple()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -176,13 +176,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
             [Test]
             public static void ExpressionInvokerWithMethod()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -229,13 +229,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
             [Test]
             public static void ExpressionInvokerWithThisEvent()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -280,13 +280,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
             [Test]
             public static void ExpressionInvokerWithEvent()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -331,13 +331,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
             [Test]
             public static void ExpressionInvokerWithStringEmpty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -382,13 +382,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
             [Test]
             public static void PropertyChangedInvokeWithCachedEventArgs()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -426,14 +426,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
             [TestCase("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")")]
             [TestCase("private static PropertyChangedEventArgs CachedArgs { get; } = new PropertyChangedEventArgs(\"Missing\")")]
             public static void CallsOnPropertyChangedWithCachedEventArgs(string cached)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -464,7 +464,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")", cached);
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
         }
     }

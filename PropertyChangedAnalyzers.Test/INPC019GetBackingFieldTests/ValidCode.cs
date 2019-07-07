@@ -154,7 +154,7 @@ namespace RoslynSandbox
         [Test]
         public static void DependencyProperty()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -175,7 +175,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, testCode);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
     }
 }

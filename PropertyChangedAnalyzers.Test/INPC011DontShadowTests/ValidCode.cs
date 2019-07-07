@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
         [Test]
         public static void NoBaseClass()
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -49,7 +49,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, testCode);
+            RoslynAssert.Valid(Analyzer, code);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace RoslynSandbox.Core
     }
 }";
 
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -83,7 +83,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, viewModelBaseCode, testCode);
+            RoslynAssert.Valid(Analyzer, viewModelBaseCode, code);
         }
     }
 }

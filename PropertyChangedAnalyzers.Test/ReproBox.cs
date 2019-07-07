@@ -34,14 +34,14 @@ namespace PropertyChangedAnalyzers.Test
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void Repro(DiagnosticAnalyzer analyzer)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     public class Foo
     {
     }
 }";
-            RoslynAssert.Valid(analyzer, testCode);
+            RoslynAssert.Valid(analyzer, code);
         }
     }
 }

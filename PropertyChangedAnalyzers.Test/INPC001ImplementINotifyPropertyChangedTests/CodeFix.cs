@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
         [Test]
         public static void Message()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -28,15 +28,15 @@ namespace RoslynSandbox
             var expectedMessage = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
                 "INPC001",
                 "The class Foo should notify for:\r\nBar1\r\nBar2",
-                testCode,
-                out testCode);
-            RoslynAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, testCode);
+                before,
+                out before);
+            RoslynAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, before);
         }
 
         [Test]
         public static void WhenPublicClassPublicAutoProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -61,14 +61,14 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenInternalClassInternalAutoProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     internal class ↓Foo
@@ -92,14 +92,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenNotNotifyingWithBackingField()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -147,14 +147,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenNotNotifyingWithBackingFieldExpressionBodies()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -190,14 +190,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenNotNotifyingWithBackingFieldUnderscoreNames()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -245,14 +245,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenEventOnly()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -278,13 +278,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenEventAndInvokerOnly()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -317,14 +317,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         [Explicit("Not sure how we want this.")]
         public static void IgnoresWhenBaseIsMouseGesture()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandBox
 {
     using System.Windows.Input;
@@ -335,7 +335,7 @@ namespace RoslynSandBox
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
         }
 
         [TestCase("this.Value = 1;")]
@@ -343,7 +343,7 @@ namespace RoslynSandBox
         [TestCase("this.Value--")]
         public static void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -385,7 +385,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.Value = 1", assignCode);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
     }
 }

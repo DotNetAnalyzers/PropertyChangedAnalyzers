@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             [Test]
             public static void Struct()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     public struct Foo
@@ -18,13 +18,13 @@ namespace RoslynSandBox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void GetOnly()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     public class Foo
@@ -33,13 +33,13 @@ namespace RoslynSandBox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void ExpressionBody()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     public class Foo
@@ -48,13 +48,13 @@ namespace RoslynSandBox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void CalculatedBody()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     public class Foo
@@ -66,13 +66,13 @@ namespace RoslynSandBox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void Abstract()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     public abstract class Foo
@@ -81,14 +81,14 @@ namespace RoslynSandBox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void Static()
             {
                 // maybe this should notify?
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     public class Foo
@@ -97,14 +97,14 @@ namespace RoslynSandBox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void StaticEvent()
             {
                 // maybe this should notify?
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -115,13 +115,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void DependencyProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     using System.Windows;
@@ -142,13 +142,13 @@ namespace RoslynSandBox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void Event()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     using System;
@@ -158,13 +158,13 @@ namespace RoslynSandBox
         public event EventHandler foo;
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void MarkupExtension()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     using System;
@@ -215,13 +215,13 @@ namespace RoslynSandBox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void Attribute()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     using System;
@@ -232,13 +232,13 @@ namespace RoslynSandBox
         public string Name { get; set; }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void DataTemplateSelector()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     using System;
@@ -284,7 +284,7 @@ namespace RoslynSandBox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
@@ -292,7 +292,7 @@ namespace RoslynSandBox
             {
                 Assert.Inconclusive("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D");
                 //// ReSharper disable once HeuristicUnreachableCode
-                var testCode = @"
+                var code = @"
 namespace RoslynSandBox
 {
     using System.Windows.Input;
@@ -303,15 +303,15 @@ namespace RoslynSandBox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [TestCase("Value = value;")]
             [TestCase("Value++;")]
             [TestCase("Value--;")]
-            public static void PrivateSetterOnlyAssignedInCtor(string code)
+            public static void PrivateSetterOnlyAssignedInCtor(string expression)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -335,9 +335,9 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("Value = value;", code);
+}".AssertReplace("Value = value;", expression);
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
         }
     }

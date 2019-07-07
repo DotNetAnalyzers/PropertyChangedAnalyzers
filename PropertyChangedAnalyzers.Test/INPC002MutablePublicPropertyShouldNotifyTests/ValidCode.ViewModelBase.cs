@@ -40,7 +40,7 @@ namespace RoslynSandbox.Core
             [Test]
             public static void Set()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -55,13 +55,13 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
             }
 
             [Test]
             public static void SetWithThisGetWithout()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -76,13 +76,13 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
             }
 
             [Test]
             public static void SetExpressionBodies()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -97,7 +97,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
             }
 
             [TestCase("null")]
@@ -107,7 +107,7 @@ namespace RoslynSandbox.Client
             [TestCase(@"nameof(this.Bar)")]
             public static void RaisePropertyChanged(string propertyName)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -127,7 +127,7 @@ namespace RoslynSandbox.Client
     }
 }".AssertReplace(@"nameof(Bar)", propertyName);
 
-                RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
             }
         }
     }

@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
             [Test]
             public static void SetProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
@@ -36,13 +36,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void SetPropertyExpressionBodies()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
@@ -56,13 +56,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void SetAffectsCalculatedProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
@@ -84,13 +84,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyExpression()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
@@ -112,7 +112,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
@@ -130,7 +130,7 @@ namespace RoslynSandbox
     }
 }";
 
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo : FooBase
@@ -145,7 +145,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, fooBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, fooBaseCode, code);
             }
         }
     }

@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
         [TestCase("this.bar1 == missing", false)]
         public static void IsOperatorEquals(string check, bool expected)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -38,7 +38,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.bar1 == this.bar1", check);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var binary = syntaxTree.FindBinaryExpression(check);
@@ -55,7 +55,7 @@ namespace RoslynSandbox
         [TestCase("this.bar1 != missing", false)]
         public static void IsOperatorNotEquals(string check, bool expected)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -77,7 +77,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.bar1 == this.bar1", check);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var binary = syntaxTree.FindBinaryExpression(check);
@@ -103,7 +103,7 @@ namespace RoslynSandbox
         [TestCase("System.Nullable.Equals(this.bar1, missing)", false)]
         public static void IsNullableEquals(string check, bool expected)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -125,7 +125,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("Nullable.Equals(this.bar1, this.bar1)", check);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation(check);
@@ -157,7 +157,7 @@ namespace RoslynSandbox
         [TestCase("System.Nullable.Equals(this.bar1, missing)", false)]
         public static void IsObjectEquals(string check, bool expected)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -179,7 +179,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("Equals(this.bar1, this.bar1)", check);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation(check);
@@ -199,7 +199,7 @@ namespace RoslynSandbox
         [TestCase("Object.ReferenceEquals(this.bar1, missing)", false)]
         public static void IsReferenceEquals(string check, bool expected)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -218,7 +218,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("ReferenceEquals(this.bar1, this.bar1)", check);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation(check);
@@ -238,7 +238,7 @@ namespace RoslynSandbox
         [TestCase("string.Equals(this.bar1, this.bar3)", false)]
         public static void IsStringEquals(string check, bool expected)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -256,7 +256,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("string.Equals(this.bar1, this.bar1)", check);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation(check);
@@ -273,7 +273,7 @@ namespace RoslynSandbox
         [TestCase("missing.Equals(this.bar1)", false)]
         public static void IsInstanceEquals(string check, bool expected)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -291,7 +291,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.bar1.Equals(this.bar1)", check);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation(check);
@@ -310,7 +310,7 @@ namespace RoslynSandbox
         [TestCase("EqualityComparer<int>.Default.Equals(this.bar1, missing)", false)]
         public static void IsEqualityComparerEquals(string check, bool expected)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.Collections.Generic;
@@ -331,7 +331,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("EqualityComparer<int>.Default.Equals(this.bar1, this.bar1)", check);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation(check);
@@ -344,7 +344,7 @@ namespace RoslynSandbox
         [TestCase("EqualityComparer<T>.Default.Equals(arg1, arg1)", true)]
         public static void IsEqualityComparerEqualsGeneric(string check, bool expected)
         {
-            var testCode = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.Collections.Generic;
@@ -364,7 +364,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("EqualityComparer<T>.Default.Equals(arg1, arg1)", check);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation(check);

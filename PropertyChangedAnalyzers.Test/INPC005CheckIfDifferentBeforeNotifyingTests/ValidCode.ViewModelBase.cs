@@ -47,7 +47,7 @@ namespace RoslynSandbox.Core
             [Test]
             public static void SetAffectsCalculatedProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -69,13 +69,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyEmptyIf()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -97,13 +97,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
             }
 
             [Test]
             public static void SetAffectsSecondCalculatedProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -128,13 +128,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
             }
 
             [Test]
             public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -159,13 +159,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
             }
 
             [Test]
             public static void OnPropertyChangedAffectsCalculatedProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -216,13 +216,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
             }
 
             [Test]
             public static void IfNotSetReturnCalculatedProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -246,7 +246,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, testCode);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
             }
         }
     }

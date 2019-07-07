@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             [Test]
             public static void Struct()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public struct Foo
@@ -19,13 +19,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void GetOnly()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -34,13 +34,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void SetOnly()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -67,13 +67,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, code);
             }
 
             [Test]
             public static void ExpressionBody()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -82,13 +82,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void CalculatedBody()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -100,13 +100,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void Abstract()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public abstract class Foo
@@ -115,14 +115,14 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void Static()
             {
                 // maybe this should notify?
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -131,14 +131,14 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void InternalClass()
             {
                 // maybe this should notify?
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     internal class Foo
@@ -147,14 +147,14 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void InternalProperty()
             {
                 // maybe this should notify?
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -163,13 +163,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
 
             [Test]
             public static void DependencyProperty()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -190,13 +190,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, Descriptor, testCode);
+                RoslynAssert.Valid(Analyzer, Descriptor, code);
             }
 
             [Test]
             public static void PrivateSetterOnlyAssignedInCtor()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -222,7 +222,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, testCode);
+                RoslynAssert.Valid(Analyzer, code);
             }
         }
     }

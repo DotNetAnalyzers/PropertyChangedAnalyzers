@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
             [Test]
             public static void CallsCallerMemberNameFromMethod()
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -36,7 +36,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, testCode);
+                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
         }
     }

@@ -156,7 +156,7 @@ namespace RoslynSandbox
     }
 }");
 
-                var testCode = CSharpSyntaxTree.ParseText(@"
+                var code = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -167,9 +167,9 @@ namespace RoslynSandbox
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, testCode }, MetadataReferences.FromAttributes());
-                var semanticModel = compilation.GetSemanticModel(testCode);
-                var classDeclaration = testCode.FindClassDeclaration("ViewModel");
+                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(code);
+                var classDeclaration = code.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out var invoker));
                 Assert.AreEqual("RoslynSandbox.ViewModelBase.OnPropertyChanged(string)", invoker.ToString());
@@ -195,7 +195,7 @@ namespace RoslynSandbox
     }
 }");
 
-                var testCode = CSharpSyntaxTree.ParseText(@"
+                var code = CSharpSyntaxTree.ParseText(@"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -206,9 +206,9 @@ namespace RoslynSandbox
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, testCode }, MetadataReferences.FromAttributes());
-                var semanticModel = compilation.GetSemanticModel(testCode);
-                var classDeclaration = testCode.FindClassDeclaration("ViewModel");
+                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(code);
+                var classDeclaration = code.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(false, PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, CancellationToken.None, out _));
             }

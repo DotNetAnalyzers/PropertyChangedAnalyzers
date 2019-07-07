@@ -120,7 +120,7 @@ namespace RoslynSandbox
             [TestCase("this.TrySet(ref this.value, value, \"Wrong\")", AnalysisResult.No)]
             public static void TrySetCallerMemberName(string trySetCode, AnalysisResult expected)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.Collections.Generic;
@@ -158,7 +158,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.TrySet(ref this.value, value)", trySetCode);
 
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var node = syntaxTree.FindArgument("ref this.value");
@@ -174,7 +174,7 @@ namespace RoslynSandbox
             [TestCase("this.TrySet(ref this.value, value, \"Wrong\")", AnalysisResult.No)]
             public static void TrySet(string trySetCode, AnalysisResult expected)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.Collections.Generic;
@@ -212,7 +212,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.TrySet(ref this.value, value, nameof(Value))", trySetCode);
 
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var node = syntaxTree.FindArgument("ref this.value");

@@ -129,7 +129,7 @@ namespace RoslynSandbox
             [TestCase("this.Value--")]
             public static void PrivateSetAssignedInLambdaInCtor(string assignCode)
             {
-                var testCode = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System;
@@ -147,7 +147,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.Value = 1", assignCode);
 
-                var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
+                var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var propertyDeclaration = syntaxTree.FindPropertyDeclaration("Value");
