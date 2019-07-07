@@ -48,7 +48,7 @@ namespace RoslynSandbox
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -83,7 +83,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
         [Test]
@@ -140,7 +140,7 @@ namespace ValidCode.TrySet
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace ValidCode.TrySet
 {
     using System.Collections.Generic;
@@ -190,7 +190,7 @@ namespace ValidCode.TrySet
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -272,7 +272,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
         }
     }
 }

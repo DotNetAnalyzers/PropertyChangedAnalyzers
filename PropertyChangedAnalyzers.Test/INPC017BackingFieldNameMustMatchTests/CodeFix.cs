@@ -29,7 +29,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("wrong", fieldName);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         public int Value => this.value;
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [TestCase("_wrong")]
@@ -60,7 +60,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("_wrong", fieldName);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -70,7 +70,7 @@ namespace RoslynSandbox
         public int Value => _value;
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [TestCase("wrong")]
@@ -93,7 +93,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("wrong", fieldName);
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -107,7 +107,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [TestCase("wrong")]
@@ -131,7 +131,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("wrong", fieldName);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -145,7 +145,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [TestCase("_wrong")]
@@ -168,7 +168,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("_wrong", fieldName);
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -182,7 +182,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
     }
 }

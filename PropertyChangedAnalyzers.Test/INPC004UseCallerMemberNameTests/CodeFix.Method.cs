@@ -33,7 +33,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.PropertyChanged", member);
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -49,8 +49,8 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.PropertyChanged", member);
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
             }
 
             [TestCase("this.OnPropertyChanged")]
@@ -78,7 +78,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.OnPropertyChanged", member);
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -99,8 +99,8 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.OnPropertyChanged", member);
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
             }
         }
     }

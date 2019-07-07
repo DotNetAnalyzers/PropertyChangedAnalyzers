@@ -69,7 +69,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class ViewModel
@@ -91,7 +91,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class ViewModel
@@ -136,7 +136,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [Test]
@@ -165,7 +165,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     public class ViewModel
@@ -187,7 +187,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [TestCase("value == this.value")]
@@ -241,7 +241,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("value == this.value", equals);
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -281,7 +281,7 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("value == this.value", equals);
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [Test]
@@ -306,7 +306,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -325,7 +325,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
         }
 
         [Test]
@@ -358,7 +358,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -385,7 +385,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
         }
 
         [Test]
@@ -429,7 +429,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -467,7 +467,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
         }
 
         [Test]
@@ -512,7 +512,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -551,7 +551,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
         }
     }
 }

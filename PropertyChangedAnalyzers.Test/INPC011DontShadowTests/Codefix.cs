@@ -42,7 +42,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox.Client
 {
     using System.ComponentModel;
@@ -52,7 +52,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, fixedCode);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, after);
         }
     }
 }

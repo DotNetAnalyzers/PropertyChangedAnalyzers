@@ -71,7 +71,7 @@ public class ViewModel : INotifyPropertyChanged
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -130,7 +130,7 @@ public class ViewModel : INotifyPropertyChanged
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
         }
 
         [Test]
@@ -178,7 +178,7 @@ namespace RoslynSandbox
     }
 }";
 
-            var fixedCode = @"
+            var after = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -225,7 +225,7 @@ namespace RoslynSandbox
             // Nasty hack here as order of fixes is random. Not sure it is worth fixing.
             try
             {
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, fixedCode);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
             }
             catch
             {

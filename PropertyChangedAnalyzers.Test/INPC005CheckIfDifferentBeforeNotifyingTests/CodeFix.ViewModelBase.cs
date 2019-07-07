@@ -66,7 +66,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox.Client 
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -89,8 +89,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Check that value is different before notifying.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Check that value is different before notifying.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "Check that value is different before notifying.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "Check that value is different before notifying.");
             }
 
             [Test]
@@ -115,7 +115,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox.Client 
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -129,8 +129,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Use ViewModelBase.TrySet");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Use ViewModelBase.TrySet");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "Use ViewModelBase.TrySet");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "Use ViewModelBase.TrySet");
             }
 
             [Test]
@@ -155,7 +155,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox.Client 
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -169,8 +169,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Use ViewModelBase.TrySet");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode, fixTitle: "Use ViewModelBase.TrySet");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "Use ViewModelBase.TrySet");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "Use ViewModelBase.TrySet");
             }
 
             [Test]
@@ -197,7 +197,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -219,8 +219,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
-                RoslynAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                RoslynAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
+                RoslynAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
             }
 
             [Test]
@@ -250,7 +250,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -273,8 +273,8 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                RoslynAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
-                RoslynAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                RoslynAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
+                RoslynAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
             }
 
             [Test]
@@ -330,7 +330,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox.Client
 {
     internal class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -352,8 +352,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
             }
 
             [Test]
@@ -383,7 +383,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -405,8 +405,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
             }
 
             [Test]
@@ -439,7 +439,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -464,8 +464,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
             }
 
             [Test]
@@ -495,7 +495,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                var fixedCode = @"
+                var after = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -520,8 +520,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, fixedCode);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
             }
         }
     }
