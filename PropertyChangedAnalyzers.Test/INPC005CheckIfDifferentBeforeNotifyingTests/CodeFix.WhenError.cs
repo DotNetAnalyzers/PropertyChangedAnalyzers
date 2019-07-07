@@ -28,7 +28,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
             [TestCaseSource(nameof(TestCases))]
             public static void Check(TestCase check)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -62,13 +62,13 @@ namespace RoslynSandbox
 }".AssertReplace("Equals(value, this.bar)", check.Call)
   .AssertReplace("string", check.Type);
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
             }
 
             [TestCaseSource(nameof(TestCases))]
             public static void NegatedCheckReturn(TestCase check)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -104,13 +104,13 @@ namespace RoslynSandbox
 }".AssertReplace("Equals(value, this.bar)", check.Call)
   .AssertReplace("string", check.Type);
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
             }
 
             [Test]
             public static void OperatorNotEquals()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -144,13 +144,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
             }
 
             [Test]
             public static void OperatorNotEqualsReturn()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -184,13 +184,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
             }
 
             [Test]
             public static void OperatorEquals()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -222,13 +222,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
             }
 
             [Test]
             public static void OperatorEqualsNoReturn()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -261,7 +261,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
             }
 
             public class TestCase

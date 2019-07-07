@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
             [Test]
             public static void SetAffectsCalculatedPropertyExpression()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Stylet.PropertyChangedBase
@@ -68,13 +68,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     internal class ViewModel : Stylet.PropertyChangedBase
@@ -119,7 +119,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
         }
     }

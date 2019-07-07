@@ -40,7 +40,7 @@ namespace RoslynSandbox.Core
             [Test]
             public static void AutoPropertyToNotifyWhenValueChanges()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -72,14 +72,14 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
             }
 
             [Test]
             public static void AutoPropertyToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -102,14 +102,14 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
             }
 
             [Test]
             public static void AutoPropertyInitializedToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -132,14 +132,14 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
             }
 
             [Test]
             public static void AutoPropertyVirtualToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -162,14 +162,14 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
             }
 
             [Test]
             public static void AutoPropertyPrivateSetToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -202,14 +202,14 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
             }
 
             [Test]
             public static void AutoPropertyToSetUnderscoreNames()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -242,14 +242,14 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
             }
 
             [Test]
             public static void WithBackingFieldToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -278,14 +278,14 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
             }
 
             [Test]
             public static void WithBackingFieldToSetUnderscoreNames()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -314,8 +314,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
             }
 
             [Test]
@@ -344,7 +344,7 @@ namespace RoslynSandbox.Core
     }
 }";
 
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -376,8 +376,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
             }
 
             [Test]
@@ -413,7 +413,7 @@ namespace RoslynSandbox.Core
     }
 }";
 
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class Foo : RoslynSandbox.Core.ViewModelBase
@@ -436,8 +436,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
             }
 
             [Test]
@@ -617,7 +617,7 @@ namespace MVVM
         #endregion // IDisposable Members
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using MVVM;
@@ -660,8 +660,8 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, testCode }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, testCode }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, before }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, before }, after, fixTitle: "Notify when value changes.");
             }
 
             [Test]
@@ -682,7 +682,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : FooBase
@@ -715,8 +715,8 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
             }
         }
     }

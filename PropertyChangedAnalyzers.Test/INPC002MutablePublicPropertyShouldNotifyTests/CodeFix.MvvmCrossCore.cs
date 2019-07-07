@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             [Test]
             public static void AutoPropertyToNotifyWhenValueChanges()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -55,14 +55,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
             }
 
             [Test]
             public static void AutoPropertyToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -85,14 +85,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
             public static void InternalClassInternalPropertyAutoPropertyToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     internal class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -115,14 +115,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
             public static void AutoPropertyInitializedToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -145,14 +145,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
             public static void AutoPropertyVirtualToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -175,14 +175,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
             public static void AutoPropertyPrivateSetToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -215,14 +215,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
             public static void AutoPropertyToSetUnderscoreNames()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -255,14 +255,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
             public static void WithBackingFieldToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -291,14 +291,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
 
             [Test]
             public static void WithBackingFieldToSetUnderscoreNames()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -327,8 +327,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
         }
     }

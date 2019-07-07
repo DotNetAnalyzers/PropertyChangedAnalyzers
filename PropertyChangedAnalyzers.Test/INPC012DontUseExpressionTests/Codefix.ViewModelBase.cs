@@ -47,7 +47,7 @@ namespace RoslynSandbox.Core
             [Test]
             public static void SetAffectsCalculatedPropertyExpression()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -92,13 +92,13 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     internal class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -143,7 +143,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
             }
         }
     }

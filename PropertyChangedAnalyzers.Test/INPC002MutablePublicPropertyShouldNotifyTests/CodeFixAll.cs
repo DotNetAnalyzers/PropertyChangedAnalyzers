@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
         [Test]
         public static void TwoAutoPropertiesCallerMemberName()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -91,13 +91,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void AutoPropertiesCallerMemberName()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -192,13 +192,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void AutoPropertiesCallerMemberNameUnderscoreNames()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -293,13 +293,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying1()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -402,13 +402,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying2()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -511,13 +511,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying3()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -620,13 +620,13 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void AutoPropertiesCallerMemberNameUnderscoreNamesTwoClassesInDocument()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -789,7 +789,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

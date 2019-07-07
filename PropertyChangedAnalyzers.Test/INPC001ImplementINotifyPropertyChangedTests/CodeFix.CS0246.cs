@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             [Test]
             public static void WhenInterfaceOnlyAddUsings()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : INotifyPropertyChanged
@@ -37,13 +37,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
             public static void WhenInterfaceOnlyFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : INotifyPropertyChanged
@@ -64,13 +64,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
 
             [Test]
             public static void WhenInterfaceOnlySealedAddUsings()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public sealed class Foo : INotifyPropertyChanged
@@ -94,13 +94,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
             public static void WhenInterfaceOnlySealedFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public sealed class Foo : INotifyPropertyChanged
@@ -121,7 +121,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
         }
     }

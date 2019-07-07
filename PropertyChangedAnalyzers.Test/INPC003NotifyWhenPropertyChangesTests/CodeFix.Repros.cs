@@ -16,7 +16,7 @@ namespace Vanguard_MVVM.ViewModels
         string Title { get; }
     }
 }";
-            var testCode = @"
+            var before = @"
 namespace Vanguard_MVVM.ViewModels
 {
     using System;
@@ -97,8 +97,8 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { childDataContext, testCode }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { childDataContext, testCode }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { childDataContext, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { childDataContext, before }, after);
         }
 
         [Test]
@@ -111,7 +111,7 @@ namespace Vanguard_MVVM.ViewModels
         string Title { get; }
     }
 }";
-            var testCode = @"
+            var before = @"
 namespace Vanguard_MVVM.ViewModels
 {
     using System;
@@ -194,8 +194,8 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { childDataContext, testCode }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { childDataContext, testCode }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { childDataContext, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { childDataContext, before }, after);
         }
     }
 }

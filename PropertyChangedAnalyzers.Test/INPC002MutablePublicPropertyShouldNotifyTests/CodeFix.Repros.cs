@@ -184,7 +184,7 @@ namespace MVVM
         #endregion // IDisposable Members
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using MVVM;
@@ -218,8 +218,8 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, testCode }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, barCode, before }, after);
             }
         }
     }

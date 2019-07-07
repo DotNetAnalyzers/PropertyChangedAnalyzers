@@ -53,7 +53,7 @@ namespace RoslynSandbox
         [Test]
         public static void ConstrainedGeneric()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -108,14 +108,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
         }
 
         [Test]
         public static void OperatorEquals()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -182,14 +182,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
         }
 
         [Test]
         public static void OperatorEqualsInternalClassInternalProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -256,14 +256,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
         }
 
         [Test]
         public static void OperatorNotEquals()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -295,13 +295,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, testCode);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, before);
         }
 
         [TestCaseSource(nameof(TestCases))]
         public static void Check(TestCase check)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -369,14 +369,14 @@ namespace RoslynSandbox
     }
 }".AssertReplace("Equals(value, this.bar)", check.FixedCall ?? check.Call);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, testCode }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
         }
 
         [TestCaseSource(nameof(TestCases))]
         public static void NegatedCheck(TestCase check)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -409,7 +409,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("Equals(value, this.bar)", check.Call);
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, testCode);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, FooCode, before);
         }
 
         public class TestCase

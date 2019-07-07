@@ -30,7 +30,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             [TestCase(@"nameof(this.Value)")]
             public static void CallsOnPropertyChangedWithExplicitNameOfCallerWhenParameterIsCallerMemberName(string propertyName)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -106,8 +106,8 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [TestCase(@"""Value""")]
@@ -115,7 +115,7 @@ namespace RoslynSandbox
             [TestCase(@"nameof(this.Value)")]
             public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -191,14 +191,14 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void InternalClassInternalProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -273,14 +273,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void SecondArgument()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -355,14 +355,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void StyletSetAndNotify()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : Stylet.PropertyChangedBase
@@ -391,14 +391,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void FixAll()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -519,7 +519,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
@@ -562,7 +562,7 @@ namespace RoslynSandbox.Core
     }
 }";
 
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -607,7 +607,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, testCode }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
             }
         }
     }

@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             [Test]
             public static void SubclassMvxNotifyPropertyChangedAddUsing()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -42,13 +42,13 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged and add using.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged and add using.");
             }
 
             [Test]
             public static void SubclassMvxNotifyPropertyChangedFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -65,13 +65,13 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged fully qualified.");
             }
 
             [Test]
             public static void SubclassMvxViewModelAddUsing()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -90,13 +90,13 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel and add using.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel and add using.");
             }
 
             [Test]
             public static void SubclassMvxViewModelFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -113,13 +113,13 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel fully qualified.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel fully qualified.");
             }
 
             [Test]
             public static void ImplementINotifyPropertyChangedAddUsings()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -146,13 +146,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
             public static void ImplementINotifyPropertyChangedFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -176,7 +176,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
         }
     }

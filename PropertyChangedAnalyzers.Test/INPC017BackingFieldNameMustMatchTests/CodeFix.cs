@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
         [TestCase("vvalue")]
         public static void ExpressionBody(string fieldName)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         public int Value => this.value;
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("_wrong")]
@@ -49,7 +49,7 @@ namespace RoslynSandbox
         [TestCase("_vvalue")]
         public static void ExpressionBodyUnderscore(string fieldName)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -70,7 +70,7 @@ namespace RoslynSandbox
         public int Value => _value;
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("wrong")]
@@ -80,7 +80,7 @@ namespace RoslynSandbox
         [TestCase("vvalue")]
         public static void ExpressionBodyGetter(string fieldName)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -107,7 +107,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("wrong")]
@@ -117,7 +117,7 @@ namespace RoslynSandbox
         [TestCase("vvalue")]
         public static void StatementBodyGetter(string fieldName)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -145,7 +145,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [TestCase("_wrong")]
@@ -155,7 +155,7 @@ namespace RoslynSandbox
         [TestCase("_vvalue")]
         public static void ExpressionBodyGetterUnderscore(string fieldName)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -182,7 +182,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

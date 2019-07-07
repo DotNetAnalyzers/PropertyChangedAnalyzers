@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
         [Test]
         public static void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -68,14 +68,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void AutoPropertyExplicitNameHandlesRecursionInInvoker()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -93,13 +93,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
         }
 
         [Test]
         public static void InternalClass()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -154,14 +154,14 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void InternalProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -216,15 +216,15 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         [Explicit("Not sure how we want this.")]
         public static void NoFixWhenBaseHasInternalOnPropertyChanged()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandBox
 {
     using System.Windows.Input;
@@ -235,7 +235,7 @@ namespace RoslynSandBox
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, testCode);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
         }
 
         [TestCase("this.Value = 1;")]
@@ -243,7 +243,7 @@ namespace RoslynSandBox
         [TestCase("this.Value--")]
         public static void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -312,13 +312,13 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.Value = 1", assignCode);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenBackingFieldNotifyWhenValueChanged()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
@@ -373,14 +373,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify when value changes.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
         }
 
         [Test]
         public static void WhenBackingFieldNotifyCallerMemberName()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
@@ -427,14 +427,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify.");
         }
 
         [Test]
         public static void WhenBackingFieldExpressionBodyAccessors()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
@@ -486,14 +486,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify when value changes.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
         }
 
         [Test]
         public static void WhenBackingFieldNotify()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
@@ -543,14 +543,14 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify.");
         }
 
         [Test]
         public static void WhenBackingFieldExpressionBodyAccessorsNotify()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
@@ -597,8 +597,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify.");
         }
 
         [Test]
@@ -612,7 +612,7 @@ namespace RoslynSandbox
         public int BarValue;
     }
 }";
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -667,8 +667,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, after, fixTitle: "Notify when value changes.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after, fixTitle: "Notify when value changes.");
         }
 
         [Test]
@@ -682,7 +682,7 @@ namespace RoslynSandbox
         public int BarValue;
     }
 }";
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -732,8 +732,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, after, fixTitle: "Notify.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, testCode }, after, fixTitle: "Notify.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after, fixTitle: "Notify.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after, fixTitle: "Notify.");
         }
     }
 }

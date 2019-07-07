@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             [Test]
             public static void AutoPropertyToNotifyWhenValueChanges()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
@@ -54,14 +54,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
             }
 
             [Test]
             public static void AutoPropertyToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
@@ -84,14 +84,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
             }
 
             [Test]
             public static void InternalClassInternalPropertyAutoPropertyToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     internal class Foo : Caliburn.Micro.PropertyChangedBase
@@ -114,14 +114,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
             }
 
             [Test]
             public static void AutoPropertyInitializedToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
@@ -144,14 +144,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
             }
 
             [Test]
             public static void AutoPropertyVirtualToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
@@ -174,14 +174,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
             }
 
             [Test]
             public static void AutoPropertyPrivateSetToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
@@ -214,14 +214,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
             }
 
             [Test]
             public static void AutoPropertyToSetUnderscoreNames()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
@@ -254,14 +254,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
             }
 
             [Test]
             public static void WithBackingFieldToSet()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
@@ -290,14 +290,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
             }
 
             [Test]
             public static void WithBackingFieldToSetUnderscoreNames()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
@@ -326,8 +326,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
             }
         }
     }

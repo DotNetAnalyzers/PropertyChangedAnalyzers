@@ -173,7 +173,7 @@ namespace RoslynSandbox
         [Test]
         public static void DependencyProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.Windows;
@@ -216,7 +216,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

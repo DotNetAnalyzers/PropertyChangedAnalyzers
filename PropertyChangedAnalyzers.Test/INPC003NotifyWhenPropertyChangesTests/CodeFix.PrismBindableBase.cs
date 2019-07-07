@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
             [Test]
             public static void SetAffectsCalculatedProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -61,14 +61,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     internal class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -107,14 +107,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -159,14 +159,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void SetExpressionBodiesAffectsCalculatedProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -205,14 +205,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void SetAffectsCalculatedPropertyEmptyIf()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -256,14 +256,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void SetAffectsSecondCalculatedProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -313,14 +313,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -368,14 +368,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void OnPropertyChangedAffectsCalculatedProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -477,14 +477,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -538,14 +538,14 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
             public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -595,8 +595,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
         }
     }

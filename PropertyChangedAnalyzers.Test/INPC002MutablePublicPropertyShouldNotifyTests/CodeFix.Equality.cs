@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             [TestCase("StringComparison")]
             public static void OpEqualsFor(string typeCode)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -66,8 +66,8 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("int", typeCode);
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [Test]
@@ -80,7 +80,7 @@ namespace RoslynSandbox
     {
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -130,8 +130,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { refTypeCode, testCode }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { refTypeCode, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { refTypeCode, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { refTypeCode, before }, after);
             }
 
             [Test]
@@ -168,7 +168,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -219,8 +219,8 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
             }
 
             [Test]
@@ -257,7 +257,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -307,8 +307,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
             }
 
             [Test]
@@ -356,7 +356,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -406,8 +406,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
             }
 
             [Test]
@@ -454,7 +454,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -504,8 +504,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
             }
 
             [Test]
@@ -524,7 +524,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -574,8 +574,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
             }
 
             [Test]
@@ -594,7 +594,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -644,8 +644,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, testCode }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
             }
         }
     }

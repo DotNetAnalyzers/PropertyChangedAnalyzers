@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             [Test]
             public static void WhenInterfaceAndUsingSealedAddUsings()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -39,13 +39,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
             public static void WhenInterfaceAndUsingSealedFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -70,13 +70,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
 
             [Test]
             public static void WhenInterfaceOnlyWithUsingAddUsing()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -102,13 +102,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
             public static void WhenInterfaceOnlyWithUsingFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -133,13 +133,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
 
             [Test]
             public static void WhenInterfaceOnlyWithUsingUnderscoreAddUsings()
             {
-                var testCode = @"
+                var before = @"
 #pragma warning disable 169
 namespace RoslynSandbox
 {
@@ -170,13 +170,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
             public static void WhenInterfaceOnlyWithUsingUnderscoreFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 #pragma warning disable 169
 namespace RoslynSandbox
 {
@@ -206,13 +206,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
 
             [Test]
             public static void WhenInterfaceOnlyAndUsingsAddUsing()
             {
-                var testCode = @"
+                var before = @"
 #pragma warning disable 8019
 namespace RoslynSandbox
 {
@@ -241,13 +241,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
             public static void WhenInterfaceOnlyAndUsingsFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 #pragma warning disable 8019
 namespace RoslynSandbox
 {
@@ -276,7 +276,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
         }
     }

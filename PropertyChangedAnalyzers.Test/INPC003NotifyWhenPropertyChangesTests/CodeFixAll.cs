@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
         [Test]
         public static void WhenUsingPropertiesExpressionBody()
         {
-            var testCode = @"
+            var before = @"
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -130,13 +130,13 @@ public class ViewModel : INotifyPropertyChanged
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenTwoCalculatedProperties()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -225,7 +225,7 @@ namespace RoslynSandbox
             // Nasty hack here as order of fixes is random. Not sure it is worth fixing.
             try
             {
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
             catch
             {

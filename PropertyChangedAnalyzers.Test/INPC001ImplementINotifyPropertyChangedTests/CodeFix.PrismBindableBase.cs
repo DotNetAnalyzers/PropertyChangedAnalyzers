@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             [Test]
             public static void SubclassBindableBaseAddUsing()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -41,13 +41,13 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase and add using.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase and add using.");
             }
 
             [Test]
             public static void SubclassBindableBaseFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -64,13 +64,13 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase fully qualified.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase fully qualified.");
             }
 
             [Test]
             public static void ImplementINotifyPropertyChangedAddUsings()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -97,13 +97,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
             public static void ImplementINotifyPropertyChangedFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -127,7 +127,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
         }
     }

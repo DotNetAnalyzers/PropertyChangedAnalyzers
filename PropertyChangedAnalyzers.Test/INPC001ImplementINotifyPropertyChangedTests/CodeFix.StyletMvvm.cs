@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             [Test]
             public static void SubclassPropertyChangedBaseAddUsing()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -42,13 +42,13 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Subclass Stylet.PropertyChangedBase and add using.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Stylet.PropertyChangedBase and add using.");
             }
 
             [Test]
             public static void SubclassPropertyChangedBaseFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -65,13 +65,13 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Subclass Stylet.PropertyChangedBase fully qualified.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Stylet.PropertyChangedBase fully qualified.");
             }
 
             [Test]
             public static void ImplementINotifyPropertyChangedAddUsings()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -98,13 +98,13 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
             public static void ImplementINotifyPropertyChangedFullyQualified()
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     public class ↓Foo
@@ -128,7 +128,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
         }
     }

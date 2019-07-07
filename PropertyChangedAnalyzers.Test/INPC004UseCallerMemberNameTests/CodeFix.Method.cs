@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             [TestCase("PropertyChanged")]
             public static void Invoker(string member)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -49,15 +49,15 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.PropertyChanged", member);
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
             [TestCase("this.OnPropertyChanged")]
             [TestCase("OnPropertyChanged")]
             public static void ChainedInvoker(string member)
             {
-                var testCode = @"
+                var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -99,8 +99,8 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.OnPropertyChanged", member);
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
         }
     }

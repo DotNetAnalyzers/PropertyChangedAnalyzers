@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
         [Test]
         public static void ExpressionInvokerToCallerMemberName()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -104,13 +104,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void ExpressionInvokerToCallerMemberNameInternalClassInternalProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -200,13 +200,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void ExpressionInvokerToCallerMemberNameCalculatedProperty()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -302,13 +302,13 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void ExpressionInvokerToNameOf()
         {
-            var testCode = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System;
@@ -396,7 +396,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, testCode, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }
