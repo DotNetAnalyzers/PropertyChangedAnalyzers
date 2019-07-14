@@ -186,7 +186,7 @@ namespace RoslynSandbox.Client
             set
             {
                 ↓this.OnPropertyChanged(nameof(this.Greeting));
-                this.TrySet(ref this.name, value)
+                this.TrySet(ref this.name, value);
             }
         }
     }
