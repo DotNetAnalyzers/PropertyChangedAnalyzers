@@ -2,15 +2,12 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseNameofFix))]
     [Shared]
@@ -24,58 +21,28 @@ namespace PropertyChangedAnalyzers
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
-
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                       .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText) || token.IsMissing)
-                {
-                    continue;
-                }
-
-                var argument = (ArgumentSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-                if (argument.Expression is LiteralExpressionSyntax literal)
+                if (syntaxRoot.TryFindNode(diagnostic, out ArgumentSyntax argument) &&
+                    argument.Expression is LiteralExpressionSyntax literal &&
+                    semanticModel.LookupSymbols(argument.SpanStart, name: literal.Token.ValueText).TryFirst(out var member))
                 {
                     context.RegisterCodeFix(
                         "Use nameof",
-                        (editor, cancellationToken) => ApplyFix(editor, argument, literal.Token.ValueText, cancellationToken),
-                        this.GetType(),
+                        async (editor, cancellationToken) =>
+                        {
+                            var replacement = await editor.SymbolAccessAsync(member, literal, cancellationToken)
+                                                          .ConfigureAwait(false);
+                            _ = editor.ReplaceNode(
+                                literal,
+                                x => InpcFactory.Nameof(replacement).WithTriviaFrom(x));
+                        },
+                        nameof(UseNameofFix),
                         diagnostic);
                 }
             }
-        }
-
-        private static void ApplyFix(DocumentEditor editor, ArgumentSyntax argument, string name, CancellationToken cancellationToken)
-        {
-            if (!IsStaticContext(argument, editor.SemanticModel, cancellationToken) &&
-                editor.SemanticModel.LookupSymbols(argument.SpanStart, name: name).TrySingle(out var member) &&
-                (member is IFieldSymbol || member is IPropertySymbol || member is IMethodSymbol) &&
-                !member.IsStatic &&
-                editor.SemanticModel.UnderscoreFields() != CodeStyleResult.Yes)
-            {
-                editor.ReplaceNode(
-                    argument.Expression,
-                    (x, _) => SyntaxNodeExtensions.WithTriviaFrom(SyntaxFactory.ParseExpression($"nameof(this.{name})"), x));
-            }
-            else
-            {
-                editor.ReplaceNode(
-                    argument.Expression,
-                    (x, _) => SyntaxNodeExtensions.WithTriviaFrom(SyntaxFactory.ParseExpression($"nameof({name})"), x));
-            }
-        }
-
-        private static bool IsStaticContext(SyntaxNode context, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            var accessor = context.FirstAncestor<AccessorDeclarationSyntax>();
-            if (accessor != null)
-            {
-                return semanticModel.GetDeclaredSymbolSafe(accessor.FirstAncestor<PropertyDeclarationSyntax>(), cancellationToken)
-                                    ?.IsStatic != false;
-            }
-
-            var methodDeclaration = context.FirstAncestor<MethodDeclarationSyntax>();
-            return semanticModel.GetDeclaredSymbolSafe(methodDeclaration, cancellationToken)?.IsStatic != false;
         }
     }
 }
