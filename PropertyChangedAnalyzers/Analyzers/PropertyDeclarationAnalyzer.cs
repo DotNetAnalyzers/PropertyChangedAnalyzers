@@ -69,10 +69,14 @@ namespace PropertyChangedAnalyzers
                         }
 
                         if (single is LiteralExpressionSyntax &&
-                            propertyDeclaration.TryGetGetter(out _) &&
-                            Property.TryGetBackingFieldFromSetter(propertyDeclaration, context.SemanticModel, context.CancellationToken, out _))
+                            propertyDeclaration.TryGetSetter(out var set) &&
+                            Property.TryGetSingleAssignedWithParameter(set, context.SemanticModel, context.CancellationToken, out var fieldAccess))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC019GetBackingField, single.GetLocation()));
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.INPC019GetBackingField,
+                                    single.GetLocation(),
+                                    additionalLocations: new[] { fieldAccess.GetLocation() }));
                         }
                     }
                 }
@@ -241,8 +245,8 @@ namespace PropertyChangedAnalyzers
                     return true;
                 }
 
-                if (context.SemanticModel.TryGetSymbol(singleAssignment.Left, context.CancellationToken, out ISymbol setSymbol) &&
-                    context.SemanticModel.TryGetSymbol(singleReturnValue, context.CancellationToken, out ISymbol getSymbol))
+                if (context.SemanticModel.TryGetSymbol(singleAssignment.Left, context.CancellationToken, out var setSymbol) &&
+                    context.SemanticModel.TryGetSymbol(singleReturnValue, context.CancellationToken, out var getSymbol))
                 {
                     if (getSymbol.Kind == setSymbol.Kind)
                     {

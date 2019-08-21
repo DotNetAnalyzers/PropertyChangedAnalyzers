@@ -350,6 +350,36 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
+        internal static bool TryGetSingleAssignedWithParameter(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax fieldAccess)
+        {
+            using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken))
+            {
+                if (mutations.TrySingle(out var mutation))
+                {
+                    switch (mutation)
+                    {
+                        case AssignmentExpressionSyntax assignment:
+                            fieldAccess = assignment.Left;
+                            return assignment.Right is IdentifierNameSyntax identifierName &&
+                                   identifierName.Identifier.ValueText == "value";
+                        case ArgumentSyntax argument:
+                            fieldAccess = null;
+                            return argument.Parent is ArgumentListSyntax argumentList &&
+                                   argumentList.Parent is InvocationExpressionSyntax invocation &&
+                                   argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
+                                   (fieldAccess = refArgument.Expression) != null &&
+                                   PropertyChanged.IsSetAndRaiseCall(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
+                        default:
+                            fieldAccess = null;
+                            return false;
+                    }
+                }
+            }
+
+            fieldAccess = null;
+            return false;
+        }
+
         private static bool TryGetBackingField(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
             field = null;

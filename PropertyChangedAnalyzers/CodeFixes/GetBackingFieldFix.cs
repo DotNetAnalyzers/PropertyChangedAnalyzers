@@ -7,7 +7,6 @@ namespace PropertyChangedAnalyzers
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(GetBackingFieldFix))]
@@ -21,43 +20,20 @@ namespace PropertyChangedAnalyzers
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AccessorDeclarationSyntax accessor) &&
-                    accessor.TryFirstAncestor(out PropertyDeclarationSyntax propertyDeclaration) &&
-                    Property.TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, context.CancellationToken, out var field))
+                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax expression) &&
+                    diagnostic.AdditionalLocations.TrySingle(out var additionalLocation) &&
+                    syntaxRoot.FindNode(additionalLocation.SourceSpan) is ExpressionSyntax fieldAccess)
                 {
-                    if (accessor.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
-                    {
-                        context.RegisterCodeFix(
-                            "Get backing field.",
-                            (e, cancellationToken) => e.ReplaceNode(
-                                expressionBody.Expression,
-                                x => Replacement(x)),
-                            "Get backing field.",
-                            diagnostic);
-                    }
-                    else if (accessor.Body is BlockSyntax block &&
-                            block.Statements.TrySingle(out var statement) &&
-                            statement is ReturnStatementSyntax returnStatement)
-                    {
-                        context.RegisterCodeFix(
-                            "Get backing field.",
-                            (e, cancellationToken) => e.ReplaceNode(
-                                returnStatement.Expression,
-                                x => Replacement(x)),
-                            "Get backing field.",
-                            diagnostic);
-                    }
-
-                    ExpressionSyntax Replacement(ExpressionSyntax expressionSyntax)
-                    {
-                        return semanticModel.UnderscoreFields() == CodeStyleResult.Yes
-                            ? SyntaxFactory.ParseExpression(field.Name).WithTriviaFrom(expressionSyntax)
-                            : SyntaxFactory.ParseExpression($"this.{field.Name}").WithTriviaFrom(expressionSyntax);
-                    }
+                    context.RegisterCodeFix(
+                        "Get backing field.",
+                        (editor, _) => editor.ReplaceNode(
+                            expression,
+                            x => fieldAccess.WithTriviaFrom(x)),
+                        "Get backing field.",
+                        diagnostic);
                 }
             }
         }
