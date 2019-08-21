@@ -29,7 +29,7 @@ namespace PropertyChangedAnalyzers
                     return true;
                 }
 
-                if (assignedPath.TrySingle(out var candidate) &&
+                if (assignedPath.Tokens.TrySingle(out var candidate) &&
                     containingType.TryFindPropertyRecursive(candidate.ValueText, out var property) &&
                     property.TrySingleDeclaration(context.CancellationToken, out var declaration) &&
                     declaration.TryGetSetter(out var setter) &&
