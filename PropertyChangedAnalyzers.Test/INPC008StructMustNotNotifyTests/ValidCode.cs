@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
 
     public static class ValidCode
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC008StructMustNotNotify();
+        private static readonly DiagnosticAnalyzer Analyzer = new StructAnalyzer();
 
         [Test]
         public static void SimpleStruct()

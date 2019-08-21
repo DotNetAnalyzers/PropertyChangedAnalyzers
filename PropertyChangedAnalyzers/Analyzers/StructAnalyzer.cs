@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class INPC008StructMustNotNotify : DiagnosticAnalyzer
+    internal class StructAnalyzer : DiagnosticAnalyzer
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.INPC008StructMustNotNotify);

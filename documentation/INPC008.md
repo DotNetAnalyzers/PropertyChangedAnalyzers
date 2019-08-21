@@ -7,7 +7,7 @@
 | Severity | Error
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [INPC008StructMustNotNotify](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC008StructMustNotNotify.cs)
+| Code     | [StructAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/StructAnalyzer.cs)
 
 ## Description
 
