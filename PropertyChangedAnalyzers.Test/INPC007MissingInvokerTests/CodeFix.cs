@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC007MissingInvoker();
+        private static readonly DiagnosticAnalyzer Analyzer = new EventAnalyzer();
         private static readonly CodeFixProvider Fix = new MissingInvokerFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC007MissingInvoker);
 

@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
 
     public static class ValidCode
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC011DontShadow();
+        private static readonly DiagnosticAnalyzer Analyzer = new EventAnalyzer();
 
         [Test]
         public static void NoBaseClass()

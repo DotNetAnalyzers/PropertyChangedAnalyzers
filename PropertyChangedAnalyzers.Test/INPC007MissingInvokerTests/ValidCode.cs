@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
 
     public static class ValidCode
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC007MissingInvoker();
+        private static readonly DiagnosticAnalyzer Analyzer = new EventAnalyzer();
 
         [Test]
         public static void OnPropertyChangedCallerMemberName()
