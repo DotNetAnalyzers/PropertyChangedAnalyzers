@@ -14,14 +14,14 @@ namespace PropertyChangedAnalyzers
 
             if (!type.IsReferenceType)
             {
-                if (Equality.HasEqualityOperator(type))
+                if (Gu.Roslyn.AnalyzerExtensions.Equality.HasEqualityOperator(type))
                 {
                     return $"{x} == {y}";
                 }
 
                 if (type == KnownSymbol.NullableOfT)
                 {
-                    return Equality.HasEqualityOperator(((INamedTypeSymbol)type).TypeArguments[0])
+                    return Gu.Roslyn.AnalyzerExtensions.Equality.HasEqualityOperator(((INamedTypeSymbol)type).TypeArguments[0])
                         ? $"{x} == {y}"
                         : $"System.Nullable.Equals({x}, {y})";
                 }
