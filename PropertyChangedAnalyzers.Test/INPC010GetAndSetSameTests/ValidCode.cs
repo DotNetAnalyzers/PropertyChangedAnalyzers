@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
     public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly DiagnosticDescriptor Descriptor = INPC010GetAndSetSame.Descriptor;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC010GetAndSetSame;
 
         [Test]
         public static void NotifyingProperty()

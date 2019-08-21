@@ -19,7 +19,7 @@ namespace PropertyChangedAnalyzers
     internal class MissingInvokerFix : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC007MissingInvoker.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC007MissingInvoker.Id);
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 

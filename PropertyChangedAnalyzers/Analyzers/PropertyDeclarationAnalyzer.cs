@@ -13,13 +13,13 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            INPC002MutablePublicPropertyShouldNotify.Descriptor,
-            INPC010GetAndSetSame.Descriptor,
-            INPC015PropertyIsRecursive.Descriptor,
-            INPC017BackingFieldNameMustMatch.Descriptor,
-            INPC019GetBackingField.Descriptor,
-            INPC020PreferExpressionBodyAccessor.Descriptor,
-            INPC021SetBackingField.Descriptor);
+            Descriptors.INPC002MutablePublicPropertyShouldNotify,
+            Descriptors.INPC010GetAndSetSame,
+            Descriptors.INPC015PropertyIsRecursive,
+            Descriptors.INPC017BackingFieldNameMisMatch,
+            Descriptors.INPC019GetBackingField,
+            Descriptors.INPC020PreferExpressionBodyAccessor,
+            Descriptors.INPC021SetBackingField);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -41,7 +41,7 @@ namespace PropertyChangedAnalyzers
                     {
                         if (IsProperty(returnValue, property))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, returnValue.GetLocation(), "Getter returns property, infinite recursion"));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, returnValue.GetLocation(), "Getter returns property, infinite recursion"));
                         }
                     }
 
@@ -53,7 +53,7 @@ namespace PropertyChangedAnalyzers
                         {
                             if (!HasMatchingName(backingField, property))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor, path.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC017BackingFieldNameMisMatch, path.GetLocation()));
                             }
 
                             if (propertyDeclaration.TryGetSetter(out var setAccessor))
@@ -62,7 +62,7 @@ namespace PropertyChangedAnalyzers
                                 {
                                     if (mutationWalker.IsEmpty)
                                     {
-                                        context.ReportDiagnostic(Diagnostic.Create(INPC021SetBackingField.Descriptor, setAccessor.GetLocation()));
+                                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, setAccessor.GetLocation()));
                                     }
                                 }
                             }
@@ -72,7 +72,7 @@ namespace PropertyChangedAnalyzers
                             propertyDeclaration.TryGetGetter(out _) &&
                             Property.TryGetBackingFieldFromSetter(propertyDeclaration, context.SemanticModel, context.CancellationToken, out _))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC019GetBackingField.Descriptor, single.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC019GetBackingField, single.GetLocation()));
                         }
                     }
                 }
@@ -81,14 +81,14 @@ namespace PropertyChangedAnalyzers
                 {
                     if (ShouldBeExpressionBody(setter))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(INPC020PreferExpressionBodyAccessor.Descriptor, setter.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, setter.GetLocation()));
                     }
 
                     using (var assignmentWalker = AssignmentWalker.Borrow(setter))
                     {
                         if (assignmentWalker.Assignments.TryFirst(x => IsProperty(x.Left, property), out var recursiveAssignment))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC015PropertyIsRecursive.Descriptor, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
                         }
 
                         if (propertyDeclaration.TryGetGetter(out var getter))
@@ -96,17 +96,17 @@ namespace PropertyChangedAnalyzers
                             if (property.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) &&
                                 Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC002MutablePublicPropertyShouldNotify.Descriptor, propertyDeclaration.GetLocation(), property.Name));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify, propertyDeclaration.GetLocation(), property.Name));
                             }
 
                             if (GetAndSetsSameField(assignmentWalker, getter, context) == false)
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC010GetAndSetSame.Descriptor, propertyDeclaration.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, propertyDeclaration.GetLocation()));
                             }
 
                             if (ShouldBeExpressionBody(getter))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC020PreferExpressionBodyAccessor.Descriptor, getter.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, getter.GetLocation()));
                             }
                         }
                     }

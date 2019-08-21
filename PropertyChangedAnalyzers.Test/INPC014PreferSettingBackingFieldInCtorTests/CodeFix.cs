@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
     {
         private static readonly DiagnosticAnalyzer Analyzer = new AssignmentAnalyzer();
         private static readonly CodeFixProvider Fix = new SetBackingFieldFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC014SetBackingField.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC014SetBackingFieldInConstructor);
 
 #pragma warning disable SA1203 // Constants must appear before fields
         private const string ViewModelBaseCode = @"

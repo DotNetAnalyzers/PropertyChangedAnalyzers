@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC015PropertyIsRecursive.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC015PropertyIsRecursive);
 
         [Test]
         public static void ExpressionBody()

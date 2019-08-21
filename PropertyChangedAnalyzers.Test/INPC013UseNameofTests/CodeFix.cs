@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
         private static readonly UseNameofFix Fix = new UseNameofFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC013");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC013UseNameof);
 
         [Test]
         public static void WhenThrowingArgumentException()

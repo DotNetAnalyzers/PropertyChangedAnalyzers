@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new MakePropertyNotifyFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC002");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify);
 
         [Test]
         public static void CallsOnPropertyChangedCopyLocalNullCheckInvoke()

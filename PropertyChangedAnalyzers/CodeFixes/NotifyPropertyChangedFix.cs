@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers
     internal class NotifyPropertyChangedFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC003NotifyWhenPropertyChanges.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC003NotifyForDependentProperty.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)

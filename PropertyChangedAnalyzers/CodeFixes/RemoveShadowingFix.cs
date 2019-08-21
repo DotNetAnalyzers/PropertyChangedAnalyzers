@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers
     internal class RemoveShadowingFix : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC011DontShadow.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC011DoNotShadow.Id);
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 

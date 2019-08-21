@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         {
             private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
             private static readonly UseCallerMemberNameFix Fix = new UseCallerMemberNameFix();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC004");
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
 
             [OneTimeSetUp]
             public static void OneTimeSetUp()

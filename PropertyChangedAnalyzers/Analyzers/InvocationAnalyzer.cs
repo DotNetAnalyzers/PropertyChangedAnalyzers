@@ -13,9 +13,9 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            INPC005CheckIfDifferentBeforeNotifying.Descriptor,
-            INPC009DontRaiseChangeForMissingProperty.Descriptor,
-            INPC016NotifyAfterUpdate.Descriptor);
+            Descriptors.INPC005CheckIfDifferentBeforeNotifying,
+            Descriptors.INPC009DoNotRaiseChangeForMissingProperty,
+            Descriptors.INPC016NotifyAfterUpdate);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -30,7 +30,7 @@ namespace PropertyChangedAnalyzers
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation)
             {
-                if (PropertyChanged.TryGetName(invocation, context.SemanticModel, context.CancellationToken, out var name) != AnalysisResult.No)
+                if (PropertyChanged.TryGetName(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No)
                 {
                     if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
                         setter.IsKind(SyntaxKind.SetAccessorDeclaration))
@@ -40,13 +40,13 @@ namespace PropertyChangedAnalyzers
                             if (!AreInSameBlock(assignment, invocation) ||
                                 assignment.SpanStart > invocation.SpanStart)
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
                             }
 
                             if (IsFirstCall(invocation) &&
                                 IncorrectOrMissingCheckIfDifferent(context, setter, invocation, assignment))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
                             }
                         }
                         else if (Property.TryFindSingleSetAndRaise(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
@@ -54,20 +54,20 @@ namespace PropertyChangedAnalyzers
                             if (!AreInSameBlock(setAndRaise, invocation) ||
                                 setAndRaise.SpanStart > invocation.SpanStart)
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC016NotifyAfterUpdate.Descriptor, GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
                             }
 
                             if (IsFirstCall(invocation) &&
                                 IncorrectOrMissingCheckIfDifferent(setAndRaise, invocation))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC005CheckIfDifferentBeforeNotifying.Descriptor, GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
                             }
                         }
                     }
                     else if (invocation.ArgumentList is ArgumentListSyntax argumentList &&
                              argumentList.Arguments.Count == 0)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, GetLocation()));
                     }
                 }
             }

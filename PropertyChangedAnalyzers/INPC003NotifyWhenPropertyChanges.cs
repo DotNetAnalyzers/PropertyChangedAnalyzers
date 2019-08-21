@@ -11,21 +11,10 @@ namespace PropertyChangedAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class INPC003NotifyWhenPropertyChanges : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "INPC003";
         public static readonly string PropertyNameKey = "PropertyName";
 
-        internal static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            id: DiagnosticId,
-            title: "Notify when property changes.",
-            messageFormat: "Notify that property '{0}' changes.",
-            category: AnalyzerCategory.PropertyChanged,
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
-            description: "Notify when property changes.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.INPC003NotifyForDependentProperty);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -137,7 +126,7 @@ namespace PropertyChangedAnalyzers
                             }
 
                             var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), properties, property.Name));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC003NotifyForDependentProperty, context.Node.GetLocation(), properties, property.Name));
                         }
                     }
                 }

@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers
     internal class GetBackingFieldFix : DocumentEditorCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            INPC019GetBackingField.DiagnosticId);
+            Descriptors.INPC019GetBackingField.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {

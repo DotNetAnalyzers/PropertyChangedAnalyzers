@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
         private static readonly CodeFixProvider Fix = new NotifyPropertyChangedFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC003NotifyWhenPropertyChanges.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
 
         [Test]
         public static void WhenUsingPropertiesExpressionBody()

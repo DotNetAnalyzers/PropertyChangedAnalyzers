@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
     public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly DiagnosticDescriptor Descriptor = INPC015PropertyIsRecursive.Descriptor;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC015PropertyIsRecursive;
 
         [Test]
         public static void NotifyingProperty()

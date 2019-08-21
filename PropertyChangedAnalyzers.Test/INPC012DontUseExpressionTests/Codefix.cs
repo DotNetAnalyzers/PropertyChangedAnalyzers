@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
         private static readonly CodeFixProvider Fix = new RemoveExpressionFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC012DontUseExpression.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC012DoNotUseExpression);
 
         [Test]
         public static void ExpressionInvokerToCallerMemberName()

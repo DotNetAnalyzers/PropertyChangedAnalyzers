@@ -12,10 +12,10 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            INPC004UseCallerMemberName.Descriptor,
-            INPC009DontRaiseChangeForMissingProperty.Descriptor,
-            INPC012DontUseExpression.Descriptor,
-            INPC013UseNameof.Descriptor);
+            Descriptors.INPC004UseCallerMemberName,
+            Descriptors.INPC009DoNotRaiseChangeForMissingProperty,
+            Descriptors.INPC012DoNotUseExpression,
+            Descriptors.INPC013UseNameof);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -39,12 +39,12 @@ namespace PropertyChangedAnalyzers
                     {
                         if (parameter.IsCallerMemberName())
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, argument.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
                         }
                         else if (parameter.TrySingleDeclaration<SyntaxNode>(context.CancellationToken, out _) &&
                                  PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, argument.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
                         }
                     }
 
@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
                             PropertyChanged.IsOnPropertyChanged(onPropertyChangedCandidate, context.SemanticModel, context.CancellationToken) != AnalysisResult.No &&
                             !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(text, out _))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
                         }
 
                         if (argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
@@ -66,7 +66,7 @@ namespace PropertyChangedAnalyzers
                                  PropertyChanged.IsPropertyChangedInvoke(parentInvocation, context.SemanticModel, context.CancellationToken)) &&
                                 !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(text, out _))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
                             }
                         }
 
@@ -76,12 +76,12 @@ namespace PropertyChangedAnalyzers
                             if (context.ContainingSymbol is IMethodSymbol containingMethod &&
                                 containingMethod.Parameters.TrySingle(x => x.Name == literal.Token.ValueText, out _))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC013UseNameof.Descriptor, argument.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC013UseNameof, argument.GetLocation()));
                             }
 
                             if (context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(literal.Token.ValueText, out _))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(INPC013UseNameof.Descriptor, argument.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC013UseNameof, argument.GetLocation()));
                             }
                         }
                     }
@@ -94,10 +94,10 @@ namespace PropertyChangedAnalyzers
                 {
                     if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(INPC012DontUseExpression.Descriptor, argument.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC012DoNotUseExpression, argument.GetLocation()));
                         if (!context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(lambdaName, out _))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
                         }
                     }
                 }
@@ -112,7 +112,7 @@ namespace PropertyChangedAnalyzers
                         !string.IsNullOrEmpty(propertyName) &&
                         !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
                     }
 
                     if (PropertyChanged.IsPropertyChangedInvoke(invokeCandidate, context.SemanticModel, context.CancellationToken) &&
@@ -122,7 +122,7 @@ namespace PropertyChangedAnalyzers
                          !string.IsNullOrEmpty(propertyName) &&
                          !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(INPC009DontRaiseChangeForMissingProperty.Descriptor, argument.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
                     }
                 }
             }

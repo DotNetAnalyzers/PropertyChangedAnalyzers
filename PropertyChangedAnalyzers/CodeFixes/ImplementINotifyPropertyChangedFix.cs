@@ -68,7 +68,7 @@ namespace PropertyChangedAnalyzers
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            INPC001ImplementINotifyPropertyChanged.DiagnosticId,
+            Descriptors.INPC001ImplementINotifyPropertyChanged.Id,
             "CS0535",
             "CS0246");
 
@@ -301,7 +301,7 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsSupportedDiagnostic(Diagnostic diagnostic)
         {
-            if (diagnostic.Id == INPC001ImplementINotifyPropertyChanged.DiagnosticId)
+            if (diagnostic.Id == Descriptors.INPC001ImplementINotifyPropertyChanged.Id)
             {
                 return true;
             }

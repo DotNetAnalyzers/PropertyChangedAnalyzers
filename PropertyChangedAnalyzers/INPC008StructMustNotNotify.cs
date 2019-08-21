@@ -10,20 +10,8 @@ namespace PropertyChangedAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class INPC008StructMustNotNotify : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "INPC008";
-
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            id: DiagnosticId,
-            title: "Struct must not implement INotifyPropertyChanged",
-            messageFormat: "Struct '{0}' implements INotifyPropertyChanged",
-            category: AnalyzerCategory.PropertyChanged,
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
-            description: "Struct must not implement INotifyPropertyChanged",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.INPC008StructMustNotNotify);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -44,7 +32,7 @@ namespace PropertyChangedAnalyzers
                 context.ContainingSymbol is INamedTypeSymbol type &&
                 type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetNode().GetLocation(), context.ContainingSymbol.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC008StructMustNotNotify, GetNode().GetLocation(), context.ContainingSymbol.Name));
             }
 
             SyntaxNode GetNode()

@@ -19,7 +19,7 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(INPC017BackingFieldNameMustMatch.DiagnosticId);
+            ImmutableArray.Create(Descriptors.INPC017BackingFieldNameMisMatch.Id);
 
         public override FixAllProvider GetFixAllProvider() => null;
 

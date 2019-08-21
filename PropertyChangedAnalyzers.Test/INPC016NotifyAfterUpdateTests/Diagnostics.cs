@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC016");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC016NotifyAfterUpdate);
 
 #pragma warning disable SA1203 // Constants must appear before fields
         private const string ViewModelBaseCode = @"

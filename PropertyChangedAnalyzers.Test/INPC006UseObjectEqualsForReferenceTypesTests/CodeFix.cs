@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
     {
         private static readonly DiagnosticAnalyzer Analyzer = new IfStatementAnalyzer();
         private static readonly CodeFixProvider Fix = new UseCorrectEqualityFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC006_b");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC006UseObjectEqualsForReferenceTypes);
 
         private static readonly IReadOnlyList<TestCase> TestCases = new[]
             {
@@ -42,7 +42,7 @@ namespace RoslynSandbox
         [OneTimeSetUp]
         public static void OneTimeSetUp()
         {
-            RoslynAssert.SuppressedDiagnostics.Add(INPC006UseReferenceEqualsForReferenceTypes.DiagnosticId);
+            RoslynAssert.SuppressedDiagnostics.Add(Descriptors.INPC006UseReferenceEqualsForReferenceTypes.Id);
         }
 
         [OneTimeTearDown]

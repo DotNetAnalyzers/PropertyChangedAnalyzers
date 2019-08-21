@@ -13,8 +13,8 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            INPC006UseReferenceEqualsForReferenceTypes.Descriptor,
-            INPC006UseObjectEqualsForReferenceTypes.Descriptor);
+            Descriptors.INPC006UseReferenceEqualsForReferenceTypes,
+            Descriptors.INPC006UseObjectEqualsForReferenceTypes);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -41,22 +41,22 @@ namespace PropertyChangedAnalyzers
                     if (property.Type.IsReferenceType &&
                         property.Type != KnownSymbol.String)
                     {
-                        if (INPC006UseReferenceEqualsForReferenceTypes.Descriptor.IsSuppressed(context.SemanticModel) &&
+                        if (Descriptors.INPC006UseReferenceEqualsForReferenceTypes.IsSuppressed(context.SemanticModel) &&
                             !IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !IsObjectEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property) &&
                             !IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !IsEqualityComparerEqualsOrNegated(ifStatement, context.SemanticModel, context.CancellationToken, value, property))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC006UseObjectEqualsForReferenceTypes.Descriptor, ifStatement.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC006UseObjectEqualsForReferenceTypes, ifStatement.GetLocation()));
                         }
 
-                        if (INPC006UseObjectEqualsForReferenceTypes.Descriptor.IsSuppressed(context.SemanticModel) &&
+                        if (Descriptors.INPC006UseObjectEqualsForReferenceTypes.IsSuppressed(context.SemanticModel) &&
                             !Equality.IsReferenceEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !Equality.IsReferenceEquals(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property) &&
                             !IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) &&
                             !IsNegatedReferenceEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(INPC006UseReferenceEqualsForReferenceTypes.Descriptor, ifStatement.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC006UseReferenceEqualsForReferenceTypes, ifStatement.GetLocation()));
                         }
                     }
                 }

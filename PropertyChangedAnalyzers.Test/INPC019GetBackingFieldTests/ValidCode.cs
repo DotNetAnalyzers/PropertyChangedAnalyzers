@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC019GetBackingFieldTests
     public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly DiagnosticDescriptor Descriptor = INPC019GetBackingField.Descriptor;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC019GetBackingField;
 
         [Test]
         public static void ExpressionBody()

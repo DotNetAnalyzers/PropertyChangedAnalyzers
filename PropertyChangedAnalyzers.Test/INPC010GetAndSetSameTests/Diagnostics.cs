@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC010GetAndSetSame.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC010GetAndSetSame);
 
         [Test]
         public static void DifferentFields()

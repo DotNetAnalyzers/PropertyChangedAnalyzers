@@ -12,8 +12,8 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            INPC004UseCallerMemberName.Descriptor,
-            INPC018InvokerShouldBeProtected.Descriptor);
+            Descriptors.INPC004UseCallerMemberName,
+            Descriptors.INPC018InvokerShouldBeProtected);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -36,7 +36,7 @@ namespace PropertyChangedAnalyzers
                     methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
                     parameterList.Parameters.TrySingle(out var parameterSyntax))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(INPC004UseCallerMemberName.Descriptor, parameterSyntax.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
                 }
 
                 if (method.DeclaredAccessibility == Accessibility.Private &&
@@ -44,7 +44,7 @@ namespace PropertyChangedAnalyzers
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            INPC018InvokerShouldBeProtected.Descriptor,
+                            Descriptors.INPC018InvokerShouldBeProtected,
                             methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier) ? modifier.GetLocation() : methodDeclaration.Identifier.GetLocation()));
                 }
             }

@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new RenameFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC017BackingFieldNameMustMatch.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC017BackingFieldNameMisMatch);
 
         [TestCase("wrong")]
         [TestCase("valuE")]

@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC001ImplementINotifyPropertyChanged();
         private static readonly CodeFixProvider Fix = new ImplementINotifyPropertyChangedFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC001");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged);
 
         [Test]
         public static void Message()
@@ -25,12 +25,8 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedMessage = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
-                "INPC001",
-                "The class Foo should notify for:\r\nBar1\r\nBar2",
-                before,
-                out before);
-            RoslynAssert.Diagnostics<INPC001ImplementINotifyPropertyChanged>(expectedMessage, before);
+            var expectedMessage = ExpectedDiagnostic.WithMessage("The class Foo should notify for:\r\nBar1\r\nBar2");
+            RoslynAssert.Diagnostics(Analyzer, expectedMessage, before);
         }
 
         [Test]

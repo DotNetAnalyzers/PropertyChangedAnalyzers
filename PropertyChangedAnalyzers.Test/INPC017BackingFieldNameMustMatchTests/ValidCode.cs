@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
     public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly DiagnosticDescriptor Descriptor = INPC017BackingFieldNameMustMatch.Descriptor;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC017BackingFieldNameMisMatch;
 
         [Test]
         public static void NotifyingProperty()

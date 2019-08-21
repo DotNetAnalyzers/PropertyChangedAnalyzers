@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers
                                      .WithAdditionalAnnotations(Simplifier.Annotation))));
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(INPC004UseCallerMemberName.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC004UseCallerMemberName.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)

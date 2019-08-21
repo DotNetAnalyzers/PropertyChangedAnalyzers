@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         {
             private static readonly DiagnosticAnalyzer Analyzer = new MethodDeclarationAnalyzer();
             private static readonly CodeFixProvider Fix = new UseCallerMemberNameFix();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC004UseCallerMemberName.Descriptor);
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
 
             [TestCase("this.PropertyChanged")]
             [TestCase("PropertyChanged")]

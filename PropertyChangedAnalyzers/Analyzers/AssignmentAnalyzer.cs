@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            INPC014SetBackingField.Descriptor);
+            Descriptors.INPC014SetBackingFieldInConstructor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -29,7 +29,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (ShouldSetBackingField(assignment, context))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(INPC014SetBackingField.Descriptor, assignment.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC014SetBackingFieldInConstructor, assignment.GetLocation()));
                 }
             }
         }

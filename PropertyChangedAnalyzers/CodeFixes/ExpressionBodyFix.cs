@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers
     internal class ExpressionBodyFix : DocumentEditorCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            INPC020PreferExpressionBodyAccessor.DiagnosticId);
+            Descriptors.INPC020PreferExpressionBodyAccessor.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {

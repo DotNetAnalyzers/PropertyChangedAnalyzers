@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC011DontShadowTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC011DontShadow();
         private static readonly CodeFixProvider Fix = new RemoveShadowingFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC011");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC011DoNotShadow);
 
         [Test]
         public static void ShadowingEvent()

@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC021SetBackingFieldTests
     public static class Diagnostics
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC021SetBackingField.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC021SetBackingField);
 
         [Test]
         public static void ExpressionBody()

@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers
     internal class MakeProtectedFix : DocumentEditorCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            INPC018InvokerShouldBeProtected.DiagnosticId);
+            Descriptors.INPC018InvokerShouldBeProtected.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {

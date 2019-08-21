@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
         private static readonly CodeFixProvider Fix = new NotifyPropertyChangedFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC003");
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
 
         [TestCase("this.value = value;")]
         [TestCase("this.value += value;")]

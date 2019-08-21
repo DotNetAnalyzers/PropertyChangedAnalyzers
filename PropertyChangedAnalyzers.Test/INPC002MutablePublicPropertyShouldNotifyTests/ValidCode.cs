@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     public static partial class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly DiagnosticDescriptor Descriptor = INPC002MutablePublicPropertyShouldNotify.Descriptor;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC002MutablePublicPropertyShouldNotify;
 
         [TestCase("null")]
         [TestCase("string.Empty")]

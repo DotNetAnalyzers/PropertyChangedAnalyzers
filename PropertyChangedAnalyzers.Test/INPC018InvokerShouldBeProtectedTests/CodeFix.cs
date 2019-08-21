@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtectedTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new MethodDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new MakeProtectedFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC018InvokerShouldBeProtected.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC018InvokerShouldBeProtected);
 
         [Test]
         public static void ProtectedPropertyName()

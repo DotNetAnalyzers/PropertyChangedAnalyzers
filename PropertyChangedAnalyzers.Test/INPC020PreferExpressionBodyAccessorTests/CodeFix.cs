@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC020PreferExpressionBodyAccessorTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new ExpressionBodyFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(INPC020PreferExpressionBodyAccessor.Descriptor);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor);
 
         [Test]
         public static void TrySet()

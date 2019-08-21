@@ -12,20 +12,8 @@ namespace PropertyChangedAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class INPC001ImplementINotifyPropertyChanged : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "INPC001";
-
-        private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
-            id: DiagnosticId,
-            title: "The class has mutable properties and should implement INotifyPropertyChanged.",
-            messageFormat: "{0}",
-            category: AnalyzerCategory.PropertyChanged,
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: AnalyzerConstants.EnabledByDefault,
-            description: "The class has mutable properties and should implement INotifyPropertyChanged.",
-            helpLinkUri: HelpLink.ForId(DiagnosticId));
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.INPC001ImplementINotifyPropertyChanged);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -60,7 +48,7 @@ namespace PropertyChangedAnalyzers
                         classDeclaration.Members.OfType<PropertyDeclarationSyntax>()
                                    .Where(x => Property.ShouldNotify(x, context.SemanticModel, context.CancellationToken))
                                    .Select(x => x.Identifier.ValueText));
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, classDeclaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged, classDeclaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
                 }
 
                 if (type.TryFindEvent("PropertyChanged", out var eventSymbol))
@@ -72,7 +60,7 @@ namespace PropertyChangedAnalyzers
                         return;
                     }
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, classDeclaration.Identifier.GetLocation(), $"The class {type.Name} has event PropertyChanged but does not implement INotifyPropertyChanged."));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged, classDeclaration.Identifier.GetLocation(), $"The class {type.Name} has event PropertyChanged but does not implement INotifyPropertyChanged."));
                 }
             }
         }
