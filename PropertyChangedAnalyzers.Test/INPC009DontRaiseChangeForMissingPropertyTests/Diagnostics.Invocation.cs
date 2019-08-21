@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
         public static class Invocation
         {
             private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC009");
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty);
 
             [Test]
             public static void CallsCallerMemberNameFromMethod()

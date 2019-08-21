@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
         public static class Argument
         {
             private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("INPC009");
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty);
 
             [TestCase(@"""Missing""")]
             [TestCase(@"nameof(PropertyChanged)")]
