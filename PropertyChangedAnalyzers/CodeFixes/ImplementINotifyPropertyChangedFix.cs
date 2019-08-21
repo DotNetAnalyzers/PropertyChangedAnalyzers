@@ -9,62 +9,27 @@ namespace PropertyChangedAnalyzers
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
-    using Microsoft.CodeAnalysis.Formatting;
-    using Microsoft.CodeAnalysis.Simplification;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ImplementINotifyPropertyChangedFix))]
     [Shared]
-    internal class ImplementINotifyPropertyChangedFix : CodeFixProvider
+    internal class ImplementINotifyPropertyChangedFix : DocumentEditorCodeFixProvider
     {
         // ReSharper disable once InconsistentNaming
-        private static readonly QualifiedNameSyntax INotifyPropertyChangedType = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("System.ComponentModel.INotifyPropertyChanged")
-                                                                                                                   .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                   .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax CallerMemberNameType = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("System.Runtime.CompilerServices.CallerMemberName")
-                                                                                                             .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                             .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax PropertyChangedEventHandlerType = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("System.ComponentModel.PropertyChangedEventHandler")
-                                                                                                                        .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                        .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax MvvmLightViewModelBaseType = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("GalaSoft.MvvmLight.ViewModelBase")
-                                                                                                                   .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                   .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax CaliburnMicroPropertyChangedBase = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("Caliburn.Micro.PropertyChangedBase")
-                                                                                                                         .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                         .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax StyletPropertyChangedBase = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("Stylet.PropertyChangedBase")
-                                                                                                                  .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                  .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax MvvmCrossMvxNotifyPropertyChanged = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.ViewModels.MvxNotifyPropertyChanged")
-                                                                                                                              .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                              .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax MvvmCrossMvxViewModel = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.ViewModels.MvxViewModel")
-                                                                                                                  .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                  .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax MvvmCrossCoreMvxNotifyPropertyChanged = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged")
-                                                                                                                 .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                                 .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax MvvmCrossCoreMvxViewModel = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("MvvmCross.Core.ViewModels.MvxViewModel")
-                                                                                                     .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                     .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
-
-        private static readonly QualifiedNameSyntax PrismMvvmBindableBase = (QualifiedNameSyntax)SyntaxFactory.ParseTypeName("Microsoft.Practices.Prism.Mvvm.BindableBase")
-                                                                                                              .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                                                                              .WithAdditionalAnnotations(Simplifier.Annotation, SyntaxAnnotation.ElasticAnnotation);
+        private static readonly QualifiedNameSyntax INotifyPropertyChangedType = InpcFactory.ParseQualifiedName("System.ComponentModel.INotifyPropertyChanged");
+        private static readonly QualifiedNameSyntax CallerMemberNameType = InpcFactory.ParseQualifiedName("System.Runtime.CompilerServices.CallerMemberName");
+        private static readonly QualifiedNameSyntax PropertyChangedEventHandlerType = InpcFactory.ParseQualifiedName("System.ComponentModel.PropertyChangedEventHandler");
+        private static readonly QualifiedNameSyntax MvvmLightViewModelBaseType = InpcFactory.ParseQualifiedName("GalaSoft.MvvmLight.ViewModelBase");
+        private static readonly QualifiedNameSyntax CaliburnMicroPropertyChangedBase = InpcFactory.ParseQualifiedName("Caliburn.Micro.PropertyChangedBase");
+        private static readonly QualifiedNameSyntax StyletPropertyChangedBase = InpcFactory.ParseQualifiedName("Stylet.PropertyChangedBase");
+        private static readonly QualifiedNameSyntax MvvmCrossMvxNotifyPropertyChanged = InpcFactory.ParseQualifiedName("MvvmCross.ViewModels.MvxNotifyPropertyChanged");
+        private static readonly QualifiedNameSyntax MvvmCrossMvxViewModel = InpcFactory.ParseQualifiedName("MvvmCross.ViewModels.MvxViewModel");
+        private static readonly QualifiedNameSyntax MvvmCrossCoreMvxNotifyPropertyChanged = InpcFactory.ParseQualifiedName("MvvmCross.Core.ViewModels.MvxNotifyPropertyChanged");
+        private static readonly QualifiedNameSyntax MvvmCrossCoreMvxViewModel = InpcFactory.ParseQualifiedName("MvvmCross.Core.ViewModels.MvxViewModel");
+        private static readonly QualifiedNameSyntax PrismMvvmBindableBase = InpcFactory.ParseQualifiedName("Microsoft.Practices.Prism.Mvvm.BindableBase");
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
@@ -72,10 +37,10 @@ namespace PropertyChangedAnalyzers
             "CS0535",
             "CS0246");
 
-        public override FixAllProvider GetFixAllProvider() => null;
+        protected override DocumentEditorFixAllProvider FixAllProvider() => null;
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                            .ConfigureAwait(false);
@@ -83,219 +48,188 @@ namespace PropertyChangedAnalyzers
                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!IsSupportedDiagnostic(diagnostic))
+                if (IsSupportedDiagnostic(diagnostic) &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax classDeclaration) &&
+                    semanticModel.TryGetNamedType(classDeclaration, context.CancellationToken, out var type))
                 {
-                    continue;
-                }
-
-                var classDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                if (classDeclaration == null)
-                {
-                    continue;
-                }
-
-                var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
-                if (type.BaseType.TryFindEventRecursive("PropertyChanged", out _))
-                {
-                    continue;
-                }
-
-                if (type.BaseType == KnownSymbol.Object &&
-                    !type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation))
-                {
-                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("GalaSoft.MvvmLight.dll") == true))
+                    if (type.BaseType == KnownSymbol.Object &&
+                        !type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation))
                     {
-                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmLightViewModelBaseType);
+                        if (References("GalaSoft.MvvmLight.dll"))
+                        {
+                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmLightViewModelBaseType);
+                        }
+
+                        if (References("Caliburn.Micro.dll"))
+                        {
+                            RegisterSubclassFixes(diagnostic, classDeclaration, CaliburnMicroPropertyChangedBase);
+                        }
+
+                        if (References("Stylet.dll"))
+                        {
+                            RegisterSubclassFixes(diagnostic, classDeclaration, StyletPropertyChangedBase);
+                        }
+
+                        if (References("MvvmCross.dll"))
+                        {
+                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossMvxNotifyPropertyChanged);
+                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossMvxViewModel);
+                        }
+
+                        if (References("MvvmCross.Core.dll"))
+                        {
+                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossCoreMvxNotifyPropertyChanged);
+                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossCoreMvxViewModel);
+                        }
+
+                        if (References("Prism.Mvvm.dll"))
+                        {
+                            RegisterSubclassFixes(diagnostic, classDeclaration, PrismMvvmBindableBase);
+                        }
                     }
 
-                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Caliburn.Micro.dll") == true))
-                    {
-                        RegisterSubclassFixes(diagnostic, classDeclaration, CaliburnMicroPropertyChangedBase);
-                    }
-
-                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Stylet.dll") == true))
-                    {
-                        RegisterSubclassFixes(diagnostic, classDeclaration, StyletPropertyChangedBase);
-                    }
-
-                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("MvvmCross.dll") == true))
-                    {
-                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossMvxNotifyPropertyChanged);
-                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossMvxViewModel);
-                    }
-
-                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("MvvmCross.Core.dll") == true))
-                    {
-                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossCoreMvxNotifyPropertyChanged);
-                        RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossCoreMvxViewModel);
-                    }
-
-                    if (semanticModel.Compilation.References.Any(x => x.Display?.EndsWith("Prism.Mvvm.dll") == true))
-                    {
-                        RegisterSubclassFixes(diagnostic, classDeclaration, PrismMvvmBindableBase);
-                    }
-                }
-
-                context.RegisterCodeFix(
-                    CodeAction.Create(
+                    context.RegisterCodeFix(
                         "Implement INotifyPropertyChanged and add usings.",
-                        cancellationToken =>
+                        (editor, cancellationToken) =>
                             ImplementINotifyPropertyChangedAsync(
-                                context,
-                                semanticModel,
+                                editor,
                                 classDeclaration,
+                                addUsings: true,
                                 cancellationToken),
-                        this.GetType().FullName),
-                    diagnostic);
+                        "Implement INotifyPropertyChanged and add usings.",
+                        diagnostic);
 
-                context.RegisterCodeFix(
-                    CodeAction.Create(
+                    context.RegisterCodeFix(
                         "Implement INotifyPropertyChanged fully qualified.",
-                        cancellationToken =>
-                            ImplementINotifyPropertyChangedFullyQualifiedAsync(
-                                context,
-                                semanticModel,
+                        (editor, cancellationToken) =>
+                            ImplementINotifyPropertyChangedAsync(
+                                editor,
                                 classDeclaration,
+                                addUsings: false,
                                 cancellationToken),
-                        this.GetType().FullName),
-                    diagnostic);
+                        "Implement INotifyPropertyChanged fully qualified.",
+                        diagnostic);
+                }
             }
 
-            void RegisterSubclassFixes(Diagnostic diagnostic, ClassDeclarationSyntax classDeclaration, QualifiedNameSyntax viewModelBasetype)
+            bool References(string dll)
+            {
+                return semanticModel.Compilation.References.Any(x => x.Display?.EndsWith(dll) == true);
+            }
+
+            void RegisterSubclassFixes(Diagnostic diagnostic, ClassDeclarationSyntax classDeclaration, QualifiedNameSyntax viewModelBaseType)
             {
                 context.RegisterCodeFix(
-                    CodeAction.Create(
-                        $"Subclass {viewModelBasetype} and add using.",
-                        cancellationToken =>
-                            SubclassViewModelBaseAndAddUsingAsync(
-                                context,
-                                classDeclaration,
-                                viewModelBasetype,
-                                cancellationToken),
-                        $"Subclass {viewModelBasetype} add usings."),
+                    $"Subclass {viewModelBaseType} and add using.",
+                    (editor, _) =>
+                        Subclass(
+                            editor,
+                            classDeclaration,
+                            viewModelBaseType,
+                            addUsings: true),
+                    $"Subclass {viewModelBaseType} and add usings.",
                     diagnostic);
 
                 context.RegisterCodeFix(
-                    CodeAction.Create(
-                        $"Subclass {viewModelBasetype} fully qualified.",
-                        cancellationToken =>
-                            SubclassViewModelBaseFullyQualifiedAsync(
-                                context,
-                                classDeclaration,
-                                viewModelBasetype,
-                                cancellationToken),
-                        $"Subclass {viewModelBasetype} fully qualified."),
+                    $"Subclass {viewModelBaseType} fully qualified.",
+                    (editor, _) =>
+                        Subclass(
+                            editor,
+                            classDeclaration,
+                            viewModelBaseType,
+                            addUsings: false),
+                    $"Subclass {viewModelBaseType} fully qualified.",
                     diagnostic);
             }
         }
 
-        private static async Task<Document> ImplementINotifyPropertyChangedAsync(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
+        private static async Task ImplementINotifyPropertyChangedAsync(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, bool addUsings, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
-                                             .ConfigureAwait(false);
-            ImplementINotifyPropertyChanged(context, semanticModel, classDeclaration, editor);
-            _ = editor.AddUsing(SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left))
-                      .AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
-            return editor.GetChangedDocument();
-        }
-
-        private static async Task<Document> ImplementINotifyPropertyChangedFullyQualifiedAsync(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
-        {
-            var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
-                                             .ConfigureAwait(false);
-            ImplementINotifyPropertyChanged(context, semanticModel, classDeclaration, editor);
-            return editor.GetChangedDocument();
-        }
-
-        private static void ImplementINotifyPropertyChanged(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, DocumentEditor editor)
-        {
-            var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
-            var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-            if (!type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation))
+            if (editor.SemanticModel.TryGetSymbol(classDeclaration, cancellationToken, out var type))
             {
-                if (classDeclaration.BaseList != null &&
-                    classDeclaration.BaseList.Types.TryFirst(
-                        x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true,
-                        out var baseType) &&
-                    context.Diagnostics.Any(d => IsINotifyPropertyChangedMissing(d)))
+                if (!type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, editor.SemanticModel.Compilation) &&
+                    !HasINotifyPropertyChangedInterface(out var baseType))
                 {
-                    editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(INotifyPropertyChangedType));
+                    if (baseType is null)
+                    {
+                        editor.AddInterfaceType(classDeclaration, INotifyPropertyChangedType);
+                    }
+                    else
+                    {
+                        _ = editor.ReplaceNode(
+                            baseType.Type,
+                            x => INotifyPropertyChangedType.WithTriviaFrom(x));
+                    }
                 }
-                else
+
+                if (!type.TryFindEventRecursive("PropertyChanged", out _))
                 {
-                    editor.AddInterfaceType(classDeclaration, INotifyPropertyChangedType);
+                    _ = editor.AddEvent(
+                        classDeclaration,
+                        (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration("PropertyChanged", PropertyChangedEventHandlerType, Accessibility.Public));
                 }
-            }
 
-            if (!type.TryFindEventRecursive("PropertyChanged", out _))
-            {
-                _ = editor.AddEvent(
-                    classDeclaration,
-                    (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration("PropertyChanged", PropertyChangedEventHandlerType, Accessibility.Public));
-            }
-
-            if (!type.TryFindFirstMethodRecursive(
-                "OnPropertyChanged",
-                m => m.Parameters.Length == 1 &&
-                     m.Parameters[0]
-                      .Type == KnownSymbol.String,
-                out _))
-            {
-                if (type.IsSealed)
+                if (!type.TryFindFirstMethodRecursive("OnPropertyChanged", m => m.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.String, out _))
                 {
+                    var qualifyAccess = await editor.QualifyEventAccessAsync(cancellationToken)
+                                                    .ConfigureAwait(false);
+
                     _ = editor.AddMethod(
                         classDeclaration,
-                        ParseMethod(
-                            @"private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-                              {
-                                  this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-                              }",
-                            underscoreFields));
+                        InpcFactory.OnPropertyChangedDeclaration(qualifyAccess, type.IsSealed, true));
                 }
-                else
+
+                if (addUsings)
                 {
-                    _ = editor.AddMethod(
-                        classDeclaration,
-                        ParseMethod(
-                            @"protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-                              {
-                                  this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-                              }",
-                            underscoreFields));
+                    _ = editor.AddUsing(SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left))
+                              .AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
                 }
+            }
+
+            bool HasINotifyPropertyChangedInterface(out BaseTypeSyntax baseType)
+            {
+                if (classDeclaration.BaseList is BaseListSyntax baseList)
+                {
+                    if (baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out baseType))
+                    {
+                        if (addUsings)
+                        {
+                            return true;
+                        }
+
+                        return baseType.Type.IsKind(SyntaxKind.QualifiedName);
+                    }
+                }
+
+                baseType = null;
+                return false;
             }
         }
 
-        private static async Task<Document> SubclassViewModelBaseAndAddUsingAsync(CodeFixContext context, ClassDeclarationSyntax classDeclaration, QualifiedNameSyntax viewModelBaseType, CancellationToken cancellationToken)
+        private static void Subclass(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, QualifiedNameSyntax viewModelBaseType, bool addUsings)
         {
-            var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
-                                             .ConfigureAwait(false);
-            AddBaseType(context, classDeclaration, viewModelBaseType, editor);
-            _ = editor.AddUsing(SyntaxFactory.UsingDirective(viewModelBaseType.Left));
-            return editor.GetChangedDocument();
-        }
-
-        private static async Task<Document> SubclassViewModelBaseFullyQualifiedAsync(CodeFixContext context, ClassDeclarationSyntax classDeclaration, QualifiedNameSyntax viewModelBaseType, CancellationToken cancellationToken)
-        {
-            var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
-                                             .ConfigureAwait(false);
-            AddBaseType(context, classDeclaration, viewModelBaseType, editor);
-            return editor.GetChangedDocument();
-        }
-
-        private static void AddBaseType(CodeFixContext context, ClassDeclarationSyntax classDeclaration, TypeSyntax viewModelBaseType, DocumentEditor editor)
-        {
-            if (classDeclaration.BaseList != null &&
-                classDeclaration.BaseList.Types.TryFirst(
-                    x => (x.Type as IdentifierNameSyntax)?.Identifier.ValueText.Contains("INotifyPropertyChanged") == true,
-                    out var baseType) &&
-                context.Diagnostics.Any(x => IsINotifyPropertyChangedMissing(x)))
+            if (classDeclaration.BaseList is BaseListSyntax baseList &&
+                baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out var baseType))
             {
-                editor.ReplaceNode(baseType, SyntaxFactory.SimpleBaseType(viewModelBaseType));
+                _ = editor.ReplaceNode(
+                       baseType,
+                       x => BaseType().WithTriviaFrom(x));
             }
             else
             {
-                editor.AddBaseType(classDeclaration, viewModelBaseType);
+                editor.AddBaseType(classDeclaration, BaseType());
+            }
+
+            if (addUsings)
+            {
+                _ = editor.AddUsing(SyntaxFactory.UsingDirective(viewModelBaseType.Left));
+            }
+
+            TypeSyntax BaseType()
+            {
+                return addUsings
+                    ? (TypeSyntax)viewModelBaseType.Right
+                    : viewModelBaseType;
             }
         }
 
@@ -319,25 +253,10 @@ namespace PropertyChangedAnalyzers
         {
             if (diagnostic.Id == "CS0246")
             {
-                return diagnostic.GetMessage(CultureInfo.InvariantCulture) ==
-                       "The type or namespace name 'INotifyPropertyChanged' could not be found (are you missing a using directive or an assembly reference?)";
+                return diagnostic.GetMessage(CultureInfo.InvariantCulture) == "The type or namespace name 'INotifyPropertyChanged' could not be found (are you missing a using directive or an assembly reference?)";
             }
 
             return false;
-        }
-
-        private static MethodDeclarationSyntax ParseMethod(string code, bool usesUnderscoreNames)
-        {
-            if (usesUnderscoreNames)
-            {
-                code = code.Replace("this.", string.Empty);
-            }
-
-            return Parse.MethodDeclaration(code)
-                        .WithSimplifiedNames()
-                        .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
-                        .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                        .WithAdditionalAnnotations(Formatter.Annotation);
         }
     }
 }
