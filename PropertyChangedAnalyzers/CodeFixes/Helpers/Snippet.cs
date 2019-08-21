@@ -29,10 +29,7 @@ namespace PropertyChangedAnalyzers
                 }
 
                 if (type.GetMembers(nameof(Equals))
-                        .OfType<IMethodSymbol>()
-                        .TrySingle(
-                            m => m.Parameters.Length == 1 &&
-                                 ReferenceEquals(type, m.Parameters[0].Type), out _))
+                        .TrySingleOfType(m => m.Parameters.Length == 1 && Equals(type, m.Parameters[0].Type), out IMethodSymbol _))
                 {
                     return $"{x}.Equals({y})";
                 }
