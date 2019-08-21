@@ -52,7 +52,7 @@ namespace PropertyChangedAnalyzers
                                 diagnostic);
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _) &&
-                                 setAndRaiseMethod.CanGenerateSetAndRaiseCall(out var nameParameter))
+                                InpcFactory.CanGenerateSetAndRaiseCall(setAndRaiseMethod, out var nameParameter))
                         {
                             context.RegisterCodeFix(
                                 key,

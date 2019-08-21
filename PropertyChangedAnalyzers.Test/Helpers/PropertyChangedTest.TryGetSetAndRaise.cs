@@ -54,7 +54,6 @@ namespace RoslynSandbox
                 Assert.AreEqual("TrySet", method.Name);
             }
 
-            [Explicit("Temp")]
             [Test]
             public static void CustomImplementation2()
             {

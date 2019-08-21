@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
                             assignedSymbol.Kind == SymbolKind.Field &&
                             semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol setterSymbol) &&
                             PropertyChanged.TryGetSetAndRaise(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var setAndRaiseMethod) &&
-                            setAndRaiseMethod.CanGenerateSetAndRaiseCall(out var nameParameter))
+                           InpcFactory.CanGenerateSetAndRaiseCall(setAndRaiseMethod, out var nameParameter))
                         {
                             context.RegisterCodeFix(
                                 $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",

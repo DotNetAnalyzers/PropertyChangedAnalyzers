@@ -418,7 +418,7 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryGetSetAndRaise(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            return type.TryFindFirstMethodRecursive(x => x.Parameters.Length == 3 && IsSetAndRaise(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
+            return type.TryFindFirstMethodRecursive(x => InpcFactory.CanGenerateSetAndRaiseCall(x, out _) && IsSetAndRaise(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
         }
 
         internal static AnalysisResult IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)

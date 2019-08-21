@@ -176,7 +176,7 @@ namespace PropertyChangedAnalyzers
                                 .WithTriviaFrom(lambda);
         }
 
-        internal static bool CanGenerateSetAndRaiseCall(this IMethodSymbol candidate, out IParameterSymbol nameParameter)
+        internal static bool CanGenerateSetAndRaiseCall(IMethodSymbol candidate, out IParameterSymbol nameParameter)
         {
             nameParameter = null;
             return candidate.IsGenericMethod &&
