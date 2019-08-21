@@ -421,17 +421,12 @@ namespace PropertyChangedAnalyzers
             return type.TryFindFirstMethodRecursive(x => IsSetAndRaise(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
         }
 
-        internal static AnalysisResult IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> @checked = null)
+        internal static AnalysisResult IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
         {
             if (candidate?.ArgumentList == null ||
                 candidate.ArgumentList.Arguments.Count < 2 ||
-                candidate.ArgumentList.Arguments.Count > 3 ||
+                !candidate.ArgumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out _) ||
                 !candidate.IsPotentialThisOrBase())
-            {
-                return AnalysisResult.No;
-            }
-
-            if (!candidate.ArgumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out _))
             {
                 return AnalysisResult.No;
             }
@@ -440,7 +435,7 @@ namespace PropertyChangedAnalyzers
                 semanticModel.GetSymbolSafe(candidate, cancellationToken),
                 semanticModel,
                 cancellationToken,
-                @checked);
+                visited);
         }
 
         internal static AnalysisResult IsSetAndRaise(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
