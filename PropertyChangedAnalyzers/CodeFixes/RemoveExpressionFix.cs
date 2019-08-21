@@ -2,7 +2,6 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
@@ -10,8 +9,6 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
-    using Microsoft.CodeAnalysis.Formatting;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveExpressionFix))]
     [Shared]
@@ -25,57 +22,66 @@ namespace PropertyChangedAnalyzers
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
-            var semanticModel = await context.Document
-                                             .GetSemanticModelAsync(context.CancellationToken)
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
-            var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax argument) &&
+                    TryGetNameExpression(argument, out var nameExpression) &&
+                    argument.Parent is ArgumentListSyntax argumentList &&
+                    argumentList.Arguments.Count == 1 &&
+                    argumentList.Parent is InvocationExpressionSyntax invocation &&
+                    argument.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
+                    semanticModel.TryGetSymbol(classDeclaration, context.CancellationToken, out var type) &&
+                    PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
+                    invoker.Parameters.TrySingle(out var parameter) &&
+                    parameter.Type == KnownSymbol.String &&
+                    PropertyChanged.TryGetName(invocation, semanticModel, context.CancellationToken, out var name) == AnalysisResult.Yes)
                 {
-                    continue;
-                }
-
-                var argument = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                         .FirstAncestorOrSelf<ArgumentSyntax>();
-                var type = semanticModel.GetDeclaredSymbolSafe(argument?.FirstAncestorOrSelf<ClassDeclarationSyntax>(), context.CancellationToken);
-                if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker))
-                {
-                    context.RegisterCodeFix(
-                        "Use overload that does not use expression.",
-                        (editor, cancellationToken) => RemoveExpression(editor, argument, invoker, underscoreFields, cancellationToken),
-                        this.GetType(),
-                        diagnostic);
+                    if (parameter.IsCallerMemberName() &&
+                        argument.TryFirstAncestor(out PropertyDeclarationSyntax propertyDeclaration) &&
+                        propertyDeclaration.Identifier.ValueText == name)
+                    {
+                        context.RegisterCodeFix(
+                            "Use overload that does not use expression.",
+                            (editor, cancellationToken) => editor.ReplaceNode(
+                                invocation,
+                                x => x.WithArgumentList(SyntaxFactory.ArgumentList())
+                                      .WithTriviaFrom(x)),
+                            nameof(RemoveExpressionFix),
+                            diagnostic);
+                    }
+                    else
+                    {
+                        context.RegisterCodeFix(
+                            "Use overload that does not use expression.",
+                            (editor, cancellationToken) => editor.ReplaceNode(
+                                argument.Expression,
+                                x => InpcFactory.Nameof(nameExpression)),
+                            nameof(RemoveExpressionFix),
+                            diagnostic);
+                    }
                 }
             }
         }
 
-        private static void RemoveExpression(DocumentEditor editor, ArgumentSyntax argument, IMethodSymbol invoker, bool usesUnderscoreNames, CancellationToken cancellationToken)
+        private static bool TryGetNameExpression(ArgumentSyntax argument, out ExpressionSyntax expression)
         {
-            var invocation = argument.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-            if (PropertyChanged.TryGetName(invocation, editor.SemanticModel, cancellationToken, out var name) == AnalysisResult.Yes)
+            if (argument.Expression is ParenthesizedLambdaExpressionSyntax lambda)
             {
-                var property = editor.SemanticModel.GetDeclaredSymbolSafe(argument.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), cancellationToken);
-                if (property?.Name == name)
+                switch (lambda.Body)
                 {
-                    editor.ReplaceNode(
-                        invocation,
-                        SyntaxFactory.ParseExpression(Snippet.OnPropertyChanged(invoker, property?.Name, usesUnderscoreNames).TrimEnd(';'))
-                                     .WithSimplifiedNames()
-                                     .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
-                                     .WithAdditionalAnnotations(Formatter.Annotation));
-                }
-                else
-                {
-                    editor.ReplaceNode(
-                        invocation,
-                        SyntaxFactory.ParseExpression(Snippet.OnOtherPropertyChanged(invoker, name, usesUnderscoreNames).TrimEnd(';'))
-                                     .WithSimplifiedNames()
-                                     .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
-                                     .WithAdditionalAnnotations(Formatter.Annotation));
+                    case IdentifierNameSyntax identifierName:
+                        expression = identifierName;
+                        return true;
+                    case MemberAccessExpressionSyntax memberAccess:
+                        expression = memberAccess;
+                        return true;
                 }
             }
+
+            expression = null;
+            return false;
         }
     }
 }
