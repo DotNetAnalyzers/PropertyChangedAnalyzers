@@ -2,58 +2,36 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveShadowingFix))]
     [Shared]
-    internal class RemoveShadowingFix : CodeFixProvider
+    internal class RemoveShadowingFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC011DoNotShadow.Id);
 
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                var eventFieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                      .FirstAncestorOrSelf<EventFieldDeclarationSyntax>();
-                if (eventFieldDeclaration != null)
+                if (syntaxRoot.TryFindNode(diagnostic, out MemberDeclarationSyntax eventDeclaration))
                 {
                     context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "Remove shadowing event.",
-                            cancellationToken => RemoveEventAsync(context.Document, eventFieldDeclaration, cancellationToken),
-                            this.GetType().FullName),
+                        "Remove shadowing event.",
+                        (editor, _) => editor.RemoveNode(eventDeclaration),
+                        nameof(RemoveShadowingFix),
                         diagnostic);
                 }
             }
-        }
-
-        private static async Task<Document> RemoveEventAsync(Document document, EventFieldDeclarationSyntax eventFieldDeclaration, CancellationToken cancellationToken)
-        {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
-            editor.RemoveNode(eventFieldDeclaration);
-
-            return editor.GetChangedDocument();
         }
     }
 }
