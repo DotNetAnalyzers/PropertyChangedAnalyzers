@@ -20,7 +20,8 @@ namespace PropertyChangedAnalyzers
         private const string NotifyWhenValueChanges = "Notify when value changes.";
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            Descriptors.INPC002MutablePublicPropertyShouldNotify.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -67,12 +68,8 @@ namespace PropertyChangedAnalyzers
                     if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
                         invoker.Parameters.Length == 1)
                     {
-                        if (invoker.Parameters[0]
-                                   .Type ==
-                            KnownSymbol.String ||
-                            invoker.Parameters[0]
-                                   .Type ==
-                            KnownSymbol.PropertyChangedEventArgs)
+                        if (invoker.Parameters[0].Type == KnownSymbol.String ||
+                            invoker.Parameters[0].Type == KnownSymbol.PropertyChangedEventArgs)
                         {
                             if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                             {
