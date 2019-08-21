@@ -48,7 +48,7 @@ namespace PropertyChangedAnalyzers
                         }
 
                         if (semanticModel.TryGetSymbol(returnValue, cancellationToken, out IFieldSymbol returnedField) &&
-                            AssignmentExecutionWalker.FirstFor(returnedField, getter, Scope.Instance, semanticModel, cancellationToken, out _))
+                            AssignmentExecutionWalker.FirstFor(returnedField, getter, SearchScope.Instance, semanticModel, cancellationToken, out _))
                         {
                             return true;
                         }
@@ -66,7 +66,7 @@ namespace PropertyChangedAnalyzers
                 return expression is BinaryExpressionSyntax binary &&
                        binary.IsKind(SyntaxKind.CoalesceExpression) &&
                        semanticModel.TryGetSymbol(binary.Left, cancellationToken, out IFieldSymbol coalesceField) &&
-                       AssignmentExecutionWalker.FirstFor(coalesceField, binary.Right, Scope.Instance, semanticModel, cancellationToken, out _);
+                       AssignmentExecutionWalker.FirstFor(coalesceField, binary.Right, SearchScope.Instance, semanticModel, cancellationToken, out _);
             }
         }
 

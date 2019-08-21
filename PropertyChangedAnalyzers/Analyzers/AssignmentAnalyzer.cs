@@ -51,7 +51,7 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsAssignedWithParameter(AccessorDeclarationSyntax setter, SyntaxNodeAnalysisContext context)
         {
-            using (var mutations = MutationWalker.Borrow(setter, Scope.Member, context.SemanticModel, context.CancellationToken))
+            using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, context.SemanticModel, context.CancellationToken))
             {
                 if (mutations.TrySingle(out var mutation))
                 {

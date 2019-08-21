@@ -27,7 +27,7 @@ namespace PropertyChangedAnalyzers
 
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
-            var underscoreFields = semanticModel.UnderscoreFields();
+            var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.TryGetValue(INPC003NotifyWhenPropertyChanges.PropertyNameKey, out var property))

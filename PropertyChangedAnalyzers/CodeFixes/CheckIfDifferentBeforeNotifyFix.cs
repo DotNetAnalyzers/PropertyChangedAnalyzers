@@ -192,7 +192,7 @@ namespace PropertyChangedAnalyzers
 
         private static void UseSetAndRaise(DocumentEditor editor, AccessorDeclarationSyntax setter, AssignmentExpressionSyntax assignment, IMethodSymbol setAndRaise)
         {
-            var underscoreFields = editor.SemanticModel.UnderscoreFields();
+            var underscoreFields = editor.SemanticModel.UnderscoreFields() == CodeStyleResult.Yes;
             _ = editor.ReplaceNode(
                 setter,
                 x => x.WithBody(null)

@@ -58,7 +58,7 @@ namespace PropertyChangedAnalyzers
 
                             if (propertyDeclaration.TryGetSetter(out var setAccessor))
                             {
-                                using (var mutationWalker = MutationWalker.Borrow(setAccessor, Scope.Member, context.SemanticModel, context.CancellationToken))
+                                using (var mutationWalker = MutationWalker.Borrow(setAccessor, SearchScope.Member, context.SemanticModel, context.CancellationToken))
                                 {
                                     if (mutationWalker.IsEmpty)
                                     {

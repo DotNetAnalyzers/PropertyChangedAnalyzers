@@ -26,7 +26,7 @@ namespace Vanguard_MVVM.ViewModels
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
         IChildDataContext _childDataContext;
-        readonly string _title;
+        private readonly string _title;
         MainWindowViewModel()
         {
             _title = ""MVVM Attempt"";
@@ -66,7 +66,7 @@ namespace Vanguard_MVVM.ViewModels
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
         IChildDataContext _childDataContext;
-        readonly string _title;
+        private readonly string _title;
         MainWindowViewModel()
         {
             _title = ""MVVM Attempt"";
@@ -121,7 +121,7 @@ namespace Vanguard_MVVM.ViewModels
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
         IChildDataContext _childDataContext;
-        readonly string _title;
+        private readonly string _title;
         MainWindowViewModel()
         {
             _title = ""MVVM Attempt"";
@@ -162,7 +162,7 @@ namespace Vanguard_MVVM.ViewModels
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
         IChildDataContext _childDataContext;
-        readonly string _title;
+        private readonly string _title;
         MainWindowViewModel()
         {
             _title = ""MVVM Attempt"";

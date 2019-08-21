@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
 
                     ExpressionSyntax Replacement(ExpressionSyntax expressionSyntax)
                     {
-                        return semanticModel.UnderscoreFields()
+                        return semanticModel.UnderscoreFields() == CodeStyleResult.Yes
                             ? SyntaxFactory.ParseExpression(field.Name).WithTriviaFrom(expressionSyntax)
                             : SyntaxFactory.ParseExpression($"this.{field.Name}").WithTriviaFrom(expressionSyntax);
                     }

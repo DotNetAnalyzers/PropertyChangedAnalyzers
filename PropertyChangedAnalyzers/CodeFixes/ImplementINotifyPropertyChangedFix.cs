@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -210,7 +210,7 @@
         private static void ImplementINotifyPropertyChanged(CodeFixContext context, SemanticModel semanticModel, ClassDeclarationSyntax classDeclaration, DocumentEditor editor)
         {
             var type = (ITypeSymbol)semanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
-            var underscoreFields = semanticModel.UnderscoreFields();
+            var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
             if (!type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation))
             {
                 if (classDeclaration.BaseList != null &&

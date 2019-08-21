@@ -51,7 +51,7 @@ namespace PropertyChangedAnalyzers
 
         private static string Name(IPropertySymbol property, SemanticModel semanticModel)
         {
-            var name = semanticModel.UnderscoreFields()
+            var name = semanticModel.UnderscoreFields() == CodeStyleResult.Yes
                 ? $"_{property.Name.ToFirstCharLower()}"
                 : property.Name.ToFirstCharLower();
             while (property.ContainingType.MemberNames.Any(x => x == name))

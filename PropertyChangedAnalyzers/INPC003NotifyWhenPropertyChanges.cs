@@ -111,7 +111,7 @@ namespace PropertyChangedAnalyzers
             {
                 using (var pathWalker = MemberPath.PathWalker.Borrow(backing))
                 {
-                    if (pathWalker.IdentifierNames.Count == 0)
+                    if (pathWalker.Tokens.Count == 0)
                     {
                         return;
                     }

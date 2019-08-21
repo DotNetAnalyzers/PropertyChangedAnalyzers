@@ -29,15 +29,15 @@ namespace PropertyChangedAnalyzers
                     return true;
                 }
 
-                if (assignedPath.IdentifierNames.TrySingle(out var candidate) &&
-                    containingType.TryFindPropertyRecursive(candidate.Identifier.ValueText, out var property) &&
+                if (assignedPath.TrySingle(out var candidate) &&
+                    containingType.TryFindPropertyRecursive(candidate.ValueText, out var property) &&
                     property.TrySingleDeclaration(context.CancellationToken, out var declaration) &&
                     declaration.TryGetSetter(out var setter) &&
                     Property.TrySingleAssignmentInSetter(setter, out var assignment))
                 {
                     using (var set = visited.IncrementUsage())
                     {
-                        if (set.Add(candidate))
+                        if (set.Add(candidate.Parent))
                         {
                             return Uses(assignment.Left, returned, context, set);
                         }
@@ -55,8 +55,8 @@ namespace PropertyChangedAnalyzers
 
         private static bool Equals(MemberPath.PathWalker xWalker, MemberPath.PathWalker yWalker)
         {
-            var xPath = xWalker.IdentifierNames;
-            var yPath = yWalker.IdentifierNames;
+            var xPath = xWalker.Tokens;
+            var yPath = yWalker.Tokens;
             if (xPath.Count == 0 ||
                 xPath.Count != yPath.Count)
             {
@@ -65,7 +65,7 @@ namespace PropertyChangedAnalyzers
 
             for (var i = 0; i < xPath.Count; i++)
             {
-                if (xPath[i].Identifier.ValueText != yPath[i].Identifier.ValueText)
+                if (xPath[i].ValueText != yPath[i].ValueText)
                 {
                     return false;
                 }

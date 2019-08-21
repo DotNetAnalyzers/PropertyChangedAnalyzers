@@ -74,7 +74,7 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
             var type = editor.SemanticModel.GetDeclaredSymbolSafe(classDeclaration, cancellationToken);
-            var underscoreFields = editor.SemanticModel.UnderscoreFields();
+            var underscoreFields = editor.SemanticModel.UnderscoreFields() == CodeStyleResult.Yes;
             if (type.IsSealed)
             {
                 _ = editor.AddMethod(
