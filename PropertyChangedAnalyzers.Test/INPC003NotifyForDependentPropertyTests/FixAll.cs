@@ -1,13 +1,13 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
+namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public static class CodeFixAll
+    public static class FixAll
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
+        private static readonly DiagnosticAnalyzer Analyzer = new MutationAnalyzer();
         private static readonly CodeFixProvider Fix = new NotifyPropertyChangedFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
 
@@ -137,36 +137,36 @@ public class ViewModel : INotifyPropertyChanged
         public static void WhenTwoCalculatedProperties()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private string name;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public int P1 => this.p;
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public int P2 => this.p * this.p;
 
-        public string Name
+        public int P
         {
             get
             {
-                return this.name;
+                return this.p;
             }
 
             set
             {
-                if (value == this.name)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                ↓this.name = value;
+                ↓this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -179,39 +179,39 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private string name;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public int P1 => this.p;
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public int P2 => this.p * this.p;
 
-        public string Name
+        public int P
         {
             get
             {
-                return this.name;
+                return this.p;
             }
 
             set
             {
-                if (value == this.name)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting1));
-                this.OnPropertyChanged(nameof(this.Greeting2));
+                this.OnPropertyChanged(nameof(this.P1));
+                this.OnPropertyChanged(nameof(this.P2));
             }
         }
 
@@ -231,6 +231,142 @@ namespace RoslynSandbox
             {
                 Assert.Inconclusive("Did not pass this time.");
             }
+        }
+
+        [Explicit("Fix.")]
+        [Test]
+        public static void SimpleLambda()
+        {
+            var before = @"
+namespace N
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public C()
+        {
+            Action<int> func = x => ↓this.p++;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => this.p;
+
+        public int P2 => this.p * this.p;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public C()
+        {
+            Action<int> func = x =>
+            {
+                this.p++;
+                this.OnPropertyChanged(nameof(this.P1));
+                this.OnPropertyChanged(nameof(this.P2));
+            };
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => this.p;
+
+        public int P2 => this.p * this.p;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Explicit("Fix.")]
+        [Test]
+        public static void ParenthesizedLambda()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public C()
+        {
+            this.PropertyChanged += (o, e) => ↓this.p++;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => this.p;
+
+        public int P2 => this.p * this.p;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public C()
+        {
+            this.PropertyChanged += (o, e) =>
+            {
+                this.p++;
+                this.OnPropertyChanged(nameof(this.P1));
+                this.OnPropertyChanged(nameof(this.P2));
+            };
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => this.p;
+
+        public int P2 => this.p * this.p;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

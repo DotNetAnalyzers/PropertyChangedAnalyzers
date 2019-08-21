@@ -30,7 +30,7 @@ namespace PropertyChangedAnalyzers
             var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Properties.TryGetValue(INPC003NotifyWhenPropertyChanges.PropertyNameKey, out var property))
+                if (diagnostic.Properties.TryGetValue(MutationAnalyzer.PropertyNameKey, out var property))
                 {
                     var expression = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
                                                .FirstAncestorOrSelf<ExpressionSyntax>();

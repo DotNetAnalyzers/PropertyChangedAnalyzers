@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
+namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
 
     public static partial class ValidCode
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC003NotifyWhenPropertyChanges();
+        private static readonly DiagnosticAnalyzer Analyzer = new MutationAnalyzer();
 
         [TestCase("null")]
         [TestCase("string.Empty")]

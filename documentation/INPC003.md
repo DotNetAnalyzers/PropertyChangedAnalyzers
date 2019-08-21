@@ -7,8 +7,7 @@
 | Severity | Warning
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [INPC003NotifyWhenPropertyChanges](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC003NotifyWhenPropertyChanges.cs)
-
+| Code     | [MutationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/MutationAnalyzer.cs)
 ## Description
 
 Notify when property changes.

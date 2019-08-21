@@ -1,22 +1,23 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
+namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     public static partial class ValidCode
     {
-        public static class CaliburnMicro
+        public static class MvvmCrossCore
         {
             [OneTimeSetUp]
             public static void OneTimeSetUp()
             {
-                RoslynAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.PropertyChangedBase).Assembly);
+                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
             }
 
             [OneTimeTearDown]
             public static void TearDown()
             {
-                RoslynAssert.ResetMetadataReferences();
+                RoslynAssert.ResetAll();
             }
 
             [Test]
@@ -25,14 +26,14 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
                 var code = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
         public string Name
         {
             get { return this.name; }
-            set { this.Set(ref this.name, value); }
+            set { this.SetProperty(ref this.name, value); }
         }
     }
 }";
@@ -45,14 +46,14 @@ namespace RoslynSandbox
                 var code = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
         public string Name
         {
             get => this.name;
-            set => this.Set(ref this.name, value);
+            set => this.SetProperty(ref this.name, value);
         }
     }
 }";
@@ -65,7 +66,7 @@ namespace RoslynSandbox
                 var code = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
@@ -76,9 +77,9 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetProperty(ref this.name, value))
                 {
-                    this.NotifyOfPropertyChange(nameof(Greeting));
+                    this.RaisePropertyChanged(nameof(Greeting));
                 }
             }
         }
@@ -93,7 +94,7 @@ namespace RoslynSandbox
                 var code = @"
 namespace RoslynSandbox
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -104,9 +105,9 @@ namespace RoslynSandbox
             get { return this.name; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.SetProperty(ref this.name, value))
                 {
-                    this.NotifyOfPropertyChange(() => this.Greeting);
+                    this.RaisePropertyChanged(() => this.Greeting);
                 }
             }
         }
@@ -116,16 +117,16 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void WhenOverriddenSet()
+            public static void WhenOverriddenSetProperty()
             {
                 var fooBaseCode = @"
 namespace RoslynSandbox
 {
-    public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
+    public abstract class FooBase : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
-        public override bool Set<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected override bool SetProperty<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
-            return base.Set(ref oldValue, newValue, propertyName);
+            return base.SetProperty(ref oldValue, newValue, propertyName);
         }
     }
 }";
@@ -140,7 +141,7 @@ namespace RoslynSandbox
         public int Value
         {
             get { return this.value; }
-            set { this.Set(ref this.value, value); }
+            set { this.SetProperty(ref this.value, value); }
         }
     }
 }";

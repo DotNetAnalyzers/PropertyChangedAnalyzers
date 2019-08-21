@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class INPC003NotifyWhenPropertyChanges : DiagnosticAnalyzer
+    internal class MutationAnalyzer : DiagnosticAnalyzer
     {
         public static readonly string PropertyNameKey = "PropertyName";
 
@@ -19,11 +19,6 @@ namespace PropertyChangedAnalyzers
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            if (context == null)
-            {
-                throw new System.ArgumentNullException(nameof(context));
-            }
-
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterSyntaxNodeAction(c => HandlePrefixUnaryExpression(c), SyntaxKind.PreIncrementExpression);

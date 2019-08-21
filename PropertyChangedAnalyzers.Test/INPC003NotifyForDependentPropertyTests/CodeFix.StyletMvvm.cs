@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyWhenPropertyChangesTests
+namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -127,7 +127,7 @@ namespace RoslynSandbox
             get => $""Hello {this.Name}"";
         }
 
-            public string Name
+        public string Name
         {
             get { return this.name; }
             set { this.SetAndNotify(↓ref this.name, value); }
