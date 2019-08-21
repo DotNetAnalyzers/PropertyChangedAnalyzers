@@ -786,6 +786,262 @@ namespace RoslynSandbox
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
             }
+
+            [Test]
+            public static void UseSetAndRaise()
+            {
+                var before = @"
+namespace N
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.OnPropertyChanged();
+            }
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var after = @"
+namespace N
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.TrySet(ref this.name, value);
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use ViewModel.TrySet");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use ViewModel.TrySet");
+            }
+
+            [Test]
+            public static void UseSetAndRaiseNoCallerMemberName()
+            {
+                var before = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.OnPropertyChanged(nameof(this.Name));
+            }
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var after = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.TrySet(ref this.name, value, nameof(this.Name));
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use ViewModel.TrySet");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use ViewModel.TrySet");
+            }
+
+            [Test]
+            public static void UseSetAndRaiseUnderscoreNoCallerMemberName()
+            {
+                var before = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string _name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                ↓OnPropertyChanged(nameof(Name));
+            }
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var after = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string _name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get => _name;
+            set => TrySet(ref _name, value, nameof(Name));
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use ViewModel.TrySet");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use ViewModel.TrySet");
+            }
         }
     }
 }

@@ -9,33 +9,33 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
     {
         private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
 
-        private static readonly IReadOnlyList<TestCase> TestCases = new[]
+        private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
         {
-            new TestCase("string", "Equals(value, this.bar)"),
-            new TestCase("string", "Equals(this.bar, value)"),
-            new TestCase("string", "Equals(value, bar)"),
-            new TestCase("string", "Equals(value, Bar)"),
-            new TestCase("string", "Equals(Bar, value)"),
-            new TestCase("string", "object.Equals(Bar, value)"),
-            new TestCase("string", "Object.Equals(Bar, value)"),
-            new TestCase("string", "System.Object.Equals(Bar, value)"),
-            new TestCase("string", "Nullable.Equals(value, this.bar)"),
-            new TestCase("int?", "Nullable.Equals(value, this.bar)"),
-            new TestCase("int?", "System.Nullable.Equals(value, this.bar)"),
-            new TestCase("string", "value.Equals(this.bar)"),
-            new TestCase("string", "value.Equals(bar)"),
-            new TestCase("string", "this.bar.Equals(value)"),
-            new TestCase("string", "bar.Equals(value)"),
-            new TestCase("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
-            new TestCase("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
-            new TestCase("string", "ReferenceEquals(value, this.bar)"),
-            new TestCase("string", "object.ReferenceEquals(value, this.bar)"),
-            new TestCase("string", "Object.ReferenceEquals(value, this.bar)"),
-            new TestCase("string", "System.Object.ReferenceEquals(value, this.bar)"),
+            new TestCaseData("string", "Equals(value, this.bar)"),
+            new TestCaseData("string", "Equals(this.bar, value)"),
+            new TestCaseData("string", "Equals(value, bar)"),
+            new TestCaseData("string", "Equals(value, Bar)"),
+            new TestCaseData("string", "Equals(Bar, value)"),
+            new TestCaseData("string", "object.Equals(Bar, value)"),
+            new TestCaseData("string", "Object.Equals(Bar, value)"),
+            new TestCaseData("string", "System.Object.Equals(Bar, value)"),
+            new TestCaseData("string", "Nullable.Equals(value, this.bar)"),
+            new TestCaseData("int?", "Nullable.Equals(value, this.bar)"),
+            new TestCaseData("int?", "System.Nullable.Equals(value, this.bar)"),
+            new TestCaseData("string", "value.Equals(this.bar)"),
+            new TestCaseData("string", "value.Equals(bar)"),
+            new TestCaseData("string", "this.bar.Equals(value)"),
+            new TestCaseData("string", "bar.Equals(value)"),
+            new TestCaseData("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
+            new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
+            new TestCaseData("string", "ReferenceEquals(value, this.bar)"),
+            new TestCaseData("string", "object.ReferenceEquals(value, this.bar)"),
+            new TestCaseData("string", "Object.ReferenceEquals(value, this.bar)"),
+            new TestCaseData("string", "System.Object.ReferenceEquals(value, this.bar)"),
         };
 
         [TestCaseSource(nameof(TestCases))]
-        public static void Check(TestCase check)
+        public static void Check(string type, string expression)
         {
             var code = @"
 namespace RoslynSandbox
@@ -70,13 +70,14 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}".AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+}".AssertReplace("Equals(value, this.bar)", expression)
+  .AssertReplace("string", type);
 
             RoslynAssert.Valid(Analyzer, code);
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public static void NegatedCheck(TestCase check)
+        public static void NegatedCheck(string type, string expression)
         {
             var code = @"
 namespace RoslynSandbox
@@ -109,7 +110,8 @@ namespace RoslynSandbox
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}".AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+}".AssertReplace("Equals(value, this.bar)", expression)
+  .AssertReplace("string", type);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -714,24 +716,6 @@ namespace RoslynSandbox
 }";
 
             RoslynAssert.Valid(Analyzer, code);
-        }
-
-        public class TestCase
-        {
-            public TestCase(string type, string call)
-            {
-                this.Type = type;
-                this.Call = call;
-            }
-
-            internal string Type { get; }
-
-            internal string Call { get; }
-
-            public override string ToString()
-            {
-                return $"{nameof(this.Type)}: {this.Type}, {nameof(this.Call)}: {this.Call}";
-            }
         }
     }
 }

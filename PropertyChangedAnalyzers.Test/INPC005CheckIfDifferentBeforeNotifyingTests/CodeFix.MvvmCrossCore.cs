@@ -69,6 +69,7 @@ namespace RoslynSandbox
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Check that value is different before notifying.");
             }
 
+            [Explicit("Fix later.")]
             [Test]
             public static void NoCheckToUseSetAndRaise()
             {
@@ -109,6 +110,7 @@ namespace RoslynSandbox
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use MvxNotifyPropertyChanged.SetProperty");
             }
 
+            [Explicit("Fix later.")]
             [Test]
             public static void NoCheckExpressionToUseSetAndRaise()
             {

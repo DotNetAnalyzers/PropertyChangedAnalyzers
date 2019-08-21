@@ -134,6 +134,46 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
+            public static void NoCheckToUseSetAndRaiseUnderscoreNames()
+            {
+                var before = @"
+namespace RoslynSandbox.Client 
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string _name;
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                ↓OnPropertyChanged();
+            }
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox.Client 
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string _name;
+
+        public string Name
+        {
+            get => _name;
+            set => TrySet(ref _name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "Use ViewModelBase.TrySet");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "Use ViewModelBase.TrySet");
+            }
+
+            [Test]
             public static void NoCheckExpressionToUseSetAndRaise()
             {
                 var before = @"
@@ -219,8 +259,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
-                RoslynAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
             }
 
             [Test]
@@ -273,8 +313,8 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                RoslynAssert.CodeFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
-                RoslynAssert.FixAll<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
             }
 
             [Test]
@@ -303,7 +343,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                RoslynAssert.NoFix<InvocationAnalyzer, CheckIfDifferentBeforeNotifyFix>(ExpectedDiagnostic, new[] { ViewModelBaseCode, before });
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before });
             }
 
             [Test]
