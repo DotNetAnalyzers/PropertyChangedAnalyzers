@@ -1,6 +1,5 @@
 namespace PropertyChangedAnalyzers
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
@@ -12,7 +11,6 @@ namespace PropertyChangedAnalyzers
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SetBackingFieldFix))]
     [Shared]
-    [Obsolete("Use Gu.Roslyn.Extensions.Scope.HasLocal and HasParameter")]
     internal class SetBackingFieldFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
@@ -27,7 +25,6 @@ namespace PropertyChangedAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNode(diagnostic, out AssignmentExpressionSyntax assignment) &&
-                    assignment.TryFirstAncestor(out ConstructorDeclarationSyntax ctor) &&
                     diagnostic.AdditionalLocations.TrySingle(out var additionalLocation) &&
                     syntaxRoot.FindNode(additionalLocation.SourceSpan) is ExpressionSyntax fieldAccess)
                 {
