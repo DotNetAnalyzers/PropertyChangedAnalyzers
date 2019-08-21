@@ -11,8 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
         private static readonly CodeFixProvider Fix = new SetBackingFieldFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC014SetBackingFieldInConstructor);
 
-#pragma warning disable SA1203 // Constants must appear before fields
-        private const string ViewModelBaseCode = @"
+        private const string ViewModelBase = @"
 namespace RoslynSandbox.Core
 {
     using System.Collections.Generic;
@@ -41,7 +40,6 @@ namespace RoslynSandbox.Core
         }
     }
 }";
-#pragma warning restore SA1203 // Constants must appear before fields
 
         [Test]
         public static void SimplePropertyWithBackingFieldStatementBodySetter()
@@ -133,6 +131,143 @@ namespace RoslynSandbox
         {
             get => this.value;
             private set => this.value = value;
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void SimplePropertyWithBackingFieldExpressionBodySetterKeyword()
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel
+    {
+        private int @default;
+
+        public ViewModel(int @default)
+        {
+            ↓this.Value = @default;
+        }
+
+        public int Value
+        {
+            get => this.@default;
+            private set => this.@default = value;
+        }
+    }
+}";
+
+            var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel
+    {
+        private int @default;
+
+        public ViewModel(int @default)
+        {
+            this.@default = @default;
+        }
+
+        public int Value
+        {
+            get => this.@default;
+            private set => this.@default = value;
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void SimplePropertyWithBackingFieldExpressionBodySetterCollisionParameter()
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel
+    {
+        private int f;
+
+        public ViewModel(int f)
+        {
+            ↓this.Value = f;
+        }
+
+        public int Value
+        {
+            get => f;
+            private set => f = value;
+        }
+    }
+}";
+
+            var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel
+    {
+        private int f;
+
+        public ViewModel(int f)
+        {
+            this.f = f;
+        }
+
+        public int Value
+        {
+            get => f;
+            private set => f = value;
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void SimplePropertyWithBackingFieldExpressionBodySetterCollisionLocal()
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel
+    {
+        private int f;
+
+        public ViewModel(int value)
+        {
+            var f = 1;
+            ↓this.Value = value;
+        }
+
+        public int Value
+        {
+            get => f;
+            private set => f = value;
+        }
+    }
+}";
+
+            var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel
+    {
+        private int f;
+
+        public ViewModel(int value)
+        {
+            var f = 1;
+            this.f = value;
+        }
+
+        public int Value
+        {
+            get => f;
+            private set => f = value;
         }
     }
 }";
@@ -325,7 +460,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
         }
 
         [Test]
@@ -385,7 +520,7 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
         }
 
         [Test]
@@ -467,7 +602,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
         }
 
         [Test]
@@ -551,7 +686,91 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
+        }
+
+        [Test]
+        public static void WhenShadowingLocalKeyword()
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class A : INotifyPropertyChanged
+    {
+        public A(bool a)
+        {
+            var @default = a;
+            ↓X = a;
+        }
+
+        private bool @default;
+
+        public bool X
+        {
+            get => @default;
+            set
+            {
+                if (value == @default)
+                {
+                    return;
+                }
+
+                @default = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var after = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class A : INotifyPropertyChanged
+    {
+        public A(bool a)
+        {
+            var @default = a;
+            this.@default = a;
+        }
+
+        private bool @default;
+
+        public bool X
+        {
+            get => @default;
+            set
+            {
+                if (value == @default)
+                {
+                    return;
+                }
+
+                @default = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
         }
     }
 }

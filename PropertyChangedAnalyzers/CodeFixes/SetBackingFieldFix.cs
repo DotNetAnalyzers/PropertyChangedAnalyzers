@@ -1,5 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
@@ -7,11 +8,11 @@ namespace PropertyChangedAnalyzers
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SetBackingFieldFix))]
     [Shared]
+    [Obsolete("Use Gu.Roslyn.Extensions.Scope.HasLocal and HasParameter")]
     internal class SetBackingFieldFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
@@ -23,50 +24,31 @@ namespace PropertyChangedAnalyzers
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
 
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
-                                             .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNode(diagnostic, out AssignmentExpressionSyntax assignment) &&
                     assignment.TryFirstAncestor(out ConstructorDeclarationSyntax ctor) &&
-                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
-                    Property.TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, context.CancellationToken, out var field))
+                    diagnostic.AdditionalLocations.TrySingle(out var additionalLocation) &&
+                    syntaxRoot.FindNode(additionalLocation.SourceSpan) is ExpressionSyntax fieldAccess)
                 {
                     context.RegisterCodeFix(
                         "Set backing field.",
-                        (e, cancellationToken) => e.ReplaceNode(assignment.Left, x => Replacement(x)),
-                        "Set backing field.",
+                        (e, cancellationToken) => e.ReplaceNode(
+                            assignment.Left,
+                            (x, _) => Qualify(fieldAccess).WithTriviaFrom(x)),
+                        nameof(SetBackingFieldFix),
                         diagnostic);
 
-                    ExpressionSyntax Replacement(ExpressionSyntax x)
+                    ExpressionSyntax Qualify(ExpressionSyntax expression)
                     {
-                        switch (x)
+                        if (expression is IdentifierNameSyntax identifierName &&
+                            (Scope.HasParameter(assignment, identifierName.Identifier.ValueText) ||
+                             Scope.HasLocal(assignment, identifierName.Identifier.ValueText)))
                         {
-                            case IdentifierNameSyntax _ when IsShadowed():
-                                return SyntaxFactory.ParseExpression($"this.{field.Name}")
-                                                    .WithTriviaFrom(x);
-                            case IdentifierNameSyntax identifierName:
-                                return identifierName.WithIdentifier(SyntaxFactory.Identifier(field.Name));
-                            case MemberAccessExpressionSyntax memberAccess
-                                when memberAccess.Name is IdentifierNameSyntax name:
-                                return memberAccess.ReplaceNode(
-                                    name, name.WithIdentifier(SyntaxFactory.Identifier(field.Name)));
-                            default:
-                                return x;
-                        }
-                    }
-
-                    bool IsShadowed()
-                    {
-                        if (ctor.ParameterList.Parameters.TryFirst(x => x.Identifier.ValueText == field.Name, out _))
-                        {
-                            return true;
+                            return InpcFactory.SymbolAccess(identifierName.Identifier.ValueText, CodeStyleResult.Yes);
                         }
 
-                        using (var walker = VariableDeclaratorWalker.Borrow(ctor))
-                        {
-                            return walker.VariableDeclarators.TryFirst(x => x.Identifier.ValueText == field.Name, out _);
-                        }
+                        return expression;
                     }
                 }
             }
