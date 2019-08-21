@@ -18,7 +18,7 @@ namespace RoslynSandbox
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class ExpressionBodies : INotifyPropertyChanged
+    public class ExpressionBodies : INotifyPropertyChanged
     {
         private string name;
 
@@ -43,7 +43,10 @@ namespace RoslynSandbox
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
@@ -60,7 +63,7 @@ namespace ValidCode.TrySet
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class ExpressionBodies : INotifyPropertyChanged
+    public class ExpressionBodies : INotifyPropertyChanged
     {
         private string name;
         private int value;
@@ -88,9 +91,12 @@ namespace ValidCode.TrySet
             set => this.TrySet(ref this.value, value);
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected virtual bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -116,7 +122,7 @@ namespace RoslynSandbox
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class ExpressionBodies : INotifyPropertyChanged
+    public class ExpressionBodies : INotifyPropertyChanged
     {
         private string name;
 
@@ -144,7 +150,10 @@ namespace RoslynSandbox
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }";
 
