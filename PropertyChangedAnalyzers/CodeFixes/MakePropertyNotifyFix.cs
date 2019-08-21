@@ -27,9 +27,9 @@ namespace PropertyChangedAnalyzers
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
+                                                   .ConfigureAwait(false);
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
-                                 .ConfigureAwait(false);
+                                                      .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNode<PropertyDeclarationSyntax>(diagnostic, out var propertyDeclaration) &&
@@ -51,15 +51,22 @@ namespace PropertyChangedAnalyzers
                                 key,
                                 diagnostic);
                         }
-                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out _, out _))
+                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _) &&
+                                 setAndRaiseMethod.CanGenerateSetAndRaiseCall(out var nameParameter))
                         {
                             context.RegisterCodeFix(
                                 key,
-                                (editor, cancellationToken) => MakeWithBackingFieldSet(
-                                    editor,
-                                    propertyDeclaration,
-                                    setAndRaiseMethod,
-                                    semanticModel),
+                                async (editor, cancellationToken) =>
+                                {
+                                    var qualifyAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
+                                                                    .ConfigureAwait(false);
+                                    var name = await editor.NameOfContainingAsync(propertyDeclaration, nameParameter, cancellationToken)
+                                                           .ConfigureAwait(false);
+                                    _ = editor.ReplaceNode(
+                                        assignment,
+                                        x => InpcFactory.SetAndRaise(qualifyAccess, setAndRaiseMethod, assignment.Left, assignment.Right, name)
+                                                                 .WithTriviaFrom(x));
+                                },
                                 key,
                                 diagnostic);
                         }
@@ -333,24 +340,6 @@ namespace PropertyChangedAnalyzers
                     editor.InsertAfter(statement, notifyStatement);
                     _ = editor.FormatNode(propertyDeclaration);
                 }
-            }
-        }
-
-        private static void MakeWithBackingFieldSet(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel)
-        {
-            var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-            if (classDeclaration == null)
-            {
-                return;
-            }
-
-            if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out var fieldAccess))
-            {
-                var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-                var setExpression = SyntaxFactory.ParseExpression($"{(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
-                                                 .WithTrailingTrivia(SyntaxFactory.ElasticMarker).WithSimplifiedNames()
-                    .WithAdditionalAnnotations(Formatter.Annotation);
-                editor.ReplaceNode(assignment, setExpression);
             }
         }
 

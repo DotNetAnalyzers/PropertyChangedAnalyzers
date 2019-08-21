@@ -84,8 +84,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
             }
 
             [Test]
@@ -114,8 +114,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
             }
 
             [Test]
@@ -144,8 +144,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
             }
 
             [Test]
@@ -174,8 +174,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
             }
 
             [Test]
@@ -214,8 +214,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
             }
 
             [Test]
@@ -254,12 +254,12 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "ViewModelBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "ViewModelBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "ObservableObject.Set.");
             }
 
             [Test]
-            public static void WithBackingFieldToSet()
+            public static void WithBackingFieldToSetStatementBody()
             {
                 var before = @"
 namespace RoslynSandbox
@@ -290,12 +290,48 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
             }
 
             [Test]
-            public static void WithBackingFieldToSetUnderscoreNames()
+            public static void WithBackingFieldToSetExpressionBody()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        ↓public string Name
+        {
+            get => this.name;
+            set => this.name = value;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.Set(ref this.name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ObservableObject.Set.");
+            }
+
+            [Test]
+            public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
             {
                 var before = @"
 namespace RoslynSandbox
@@ -326,8 +362,44 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "ViewModelBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "ObservableObject.Set.");
+            }
+
+            [Test]
+            public static void WithBackingFieldToSetUnderscoreNamesExpressionBody()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string _name;
+
+        ↓public string Name
+        {
+            get => _name;
+            set => _name = value;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    {
+        private string _name;
+
+        public string Name
+        {
+            get => _name;
+            set => Set(ref _name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "ObservableObject.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "ObservableObject.Set.");
             }
         }
     }

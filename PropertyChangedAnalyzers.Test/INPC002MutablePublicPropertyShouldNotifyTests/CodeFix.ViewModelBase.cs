@@ -37,6 +37,36 @@ namespace RoslynSandbox.Core
     }
 }";
 
+            private const string ViewModelBaseUnderscore = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class ViewModelBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
             [Test]
             public static void AutoPropertyToNotifyWhenValueChanges()
             {
@@ -247,7 +277,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public static void WithBackingFieldToSet()
+            public static void WithBackingFieldToSetStatementBody()
             {
                 var before = @"
 namespace RoslynSandbox.Client
@@ -283,12 +313,48 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public static void WithBackingFieldToSetUnderscoreNames()
+            public static void WithBackingFieldToSetExpressionBody()
             {
                 var before = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        ↓public string Name
+        {
+            get => this.name;
+            set => this.name = value;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.TrySet(ref this.name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+            }
+
+            [Test]
+            public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : ViewModelBase
     {
         private string _name;
 
@@ -301,9 +367,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace RoslynSandbox
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : ViewModelBase
     {
         private string _name;
 
@@ -314,8 +380,44 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "ViewModelBase.TrySet.");
+            }
+
+            [Test]
+            public static void WithBackingFieldToSetUnderscoreNamesExpressionBody()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : RoslynSandbox.ViewModelBase
+    {
+        private string _name;
+
+        ↓public string Name
+        {
+            get => _name;
+            set => _name = value;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : RoslynSandbox.ViewModelBase
+    {
+        private string _name;
+
+        public string Name
+        {
+            get => _name;
+            set => TrySet(ref _name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "ViewModelBase.TrySet.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "ViewModelBase.TrySet.");
             }
 
             [Test]

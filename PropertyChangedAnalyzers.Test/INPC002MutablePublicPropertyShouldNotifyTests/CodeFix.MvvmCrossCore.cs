@@ -260,7 +260,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void WithBackingFieldToSet()
+            public static void WithBackingFieldToSetStatementBody()
             {
                 var before = @"
 namespace RoslynSandbox
@@ -288,6 +288,42 @@ namespace RoslynSandbox
         {
             get { return this.name; }
             set { this.SetProperty(ref this.name, value); }
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+            }
+
+            [Test]
+            public static void WithBackingFieldToSetExpressionBody()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        ↓public string Name
+        {
+            get => this.name;
+            set => this.name = value;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.SetProperty(ref this.name, value);
         }
     }
 }";
@@ -327,8 +363,44 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+            }
+
+            [Test]
+            public static void WithBackingFieldToSetUnderscoreNamesExpressionBody()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string _name;
+
+        ↓public string Name
+        {
+            get => _name;
+            set => _name = value;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string _name;
+
+        public string Name
+        {
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "MvxNotifyPropertyChanged.SetProperty.");
             }
         }
     }

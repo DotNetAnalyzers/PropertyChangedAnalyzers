@@ -229,7 +229,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void WithBackingFieldToSet()
+            public static void WithBackingFieldToSetStatementBody()
             {
                 var before = @"
 namespace RoslynSandbox
@@ -265,7 +265,43 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void WithBackingFieldToSetUnderscoreNames()
+            public static void WithBackingFieldToSetExpressionBody()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.Screen
+    {
+        private string name;
+
+        ↓public string Name
+        {
+            get => this.name;
+            set => this.name = value;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.Screen
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.Set(ref this.name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+            }
+
+            [Test]
+            public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
             {
                 var before = @"
 namespace RoslynSandbox
@@ -296,8 +332,44 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
+            }
+
+            [Test]
+            public static void WithBackingFieldToSetUnderscoreNamesExpressionBody()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.Screen
+    {
+        private string _name;
+
+        ↓public string Name
+        {
+            get => _name;
+            set => _name = value;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : Caliburn.Micro.Screen
+    {
+        private string _name;
+
+        public string Name
+        {
+            get => _name;
+            set => Set(ref _name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
             }
         }
     }
