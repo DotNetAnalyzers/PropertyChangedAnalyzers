@@ -31,16 +31,10 @@ namespace PropertyChangedAnalyzers
                                  .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
                 if (syntaxRoot.TryFindNode<PropertyDeclarationSyntax>(diagnostic, out var propertyDeclaration) &&
-                    propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax)
+                    propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
+                    semanticModel.TryGetSymbol(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
-                    var type = semanticModel.GetDeclaredSymbolSafe(classDeclarationSyntax, context.CancellationToken);
                     if (PropertyChanged.TryGetSetAndRaise(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
                     {
                         var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
