@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark ClassDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.ClassDeclarationAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark IfStatementAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.IfStatementAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark EqualityAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.EqualityAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark InvocationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.InvocationAnalyzer());
 
@@ -45,9 +45,9 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void IfStatementAnalyzer()
+        public void EqualityAnalyzer()
         {
-            IfStatementAnalyzerBenchmark.Run();
+            EqualityAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

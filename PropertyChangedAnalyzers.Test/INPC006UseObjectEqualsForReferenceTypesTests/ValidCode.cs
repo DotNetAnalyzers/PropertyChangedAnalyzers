@@ -7,27 +7,26 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
 
     public static class ValidCode
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new IfStatementAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new EqualityAnalyzer();
 
-        private static readonly IReadOnlyList<TestCase> TestCases = new[]
+        private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
         {
-            new TestCase("string", "Equals(value, this.bar)"),
-            new TestCase("string", "Equals(this.bar, value)"),
-            new TestCase("string", "Equals(value, bar)"),
-            new TestCase("string", "Equals(value, Bar)"),
-            new TestCase("string", "Equals(Bar, value)"),
-            new TestCase("string", "Nullable.Equals(value, this.bar)"),
-            new TestCase("int?", "Nullable.Equals(value, this.bar)"),
-            new TestCase("string", "value.Equals(this.bar)"),
-            new TestCase("string", "value.Equals(bar)"),
-            new TestCase("string", "this.bar.Equals(value)"),
-            new TestCase("string", "bar.Equals(value)"),
-            new TestCase("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
-            new TestCase("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
-            new TestCase("string", "ReferenceEquals(value, this.bar)"),
+            new TestCaseData("string", "Equals(value, this.bar)"),
+            new TestCaseData("string", "Equals(this.bar, value)"),
+            new TestCaseData("string", "Equals(value, bar)"),
+            new TestCaseData("string", "Equals(value, Bar)"),
+            new TestCaseData("string", "Equals(Bar, value)"),
+            new TestCaseData("string", "Nullable.Equals(value, this.bar)"),
+            new TestCaseData("int?",   "Nullable.Equals(value, this.bar)"),
+            new TestCaseData("string", "value.Equals(this.bar)"),
+            new TestCaseData("string", "value.Equals(bar)"),
+            new TestCaseData("string", "this.bar.Equals(value)"),
+            new TestCaseData("string", "bar.Equals(value)"),
+            new TestCaseData("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
+            new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
         };
 
-        private static readonly string FooCode = @"
+        private static readonly string Foo = @"
 namespace RoslynSandbox
 {
     public class Foo
@@ -48,7 +47,7 @@ namespace RoslynSandbox
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public static void Check(TestCase check)
+        public static void Check(string type, string expression)
         {
             var code = @"
 namespace RoslynSandbox
@@ -59,13 +58,13 @@ namespace RoslynSandbox
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private string bar;
+        private int bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Bar
+        public int Bar
         {
-            get { return this.bar; }
+            get => this.bar;
             set
             {
                 if (Equals(value, this.bar))
@@ -74,22 +73,23 @@ namespace RoslynSandbox
                 }
 
                 this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.OnPropertyChanged();
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+}".AssertReplace("Equals(value, this.bar)", expression)
+  .AssertReplace("int", type);
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Foo, code);
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public static void NegatedCheck(TestCase check)
+        public static void CheckNegated(string type, string expression)
         {
             var code = @"
 namespace RoslynSandbox
@@ -100,29 +100,30 @@ namespace RoslynSandbox
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private string bar;
+        private int bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Bar
+        public int Bar
         {
-            get { return this.bar; }
+            get => this.bar;
             set
             {
                 if (!Equals(value, this.bar))
                 {
                     this.bar = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                    this.OnPropertyChanged();
                 }
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("Equals(value, this.bar)", check.Call).AssertReplace("string", check.Type);
+}".AssertReplace("Equals(value, this.bar)", expression)
+  .AssertReplace("int", type);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -148,9 +149,9 @@ namespace RoslynSandbox
             set { this.bar = value; }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
@@ -191,7 +192,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, FooCode, code);
+            RoslynAssert.Valid(Analyzer, Foo, code);
         }
 
         [Test]
@@ -384,6 +385,7 @@ namespace RoslynSandbox
 {
     using System;
     using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
     public class ViewModel : INotifyPropertyChanged
     {
@@ -402,13 +404,13 @@ namespace RoslynSandbox
                 }
 
                 this.foo = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Foo)));
+                this.OnPropertyChanged();
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
@@ -448,36 +450,96 @@ namespace RoslynSandbox
                 if (!System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.foo))
                 {
                     this.foo = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Foo)));
+                    this.OnPropertyChanged();
                 }
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
             RoslynAssert.Valid(Analyzer, fooCode, code);
         }
 
-        public class TestCase
+        [TestCase("string")]
+        public static void OperatorEquals(string type)
         {
-            public TestCase(string type, string call)
+            var code = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private string p;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string P
+        {
+            get => this.p;
+            set
             {
-                this.Type = type;
-                this.Call = call;
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.OnPropertyChanged();
             }
+        }
 
-            internal string Type { get; }
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("string", type);
 
-            internal string Call { get; }
+            RoslynAssert.Valid(Analyzer,  code);
+        }
 
-            public override string ToString()
+        [TestCase("string")]
+        public static void OperatorNotEquals(string type)
+        {
+            var code = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private string p;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string P
+        {
+            get => this.p;
+            set
             {
-                return $"{nameof(this.Type)}: {this.Type}, {nameof(this.Call)}: {this.Call}";
+                if (value != this.p)
+                {
+                    this.p = value;
+                    this.OnPropertyChanged();
+                }
             }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("string", type);
+
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }
