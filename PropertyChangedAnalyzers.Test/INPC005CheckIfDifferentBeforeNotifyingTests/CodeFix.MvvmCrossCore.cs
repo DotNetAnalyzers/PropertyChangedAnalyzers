@@ -70,6 +70,86 @@ namespace RoslynSandbox
             }
 
             [Test]
+            public static void NoCheckToUseSetAndRaise()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.RaisePropertyChanged();
+            }
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.SetProperty(ref this.name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use MvxNotifyPropertyChanged.SetProperty");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use MvxNotifyPropertyChanged.SetProperty");
+            }
+
+            [Test]
+            public static void NoCheckExpressionToUseSetAndRaise()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                this.name = value;
+                ↓this.RaisePropertyChanged(() => this.Name);
+            }
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    {
+        private string name;
+
+        public string Name
+        {
+            get => this.name;
+            set => this.SetProperty(ref this.name, value);
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use MvxNotifyPropertyChanged.SetProperty");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Use MvxNotifyPropertyChanged.SetProperty");
+            }
+
+            [Test]
             public static void SetAffectsCalculatedProperty()
             {
                 var before = @"
