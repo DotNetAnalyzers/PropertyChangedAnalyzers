@@ -10,10 +10,11 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class INPC001ImplementINotifyPropertyChanged : DiagnosticAnalyzer
+    internal class ClassDeclarationAnalyzer : DiagnosticAnalyzer
     {
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.INPC001ImplementINotifyPropertyChanged);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            Descriptors.INPC001ImplementINotifyPropertyChanged);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)

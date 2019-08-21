@@ -18,7 +18,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class Foo : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -39,7 +39,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
@@ -50,7 +50,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class Foo : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -70,7 +70,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
 
             [Test]
@@ -81,7 +81,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class Foo : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -102,7 +102,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
@@ -113,7 +113,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class Foo : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -133,7 +133,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
 
             [Test]
@@ -145,7 +145,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class Foo : ↓INotifyPropertyChanged
     {
         private int _value;
     }
@@ -170,7 +170,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
@@ -182,7 +182,7 @@ namespace RoslynSandbox
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class Foo : ↓INotifyPropertyChanged
     {
         private int _value;
     }
@@ -206,7 +206,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
 
             [Test]
@@ -219,7 +219,7 @@ namespace RoslynSandbox
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class Foo : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -241,7 +241,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]
@@ -254,7 +254,7 @@ namespace RoslynSandbox
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class Foo : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -276,7 +276,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix<ImplementINotifyPropertyChangedFix>(ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
         }
     }

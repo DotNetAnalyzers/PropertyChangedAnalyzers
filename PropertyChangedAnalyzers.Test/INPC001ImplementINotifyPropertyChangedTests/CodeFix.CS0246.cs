@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
                 var before = @"
 namespace RoslynSandbox
 {
-    public class Foo : INotifyPropertyChanged
+    public class Foo : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -46,7 +46,7 @@ namespace RoslynSandbox
                 var before = @"
 namespace RoslynSandbox
 {
-    public class Foo : INotifyPropertyChanged
+    public class Foo : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -73,7 +73,7 @@ namespace RoslynSandbox
                 var before = @"
 namespace RoslynSandbox
 {
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class Foo : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -103,7 +103,7 @@ namespace RoslynSandbox
                 var before = @"
 namespace RoslynSandbox
 {
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class Foo : ↓INotifyPropertyChanged
     {
     }
 }";

@@ -19,7 +19,7 @@ namespace PropertyChangedAnalyzers.Benchmarks
             {
                 var benchmark = Gu.Roslyn.Asserts.Benchmark.Create(
                     Code.ValidCodeProject,
-                    new INPC001ImplementINotifyPropertyChanged());
+                    new ClassDeclarationAnalyzer());
 
                 // Warmup
                 benchmark.Run();

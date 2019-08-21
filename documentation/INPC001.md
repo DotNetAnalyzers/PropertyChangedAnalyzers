@@ -7,11 +7,12 @@
 | Severity | Warning
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [INPC001ImplementINotifyPropertyChanged](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/INPC001ImplementINotifyPropertyChanged.cs)
+| Code     | [ClassDeclarationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/ClassDeclarationAnalyzer.cs)
 
 ## Description
 
 The class has mutable properties and should implement INotifyPropertyChanged.
+![ImplementInpc](https://user-images.githubusercontent.com/1640096/63153711-44091880-c00f-11e9-9185-564c52575b4a.gif)
 
 ## Motivation
 

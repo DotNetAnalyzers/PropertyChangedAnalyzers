@@ -1,23 +1,16 @@
 namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     public static partial class CodeFix
     {
         public static class CaliburnMicro
         {
-            [OneTimeSetUp]
-            public static void OneTimeSetUp()
-            {
-                RoslynAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.PropertyChangedBase).Assembly);
-            }
-
-            [OneTimeTearDown]
-            public static void TearDown()
-            {
-                RoslynAssert.ResetAll();
-            }
+            private static readonly IReadOnlyList<MetadataReference> MetadataReferences = Gu.Roslyn.Asserts.MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase)).ToArray();
 
             [Test]
             public static void SubclassPropertyChangedBaseAddUsing()
@@ -41,7 +34,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase and add using.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase and add using.", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -64,7 +57,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase fully qualified.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase fully qualified.", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -97,7 +90,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -127,7 +120,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.", metadataReferences: MetadataReferences);
             }
         }
     }

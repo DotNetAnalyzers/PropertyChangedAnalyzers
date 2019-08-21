@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
 
     public static partial class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC001ImplementINotifyPropertyChanged();
+        private static readonly DiagnosticAnalyzer Analyzer = new ClassDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new ImplementINotifyPropertyChangedFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged);
 
@@ -241,8 +241,8 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]

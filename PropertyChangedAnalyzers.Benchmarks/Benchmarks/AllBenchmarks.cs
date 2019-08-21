@@ -8,6 +8,8 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark AssignmentAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.AssignmentAnalyzer());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark ClassDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.ClassDeclarationAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark IfStatementAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.IfStatementAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark InvocationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.InvocationAnalyzer());
@@ -15,8 +17,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         private static readonly Gu.Roslyn.Asserts.Benchmark MethodDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.MethodDeclarationAnalyzer());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark PropertyDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.PropertyDeclarationAnalyzer());
-
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC001ImplementINotifyPropertyChangedBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.INPC001ImplementINotifyPropertyChanged());
 
         private static readonly Gu.Roslyn.Asserts.Benchmark INPC003NotifyWhenPropertyChangesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.INPC003NotifyWhenPropertyChanges());
 
@@ -36,6 +36,12 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void AssignmentAnalyzer()
         {
             AssignmentAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
+        public void ClassDeclarationAnalyzer()
+        {
+            ClassDeclarationAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
@@ -60,12 +66,6 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         public void PropertyDeclarationAnalyzer()
         {
             PropertyDeclarationAnalyzerBenchmark.Run();
-        }
-
-        [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC001ImplementINotifyPropertyChanged()
-        {
-            INPC001ImplementINotifyPropertyChangedBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]

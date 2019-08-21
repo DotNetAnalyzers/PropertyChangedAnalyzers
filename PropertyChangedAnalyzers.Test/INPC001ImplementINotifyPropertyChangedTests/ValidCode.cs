@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
 
     public static partial class ValidCode
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new INPC001ImplementINotifyPropertyChanged();
+        private static readonly DiagnosticAnalyzer Analyzer = new ClassDeclarationAnalyzer();
 
         [TestCase("null")]
         [TestCase("string.Empty")]
