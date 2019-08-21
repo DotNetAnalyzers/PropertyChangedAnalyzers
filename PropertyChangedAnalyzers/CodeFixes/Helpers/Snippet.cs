@@ -1,8 +1,10 @@
 namespace PropertyChangedAnalyzers
 {
+    using System;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
 
+    [Obsolete("Remove this.")]
     internal static class Snippet
     {
         internal static string EqualityCheck(ITypeSymbol type, string x, string y, SemanticModel semanticModel)
