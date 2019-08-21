@@ -389,7 +389,6 @@ namespace RoslynSandbox
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [Explicit("Fix.")]
         [Test]
         public static void IfTrySetBlockBody()
         {
@@ -400,7 +399,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
@@ -448,7 +447,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
@@ -463,7 +462,7 @@ namespace N
             get => this.p;
             set
             {
-                if (this.TrySet(↓ref this.p, value))
+                if (this.TrySet(ref this.p, value))
                 {
                     this.OnPropertyChanged(nameof(this.P1));
                     this.OnPropertyChanged(nameof(this.P2));
@@ -492,7 +491,6 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [Explicit("Fix.")]
         [Test]
         public static void IfTrySetStatementBody()
         {
@@ -503,7 +501,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
@@ -549,7 +547,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
@@ -564,7 +562,7 @@ namespace N
             get => this.p;
             set
             {
-                if (this.TrySet(↓ref this.p, value))
+                if (this.TrySet(ref this.p, value))
                 {
                     this.OnPropertyChanged(nameof(this.P1));
                     this.OnPropertyChanged(nameof(this.P2));
@@ -593,7 +591,6 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [Explicit("Fix.")]
         [Test]
         public static void IfNotTrySet()
         {
@@ -604,7 +601,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
@@ -654,7 +651,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
