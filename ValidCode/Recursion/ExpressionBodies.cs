@@ -1,5 +1,5 @@
 // ReSharper disable All
-#pragma warning disable INPC007, INPC015
+#pragma warning disable INPC007, INPC015, CS0067
 namespace ValidCode.Recursion
 {
     using System.ComponentModel;
