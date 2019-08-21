@@ -29,11 +29,7 @@ namespace RoslynSandbox
     }
 }";
 
-                var expectedMessage = ExpectedDiagnostic.CreateFromCodeWithErrorsIndicated(
-                    "INPC002",
-                    "Property 'Bar' should notify when value changes.",
-                    before,
-                    out before);
+                var expectedMessage = ExpectedDiagnostic.WithMessage("Property 'Bar' should notify when value changes.");
                 RoslynAssert.Diagnostics(Analyzer, expectedMessage, before);
             }
 
@@ -472,8 +468,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after);
             }
 
             [Test]

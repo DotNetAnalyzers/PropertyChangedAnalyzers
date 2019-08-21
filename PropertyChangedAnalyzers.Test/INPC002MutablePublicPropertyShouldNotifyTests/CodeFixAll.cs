@@ -293,7 +293,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after);
         }
 
         [Test]
