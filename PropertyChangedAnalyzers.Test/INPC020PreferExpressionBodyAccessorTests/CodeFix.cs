@@ -31,7 +31,7 @@ namespace RoslynSandbox
         {
             get => this.name;
 
-            set
+            ↓set
             {
                 this.TrySet(ref this.name, value);
             }
@@ -92,6 +92,86 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public static void TrySetDiscarded()
+        {
+            var code = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public sealed class ExpressionBodies : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get => this.name;
+
+            ↓set
+            {
+                _ = this.TrySet(ref this.name, value);
+            }
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+
+            var after = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public sealed class ExpressionBodies : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get => this.name;
+
+            set => _ = this.TrySet(ref this.name, value);
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+        }
+
+        [Test]
         public static void StatementBody()
         {
             var code = @"
@@ -110,7 +190,7 @@ namespace RoslynSandbox
 
         public string Name
         {
-            get
+            ↓get
             {
                 return this.name;
             }

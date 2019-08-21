@@ -7,7 +7,6 @@ namespace PropertyChangedAnalyzers
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ExpressionBodyFix))]
@@ -23,23 +22,18 @@ namespace PropertyChangedAnalyzers
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AccessorDeclarationSyntax accessor))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AccessorDeclarationSyntax accessor) &&
+                    accessor.Body is BlockSyntax block &&
+                    block.Statements.TrySingle(out var statement) &&
+                    TryGetExpression(statement, out var expression))
                 {
-                    if (accessor.Body is BlockSyntax block &&
-                        block.Statements.TrySingle(out var statement) &&
-                        TryGetExpression(statement, out var expression))
-                    {
-                        context.RegisterCodeFix(
-                            "To expression body.",
-                            (e, cancellationToken) => e.ReplaceNode(
-                                accessor,
-                                x => accessor.WithBody(null)
-                                             .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(expression))
-                                             .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-                                             .WithTriviaFrom(accessor)),
-                            nameof(ExpressionBodyFix),
-                            diagnostic);
-                    }
+                    context.RegisterCodeFix(
+                        "To expression body.",
+                        (e, cancellationToken) => e.ReplaceNode(
+                            accessor,
+                            x => x.AsExpressionBody(expression.WithoutTrivia())),
+                        nameof(ExpressionBodyFix),
+                        diagnostic);
                 }
             }
         }
