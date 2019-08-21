@@ -61,7 +61,7 @@ namespace PropertyChangedAnalyzers
                                 _ => Task.FromResult(context.Document.WithSyntaxRoot(
                                         syntaxRoot.ReplaceNode(
                                             classDeclaration,
-                                            MakeSealedRewriter.Default.Visit(classDeclaration, classDeclaration)))),
+                                            SealRewriter.Seal(classDeclaration)))),
                                 "Seal class."),
                             diagnostic);
                     }
@@ -74,7 +74,7 @@ namespace PropertyChangedAnalyzers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
                                              .ConfigureAwait(false);
             var type = editor.SemanticModel.GetDeclaredSymbolSafe(classDeclaration, cancellationToken);
-            var underscoreFields = editor.SemanticModel.UnderscoreFields() == CodeStyleResult.Yes;
+            var underscoreFields = editor.SemanticModel.UnderscoreFields();
             if (type.IsSealed)
             {
                 _ = editor.AddMethod(
@@ -115,9 +115,9 @@ protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.Caller
             return editor.GetChangedDocument();
         }
 
-        private static MethodDeclarationSyntax ParseMethod(string code, bool underscoreFields)
+        private static MethodDeclarationSyntax ParseMethod(string code, CodeStyleResult underscoreFields)
         {
-            if (underscoreFields)
+            if (underscoreFields == CodeStyleResult.Yes)
             {
                 code = code.Replace("this.", string.Empty);
             }
