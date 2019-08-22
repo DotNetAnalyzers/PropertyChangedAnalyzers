@@ -39,7 +39,7 @@ namespace PropertyChangedAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify, propertyDeclaration.Identifier.GetLocation()));
                     }
                 }
-                else if (setter.Body != null)
+                else if (setter.Body is BlockSyntax body)
                 {
                     if (Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
                     {
@@ -49,6 +49,8 @@ namespace PropertyChangedAnalyzers
                                 propertyDeclaration.Identifier.GetLocation(),
                                 property.Name));
                     }
+
+                    Walk(body);
                 }
                 else
                 {
@@ -59,6 +61,26 @@ namespace PropertyChangedAnalyzers
                                 Descriptors.INPC002MutablePublicPropertyShouldNotify,
                                 propertyDeclaration.Identifier.GetLocation(),
                                 property.Name));
+                    }
+                }
+            }
+
+            void Walk(BlockSyntax body)
+            {
+                var hasCheckedEquals = false;
+                var hasAssigned = false;
+                var hasNotified = false;
+                foreach (var statement in body.Statements)
+                {
+                    switch (statement)
+                    {
+                        case ExpressionStatementSyntax expressionStatement when expressionStatement.Expression is AssignmentExpressionSyntax assignment &&
+                                                                                Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out var fieldAccess) &&
+                                                                                assignment.Left == fieldAccess:
+                            hasAssigned = true;
+                            break;
+                        default:
+                            return;
                     }
                 }
             }
