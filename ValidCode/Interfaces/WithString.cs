@@ -12,7 +12,16 @@ namespace ValidCode.Interfaces
         public string Value
         {
             get => this.value;
-            set => this.value = value;
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
         }
 
         object IValue.Value
