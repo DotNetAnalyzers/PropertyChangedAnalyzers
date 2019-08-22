@@ -80,15 +80,14 @@ namespace PropertyChangedAnalyzers
                         {
                             context.RegisterCodeFix(
                                 "Check that value is different before notifying.",
-                                (editor, _) =>
+                                (editor, __) =>
                                 {
                                     editor.RemoveNode(onPropertyChangedStatement);
-                                    editor.ReplaceNode(
+                                    _ = editor.ReplaceNode(
                                         setAndRaiseStatement,
-                                        (x, g) => g.IfStatement(
-                                                       ((ExpressionStatementSyntax)x).Expression.WithoutTrivia(),
-                                                       new[] { onPropertyChangedStatement })
-                                                   .WithLeadingTrivia(x.GetLeadingTrivia()));
+                                        x => InpcFactory.IfStatement(
+                                            x.Expression.WithoutTrivia(),
+                                            onPropertyChangedStatement));
                                 },
                                 nameof(CheckIfDifferentBeforeNotifyFix),
                                 diagnostic);
