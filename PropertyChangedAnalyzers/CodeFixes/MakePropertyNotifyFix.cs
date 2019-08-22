@@ -357,7 +357,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (setter.Body?.Statements.Count == 1)
                 {
-                    if (Property.AssignsValueToBackingField(setter, out assignment))
+                    if (SetAccessor.AssignsValueToBackingField(setter, out assignment))
                     {
                         statement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
                         fieldAccess = assignment.Left;
@@ -367,7 +367,7 @@ namespace PropertyChangedAnalyzers
 
                 if (setter.ExpressionBody != null)
                 {
-                    if (Property.AssignsValueToBackingField(setter, out assignment))
+                    if (SetAccessor.AssignsValueToBackingField(setter, out assignment))
                     {
                         statement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
                         fieldAccess = assignment.Left;

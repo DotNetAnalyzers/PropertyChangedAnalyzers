@@ -32,7 +32,7 @@ namespace PropertyChangedAnalyzers
                     setter.IsKind(SyntaxKind.SetAccessorDeclaration) &&
                     setter.Body is BlockSyntax body)
                 {
-                    if (Property.TrySingleAssignmentInSetter(setter, out var assignment) &&
+                    if (SetAccessor.TryFindSingleAssignment(setter, out var assignment) &&
                         assignment.Parent is ExpressionStatementSyntax assignmentStatement &&
                         body.Statements.IndexOf(assignmentStatement) == 0)
                     {
@@ -74,7 +74,7 @@ namespace PropertyChangedAnalyzers
                         }
                     }
                     else if (onPropertyChangedStatement.Parent == body &&
-                             Property.TryFindSingleTrySet(setter, semanticModel, context.CancellationToken, out var setAndRaise))
+                             SetAccessor.TryFindSingleTrySet(setter, semanticModel, context.CancellationToken, out var setAndRaise))
                     {
                         if (setAndRaise.Parent is ExpressionStatementSyntax setAndRaiseStatement &&
                             body.Statements.IndexOf(setAndRaiseStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)

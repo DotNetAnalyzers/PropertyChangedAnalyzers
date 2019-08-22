@@ -35,7 +35,7 @@ namespace PropertyChangedAnalyzers
                     containingType.TryFindPropertyRecursive(candidate.ValueText, out var property) &&
                     property.TrySingleDeclaration(context.CancellationToken, out var declaration) &&
                     declaration.TryGetSetter(out var setter) &&
-                    Property.TrySingleAssignmentInSetter(setter, out var assignment))
+                    SetAccessor.TryFindSingleAssignment(setter, out var assignment))
                 {
                     using (var set = visited.IncrementUsage())
                     {
