@@ -36,8 +36,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (Property.TrySingleAssignmentInSetter(setter, out var assignment))
                     {
-                        if (!AreInSameBlock(assignment, invocation) ||
-                            assignment.SpanStart > invocation.SpanStart)
+                        if (invocation.IsExecutedBefore(assignment) == ExecutedBefore.Yes)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
                         }
@@ -48,16 +47,15 @@ namespace PropertyChangedAnalyzers
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
                         }
                     }
-                    else if (Property.TryFindSingleTrySet(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
+                    else if (Property.TryFindSingleTrySet(setter, context.SemanticModel, context.CancellationToken, out var trySet))
                     {
-                        if (!AreInSameBlock(setAndRaise, invocation) ||
-                            setAndRaise.SpanStart > invocation.SpanStart)
+                        if (invocation.IsExecutedBefore(trySet) == ExecutedBefore.Yes)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
                         }
 
                         if (IsFirstCall(invocation) &&
-                            IncorrectOrMissingCheckIfDifferent(setAndRaise, invocation))
+                            IncorrectOrMissingCheckIfDifferent(trySet, invocation))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
                         }
@@ -79,19 +77,6 @@ namespace PropertyChangedAnalyzers
 
                 return context.Node.GetLocation();
             }
-        }
-
-        private static bool AreInSameBlock(SyntaxNode node1, SyntaxNode node2)
-        {
-            if (node1?.FirstAncestor<BlockSyntax>() is BlockSyntax block1 &&
-                node2?.FirstAncestor<BlockSyntax>() is BlockSyntax block2)
-            {
-                return block1 == block2 ||
-                       block1.Contains(block2) ||
-                       block2.Contains(block1);
-            }
-
-            return false;
         }
 
         private static bool IsFirstCall(InvocationExpressionSyntax invocation)
