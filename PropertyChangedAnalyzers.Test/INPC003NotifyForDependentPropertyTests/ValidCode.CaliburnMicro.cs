@@ -1,23 +1,16 @@
 namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
+    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     public static partial class ValidCode
     {
         public static class CaliburnMicro
         {
-            [OneTimeSetUp]
-            public static void OneTimeSetUp()
-            {
-                RoslynAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.PropertyChangedBase).Assembly);
-            }
-
-            [OneTimeTearDown]
-            public static void TearDown()
-            {
-                RoslynAssert.ResetMetadataReferences();
-            }
+            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.CaliburnMicro;
 
             [Test]
             public static void SetProperty()
@@ -36,7 +29,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -56,7 +49,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -84,7 +77,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -112,7 +105,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -145,7 +138,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, fooBaseCode, code);
+                RoslynAssert.Valid(Analyzer, new[] { fooBaseCode, code }, metadataReferences: MetadataReferences);
             }
         }
     }

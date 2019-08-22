@@ -1,6 +1,8 @@
 namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
 {
+    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
@@ -8,17 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DontUseExpressionTests
     {
         public static class StyletMvvm
         {
-            [OneTimeSetUp]
-            public static void OneTimeSetUp()
-            {
-                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
-            }
-
-            [OneTimeTearDown]
-            public static void TearDown()
-            {
-                RoslynAssert.ResetAll();
-            }
+            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.Stylet;
 
             [Test]
             public static void SetAffectsCalculatedPropertyExpression()
@@ -68,7 +60,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -119,7 +111,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, metadataReferences: MetadataReferences);
             }
         }
     }

@@ -13,18 +13,6 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             private static readonly UseCallerMemberNameFix Fix = new UseCallerMemberNameFix();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
 
-            [OneTimeSetUp]
-            public static void OneTimeSetUp()
-            {
-                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
-            }
-
-            [OneTimeTearDown]
-            public static void TearDown()
-            {
-                RoslynAssert.ResetAll();
-            }
-
             [TestCase(@"""Value""")]
             [TestCase(@"nameof(Value)")]
             [TestCase(@"nameof(this.Value)")]
@@ -391,8 +379,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, metadataReferences: SpecialMetadataReferences.Stylet);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, metadataReferences: SpecialMetadataReferences.Stylet);
             }
 
             [Test]

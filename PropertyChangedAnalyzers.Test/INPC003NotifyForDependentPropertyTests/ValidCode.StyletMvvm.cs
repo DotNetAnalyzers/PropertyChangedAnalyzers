@@ -1,6 +1,8 @@
 namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
+    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
@@ -8,17 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
     {
         public static class StyletMvvm
         {
-            [OneTimeSetUp]
-            public static void OneTimeSetUp()
-            {
-                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
-            }
-
-            [OneTimeTearDown]
-            public static void TearDown()
-            {
-                RoslynAssert.ResetAll();
-            }
+            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.Stylet;
 
             [Test]
             public static void SetProperty()
@@ -37,7 +29,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -57,7 +49,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -85,7 +77,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -107,7 +99,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -135,7 +127,7 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -168,7 +160,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, fooBaseCode, code);
+                RoslynAssert.Valid(Analyzer, new[] { fooBaseCode, code }, metadataReferences: MetadataReferences);
             }
         }
     }
