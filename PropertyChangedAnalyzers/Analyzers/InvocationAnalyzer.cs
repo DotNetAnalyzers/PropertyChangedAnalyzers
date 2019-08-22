@@ -34,7 +34,7 @@ namespace PropertyChangedAnalyzers
                 if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
                     setter.IsKind(SyntaxKind.SetAccessorDeclaration))
                 {
-                    if (SetAccessor.TryFindSingleAssignment(setter, out var assignment))
+                    if (Setter.TryFindSingleAssignment(setter, out var assignment))
                     {
                         if (invocation.IsExecutedBefore(assignment) == ExecutedBefore.Yes)
                         {
@@ -47,7 +47,7 @@ namespace PropertyChangedAnalyzers
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
                         }
                     }
-                    else if (SetAccessor.TryFindSingleTrySet(setter, context.SemanticModel, context.CancellationToken, out var trySet))
+                    else if (Setter.TryFindSingleTrySet(setter, context.SemanticModel, context.CancellationToken, out var trySet))
                     {
                         if (invocation.IsExecutedBefore(trySet) == ExecutedBefore.Yes)
                         {

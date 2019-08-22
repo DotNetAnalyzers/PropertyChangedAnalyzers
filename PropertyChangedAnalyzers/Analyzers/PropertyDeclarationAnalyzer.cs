@@ -69,7 +69,7 @@ namespace PropertyChangedAnalyzers
 
                         if (single is LiteralExpressionSyntax &&
                             propertyDeclaration.TryGetSetter(out var set) &&
-                            SetAccessor.TryFindSingleMutationWithParameter(set, context.SemanticModel, context.CancellationToken, out var fieldAccess))
+                            Setter.TryFindSingleMutationWithParameter(set, context.SemanticModel, context.CancellationToken, out var fieldAccess))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(

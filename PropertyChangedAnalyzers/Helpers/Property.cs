@@ -113,7 +113,7 @@ namespace PropertyChangedAnalyzers
 
             if (declaration.TryGetSetter(out var setter))
             {
-                if (!SetAccessor.AssignsValueToBackingField(setter, out var assignment))
+                if (!Setter.AssignsValueToBackingField(setter, out var assignment))
                 {
                     return false;
                 }
@@ -215,12 +215,12 @@ namespace PropertyChangedAnalyzers
 
             if (property.TryGetSetter(out var setter))
             {
-                if (SetAccessor.TryFindSingleTrySet(setter, semanticModel, cancellationToken, out var invocation))
+                if (Setter.TryFindSingleTrySet(setter, semanticModel, cancellationToken, out var invocation))
                 {
                     return TryGetBackingField(invocation.ArgumentList.Arguments[0].Expression, semanticModel, cancellationToken, out field);
                 }
 
-                if (SetAccessor.TryFindSingleAssignment(setter, out var assignment))
+                if (Setter.TryFindSingleAssignment(setter, out var assignment))
                 {
                     return TryGetBackingField(assignment.Left, semanticModel, cancellationToken, out field);
                 }
