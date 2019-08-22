@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC010GetAndSetSame);
 
         [Test]
-        public static void DifferentFields()
+        public static void DifferentFieldsAssign()
         {
             var code = @"
 namespace RoslynSandbox
@@ -20,27 +20,27 @@ namespace RoslynSandbox
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private int otherValue;
-        private int value;
+        private int f1;
+        private int f2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        ↓public int P
         {
             get
             {
-                return this.otherValue;
+                return this.f1;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.f2)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(nameof(Value));
+                this.f2 = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 

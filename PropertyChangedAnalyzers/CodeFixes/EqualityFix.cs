@@ -41,8 +41,8 @@ namespace PropertyChangedAnalyzers
                             diagnostic);
                     }
                     else if (argumentList.Arguments.TrySingle(out var argument) &&
-                            invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                            memberAccess.Expression is ExpressionSyntax expression)
+                             invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                             memberAccess.Expression is ExpressionSyntax expression)
                     {
                         context.RegisterCodeFix(
                             $"Use {name}",
