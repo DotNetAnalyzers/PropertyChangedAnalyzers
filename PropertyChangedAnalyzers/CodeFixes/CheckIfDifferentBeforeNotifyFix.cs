@@ -54,15 +54,16 @@ namespace PropertyChangedAnalyzers
                             assignedSymbol.Kind == SymbolKind.Field &&
                             semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol setterSymbol) &&
                             PropertyChanged.TryGetSetAndRaise(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var setAndRaiseMethod) &&
-                           InpcFactory.CanGenerateSetAndRaiseCall(setAndRaiseMethod, out var nameParameter))
+                            InpcFactory.CanGenerateSetAndRaiseCall(setAndRaiseMethod, out var nameParameter) &&
+                            setter.TryFirstAncestor(out PropertyDeclarationSyntax property))
                         {
                             context.RegisterCodeFix(
-                                $"Use {setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}",
+                                setAndRaiseMethod.Signature(),
                                 async (editor, cancellationToken) =>
                                 {
                                     var qualifyAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
                                                                     .ConfigureAwait(false);
-                                    var nameExpression = await editor.NameOfContainingAsync(setter.FirstAncestorOrSelf<PropertyDeclarationSyntax>(), nameParameter, cancellationToken)
+                                    var nameExpression = await editor.NameOfContainingAsync(property, nameParameter, cancellationToken)
                                                                      .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
                                           setter,
