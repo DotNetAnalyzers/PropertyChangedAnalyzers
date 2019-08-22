@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
     public static partial class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new MutationAnalyzer();
-        private static readonly CodeFixProvider Fix = new NotifyPropertyChangedFix();
+        private static readonly CodeFixProvider Fix = new NotifyForDependentPropertyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
 
         [TestCase("this.value = value;")]

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -12,12 +12,13 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NotifyPropertyChangedFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NotifyForDependentPropertyFix))]
     [Shared]
-    internal class NotifyPropertyChangedFix : DocumentEditorCodeFixProvider
+    internal class NotifyForDependentPropertyFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC003NotifyForDependentProperty.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            Descriptors.INPC003NotifyForDependentProperty.Id);
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
