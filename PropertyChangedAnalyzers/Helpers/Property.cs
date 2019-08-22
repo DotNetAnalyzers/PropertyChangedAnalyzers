@@ -241,7 +241,7 @@ namespace PropertyChangedAnalyzers
 
             using (var walker = InvocationWalker.Borrow(setter))
             {
-                return walker.Invocations.TrySingle(x => TrySet.IsInvocation(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
+                return walker.Invocations.TrySingle(x => TrySet.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
             }
         }
 
@@ -368,7 +368,7 @@ namespace PropertyChangedAnalyzers
                                    argumentList.Parent is InvocationExpressionSyntax invocation &&
                                    argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
                                    (fieldAccess = refArgument.Expression) != null &&
-                                   TrySet.IsInvocation(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
+                                   TrySet.IsMatch(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
                         default:
                             fieldAccess = null;
                             return false;

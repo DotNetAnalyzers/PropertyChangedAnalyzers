@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers
     {
         [Obsolete("Don't use this.", error: true)]
 #pragma warning disable GU0073 // Member of non-public type should be internal.
-        public new static bool Equals(object x, object y) => throw new InvalidOperationException();
+        public static new bool Equals(object x, object y) => throw new InvalidOperationException();
 #pragma warning restore GU0073 // Member of non-public type should be internal.
 
         internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode> visited = null)

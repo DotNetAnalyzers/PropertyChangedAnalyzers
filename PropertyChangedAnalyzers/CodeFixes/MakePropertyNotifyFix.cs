@@ -71,7 +71,7 @@ namespace PropertyChangedAnalyzers
                         }
                     }
 
-                    if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
+                    if (OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var invoker) &&
                         invoker.Parameters.Length == 1)
                     {
                         if (invoker.Parameters[0].Type == KnownSymbol.String ||

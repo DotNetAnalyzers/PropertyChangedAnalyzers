@@ -13,15 +13,15 @@ namespace PropertyChangedAnalyzers
         {
         }
 
-        public IReadOnlyList<IfStatementSyntax> IfStatements => this.ifStatements;
-
-        public static IfStatementWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IfStatementWalker());
+        internal IReadOnlyList<IfStatementSyntax> IfStatements => this.ifStatements;
 
         public override void VisitIfStatement(IfStatementSyntax node)
         {
             this.ifStatements.Add(node);
             base.VisitIfStatement(node);
         }
+
+        internal static IfStatementWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IfStatementWalker());
 
         protected override void Clear()
         {

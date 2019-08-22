@@ -11,10 +11,10 @@ namespace PropertyChangedAnalyzers
         {
         }
 
-        internal static bool Equals(SyntaxToken x, SyntaxToken y) => x.ValueText == y.ValueText;
-
         bool IEqualityComparer<SyntaxToken>.Equals(SyntaxToken x, SyntaxToken y) => Equals(x, y);
 
         public int GetHashCode(SyntaxToken obj) => obj.ValueText.GetHashCode();
+
+        internal static bool Equals(SyntaxToken x, SyntaxToken y) => x.ValueText == y.ValueText;
     }
 }

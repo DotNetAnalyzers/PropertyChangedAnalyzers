@@ -93,7 +93,6 @@ namespace PropertyChangedAnalyzers
 
                             break;
                         }
-
                 }
             }
 

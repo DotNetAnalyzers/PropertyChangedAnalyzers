@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers
         /// <summary>
         /// Gets a list with all <see cref="AssignmentExpressionSyntax"/> in the scope.
         /// </summary>
-        public IReadOnlyList<AssignmentExpressionSyntax> Assignments => this.assignments;
+        internal IReadOnlyList<AssignmentExpressionSyntax> Assignments => this.assignments;
 
         public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
         {

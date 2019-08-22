@@ -13,19 +13,7 @@ namespace PropertyChangedAnalyzers
         {
         }
 
-        public IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
-
-        public static ReturnExpressionsWalker Empty() => Borrow(() => new ReturnExpressionsWalker());
-
-        public static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
-
-        public static bool TryGetSingle(SyntaxNode node, out ExpressionSyntax returnValue)
-        {
-            using (var walker = Borrow(node))
-            {
-                return walker.returnValues.TrySingle(out returnValue);
-            }
-        }
+        internal IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
 
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {
@@ -35,8 +23,23 @@ namespace PropertyChangedAnalyzers
 
         public override void VisitArrowExpressionClause(ArrowExpressionClauseSyntax node)
         {
-            this.returnValues.Add(node.Expression);
-            base.VisitArrowExpressionClause(node);
+            if (!node.TryFirstAncestor<ConstructorDeclarationSyntax>(out _))
+            {
+                this.returnValues.Add(node.Expression);
+                base.VisitArrowExpressionClause(node);
+            }
+        }
+
+        internal static ReturnExpressionsWalker Empty() => Borrow(() => new ReturnExpressionsWalker());
+
+        internal static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
+
+        internal static bool TryGetSingle(SyntaxNode node, out ExpressionSyntax returnValue)
+        {
+            using (var walker = Borrow(node))
+            {
+                return walker.returnValues.TrySingle(out returnValue);
+            }
         }
 
         protected override void Clear()

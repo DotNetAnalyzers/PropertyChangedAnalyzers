@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers
                 argumentList.Parent is InvocationExpressionSyntax invocation &&
                 invocation.IsPotentialThisOrBase())
             {
-                if (TrySet.IsInvocation(invocation, semanticModel, cancellationToken) != AnalysisResult.No &&
+                if (TrySet.IsMatch(invocation, semanticModel, cancellationToken) != AnalysisResult.No &&
                     semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol setAndRaiseMethod &&
                     setAndRaiseMethod.Parameters.TryLast(x => x.Type == KnownSymbol.String, out var nameParameter))
                 {
@@ -114,10 +114,37 @@ namespace PropertyChangedAnalyzers
             }
         }
 
+        internal static bool IsEventInvoke(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (invocation.ArgumentList?.Arguments.Count == 2 &&
+                invocation.ArgumentList.Arguments[0].Expression.IsEither(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
+                invocation.IsPotentialReturnVoid())
+            {
+                switch (invocation.Parent)
+                {
+                    case ConditionalAccessExpressionSyntax conditionalAccess when IsPotential(conditionalAccess):
+                        return semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _);
+                    case ExpressionStatementSyntax _ when semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol):
+                        return symbol == KnownSymbol.PropertyChangedEventHandler.Invoke;
+                    default:
+                        return false;
+                }
+            }
+
+            return false;
+
+            bool IsPotential(ConditionalAccessExpressionSyntax candidate)
+            {
+                return candidate.Expression is IdentifierNameSyntax ||
+                       (candidate.Expression is MemberAccessExpressionSyntax memberAccess &&
+                        memberAccess.Expression is ThisExpressionSyntax);
+            }
+        }
+
         internal static AnalysisResult TryGetName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
         {
             propertyName = null;
-            if (IsPropertyChangedInvoke(invocation, semanticModel, cancellationToken))
+            if (IsEventInvoke(invocation, semanticModel, cancellationToken))
             {
                 if (invocation.ArgumentList.Arguments.TryElementAt(1, out var propertyChangedArg) &&
                     PropertyChangedEventArgs.TryGetPropertyName(propertyChangedArg.Expression, semanticModel, cancellationToken, out propertyName))
@@ -128,7 +155,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (IsOnPropertyChanged(invocation, semanticModel, cancellationToken, out var onPropertyChanged) != AnalysisResult.No &&
+            if (OnPropertyChanged.IsMatch(invocation, semanticModel, cancellationToken, out var onPropertyChanged) != AnalysisResult.No &&
                 onPropertyChanged.Parameters.TrySingle(out var parameter))
             {
                 if (invocation.ArgumentList.Arguments.Count == 0)
@@ -179,270 +206,6 @@ namespace PropertyChangedAnalyzers
             }
 
             return AnalysisResult.No;
-        }
-
-        internal static bool TryGetOnPropertyChanged(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
-        {
-            if (type.TryFindEventRecursive("PropertyChanged", out var propertyChangedEvent))
-            {
-                return TryGetOnPropertyChanged(propertyChangedEvent, semanticModel, cancellationToken, out invoker);
-            }
-
-            invoker = null;
-            return false;
-        }
-
-        internal static bool TryGetOnPropertyChanged(IEventSymbol propertyChangedEvent, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
-        {
-            invoker = null;
-            var containingType = propertyChangedEvent.ContainingType;
-            while (propertyChangedEvent != null)
-            {
-                foreach (var member in propertyChangedEvent.ContainingType.GetMembers())
-                {
-                    if (member is IMethodSymbol candidate &&
-                        candidate.MethodKind == MethodKind.Ordinary &&
-                        candidate.IsStatic == propertyChangedEvent.IsStatic)
-                    {
-                        if (!Equals(candidate.ContainingType, containingType) &&
-                            candidate.DeclaredAccessibility == Accessibility.Private)
-                        {
-                            continue;
-                        }
-
-                        switch (IsOnPropertyChanged(candidate, semanticModel, cancellationToken))
-                        {
-                            case AnalysisResult.No:
-                                continue;
-                            case AnalysisResult.Yes:
-                                invoker = candidate;
-                                if (candidate.Parameters.TrySingle(out var parameter) &&
-                                    parameter.Type == KnownSymbol.String)
-                                {
-                                    return true;
-                                }
-
-                                break;
-                            case AnalysisResult.Maybe:
-                                if (invoker is null ||
-                                    (candidate.Parameters.TrySingle(out parameter) &&
-                                     parameter.Type == KnownSymbol.String))
-                                {
-                                    invoker = candidate;
-                                }
-
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    }
-                }
-
-                propertyChangedEvent = propertyChangedEvent.OverriddenEvent;
-            }
-
-            return invoker != null;
-        }
-
-        internal static bool IsPropertyChangedInvoke(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (invocation.ArgumentList?.Arguments.Count == 2 &&
-                invocation.ArgumentList.Arguments[0].Expression.IsEither(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
-                invocation.IsPotentialReturnVoid())
-            {
-                switch (invocation.Parent)
-                {
-                    case ConditionalAccessExpressionSyntax conditionalAccess when IsPotential(conditionalAccess):
-                        return semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _);
-                    case ExpressionStatementSyntax _ when semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol):
-                        return symbol == KnownSymbol.PropertyChangedEventHandler.Invoke;
-                    default:
-                        return false;
-                }
-            }
-
-            return false;
-
-            bool IsPotential(ConditionalAccessExpressionSyntax candidate)
-            {
-                return candidate.Expression is IdentifierNameSyntax ||
-                       (candidate.Expression is MemberAccessExpressionSyntax memberAccess &&
-                        memberAccess.Expression is ThisExpressionSyntax);
-            }
-        }
-
-        internal static AnalysisResult IsOnPropertyChanged(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            return IsOnPropertyChanged(invocation, semanticModel, cancellationToken, out _);
-        }
-
-        internal static AnalysisResult IsOnPropertyChanged(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
-        {
-            method = null;
-            if (invocation == null ||
-                invocation.ArgumentList?.Arguments.Count > 1 ||
-                !invocation.IsPotentialReturnVoid() ||
-                !invocation.IsPotentialThisOrBase())
-            {
-                return AnalysisResult.No;
-            }
-
-            if (invocation.FirstAncestor<ClassDeclarationSyntax>() is ClassDeclarationSyntax containingClass)
-            {
-                if (containingClass.BaseList?.Types == null ||
-                    containingClass.BaseList.Types.Count == 0)
-                {
-                    return AnalysisResult.No;
-                }
-
-                if (semanticModel.TryGetSymbol(invocation, cancellationToken, out method))
-                {
-                    return IsOnPropertyChanged(method, semanticModel, cancellationToken);
-                }
-            }
-
-            return AnalysisResult.No;
-        }
-
-        internal static AnalysisResult IsOnPropertyChanged(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
-        {
-            if (visited?.Add(method) == false)
-            {
-                return AnalysisResult.No;
-            }
-
-            if (!IsPotentialOnPropertyChanged(method, semanticModel.Compilation))
-            {
-                return AnalysisResult.No;
-            }
-
-            // not using known symbol here as both jetbrains & mvvm cross defines a NotifyPropertyChangedInvocatorAttribute
-            if (method.GetAttributes().TryFirst(x => x.AttributeClass.Name == "NotifyPropertyChangedInvocatorAttribute", out _))
-            {
-                return AnalysisResult.Yes;
-            }
-
-            var result = AnalysisResult.No;
-            if (method.Parameters.TrySingle(out var parameter) &&
-                method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax declaration))
-            {
-                using (var walker = InvocationWalker.Borrow(declaration))
-                {
-                    foreach (var invocation in walker.Invocations)
-                    {
-                        if (invocation.ArgumentList == null ||
-                            invocation.ArgumentList.Arguments.Count == 0)
-                        {
-                            continue;
-                        }
-
-                        if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument) &&
-                            IsPropertyChangedInvoke(invocation, semanticModel, cancellationToken))
-                        {
-                            if (argument.Expression is IdentifierNameSyntax identifierName &&
-                                identifierName.Identifier.ValueText == parameter.Name)
-                            {
-                                return AnalysisResult.Yes;
-                            }
-
-                            if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, semanticModel, cancellationToken))
-                            {
-                                return AnalysisResult.Yes;
-                            }
-                        }
-                        else if (invocation.ArgumentList.Arguments.TrySingle(out argument) &&
-                                 invocation.IsPotentialThisOrBase())
-                        {
-                            if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, semanticModel, cancellationToken) ||
-                                IdentifierNameWalker.Contains(argument.Expression, parameter, semanticModel, cancellationToken))
-                            {
-                                if (semanticModel.TryGetSymbol(invocation, cancellationToken, out var invokedMethod))
-                                {
-                                    using (var set = visited.IncrementUsage())
-                                    {
-                                        switch (IsOnPropertyChanged(invokedMethod, semanticModel, cancellationToken, set))
-                                        {
-                                            case AnalysisResult.No:
-                                                break;
-                                            case AnalysisResult.Yes:
-                                                return AnalysisResult.Yes;
-                                            case AnalysisResult.Maybe:
-                                                result = AnalysisResult.Maybe;
-                                                break;
-                                            default:
-                                                throw new ArgumentOutOfRangeException();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChanged ||
-                    method == KnownSymbol.MvvmLightViewModelBase.RaisePropertyChangedOfT ||
-                    method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChanged ||
-                    method == KnownSymbol.MvvmLightObservableObject.RaisePropertyChangedOfT ||
-                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChange ||
-                    method == KnownSymbol.CaliburnMicroPropertyChangedBase.NotifyOfPropertyChangeOfT ||
-                    method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChange ||
-                    method == KnownSymbol.StyletPropertyChangedBase.NotifyOfPropertyChangeOfT ||
-                    method == KnownSymbol.MvvmCrossMvxNotifyPropertyChanged.RaisePropertyChanged ||
-                    method == KnownSymbol.MvvmCrossMvxNotifyPropertyChanged.RaisePropertyChangedOfT ||
-                    method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChanged ||
-                    method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChangedOfT ||
-                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChanged ||
-                    method == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.OnPropertyChangedOfT)
-                {
-                    return AnalysisResult.Yes;
-                }
-
-                if (parameter != null &&
-                    parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
-                {
-                    if (method.Name.Contains("PropertyChanged"))
-                    {
-                        // A bit speculative here
-                        // for handling the case when inheriting a ViewModelBase class from a binary reference.
-                        return AnalysisResult.Maybe;
-                    }
-                }
-
-                return AnalysisResult.No;
-            }
-
-            return result;
-        }
-
-        private static bool IsPotentialOnPropertyChanged(IMethodSymbol method, Compilation compilation)
-        {
-            if (method == KnownSymbol.MvvmCrossMvxNotifyPropertyChanged.RaisePropertyChanged ||
-                method == KnownSymbol.MvvmCrossMvxNotifyPropertyChanged.RaisePropertyChangedOfT ||
-                method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChanged ||
-                method == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.RaisePropertyChangedOfT)
-            {
-                // They changed return type to task, special casing it like this here.
-                return true;
-            }
-
-            if (method != null &&
-                method.ReturnsVoid &&
-                method.MethodKind == MethodKind.Ordinary &&
-                method.Parameters.TrySingle(out var parameter) &&
-                parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs, KnownSymbol.LinqExpressionOfT))
-            {
-                if (method.IsStatic)
-                {
-                    return method.ContainingType.TryFindEvent("PropertyChanged", out var @event) &&
-                           @event.IsStatic;
-                }
-
-                return method.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, compilation);
-            }
-
-            return false;
         }
     }
 }

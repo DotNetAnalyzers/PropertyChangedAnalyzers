@@ -40,10 +40,10 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryFind(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            return type.TryFindFirstMethodRecursive(x => TrySet.CanCreateInvocation(x, out _) && IsMethod(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
+            return type.TryFindFirstMethodRecursive(x => TrySet.CanCreateInvocation(x, out _) && IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
         }
 
-        internal static AnalysisResult IsInvocation(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
+        internal static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
         {
             if (candidate?.ArgumentList == null ||
                 candidate.ArgumentList.Arguments.Count < 2 ||
@@ -53,14 +53,14 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            return IsMethod(
+            return IsMatch(
                 semanticModel.GetSymbolSafe(candidate, cancellationToken),
                 semanticModel,
                 cancellationToken,
                 visited);
         }
 
-        internal static AnalysisResult IsMethod(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
+        internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
         {
             if (visited?.Add(candidate) == false)
             {
@@ -105,8 +105,8 @@ namespace PropertyChangedAnalyzers
                 using (var walker = InvocationWalker.Borrow(syntaxNode))
                 {
                     if (!walker.Invocations.TrySingle(
-                        x => PropertyChanged.IsOnPropertyChanged(x, semanticModel, cancellationToken) != AnalysisResult.No ||
-                             PropertyChanged.IsPropertyChangedInvoke(x, semanticModel, cancellationToken),
+                        x => OnPropertyChanged.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No ||
+                             PropertyChanged.IsEventInvoke(x, semanticModel, cancellationToken),
                         out _))
                     {
                         using (var set = visited.IncrementUsage())
@@ -114,7 +114,7 @@ namespace PropertyChangedAnalyzers
                             var result = AnalysisResult.No;
                             foreach (var invocation in walker.Invocations)
                             {
-                                switch (IsInvocation(invocation, semanticModel, cancellationToken, set))
+                                switch (IsMatch(invocation, semanticModel, cancellationToken, set))
                                 {
                                     case AnalysisResult.No:
                                         break;
@@ -160,6 +160,5 @@ namespace PropertyChangedAnalyzers
 
             return candidate.Parameters.Length == 3 ? AnalysisResult.Maybe : AnalysisResult.No;
         }
-
     }
 }

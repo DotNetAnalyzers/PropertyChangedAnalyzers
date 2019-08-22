@@ -37,12 +37,12 @@ namespace PropertyChangedAnalyzers
                                                .FirstAncestorOrSelf<ExpressionSyntax>();
                     var typeDeclaration = expression.FirstAncestorOrSelf<TypeDeclarationSyntax>();
                     var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
-                    if (PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
+                    if (OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var invoker) &&
                         invoker.Parameters[0].Type == KnownSymbol.String)
                     {
                         var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
                         var method = semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                        if (TrySet.IsMethod(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
+                        if (TrySet.IsMatch(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
                         {
                             if (invocation.Parent is ExpressionStatementSyntax ||
                                 invocation.Parent is ArrowExpressionClauseSyntax)

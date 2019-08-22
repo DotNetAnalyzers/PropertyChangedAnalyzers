@@ -33,7 +33,7 @@ namespace PropertyChangedAnalyzers
                     argumentList.Parent is InvocationExpressionSyntax invocation &&
                     argument.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
                     semanticModel.TryGetSymbol(classDeclaration, context.CancellationToken, out var type) &&
-                    PropertyChanged.TryGetOnPropertyChanged(type, semanticModel, context.CancellationToken, out var invoker) &&
+                    OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var invoker) &&
                     invoker.Parameters.TrySingle(out var parameter) &&
                     parameter.Type == KnownSymbol.String &&
                     PropertyChanged.TryGetName(invocation, semanticModel, context.CancellationToken, out var name) == AnalysisResult.Yes)

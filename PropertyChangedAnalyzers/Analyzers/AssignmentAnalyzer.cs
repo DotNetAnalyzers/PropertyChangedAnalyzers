@@ -65,13 +65,13 @@ namespace PropertyChangedAnalyzers
                         continue;
                     }
 
-                    if (TrySet.IsInvocation(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
+                    if (TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
                     {
                         continue;
                     }
 
-                    if (PropertyChanged.IsOnPropertyChanged(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
-                        PropertyChanged.IsPropertyChangedInvoke(invocation, context.SemanticModel, context.CancellationToken))
+                    if (OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
+                        PropertyChanged.IsEventInvoke(invocation, context.SemanticModel, context.CancellationToken))
                     {
                         continue;
                     }

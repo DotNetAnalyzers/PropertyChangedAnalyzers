@@ -13,15 +13,15 @@ namespace PropertyChangedAnalyzers
         {
         }
 
-        public IReadOnlyList<InvocationExpressionSyntax> Invocations => this.invocations;
-
-        public static InvocationWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new InvocationWalker());
+        internal IReadOnlyList<InvocationExpressionSyntax> Invocations => this.invocations;
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax node)
         {
             this.invocations.Add(node);
             base.VisitInvocationExpression(node);
         }
+
+        internal static InvocationWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new InvocationWalker());
 
         protected override void Clear()
         {

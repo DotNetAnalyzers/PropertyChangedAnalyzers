@@ -29,7 +29,7 @@ namespace PropertyChangedAnalyzers
                 context.ContainingSymbol is IMethodSymbol method &&
                 method.Parameters.TrySingle(out var parameter) &&
                 context.Node is MethodDeclarationSyntax methodDeclaration &&
-                PropertyChanged.IsOnPropertyChanged(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                OnPropertyChanged.IsMatch(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
             {
                 if (parameter.Type == KnownSymbol.String &&
                     !parameter.IsCallerMemberName() &&
