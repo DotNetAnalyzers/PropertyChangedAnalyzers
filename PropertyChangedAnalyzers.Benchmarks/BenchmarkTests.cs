@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Benchmarks
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Benchmarks.Benchmarks;
 
-    internal class BenchmarkTests
+    public class BenchmarkTests
     {
         private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } = typeof(KnownSymbol).Assembly
                                                                                                     .GetTypes()
