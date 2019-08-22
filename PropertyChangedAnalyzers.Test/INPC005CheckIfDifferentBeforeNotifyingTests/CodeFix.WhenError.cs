@@ -107,6 +107,48 @@ namespace RoslynSandbox
                 RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
             }
 
+            [TestCaseSource(nameof(TestCases))]
+            public static void NegatedCheckAssignReturn(string type, string expression)
+            {
+                var code = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get { return this.bar; }
+            set
+            {
+                if (!Equals(value, this.bar))
+                {
+                    return;
+                    this.bar = value;
+                }
+
+                ↓this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("Equals(value, this.bar)", expression)
+  .AssertReplace("int", type);
+
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+            }
+
             [Test]
             public static void IfOperatorNotEqualsReturn()
             {
@@ -147,6 +189,7 @@ namespace RoslynSandbox
                 RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
             }
 
+            [Explicit("#87")]
             [Test]
             public static void OperatorEqualsNoAssignReturn()
             {
