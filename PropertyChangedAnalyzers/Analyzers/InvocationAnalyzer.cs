@@ -28,47 +28,45 @@ namespace PropertyChangedAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is InvocationExpressionSyntax invocation)
+                context.Node is InvocationExpressionSyntax invocation &&
+                PropertyChanged.TryGetName(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No)
             {
-                if (PropertyChanged.TryGetName(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No)
+                if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
+                    setter.IsKind(SyntaxKind.SetAccessorDeclaration))
                 {
-                    if (invocation.FirstAncestor<AccessorDeclarationSyntax>() is AccessorDeclarationSyntax setter &&
-                        setter.IsKind(SyntaxKind.SetAccessorDeclaration))
+                    if (Property.TrySingleAssignmentInSetter(setter, out var assignment))
                     {
-                        if (Property.TrySingleAssignmentInSetter(setter, out var assignment))
+                        if (!AreInSameBlock(assignment, invocation) ||
+                            assignment.SpanStart > invocation.SpanStart)
                         {
-                            if (!AreInSameBlock(assignment, invocation) ||
-                                assignment.SpanStart > invocation.SpanStart)
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
-                            }
-
-                            if (IsFirstCall(invocation) &&
-                                IncorrectOrMissingCheckIfDifferent(context, setter, invocation, assignment))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
-                            }
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
                         }
-                        else if (Property.TryFindSingleSetAndRaise(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
-                        {
-                            if (!AreInSameBlock(setAndRaise, invocation) ||
-                                setAndRaise.SpanStart > invocation.SpanStart)
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
-                            }
 
-                            if (IsFirstCall(invocation) &&
-                                IncorrectOrMissingCheckIfDifferent(setAndRaise, invocation))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
-                            }
+                        if (IsFirstCall(invocation) &&
+                            IncorrectOrMissingCheckIfDifferent(context, setter, invocation, assignment))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
                         }
                     }
-                    else if (invocation.ArgumentList is ArgumentListSyntax argumentList &&
-                             argumentList.Arguments.Count == 0)
+                    else if (Property.TryFindSingleSetAndRaise(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, GetLocation()));
+                        if (!AreInSameBlock(setAndRaise, invocation) ||
+                            setAndRaise.SpanStart > invocation.SpanStart)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
+                        }
+
+                        if (IsFirstCall(invocation) &&
+                            IncorrectOrMissingCheckIfDifferent(setAndRaise, invocation))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
+                        }
                     }
+                }
+                else if (invocation.ArgumentList is ArgumentListSyntax argumentList &&
+                         argumentList.Arguments.Count == 0)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, GetLocation()));
                 }
             }
 
