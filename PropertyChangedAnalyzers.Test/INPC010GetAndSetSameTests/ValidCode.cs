@@ -450,7 +450,7 @@ namespace ValidCode
         }
 
         [Test]
-        public static void IntPropertiesReturnFieldInGetter()
+        public static void IntPropertiesAssignsPropertyReturnField()
         {
             var code = @"
 namespace ValidCode
@@ -485,6 +485,54 @@ namespace ValidCode
         {
             get => this.p1;
             set => this.P1 = value;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
+        }
+
+        [Test]
+        public static void IntPropertiesAssignsFiledReturnsProperty()
+        {
+            var code = @"
+namespace ValidCode
+{
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p1;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1
+        {
+            get => this.p1;
+            set
+            {
+                if (value == this.p1)
+                {
+                    return;
+                }
+
+                this.p1 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P2));
+            }
+        }
+
+        public int P2
+        {
+            get => this.P1;
+            set => this.p1 = value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -645,6 +693,88 @@ namespace ValidCode.Repros
 }";
 
             RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void TrySet()
+        {
+            var code = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int f1;
+        private int f2;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
+        {
+            get => this.f1;
+            set => this.TrySet(ref this.f1, value);
+        }
+
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
+        }
+    }
+}
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int f1;
+        private int f2;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
+        {
+            get => this.f1;
+            set => this.TrySet(ref this.f1, value);
+        }
+
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

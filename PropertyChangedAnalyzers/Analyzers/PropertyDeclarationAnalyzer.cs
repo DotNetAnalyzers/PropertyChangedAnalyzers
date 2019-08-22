@@ -87,6 +87,11 @@ namespace PropertyChangedAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, setter.GetLocation()));
                     }
 
+                    if (Property.GetsAndSetsSame(propertyDeclaration, context.SemanticModel, context.CancellationToken, out _, out _) == false)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, propertyDeclaration.Identifier.GetLocation()));
+                    }
+
                     using (var assignmentWalker = AssignmentWalker.Borrow(setter))
                     {
                         if (assignmentWalker.Assignments.TryFirst(x => IsProperty(x.Left, property), out var recursiveAssignment))
@@ -96,11 +101,6 @@ namespace PropertyChangedAnalyzers
 
                         if (propertyDeclaration.TryGetGetter(out var getter))
                         {
-                            if (GetAndSetsSameField(assignmentWalker, getter, context) == false)
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, propertyDeclaration.GetLocation()));
-                            }
-
                             if (ShouldBeExpressionBody(getter))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, getter.GetLocation()));
@@ -226,43 +226,6 @@ namespace PropertyChangedAnalyzers
             return accessor.Body is BlockSyntax block &&
                    block.Statements.TrySingle(out var statement) &&
                    statement.IsEither(SyntaxKind.ReturnStatement, SyntaxKind.ExpressionStatement);
-        }
-
-        private static bool? GetAndSetsSameField(AssignmentWalker assignmentWalker, AccessorDeclarationSyntax getter, SyntaxNodeAnalysisContext context, PooledSet<ISymbol> visited = null)
-        {
-            if (assignmentWalker.Assignments.TrySingle(out var singleAssignment) &&
-                ReturnExpressionsWalker.TryGetSingle(getter, out var singleReturnValue))
-            {
-                if (PropertyPath.Uses(singleAssignment.Left, singleReturnValue, context))
-                {
-                    return true;
-                }
-
-                if (context.SemanticModel.TryGetSymbol(singleAssignment.Left, context.CancellationToken, out var setSymbol) &&
-                    context.SemanticModel.TryGetSymbol(singleReturnValue, context.CancellationToken, out var getSymbol))
-                {
-                    if (getSymbol.Kind == setSymbol.Kind)
-                    {
-                        return false;
-                    }
-
-                    if (getSymbol.Kind == SymbolKind.Property)
-                    {
-                        using (visited = visited.IncrementUsage())
-                        {
-                            if (visited.Add(getSymbol) &&
-                                getSymbol.TrySingleDeclaration(context.CancellationToken, out AccessorDeclarationSyntax otherGetter))
-                            {
-                                return GetAndSetsSameField(assignmentWalker, otherGetter, context);
-                            }
-                        }
-
-                        return false;
-                    }
-                }
-            }
-
-            return null;
         }
     }
 }

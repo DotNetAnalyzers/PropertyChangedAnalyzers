@@ -8,6 +8,45 @@ namespace PropertyChangedAnalyzers
 
     internal static class Property
     {
+        internal static bool? GetsAndSetsSame(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax get, out ExpressionSyntax set)
+        {
+            if (propertyDeclaration.TryGetGetter(out var getter) &&
+                propertyDeclaration.TryGetSetter(out var setter) &&
+                Getter.TrySingleReturned(getter, out get) &&
+                Setter.TryFindSingleMutation(setter, semanticModel, cancellationToken, out set))
+            {
+                if (MemberPath.Equals(get, set))
+                {
+                    return true;
+                }
+
+                if (propertyDeclaration.Parent is TypeDeclarationSyntax containing)
+                {
+                    if (MemberPath.TrySingle(get, out var getMember) &&
+                        containing.TryFindProperty(getMember.Text, out var getProperty) &&
+                        Getter.TrySingleReturned(getProperty, out get) &&
+                        MemberPath.Equals(get, set))
+                    {
+                        return true;
+                    }
+
+                    if (MemberPath.TrySingle(set, out var setMember) &&
+                        containing.TryFindProperty(setMember.Text, out var setProperty) &&
+                        Setter.TryFindSingleMutation(setProperty, semanticModel, cancellationToken, out set) &&
+                        MemberPath.Equals(get, set))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            get = null;
+            set = null;
+            return null;
+        }
+
         internal static bool IsLazy(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertyDeclaration.TryGetSetter(out _))

@@ -25,7 +25,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int P
+        public int ↓P
         {
             get
             {
@@ -42,6 +42,51 @@ namespace RoslynSandbox
                 this.f2 = value;
                 this.OnPropertyChanged(nameof(P));
             }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property sets a different field than it returns."), code);
+        }
+
+        [Test]
+        public static void DifferentFieldsTrySet()
+        {
+            var code = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private int f1;
+        private int f2;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int ↓P
+        {
+            get => this.f1;
+            set => this.TrySet(ref this.f2, value);
+        }
+
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -70,7 +115,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓internal int Value
+        internal int ↓Value
         {
             get
             {
@@ -122,7 +167,7 @@ namespace RoslynSandbox
         private readonly Bar bar = new Bar();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.bar.OtherValue;
             set
@@ -169,7 +214,7 @@ namespace RoslynSandbox
         private readonly Bar bar = new Bar();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.bar.P1;
             set
@@ -216,7 +261,7 @@ namespace RoslynSandbox
         private readonly Bar bar2 = new Bar();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.bar1.BarValue;
             set

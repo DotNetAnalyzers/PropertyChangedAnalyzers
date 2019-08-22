@@ -44,9 +44,16 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryFindSingleMutation(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax fieldAccess)
+        internal static bool TryFindSingleMutation(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax backing)
         {
-            fieldAccess = null;
+            backing = null;
+            return property.TryGetSetter(out var setter) &&
+                   TryFindSingleMutation(setter, semanticModel, cancellationToken, out backing);
+        }
+
+        internal static bool TryFindSingleMutation(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax backing)
+        {
+            backing = null;
             using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken))
             {
                 if (mutations.TrySingle(out var mutation))
@@ -54,13 +61,13 @@ namespace PropertyChangedAnalyzers
                     switch (mutation)
                     {
                         case AssignmentExpressionSyntax assignment
-                            when IsMutation(assignment, semanticModel, cancellationToken, out _, out fieldAccess):
+                            when IsMutation(assignment, semanticModel, cancellationToken, out _, out backing):
                             return true;
 
                         case ArgumentSyntax argument
                             when argument.Parent is ArgumentListSyntax argumentList &&
                                  argumentList.Parent is InvocationExpressionSyntax invocation &&
-                                 IsMutation(invocation, semanticModel, cancellationToken, out _, out fieldAccess):
+                                 IsMutation(invocation, semanticModel, cancellationToken, out _, out backing):
                             return true;
                         default:
                             return false;
@@ -71,26 +78,26 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool IsMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax parameter, out ExpressionSyntax fieldAccess)
+        internal static bool IsMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax parameter, out ExpressionSyntax backing)
         {
             switch (candidate)
             {
                 case AssignmentExpressionSyntax assignment
                     when IsParameter(assignment.Right, out parameter) &&
                          IsMember(assignment.Left):
-                    fieldAccess = assignment.Left;
+                    backing = assignment.Left;
                     return true;
                 case InvocationExpressionSyntax invocation
                     when invocation.ArgumentList is ArgumentListSyntax argumentList &&
                          argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.None) && IsParameter(x.Expression, out _), out var parameterArg) &&
                          argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
                          IsMember(refArgument.Expression):
-                    fieldAccess = refArgument.Expression;
+                    backing = refArgument.Expression;
                     parameter = (IdentifierNameSyntax)parameterArg.Expression;
                     return TrySet.IsMatch(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
                 default:
                     parameter = null;
-                    fieldAccess = null;
+                    backing = null;
                     return false;
             }
 
