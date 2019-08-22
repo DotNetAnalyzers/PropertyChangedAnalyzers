@@ -53,12 +53,14 @@ namespace PropertyChangedAnalyzers
                 {
                     switch (mutation)
                     {
-                        case AssignmentExpressionSyntax assignment when IsMutation(assignment, semanticModel, cancellationToken, out _, out fieldAccess):
+                        case AssignmentExpressionSyntax assignment
+                            when IsMutation(assignment, semanticModel, cancellationToken, out _, out fieldAccess):
                             return true;
 
-                        case ArgumentSyntax argument when argument.Parent is ArgumentListSyntax argumentList &&
-                                                          argumentList.Parent is InvocationExpressionSyntax invocation &&
-                                                          IsMutation(invocation, semanticModel, cancellationToken, out _, out fieldAccess):
+                        case ArgumentSyntax argument
+                            when argument.Parent is ArgumentListSyntax argumentList &&
+                                 argumentList.Parent is InvocationExpressionSyntax invocation &&
+                                 IsMutation(invocation, semanticModel, cancellationToken, out _, out fieldAccess):
                             return true;
                         default:
                             return false;
@@ -73,12 +75,16 @@ namespace PropertyChangedAnalyzers
         {
             switch (candidate)
             {
-                case AssignmentExpressionSyntax assignment when IsParameter(assignment.Right, out parameter):
+                case AssignmentExpressionSyntax assignment
+                    when IsParameter(assignment.Right, out parameter) &&
+                         IsMember(assignment.Left):
                     fieldAccess = assignment.Left;
                     return true;
-                case InvocationExpressionSyntax invocation when invocation.ArgumentList is ArgumentListSyntax argumentList &&
-                                                                argumentList.Arguments.TrySingle(x => IsParameter(x.Expression, out _), out var parameterArg) &&
-                                                                argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument):
+                case InvocationExpressionSyntax invocation
+                    when invocation.ArgumentList is ArgumentListSyntax argumentList &&
+                         argumentList.Arguments.TrySingle(x => IsParameter(x.Expression, out _), out var parameterArg) &&
+                         argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
+                         IsMember(refArgument.Expression):
                     fieldAccess = refArgument.Expression;
                     parameter = (IdentifierNameSyntax)parameterArg.Expression;
                     return TrySet.IsMatch(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
@@ -99,6 +105,12 @@ namespace PropertyChangedAnalyzers
 
                 result = null;
                 return false;
+            }
+
+            bool IsMember(ExpressionSyntax expression)
+            {
+                return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
+                       symbol.IsEitherKind(SymbolKind.Field, SymbolKind.Property);
             }
         }
 
