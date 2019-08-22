@@ -46,13 +46,13 @@ namespace RoslynSandbox
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private string bar;
+        private int bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Bar
+        public int Bar
         {
-            get { return this.bar; }
+            get => this.bar;
             set
             {
                 if (Equals(value, this.bar))
@@ -61,17 +61,17 @@ namespace RoslynSandbox
                 }
 
                 this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.OnPropertyChanged();
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }".AssertReplace("Equals(value, this.bar)", expression)
-  .AssertReplace("string", type);
+  .AssertReplace("int", type);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -88,11 +88,11 @@ namespace RoslynSandbox
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private string bar;
+        private int bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Bar
+        public int Bar
         {
             get { return this.bar; }
             set
@@ -100,18 +100,18 @@ namespace RoslynSandbox
                 if (!Equals(value, this.bar))
                 {
                     this.bar = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                    this.OnPropertyChanged();
                 }
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }".AssertReplace("Equals(value, this.bar)", expression)
-  .AssertReplace("string", type);
+  .AssertReplace("int", type);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -137,9 +137,9 @@ namespace RoslynSandbox
             set { this.bar = value; }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
@@ -168,13 +168,13 @@ namespace RoslynSandbox
             {
                 if (value == this.bar) return;
                 this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.OnPropertyChanged();
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
@@ -204,13 +204,13 @@ namespace RoslynSandbox
             {
                 if (value == this.Bar) return;
                 this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.OnPropertyChanged();
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
@@ -383,13 +383,13 @@ namespace RoslynSandbox
                 }
 
                 this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.OnPropertyChanged();
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
