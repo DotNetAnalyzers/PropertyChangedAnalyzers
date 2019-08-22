@@ -14,6 +14,7 @@ group Analyzers
   nuget IDisposableAnalyzers
   nuget StyleCop.Analyzers prerelease
   nuget Gu.Analyzers
+  nuget PropertyChangedAnalyzers
 
 group Benchmarks
   storage: none
