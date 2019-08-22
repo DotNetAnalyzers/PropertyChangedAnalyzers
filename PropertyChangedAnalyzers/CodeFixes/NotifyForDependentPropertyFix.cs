@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -42,7 +42,7 @@
                     {
                         var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
                         var method = semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                        if (PropertyChanged.IsTrySet(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
+                        if (TrySet.IsMethod(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
                         {
                             if (invocation.Parent is ExpressionStatementSyntax ||
                                 invocation.Parent is ArrowExpressionClauseSyntax)

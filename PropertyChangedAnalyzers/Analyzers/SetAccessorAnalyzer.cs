@@ -33,13 +33,13 @@ namespace PropertyChangedAnalyzers
             {
                 if (setter.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
                 {
-                    if (expressionBody.Expression is AssignmentExpressionSyntax assignment &&
+                    if (expressionBody.Expression.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
                         Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify, propertyDeclaration.Identifier.GetLocation()));
                     }
                 }
-                else if (setter.Body is BlockSyntax body)
+                else if (setter.Body != null)
                 {
                     if (Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
                     {

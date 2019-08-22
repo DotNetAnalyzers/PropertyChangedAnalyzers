@@ -65,7 +65,7 @@ namespace PropertyChangedAnalyzers
                         continue;
                     }
 
-                    if (PropertyChanged.IsTrySet(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
+                    if (TrySet.IsInvocation(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
                     {
                         continue;
                     }

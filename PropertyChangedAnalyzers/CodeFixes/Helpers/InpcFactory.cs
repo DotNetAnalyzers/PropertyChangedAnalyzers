@@ -176,35 +176,6 @@ namespace PropertyChangedAnalyzers
                                 .WithTriviaFrom(lambda);
         }
 
-        internal static bool CanCreateTrySetInvocation(IMethodSymbol candidate, out IParameterSymbol nameParameter)
-        {
-            nameParameter = null;
-            return candidate.IsGenericMethod &&
-                   candidate.TypeParameters.TrySingle(out var typeParameter) &&
-                   candidate.Parameters.Length > 2 &&
-                   candidate.Parameters[0].RefKind == RefKind.Ref &&
-                   candidate.Parameters[0].Type.Equals(typeParameter) &&
-                   candidate.Parameters[1].RefKind == RefKind.None &&
-                   candidate.Parameters[1].Type.Equals(typeParameter) &&
-                   candidate.Parameters.TrySingle(x => x.Type == KnownSymbol.String, out nameParameter) &&
-                   RestAreOptional();
-
-            bool RestAreOptional()
-            {
-                for (var i = 2; i < candidate.Parameters.Length; i++)
-                {
-                    var parameter = candidate.Parameters[i];
-                    if (parameter.Type != KnownSymbol.String &&
-                        !parameter.IsOptional)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        }
-
         internal static InvocationExpressionSyntax TrySetInvocation(CodeStyleResult qualifyAccess, IMethodSymbol method, ExpressionSyntax fieldAccess, ExpressionSyntax value, ExpressionSyntax name)
         {
             return SyntaxFactory.InvocationExpression(

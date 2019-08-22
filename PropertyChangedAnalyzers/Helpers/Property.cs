@@ -241,7 +241,7 @@ namespace PropertyChangedAnalyzers
 
             using (var walker = InvocationWalker.Borrow(setter))
             {
-                return walker.Invocations.TrySingle(x => PropertyChanged.IsTrySet(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
+                return walker.Invocations.TrySingle(x => TrySet.IsInvocation(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
             }
         }
 
@@ -368,7 +368,7 @@ namespace PropertyChangedAnalyzers
                                    argumentList.Parent is InvocationExpressionSyntax invocation &&
                                    argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
                                    (fieldAccess = refArgument.Expression) != null &&
-                                   PropertyChanged.IsTrySet(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
+                                   TrySet.IsInvocation(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
                         default:
                             fieldAccess = null;
                             return false;
@@ -378,22 +378,6 @@ namespace PropertyChangedAnalyzers
 
             fieldAccess = null;
             return false;
-        }
-
-        private static bool TryGetBackingField(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
-        {
-            field = null;
-            if (candidate is IdentifierNameSyntax)
-            {
-                field = semanticModel.GetSymbolSafe(candidate, cancellationToken) as IFieldSymbol;
-            }
-            else if (candidate is MemberAccessExpressionSyntax memberAccess &&
-                     memberAccess.Expression is ThisExpressionSyntax)
-            {
-                field = semanticModel.GetSymbolSafe(candidate, cancellationToken) as IFieldSymbol;
-            }
-
-            return field != null;
         }
 
         internal static bool IsAutoPropertyNeverAssignedOutsideConstructor(this PropertyDeclarationSyntax propertyDeclaration)
@@ -475,6 +459,22 @@ namespace PropertyChangedAnalyzers
 
                 return false;
             }
+        }
+
+        private static bool TryGetBackingField(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        {
+            field = null;
+            if (candidate is IdentifierNameSyntax)
+            {
+                field = semanticModel.GetSymbolSafe(candidate, cancellationToken) as IFieldSymbol;
+            }
+            else if (candidate is MemberAccessExpressionSyntax memberAccess &&
+                     memberAccess.Expression is ThisExpressionSyntax)
+            {
+                field = semanticModel.GetSymbolSafe(candidate, cancellationToken) as IFieldSymbol;
+            }
+
+            return field != null;
         }
     }
 }

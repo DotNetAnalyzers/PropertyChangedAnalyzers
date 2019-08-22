@@ -2,96 +2,14 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Linq;
     using System.Threading;
-    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public partial class PropertyChangedTest
+    public static partial class TrySetTest
     {
-        public static class IsTrySet
+        public static class TryFind
         {
-            [Test]
-            public static void Stylet()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
-namespace RoslynSandbox
-{
-    public class Foo : Stylet.PropertyChangedBase
-    {
-        private int value;
-
-        public int Value
-        {
-            get { return value; }
-            set { this.SetAndNotify(ref this.value, value); }
-        }
-    }
-}");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, SpecialMetadataReferences.Stylet);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("SetAndNotify");
-                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsTrySet(method, semanticModel, CancellationToken.None));
-            }
-
-            [Test]
-            public static void CaliburnMicro()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
-namespace RoslynSandbox
-{
-    public class Foo : Caliburn.Micro.PropertyChangedBase
-    {
-        private int value;
-
-        public int Value
-        {
-            get { return value; }
-            set { this.Set(ref this.value, value); }
-        }
-    }
-}");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("Set");
-                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsTrySet(method, semanticModel, CancellationToken.None));
-            }
-
-            [Test]
-            public static void MvvmLight()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
-namespace RoslynSandbox
-{
-    public class Foo : GalaSoft.MvvmLight.ViewModelBase
-    {
-        private int value;
-
-        public int Value
-        {
-            get { return value; }
-            set { this.Set(ref this.value, value); }
-        }
-    }
-}");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("Set");
-                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsTrySet(method, semanticModel, CancellationToken.None));
-            }
-
             [Test]
             public static void CustomImplementation1()
             {
@@ -130,9 +48,10 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsTrySet(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual("TrySet", method.Name);
             }
 
             [Test]
@@ -188,9 +107,10 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsTrySet(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindClassDeclaration("ObservableObject");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual("TrySet", method.Name);
             }
 
             [Test]
@@ -213,9 +133,10 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("Set");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsTrySet(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindClassDeclaration("FooBase");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual("Set", method.Name);
             }
 
             [Test]
@@ -238,9 +159,10 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.IsTrySet(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindClassDeclaration("FooBase");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
+                Assert.AreEqual("TrySet", method.Name);
             }
 
             [Test]
@@ -278,9 +200,9 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsTrySet(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(false, TrySet.TryFind(type, semanticModel, CancellationToken.None, out _));
             }
 
             [Test]
@@ -313,9 +235,9 @@ namespace RoslynSandbox
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.No, PropertyChanged.IsTrySet(method, semanticModel, CancellationToken.None));
+                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
+                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+                Assert.AreEqual(false, TrySet.TryFind(type, semanticModel, CancellationToken.None, out _));
             }
         }
     }

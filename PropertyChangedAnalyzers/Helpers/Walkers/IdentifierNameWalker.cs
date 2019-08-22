@@ -14,14 +14,13 @@ namespace PropertyChangedAnalyzers
         {
         }
 
+        internal IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
             this.identifierNames.Add(node);
             base.VisitIdentifierName(node);
         }
-
-        internal IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
 
         internal static IdentifierNameWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IdentifierNameWalker());
 

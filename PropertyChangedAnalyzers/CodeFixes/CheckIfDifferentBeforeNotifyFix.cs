@@ -53,8 +53,8 @@ namespace PropertyChangedAnalyzers
                             semanticModel.TryGetSymbol(assignment.Left, CancellationToken.None, out var assignedSymbol) &&
                             assignedSymbol.Kind == SymbolKind.Field &&
                             semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol setterSymbol) &&
-                            PropertyChanged.TryFindTrySet(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var setAndRaiseMethod) &&
-                            InpcFactory.CanCreateTrySetInvocation(setAndRaiseMethod, out var nameParameter) &&
+                            TrySet.TryFind(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var setAndRaiseMethod) &&
+                            TrySet.CanCreateInvocation(setAndRaiseMethod, out var nameParameter) &&
                             setter.TryFirstAncestor(out PropertyDeclarationSyntax property))
                         {
                             context.RegisterCodeFix(

@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers
                 argumentList.Parent is InvocationExpressionSyntax invocation &&
                 invocation.IsPotentialThisOrBase())
             {
-                if (IsTrySet(invocation, semanticModel, cancellationToken) != AnalysisResult.No &&
+                if (TrySet.IsInvocation(invocation, semanticModel, cancellationToken) != AnalysisResult.No &&
                     semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol setAndRaiseMethod &&
                     setAndRaiseMethod.Parameters.TryLast(x => x.Type == KnownSymbol.String, out var nameParameter))
                 {
@@ -414,129 +414,6 @@ namespace PropertyChangedAnalyzers
             }
 
             return result;
-        }
-
-        internal static bool TryFindTrySet(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
-        {
-            return type.TryFindFirstMethodRecursive(x => InpcFactory.CanCreateTrySetInvocation(x, out _) && IsTrySet(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
-        }
-
-        internal static AnalysisResult IsTrySet(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
-        {
-            if (candidate?.ArgumentList == null ||
-                candidate.ArgumentList.Arguments.Count < 2 ||
-                !candidate.ArgumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out _) ||
-                !candidate.IsPotentialThisOrBase())
-            {
-                return AnalysisResult.No;
-            }
-
-            return IsTrySet(
-                semanticModel.GetSymbolSafe(candidate, cancellationToken),
-                semanticModel,
-                cancellationToken,
-                visited);
-        }
-
-        internal static AnalysisResult IsTrySet(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
-        {
-            if (visited?.Add(candidate) == false)
-            {
-                return AnalysisResult.No;
-            }
-
-            if (candidate == null ||
-                candidate.IsStatic)
-            {
-                return AnalysisResult.No;
-            }
-
-            if (candidate.MethodKind != MethodKind.Ordinary ||
-                candidate.ReturnType != KnownSymbol.Boolean ||
-                !candidate.IsGenericMethod ||
-                candidate.TypeParameters.Length != 1 ||
-                candidate.Parameters.Length < 3 ||
-                !candidate.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation))
-            {
-                return AnalysisResult.No;
-            }
-
-            var type = candidate.TypeArguments.Length == 1
-                ? candidate.TypeArguments[0]
-                : candidate.TypeParameters[0];
-            var parameter = candidate.Parameters[0];
-            if (parameter.RefKind != RefKind.Ref ||
-                !ReferenceEquals(parameter.Type, type))
-            {
-                return AnalysisResult.No;
-            }
-
-            if (!ReferenceEquals(candidate.Parameters[1].Type, type) ||
-                candidate.Parameters[candidate.Parameters.Length - 1].Type != KnownSymbol.String)
-            {
-                return AnalysisResult.No;
-            }
-
-            if (candidate.DeclaringSyntaxReferences.TrySingle(out var reference))
-            {
-                var syntaxNode = (MethodDeclarationSyntax)reference.GetSyntax();
-                using (var walker = InvocationWalker.Borrow(syntaxNode))
-                {
-                    if (!walker.Invocations.TrySingle(
-                        x => IsOnPropertyChanged(x, semanticModel, cancellationToken) != AnalysisResult.No ||
-                             IsPropertyChangedInvoke(x, semanticModel, cancellationToken),
-                        out _))
-                    {
-                        using (var set = visited.IncrementUsage())
-                        {
-                            var result = AnalysisResult.No;
-                            foreach (var invocation in walker.Invocations)
-                            {
-                                switch (IsTrySet(invocation, semanticModel, cancellationToken, set))
-                                {
-                                    case AnalysisResult.No:
-                                        break;
-                                    case AnalysisResult.Yes:
-                                        return AnalysisResult.Yes;
-                                    case AnalysisResult.Maybe:
-                                        result = AnalysisResult.Maybe;
-                                        break;
-                                    default:
-                                        throw new ArgumentOutOfRangeException();
-                                }
-                            }
-
-                            return result;
-                        }
-                    }
-                }
-
-                using (var walker = AssignmentWalker.Borrow(syntaxNode))
-                {
-                    if (!walker.Assignments.TrySingle(
-                        x => semanticModel.GetSymbolSafe(x.Left, cancellationToken)?.Name == candidate.Parameters[0].Name &&
-                             semanticModel.GetSymbolSafe(x.Right, cancellationToken)?.Name == candidate.Parameters[1].Name,
-                        out _))
-                    {
-                        return AnalysisResult.No;
-                    }
-                }
-
-                return AnalysisResult.Yes;
-            }
-
-            if (candidate == KnownSymbol.MvvmLightViewModelBase.Set ||
-                candidate == KnownSymbol.MvvmLightObservableObject.Set ||
-                candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
-                candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
-                candidate == KnownSymbol.MvvmCrossMvxNotifyPropertyChanged.SetProperty ||
-                candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
-                candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty)
-            {
-                return AnalysisResult.Yes;
-            }
-
-            return candidate.Parameters.Length == 3 ? AnalysisResult.Maybe : AnalysisResult.No;
         }
 
         private static bool IsPotentialOnPropertyChanged(IMethodSymbol method, Compilation compilation)

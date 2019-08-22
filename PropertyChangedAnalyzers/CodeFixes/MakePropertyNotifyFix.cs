@@ -36,7 +36,7 @@ namespace PropertyChangedAnalyzers
                     propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
                     semanticModel.TryGetSymbol(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
-                    if (PropertyChanged.TryFindTrySet(type, semanticModel, context.CancellationToken, out var trySetMethod))
+                    if (TrySet.TryFind(type, semanticModel, context.CancellationToken, out var trySetMethod))
                     {
                         if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                         {
@@ -51,7 +51,7 @@ namespace PropertyChangedAnalyzers
                                 diagnostic);
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _) &&
-                                InpcFactory.CanCreateTrySetInvocation(trySetMethod, out var nameParameter))
+                                 TrySet.CanCreateInvocation(trySetMethod, out var nameParameter))
                         {
                             context.RegisterCodeFix(
                                 trySetMethod.DisplaySignature(),
