@@ -74,11 +74,15 @@ namespace PropertyChangedAnalyzers
                 {
                     switch (statement)
                     {
-                        case ExpressionStatementSyntax expressionStatement when expressionStatement.Expression is AssignmentExpressionSyntax assignment &&
-                                                                                Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out var fieldAccess) &&
-                                                                                assignment.Left == fieldAccess:
+                        case ExpressionStatementSyntax expressionStatement
+                            when expressionStatement.Expression is AssignmentExpressionSyntax assignment &&
+                                 Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out var fieldAccess) &&
+                                 assignment.Left == fieldAccess:
                             hasAssigned = true;
                             break;
+                        case ExpressionStatementSyntax expressionStatement
+                            when Setter.IsMutation(expressionStatement.Expression, context.SemanticModel, context.CancellationToken, out _, out _):
+
                         default:
                             return;
                     }
