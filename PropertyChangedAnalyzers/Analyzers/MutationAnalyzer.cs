@@ -14,7 +14,8 @@ namespace PropertyChangedAnalyzers
         public static readonly string PropertyNameKey = "PropertyName";
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptors.INPC003NotifyForDependentProperty);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            Descriptors.INPC003NotifyForDependentProperty);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
