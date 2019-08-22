@@ -78,7 +78,7 @@ namespace PropertyChangedAnalyzers
                 declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
                 !declaration.TryGetSetter(out _) ||
-                IsAutoPropertyOnlyAssignedInCtor(declaration))
+                IsAutoPropertyAssignedOnlyInConstructor(declaration))
             {
                 return false;
             }
@@ -103,7 +103,7 @@ namespace PropertyChangedAnalyzers
                 property.ContainingType.IsValueType ||
                 property.ContainingType.DeclaredAccessibility == Accessibility.Private ||
                 property.ContainingType.DeclaredAccessibility == Accessibility.Protected ||
-                IsAutoPropertyOnlyAssignedInCtor(declaration))
+                IsAutoPropertyAssignedOnlyInConstructor(declaration))
             {
                 return false;
             }
@@ -396,8 +396,42 @@ namespace PropertyChangedAnalyzers
             return field != null;
         }
 
-        private static bool IsAutoPropertyOnlyAssignedInCtor(PropertyDeclarationSyntax propertyDeclaration)
+        internal static bool IsAutoPropertyAssignedOnlyInConstructor(this PropertyDeclarationSyntax propertyDeclaration)
         {
+            if (propertyDeclaration.ExpressionBody is null &&
+                propertyDeclaration.TryGetGetter(out var setter) &&
+                setter.ExpressionBody is null &&
+                setter.Body is null)
+            {
+                if (propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword, SyntaxKind.ProtectedKeyword) &&
+                    !setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                {
+                    return false;
+                }
+
+                var name = propertyDeclaration.Identifier.ValueText;
+                using (var walker = IdentifierNameWalker.Borrow(propertyDeclaration.FirstAncestor<TypeDeclarationSyntax>()))
+                {
+                    var isAssigned = false;
+                    foreach (var identifierName in walker.IdentifierNames)
+                    {
+                        if (identifierName.Identifier.ValueText == name &&
+                            IsAssigned(identifierName))
+                        {
+                            isAssigned = true;
+                            if (!IsInConstructor(identifierName))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    return isAssigned;
+                }
+            }
+
+            return false;
+
             bool IsAssigned(IdentifierNameSyntax identifierName)
             {
                 var parent = identifierName.Parent;
@@ -428,47 +462,15 @@ namespace PropertyChangedAnalyzers
 
             bool IsInConstructor(SyntaxNode node)
             {
-                if (node.FirstAncestor<ConstructorDeclarationSyntax>() == null)
+                if (node.TryFirstAncestor(out ConstructorDeclarationSyntax ctor) &&
+                    propertyDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword) == ctor.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
-                    return false;
+                    // Could be in an event handler in ctor.
+                    return !node.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _);
                 }
 
-                // Could be in an event handler in ctor.
-                return node.FirstAncestor<AnonymousFunctionExpressionSyntax>() == null;
+                return false;
             }
-
-            if (propertyDeclaration.TryGetSetter(out var setter) &&
-                setter.Body == null &&
-                setter.ExpressionBody == null)
-            {
-                if (!propertyDeclaration.Modifiers.Any(SyntaxKind.PrivateKeyword) &&
-                    !setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                {
-                    return false;
-                }
-
-                var name = propertyDeclaration.Identifier.ValueText;
-                using (var walker = IdentifierNameWalker.Borrow(propertyDeclaration.FirstAncestor<TypeDeclarationSyntax>()))
-                {
-                    var isAssigned = false;
-                    foreach (var identifierName in walker.IdentifierNames)
-                    {
-                        if (identifierName.Identifier.ValueText == name &&
-                            IsAssigned(identifierName))
-                        {
-                            isAssigned = true;
-                            if (!IsInConstructor(identifierName))
-                            {
-                                return false;
-                            }
-                        }
-                    }
-
-                    return isAssigned;
-                }
-            }
-
-            return false;
         }
     }
 }
