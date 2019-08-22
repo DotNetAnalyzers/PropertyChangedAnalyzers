@@ -62,7 +62,7 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryFind(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
         {
-            if (type.TryFindEventRecursive("PropertyChanged", out var propertyChangedEvent))
+            if (PropertyChangedEvent.TryFind(type, out var propertyChangedEvent))
             {
                 return TryFind(propertyChangedEvent, semanticModel, cancellationToken, out invoker);
             }
@@ -137,7 +137,7 @@ namespace PropertyChangedAnalyzers
                         }
 
                         if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument) &&
-                            PropertyChanged.IsEventInvoke(invocation, semanticModel, cancellationToken))
+                            PropertyChangedEvent.IsInvoke(invocation, semanticModel, cancellationToken))
                         {
                             if (argument.Expression is IdentifierNameSyntax identifierName &&
                                 identifierName.Identifier.ValueText == parameter.Name)

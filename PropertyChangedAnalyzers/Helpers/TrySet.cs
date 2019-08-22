@@ -99,14 +99,13 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (candidate.DeclaringSyntaxReferences.TrySingle(out var reference))
+            if (candidate.TrySingleMethodDeclaration(cancellationToken, out var methodDeclaration))
             {
-                var syntaxNode = (MethodDeclarationSyntax)reference.GetSyntax();
-                using (var walker = InvocationWalker.Borrow(syntaxNode))
+                using (var walker = InvocationWalker.Borrow(methodDeclaration))
                 {
                     if (!walker.Invocations.TrySingle(
                         x => OnPropertyChanged.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No ||
-                             PropertyChanged.IsEventInvoke(x, semanticModel, cancellationToken),
+                             PropertyChangedEvent.IsInvoke(x, semanticModel, cancellationToken),
                         out _))
                     {
                         using (var set = visited.IncrementUsage())
@@ -133,7 +132,7 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                using (var walker = AssignmentWalker.Borrow(syntaxNode))
+                using (var walker = AssignmentWalker.Borrow(methodDeclaration))
                 {
                     if (!walker.Assignments.TrySingle(
                         x => semanticModel.GetSymbolSafe(x.Left, cancellationToken)?.Name == candidate.Parameters[0].Name &&

@@ -63,7 +63,7 @@ namespace PropertyChangedAnalyzers
                             context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbol.PropertyChangedEventArgs, context.CancellationToken, out _))
                         {
                             if ((OnPropertyChanged.IsMatch(parentInvocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
-                                 PropertyChanged.IsEventInvoke(parentInvocation, context.SemanticModel, context.CancellationToken)) &&
+                                 PropertyChangedEvent.IsInvoke(parentInvocation, context.SemanticModel, context.CancellationToken)) &&
                                 !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(text, out _))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
@@ -115,7 +115,7 @@ namespace PropertyChangedAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
                     }
 
-                    if (PropertyChanged.IsEventInvoke(invokeCandidate, context.SemanticModel, context.CancellationToken) &&
+                    if (PropertyChangedEvent.IsInvoke(invokeCandidate, context.SemanticModel, context.CancellationToken) &&
                          argumentList.Arguments[1] == argument &&
                          context.SemanticModel.TryGetSymbol(invokeCandidate, context.CancellationToken, out _) &&
                          PropertyChanged.TryGetName(invokeCandidate, context.SemanticModel, context.CancellationToken, out propertyName) == AnalysisResult.Yes &&

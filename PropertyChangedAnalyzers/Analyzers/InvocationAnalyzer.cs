@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.INPC005CheckIfDifferentBeforeNotifying,
             Descriptors.INPC009DoNotRaiseChangeForMissingProperty,
-            Descriptors.INPC016NotifyAfterUpdate);
+            Descriptors.INPC016NotifyAfterAssign);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -38,7 +38,7 @@ namespace PropertyChangedAnalyzers
                     {
                         if (invocation.IsExecutedBefore(assignment) == ExecutedBefore.Yes)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterAssign, GetLocation()));
                         }
 
                         if (IsFirstCall(invocation) &&
@@ -51,7 +51,7 @@ namespace PropertyChangedAnalyzers
                     {
                         if (invocation.IsExecutedBefore(trySet) == ExecutedBefore.Yes)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterUpdate, GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterAssign, GetLocation()));
                         }
 
                         if (IsFirstCall(invocation) &&

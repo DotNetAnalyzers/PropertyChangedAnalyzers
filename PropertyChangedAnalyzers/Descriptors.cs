@@ -148,7 +148,7 @@ namespace PropertyChangedAnalyzers
             isEnabledByDefault: true,
             description: "Property is recursive.");
 
-        internal static readonly DiagnosticDescriptor INPC016NotifyAfterUpdate = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC016NotifyAfterAssign = Descriptors.Create(
             id: "INPC016",
             title: "Notify after update.",
             messageFormat: "Notify after updating the backing field.",
