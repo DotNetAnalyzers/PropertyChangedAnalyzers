@@ -63,27 +63,5 @@ namespace PropertyChangedAnalyzers
                 }
             }
         }
-
-        private static bool ShouldNotify(PropertyDeclarationSyntax property, IMethodSymbol setMethod, AssignmentExpressionSyntax assignment)
-        {
-            if (property.Modifiers.Any(SyntaxKind.AbstractKeyword))
-            {
-                return false;
-            }
-
-            if (setMethod.ContainingSymbol is IPropertySymbol propertySymbol &&
-                propertySymbol.DeclaredAccessibility == Accessibility.Private)
-            {
-                return false;
-            }
-
-            if (property.IsAutoProperty())
-            {
-                return !property.IsAutoPropertyNeverAssignedOutsideConstructor();
-            }
-
-            return Property.TrySingleReturnedInGetter(property, out var returned) &&
-                   MemberPath.Equals(assignment.Left, returned);
-        }
     }
 }

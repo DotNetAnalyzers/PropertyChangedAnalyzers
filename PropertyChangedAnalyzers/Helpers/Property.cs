@@ -78,16 +78,14 @@ namespace PropertyChangedAnalyzers
                 declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
                 !declaration.TryGetSetter(out _) ||
+                declaration.ExpressionBody != null ||
                 IsAutoPropertyNeverAssignedOutsideConstructor(declaration))
             {
                 return false;
             }
 
-            return ShouldNotify(
-                declaration,
-                semanticModel.GetDeclaredSymbolSafe(declaration, cancellationToken),
-                semanticModel,
-                cancellationToken);
+            return semanticModel.TryGetSymbol(declaration, cancellationToken, out var property) &&
+                   ShouldNotify(declaration, property, semanticModel, cancellationToken);
         }
 
         internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
