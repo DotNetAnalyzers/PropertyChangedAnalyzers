@@ -23,12 +23,8 @@ namespace PropertyChangedAnalyzers
 
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
-            if (context.IsExcludedFromAnalysis())
-            {
-                return;
-            }
-
-            if (context.Node is StructDeclarationSyntax structDeclaration &&
+            if (!context.IsExcludedFromAnalysis() &&
+                context.Node is StructDeclarationSyntax structDeclaration &&
                 context.ContainingSymbol is INamedTypeSymbol type &&
                 type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation))
             {
