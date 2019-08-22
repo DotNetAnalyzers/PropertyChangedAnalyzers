@@ -61,14 +61,14 @@ namespace RoslynSandbox.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -393,9 +393,9 @@ namespace RoslynSandbox
 
         public override int Value => this.value;
 
-        public void Update(int newValue)
+        public void Update(int value)
         {
-            this.value = newValue;
+            this.value = value;
             this.OnPropertyChanged(nameof(this.Value));
         }
     }
@@ -463,14 +463,14 @@ namespace RoslynSandbox.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }

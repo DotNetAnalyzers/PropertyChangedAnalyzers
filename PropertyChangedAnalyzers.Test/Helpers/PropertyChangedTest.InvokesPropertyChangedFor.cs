@@ -76,14 +76,14 @@ namespace RoslynSandbox
             set { TrySet(ref _value3, value); }
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -139,14 +139,14 @@ namespace RoslynSandbox
             set => this.TrySet(ref this.value, value);
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -193,14 +193,14 @@ namespace RoslynSandbox
             set => this.TrySet(ref this.value, value, nameof(Value));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        protected bool TrySet<T>(ref T field, T value, string propertyName)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -286,14 +286,14 @@ namespace RoslynSandbox
             set { TrySet(ref _value3, value); }
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (TrySet<T>(ref field, newValue, propertyName))
+            if (TrySet<T>(ref field, value, propertyName))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }

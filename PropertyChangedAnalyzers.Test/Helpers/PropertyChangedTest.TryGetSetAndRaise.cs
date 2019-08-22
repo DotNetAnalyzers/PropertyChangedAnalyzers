@@ -25,14 +25,14 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -122,9 +122,9 @@ namespace RoslynSandbox
 {
     public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
     {
-        public override bool Set<T>(ref T oldValue, T newValue, string propertyName = null)
+        public override bool Set<T>(ref T oldValue, T value, string propertyName = null)
         {
-            return base.Set(ref oldValue, newValue, propertyName);
+            return base.Set(ref oldValue, value, propertyName);
         }
     }
 }");
@@ -148,9 +148,9 @@ namespace RoslynSandbox
 {
     public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
     {
-        public bool TrySet<T>(ref T oldValue, T newValue, string propertyName = null)
+        public bool TrySet<T>(ref T oldValue, T value, string propertyName = null)
         {
-            return base.Set(ref oldValue, newValue, propertyName);
+            return base.Set(ref oldValue, value, propertyName);
         }
     }
 }");
@@ -179,9 +179,9 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (this.TrySet(ref field, newValue, propertyName))
+            if (this.TrySet(ref field, value, propertyName))
             {
                 this.OnPropertyChanged(propertyName);
             }
@@ -219,9 +219,9 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            return this.TrySet(ref field, newValue, propertyName);
+            return this.TrySet(ref field, value, propertyName);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

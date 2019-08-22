@@ -14,9 +14,9 @@ namespace RoslynSandbox.Core
 
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            return base.Set(ref field, newValue, propertyName);
+            return base.Set(ref field, value, propertyName);
         }
     }
 }";
@@ -28,9 +28,9 @@ namespace RoslynSandbox
 
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            return base.Set(ref field, newValue, propertyName);
+            return base.Set(ref field, value, propertyName);
         }
 
         int M() => M();
@@ -416,9 +416,9 @@ namespace RoslynSandbox.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            return this.TrySet(ref field, newValue, propertyName);
+            return this.TrySet(ref field, value, propertyName);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
