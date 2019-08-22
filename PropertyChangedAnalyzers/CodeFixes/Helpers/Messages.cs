@@ -1,20 +1,13 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Linq;
-    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
 
     internal static class Messages
     {
-        internal static string Signature(this IMethodSymbol method)
+        internal static string DisplaySignature(this IMethodSymbol method)
         {
-            if (method.IsGenericMethod &&
-                method.TypeParameters.TrySingle(out var typeParameter))
-            {
-                return $"{method.Name}<{typeParameter.Name}>({string.Join(", ", method.Parameters.Select(x => $"{x} {x.Name}"))})";
-            }
-
-            return $"{method.Name}({string.Join(", ", method.Parameters.Select(x => $"{x} {x.Name}"))})";
+            return $"{method.Name}({string.Join(", ", method.Parameters.Where(x => !(x.IsOptional && x.Type.Kind != SymbolKind.TypeParameter)).Select(x => $"{(x.RefKind == RefKind.Ref ? "ref " : string.Empty)}{x.Name}"))})";
         }
     }
 }

@@ -788,7 +788,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void UseSetAndRaise()
+            public static void UseTrySet()
             {
                 var before = @"
 namespace N
@@ -814,14 +814,14 @@ namespace N
             }
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -853,14 +853,14 @@ namespace N
             set => this.TrySet(ref this.name, value);
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -871,8 +871,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet<T>(ref T field, T newValue, string propertyName)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet<T>(ref T field, T newValue, string propertyName)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet(ref field, value)");
             }
 
             [Test]
@@ -900,14 +900,14 @@ namespace N
             }
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        protected bool TrySet<T>(ref T field, T value, string propertyName)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -937,14 +937,14 @@ namespace N
             set => this.TrySet(ref this.name, value, nameof(this.Name));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        protected bool TrySet<T>(ref T field, T value, string propertyName)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -955,8 +955,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet<T>(ref T field, T newValue, string propertyName)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet<T>(ref T field, T newValue, string propertyName)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet(ref field, value, propertyName)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet(ref field, value, propertyName)");
             }
 
             [Test]
@@ -984,14 +984,14 @@ namespace N
             }
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        protected bool TrySet<T>(ref T field, T value, string propertyName)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             OnPropertyChanged(propertyName);
             return true;
         }
@@ -1021,14 +1021,14 @@ namespace N
             set => TrySet(ref _name, value, nameof(Name));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, string propertyName)
+        protected bool TrySet<T>(ref T field, T value, string propertyName)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             OnPropertyChanged(propertyName);
             return true;
         }
@@ -1039,8 +1039,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet<T>(ref T field, T newValue, string propertyName)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet<T>(ref T field, T newValue, string propertyName)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet(ref field, value, propertyName)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet(ref field, value, propertyName)");
             }
         }
     }

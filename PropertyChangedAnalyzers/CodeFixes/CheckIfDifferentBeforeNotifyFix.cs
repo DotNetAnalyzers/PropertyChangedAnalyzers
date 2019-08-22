@@ -58,7 +58,7 @@ namespace PropertyChangedAnalyzers
                             setter.TryFirstAncestor(out PropertyDeclarationSyntax property))
                         {
                             context.RegisterCodeFix(
-                                setAndRaiseMethod.Signature(),
+                                setAndRaiseMethod.DisplaySignature(),
                                 async (editor, cancellationToken) =>
                                 {
                                     var qualifyAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
