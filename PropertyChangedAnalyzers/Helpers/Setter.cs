@@ -114,6 +114,24 @@ namespace PropertyChangedAnalyzers
             }
         }
 
+        internal static bool TryGetBackingMember(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out FieldOrProperty member)
+        {
+            if (TryFindSingleMutation(setter, semanticModel, cancellationToken, out var mutated))
+            {
+                switch (mutated)
+                {
+                    case IdentifierNameSyntax _:
+                        return semanticModel.TryGetSymbol(mutated, cancellationToken, out var symbol) &&
+                                FieldOrProperty.TryCreate(symbol, out member);
+                    case MemberAccessExpressionSyntax memberAccess when memberAccess.Expression.IsKind(SyntaxKind.ThisExpression):
+                        return semanticModel.TryGetSymbol(mutated, cancellationToken, out symbol) &&
+                               FieldOrProperty.TryCreate(symbol, out member);
+                }
+            }
+
+            return false;
+        }
+
         internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
         {
             using (var walker = AssignmentWalker.Borrow(setter))

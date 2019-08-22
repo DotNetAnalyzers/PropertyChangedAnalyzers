@@ -8,21 +8,6 @@ namespace PropertyChangedAnalyzers
 
     internal static class Property
     {
-        internal static bool TryGetContainingProperty(ISymbol symbol, out IPropertySymbol property)
-        {
-            if (symbol is IMethodSymbol method &&
-                method.AssociatedSymbol is ISymbol associated)
-            {
-                property = associated as IPropertySymbol;
-            }
-            else
-            {
-                property = symbol.ContainingSymbol as IPropertySymbol;
-            }
-
-            return property != null;
-        }
-
         internal static bool IsLazy(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertyDeclaration.TryGetSetter(out _))
@@ -187,42 +172,6 @@ namespace PropertyChangedAnalyzers
                 {
                     result = returnStatement.Expression;
                     return result != null;
-                }
-            }
-
-            return false;
-        }
-
-        internal static bool TryGetBackingFieldFromSetter(IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
-        {
-            field = null;
-            if (property == null)
-            {
-                return false;
-            }
-
-            return property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax propertyDeclaration) &&
-                   TryGetBackingFieldFromSetter(propertyDeclaration, semanticModel, cancellationToken, out field);
-        }
-
-        internal static bool TryGetBackingFieldFromSetter(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
-        {
-            field = null;
-            if (property == null)
-            {
-                return false;
-            }
-
-            if (property.TryGetSetter(out var setter))
-            {
-                if (Setter.TryFindSingleTrySet(setter, semanticModel, cancellationToken, out var invocation))
-                {
-                    return TryGetBackingField(invocation.ArgumentList.Arguments[0].Expression, semanticModel, cancellationToken, out field);
-                }
-
-                if (Setter.TryFindSingleAssignment(setter, out var assignment))
-                {
-                    return TryGetBackingField(assignment.Left, semanticModel, cancellationToken, out field);
                 }
             }
 

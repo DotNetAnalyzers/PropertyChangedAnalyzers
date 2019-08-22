@@ -1,38 +1,72 @@
 namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
-    public partial class PropertyChangedTest
+    public static class SetterTests
     {
-        public static class TryGetBackingFieldAssignedInSetter
+        public static class TryGetBackingMember
         {
-            [Test]
-            public static void Simple()
+            [TestCase("P1", true, "p1")]
+            [TestCase("P2", true, "p2")]
+            public static void TryGetBackingMemberCases(string propertyName, bool expected, string fieldName)
             {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
-namespace RoslynSandbox
+                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+namespace N
 {
-    public class Foo
+    public class C
     {
-        private int bar;
+        private int p1;
+        private int p2;
 
-        public int Bar
+        public int P1
         {
-            get { return this.bar; }
-            set { this.bar = value; }
+            get { return this.p1; }
+            set { this.p1 = value; }
+        }
+
+        public int P2
+        {
+            get => this.p2;
+            private set => this.p2 = value;
         }
     }
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindPropertyDeclaration("Bar");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out var field));
-                Assert.AreEqual("bar", field.Name);
+                var property = syntaxTree.FindPropertyDeclaration(propertyName);
+                Assert.AreEqual(true, property.TryGetSetter(out var setter));
+                Assert.AreEqual(expected, Setter.TryGetBackingMember(setter, semanticModel, CancellationToken.None, out var field));
+                Assert.AreEqual(fieldName, field.Symbol?.Name);
+            }
+
+            [Test]
+            public static void Simple()
+            {
+                var syntaxTree = CSharpSyntaxTree.ParseText(
+                    @"
+namespace N
+{
+    public class C
+    {
+        private int p;
+
+        public int P
+        {
+            get { return this.p; }
+            set { this.p = value; }
+        }
+    }
+}");
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var semanticModel = compilation.GetSemanticModel(syntaxTree);
+                var property = syntaxTree.FindPropertyDeclaration("P");
+                Assert.AreEqual(true, property.TryGetSetter(out var setter));
+                Assert.AreEqual(true, Setter.TryGetBackingMember(setter, semanticModel, CancellationToken.None, out var field));
+                Assert.AreEqual("p", field.Name);
                 Assert.AreEqual("Int32", field.Type.MetadataName);
             }
 
@@ -41,21 +75,21 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
-            set { this.TrySet(ref bar, value); }
+            get { return this.p; }
+            set { this.TrySet(ref p, value); }
         }
 
         protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
@@ -78,10 +112,10 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindPropertyDeclaration("Bar");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out var field));
-                Assert.AreEqual("bar", field.Name);
+                var property = syntaxTree.FindPropertyDeclaration("P");
+                Assert.AreEqual(true, property.TryGetSetter(out var setter));
+                Assert.AreEqual(true, Setter.TryGetBackingMember(setter, semanticModel, CancellationToken.None, out var field));
+                Assert.AreEqual("p", field.Name);
                 Assert.AreEqual("Int32", field.Type.MetadataName);
             }
 
@@ -90,21 +124,21 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
-            set { this.TrySet(ref bar, value); }
+            get { return this.p; }
+            set { this.TrySet(ref p, value); }
         }
 
         protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
@@ -125,9 +159,9 @@ namespace RoslynSandbox
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindPropertyDeclaration("Bar");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(false, Property.TryGetBackingFieldFromSetter(type, semanticModel, CancellationToken.None, out _));
+                var property = syntaxTree.FindPropertyDeclaration("P");
+                Assert.AreEqual(true, property.TryGetSetter(out var setter));
+                Assert.AreEqual(false, Setter.TryGetBackingMember(setter, semanticModel, CancellationToken.None, out _));
             }
         }
     }
