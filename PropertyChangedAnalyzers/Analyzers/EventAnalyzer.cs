@@ -28,9 +28,7 @@ namespace PropertyChangedAnalyzers
                 context.ContainingSymbol is IEventSymbol eventSymbol &&
                 eventSymbol.Type == KnownSymbol.PropertyChangedEventHandler)
             {
-                if (!eventSymbol.IsOverride &&
-                    !eventSymbol.IsStatic &&
-                    eventSymbol.ContainingType.BaseType.TryFindEventRecursive(eventSymbol.Name, out _))
+                if (Shadows())
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC011DoNotShadow, context.Node.GetLocation()));
                 }
@@ -39,6 +37,13 @@ namespace PropertyChangedAnalyzers
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC007MissingInvoker, context.Node.GetLocation()));
                 }
+            }
+
+            bool Shadows()
+            {
+                return !eventSymbol.IsOverride &&
+                       !eventSymbol.IsStatic &&
+                       eventSymbol.ContainingType.BaseType.TryFindEventRecursive(eventSymbol.Name, out _);
             }
 
             bool MissingInvoker()
