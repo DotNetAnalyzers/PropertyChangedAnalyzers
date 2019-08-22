@@ -47,7 +47,7 @@ namespace PropertyChangedAnalyzers
                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                    propertyDeclaration.TryGetSetter(out var setter) &&
                    !ThrowWalker.Throws(setter) &&
-                   Setter.TryFindSingleMutationWithParameter(setter, context.SemanticModel, context.CancellationToken, out fieldAccess) &&
+                   Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out fieldAccess) &&
                    !HasSideEffects(setter, context);
         }
 

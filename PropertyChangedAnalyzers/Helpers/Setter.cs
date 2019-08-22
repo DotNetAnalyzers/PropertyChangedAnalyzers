@@ -44,6 +44,64 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
+        internal static bool TryFindSingleMutation(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax fieldAccess)
+        {
+            fieldAccess = null;
+            using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken))
+            {
+                if (mutations.TrySingle(out var mutation))
+                {
+                    switch (mutation)
+                    {
+                        case AssignmentExpressionSyntax assignment when IsMutation(assignment, semanticModel, cancellationToken, out _, out fieldAccess):
+                            return true;
+
+                        case ArgumentSyntax argument when argument.Parent is ArgumentListSyntax argumentList &&
+                                                          argumentList.Parent is InvocationExpressionSyntax invocation &&
+                                                          IsMutation(invocation, semanticModel, cancellationToken, out _, out fieldAccess):
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool IsMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax parameter, out ExpressionSyntax fieldAccess)
+        {
+            switch (candidate)
+            {
+                case AssignmentExpressionSyntax assignment when IsParameter(assignment.Right, out parameter):
+                    fieldAccess = assignment.Left;
+                    return true;
+                case InvocationExpressionSyntax invocation when invocation.ArgumentList is ArgumentListSyntax argumentList &&
+                                                                argumentList.Arguments.TrySingle(x => IsParameter(x.Expression, out _), out var parameterArg) &&
+                                                                argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument):
+                    fieldAccess = refArgument.Expression;
+                    parameter = (IdentifierNameSyntax)parameterArg.Expression;
+                    return TrySet.IsMatch(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
+                default:
+                    parameter = null;
+                    fieldAccess = null;
+                    return false;
+            }
+
+            bool IsParameter(ExpressionSyntax expression, out IdentifierNameSyntax result)
+            {
+                if (expression is IdentifierNameSyntax identifierName &&
+                    identifierName.Identifier.ValueText == "value")
+                {
+                    result = identifierName;
+                    return true;
+                }
+
+                result = null;
+                return false;
+            }
+        }
+
         internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
         {
             using (var walker = AssignmentWalker.Borrow(setter))
@@ -83,36 +141,6 @@ namespace PropertyChangedAnalyzers
             }
 
             assignment = null;
-            return false;
-        }
-
-        internal static bool TryFindSingleMutationWithParameter(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax fieldAccess)
-        {
-            using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken))
-            {
-                if (mutations.TrySingle(out var mutation))
-                {
-                    switch (mutation)
-                    {
-                        case AssignmentExpressionSyntax assignment:
-                            fieldAccess = assignment.Left;
-                            return assignment.Right is IdentifierNameSyntax identifierName &&
-                                   identifierName.Identifier.ValueText == "value";
-                        case ArgumentSyntax argument:
-                            fieldAccess = null;
-                            return argument.Parent is ArgumentListSyntax argumentList &&
-                                   argumentList.Parent is InvocationExpressionSyntax invocation &&
-                                   argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
-                                   (fieldAccess = refArgument.Expression) != null &&
-                                   TrySet.IsMatch(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
-                        default:
-                            fieldAccess = null;
-                            return false;
-                    }
-                }
-            }
-
-            fieldAccess = null;
             return false;
         }
     }
