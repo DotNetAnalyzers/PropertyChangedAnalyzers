@@ -94,7 +94,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public static void NoCheckToUseSetAndRaise()
+            public static void NoCheckToUseTrySet()
             {
                 var before = @"
 namespace RoslynSandbox.Client 
@@ -134,7 +134,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public static void NoCheckToUseSetAndRaiseUnderscoreNames()
+            public static void NoCheckToUseTrySetUnderscoreNames()
             {
                 var before = @"
 namespace RoslynSandbox.Client 
@@ -174,7 +174,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public static void NoCheckExpressionToUseSetAndRaise()
+            public static void NoCheckExpressionToUseTrySet()
             {
                 var before = @"
 namespace RoslynSandbox.Client 

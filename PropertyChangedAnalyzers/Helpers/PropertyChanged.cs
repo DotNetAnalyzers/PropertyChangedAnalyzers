@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers
                 argumentList.Parent is InvocationExpressionSyntax invocation &&
                 invocation.IsPotentialThisOrBase())
             {
-                if (IsSetAndRaiseCall(invocation, semanticModel, cancellationToken) != AnalysisResult.No &&
+                if (IsTrySet(invocation, semanticModel, cancellationToken) != AnalysisResult.No &&
                     semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol setAndRaiseMethod &&
                     setAndRaiseMethod.Parameters.TryLast(x => x.Type == KnownSymbol.String, out var nameParameter))
                 {
@@ -416,12 +416,12 @@ namespace PropertyChangedAnalyzers
             return result;
         }
 
-        internal static bool TryGetSetAndRaise(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        internal static bool TryFindTrySet(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
         {
-            return type.TryFindFirstMethodRecursive(x => InpcFactory.CanGenerateSetAndRaiseCall(x, out _) && IsSetAndRaise(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
+            return type.TryFindFirstMethodRecursive(x => InpcFactory.CanCreateTrySetInvocation(x, out _) && IsTrySet(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
         }
 
-        internal static AnalysisResult IsSetAndRaiseCall(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
+        internal static AnalysisResult IsTrySet(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
         {
             if (candidate?.ArgumentList == null ||
                 candidate.ArgumentList.Arguments.Count < 2 ||
@@ -431,14 +431,14 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            return IsSetAndRaise(
+            return IsTrySet(
                 semanticModel.GetSymbolSafe(candidate, cancellationToken),
                 semanticModel,
                 cancellationToken,
                 visited);
         }
 
-        internal static AnalysisResult IsSetAndRaise(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
+        internal static AnalysisResult IsTrySet(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
         {
             if (visited?.Add(candidate) == false)
             {
@@ -492,7 +492,7 @@ namespace PropertyChangedAnalyzers
                             var result = AnalysisResult.No;
                             foreach (var invocation in walker.Invocations)
                             {
-                                switch (IsSetAndRaiseCall(invocation, semanticModel, cancellationToken, set))
+                                switch (IsTrySet(invocation, semanticModel, cancellationToken, set))
                                 {
                                     case AnalysisResult.No:
                                         break;

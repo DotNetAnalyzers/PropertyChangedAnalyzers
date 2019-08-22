@@ -876,7 +876,7 @@ namespace N
             }
 
             [Test]
-            public static void UseSetAndRaiseNoCallerMemberName()
+            public static void UseTrySetNoCallerMemberName()
             {
                 var before = @"
 namespace N
@@ -960,7 +960,7 @@ namespace N
             }
 
             [Test]
-            public static void UseSetAndRaiseUnderscoreNoCallerMemberName()
+            public static void UseTrySetUnderscoreNoCallerMemberName()
             {
                 var before = @"
 namespace N

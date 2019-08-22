@@ -24,10 +24,10 @@ namespace PropertyChangedAnalyzers
                   InpcFactory.Nameof(InpcFactory.SymbolAccess(propertyName, qualifyPropertyAccess)));
         }
 
-        internal static void MoveOnPropertyChangedInside(this DocumentEditor editor, IfStatementSyntax ifSetAndRaise, ExpressionStatementSyntax onPropertyChanged)
+        internal static void MoveOnPropertyChangedInside(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged)
         {
             editor.RemoveNode(onPropertyChanged);
-            editor.AddOnPropertyChanged(ifSetAndRaise, OnPropertyChanged());
+            editor.AddOnPropertyChanged(ifTrySet, OnPropertyChanged());
 
             ExpressionStatementSyntax OnPropertyChanged()
             {
@@ -43,22 +43,22 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static void AddOnPropertyChanged(this DocumentEditor editor, IfStatementSyntax ifSetAndRaise, ExpressionStatementSyntax onPropertyChanged)
+        internal static void AddOnPropertyChanged(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged)
         {
-            switch (ifSetAndRaise.Statement)
+            switch (ifTrySet.Statement)
             {
                 case BlockSyntax block:
                     editor.AddOnPropertyChanged(block, onPropertyChanged, null);
                     break;
                 case ExpressionStatementSyntax expressionStatement:
                     _ = editor.ReplaceNode(
-                        ifSetAndRaise,
+                        ifTrySet,
                         x => x.WithStatement(SyntaxFactory.Block(expressionStatement, onPropertyChanged)));
                     break;
                 case EmptyStatementSyntax _:
                 case null:
                     _ = editor.ReplaceNode(
-                        ifSetAndRaise,
+                        ifTrySet,
                         x => x.WithStatement(SyntaxFactory.Block(onPropertyChanged)));
                     break;
             }

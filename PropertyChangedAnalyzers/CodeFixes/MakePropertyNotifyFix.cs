@@ -36,7 +36,7 @@ namespace PropertyChangedAnalyzers
                     propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
                     semanticModel.TryGetSymbol(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
-                    if (PropertyChanged.TryGetSetAndRaise(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
+                    if (PropertyChanged.TryFindTrySet(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
                     {
                         var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
                         if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
@@ -52,7 +52,7 @@ namespace PropertyChangedAnalyzers
                                 diagnostic);
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _) &&
-                                InpcFactory.CanGenerateSetAndRaiseCall(setAndRaiseMethod, out var nameParameter))
+                                InpcFactory.CanCreateTrySetInvocation(setAndRaiseMethod, out var nameParameter))
                         {
                             context.RegisterCodeFix(
                                 key,
@@ -64,7 +64,7 @@ namespace PropertyChangedAnalyzers
                                                            .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
                                         assignment,
-                                        x => InpcFactory.SetAndRaise(qualifyAccess, setAndRaiseMethod, assignment.Left, assignment.Right, name)
+                                        x => InpcFactory.TrySetInvocation(qualifyAccess, setAndRaiseMethod, assignment.Left, assignment.Right, name)
                                                                  .WithTriviaFrom(x));
                                 },
                                 key,

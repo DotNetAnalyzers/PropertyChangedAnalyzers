@@ -69,7 +69,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void NoCheckToUseSetAndRaise()
+            public static void NoCheckToUseTrySet()
             {
                 var before = @"
 namespace RoslynSandbox
@@ -109,7 +109,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void NoCheckExpressionToUseSetAndRaise()
+            public static void NoCheckExpressionToUseTrySet()
             {
                 var before = @"
 namespace RoslynSandbox

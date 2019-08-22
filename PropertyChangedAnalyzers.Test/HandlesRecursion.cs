@@ -25,7 +25,7 @@ namespace PropertyChangedAnalyzers.Test
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public static async Task InSetAndRaise(DiagnosticAnalyzer analyzer)
+        public static async Task InTrySet(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
 namespace RoslynSandbox.Core

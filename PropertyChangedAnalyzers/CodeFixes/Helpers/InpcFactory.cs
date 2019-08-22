@@ -176,7 +176,7 @@ namespace PropertyChangedAnalyzers
                                 .WithTriviaFrom(lambda);
         }
 
-        internal static bool CanGenerateSetAndRaiseCall(IMethodSymbol candidate, out IParameterSymbol nameParameter)
+        internal static bool CanCreateTrySetInvocation(IMethodSymbol candidate, out IParameterSymbol nameParameter)
         {
             nameParameter = null;
             return candidate.IsGenericMethod &&
@@ -205,7 +205,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static InvocationExpressionSyntax SetAndRaise(CodeStyleResult qualifyAccess, IMethodSymbol method, ExpressionSyntax fieldAccess, ExpressionSyntax value, ExpressionSyntax name)
+        internal static InvocationExpressionSyntax TrySetInvocation(CodeStyleResult qualifyAccess, IMethodSymbol method, ExpressionSyntax fieldAccess, ExpressionSyntax value, ExpressionSyntax name)
         {
             return SyntaxFactory.InvocationExpression(
                 qualifyAccess == CodeStyleResult.No

@@ -217,7 +217,7 @@ namespace PropertyChangedAnalyzers
 
             if (property.TryGetSetter(out var setter))
             {
-                if (TryFindSingleSetAndRaise(setter, semanticModel, cancellationToken, out var invocation))
+                if (TryFindSingleTrySet(setter, semanticModel, cancellationToken, out var invocation))
                 {
                     return TryGetBackingField(invocation.ArgumentList.Arguments[0].Expression, semanticModel, cancellationToken, out field);
                 }
@@ -231,7 +231,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryFindSingleSetAndRaise(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax invocation)
+        internal static bool TryFindSingleTrySet(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax invocation)
         {
             invocation = null;
             if (setter == null)
@@ -241,7 +241,7 @@ namespace PropertyChangedAnalyzers
 
             using (var walker = InvocationWalker.Borrow(setter))
             {
-                return walker.Invocations.TrySingle(x => PropertyChanged.IsSetAndRaiseCall(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
+                return walker.Invocations.TrySingle(x => PropertyChanged.IsTrySet(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
             }
         }
 
@@ -368,7 +368,7 @@ namespace PropertyChangedAnalyzers
                                    argumentList.Parent is InvocationExpressionSyntax invocation &&
                                    argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
                                    (fieldAccess = refArgument.Expression) != null &&
-                                   PropertyChanged.IsSetAndRaiseCall(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
+                                   PropertyChanged.IsTrySet(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
                         default:
                             fieldAccess = null;
                             return false;

@@ -42,7 +42,7 @@
                     {
                         var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
                         var method = semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                        if (PropertyChanged.IsSetAndRaise(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
+                        if (PropertyChanged.IsTrySet(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
                         {
                             if (invocation.Parent is ExpressionStatementSyntax ||
                                 invocation.Parent is ArrowExpressionClauseSyntax)

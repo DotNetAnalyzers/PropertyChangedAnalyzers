@@ -37,7 +37,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void SetAndRaise()
+            public static void TrySet()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
@@ -86,7 +86,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void RecursiveSetAndRaise()
+            public static void RecursiveTrySet()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"

@@ -48,7 +48,7 @@ namespace PropertyChangedAnalyzers
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, GetLocation()));
                         }
                     }
-                    else if (Property.TryFindSingleSetAndRaise(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
+                    else if (Property.TryFindSingleTrySet(setter, context.SemanticModel, context.CancellationToken, out var setAndRaise))
                     {
                         if (!AreInSameBlock(setAndRaise, invocation) ||
                             setAndRaise.SpanStart > invocation.SpanStart)

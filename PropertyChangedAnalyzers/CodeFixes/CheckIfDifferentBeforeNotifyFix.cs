@@ -53,8 +53,8 @@ namespace PropertyChangedAnalyzers
                             semanticModel.TryGetSymbol(assignment.Left, CancellationToken.None, out var assignedSymbol) &&
                             assignedSymbol.Kind == SymbolKind.Field &&
                             semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol setterSymbol) &&
-                            PropertyChanged.TryGetSetAndRaise(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var setAndRaiseMethod) &&
-                            InpcFactory.CanGenerateSetAndRaiseCall(setAndRaiseMethod, out var nameParameter) &&
+                            PropertyChanged.TryFindTrySet(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var setAndRaiseMethod) &&
+                            InpcFactory.CanCreateTrySetInvocation(setAndRaiseMethod, out var nameParameter) &&
                             setter.TryFirstAncestor(out PropertyDeclarationSyntax property))
                         {
                             context.RegisterCodeFix(
@@ -67,14 +67,14 @@ namespace PropertyChangedAnalyzers
                                                                      .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
                                           setter,
-                                          x => x.AsExpressionBody(InpcFactory.SetAndRaise(qualifyAccess, setAndRaiseMethod, assignment.Left, assignment.Right, nameExpression)));
+                                          x => x.AsExpressionBody(InpcFactory.TrySetInvocation(qualifyAccess, setAndRaiseMethod, assignment.Left, assignment.Right, nameExpression)));
                                 },
                                 setAndRaiseMethod.MetadataName,
                                 diagnostic);
                         }
                     }
                     else if (onPropertyChangedStatement.Parent == body &&
-                             Property.TryFindSingleSetAndRaise(setter, semanticModel, context.CancellationToken, out var setAndRaise))
+                             Property.TryFindSingleTrySet(setter, semanticModel, context.CancellationToken, out var setAndRaise))
                     {
                         if (setAndRaise.Parent is ExpressionStatementSyntax setAndRaiseStatement &&
                             body.Statements.IndexOf(setAndRaiseStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)
@@ -93,14 +93,14 @@ namespace PropertyChangedAnalyzers
                                 nameof(CheckIfDifferentBeforeNotifyFix),
                                 diagnostic);
                         }
-                        else if (setAndRaise.Parent is IfStatementSyntax ifSetAndRaiseStatement &&
-                                 body.Statements.IndexOf(ifSetAndRaiseStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)
+                        else if (setAndRaise.Parent is IfStatementSyntax ifTrySetStatement &&
+                                 body.Statements.IndexOf(ifTrySetStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)
                         {
                             context.RegisterCodeFix(
                                 "Check that value is different before notifying.",
                                 (editor, _) =>
                                 {
-                                    editor.MoveOnPropertyChangedInside(ifSetAndRaiseStatement, onPropertyChangedStatement);
+                                    editor.MoveOnPropertyChangedInside(ifTrySetStatement, onPropertyChangedStatement);
                                 },
                                 nameof(CheckIfDifferentBeforeNotifyFix),
                                 diagnostic);
