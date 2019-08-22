@@ -3,6 +3,7 @@ namespace PropertyChangedAnalyzers
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -26,15 +27,31 @@ namespace PropertyChangedAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNode(diagnostic, out InvocationExpressionSyntax invocation) &&
+                    invocation.ArgumentList is ArgumentListSyntax argumentList &&
                     TryGetMethodName(out var name))
                 {
-                    context.RegisterCodeFix(
-                        $"Use {name}",
-                        (editor, cancellationToken) => editor.ReplaceNode(
-                            invocation.Expression,
-                            x => SyntaxFactory.IdentifierName(name).WithTriviaFrom(x)),
-                        nameof(EqualityFix),
-                        diagnostic);
+                    if (argumentList.Arguments.Count == 2)
+                    {
+                        context.RegisterCodeFix(
+                            $"Use {name}",
+                            (editor, cancellationToken) => editor.ReplaceNode(
+                                invocation.Expression,
+                                x => SyntaxFactory.IdentifierName(name).WithTriviaFrom(x)),
+                            nameof(EqualityFix),
+                            diagnostic);
+                    }
+                    else if (argumentList.Arguments.TrySingle(out var argument) &&
+                            invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                            memberAccess.Expression is ExpressionSyntax expression)
+                    {
+                        context.RegisterCodeFix(
+                            $"Use {name}",
+                            (editor, cancellationToken) => editor.ReplaceNode(
+                                invocation,
+                                x => InpcFactory.Equals(null, name, expression, argument.Expression).WithTriviaFrom(x)),
+                            nameof(EqualityFix),
+                            diagnostic);
+                    }
                 }
 
                 if (syntaxRoot.TryFindNode(diagnostic, out BinaryExpressionSyntax binary) &&

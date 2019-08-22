@@ -25,10 +25,10 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
                 new TestCaseData("System.String.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
                 new TestCaseData("Nullable.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
                 new TestCaseData("Nullable.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
-                //new TestCaseData("value.Equals(this.bar)", "ReferenceEquals(value, this.bar)"),
-                //new TestCaseData("value.Equals(bar)", "ReferenceEquals(value, this.bar)"),
-                //new TestCaseData("this.bar.Equals(value)", "ReferenceEquals(value, this.bar)"),
-                //new TestCaseData("bar.Equals(value)", "ReferenceEquals(value, this.bar)"),
+                new TestCaseData("value.Equals(this.bar)", "ReferenceEquals(value, this.bar)"),
+                new TestCaseData("value.Equals(bar)", "ReferenceEquals(value, bar)"),
+                new TestCaseData("this.bar.Equals(value)", "ReferenceEquals(this.bar, value)"),
+                new TestCaseData("bar.Equals(value)", "ReferenceEquals(bar, value)"),
                 //new TestCaseData("System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
             };
 

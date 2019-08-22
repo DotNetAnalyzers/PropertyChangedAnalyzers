@@ -88,12 +88,12 @@ namespace PropertyChangedAnalyzers
                 : candidate.TypeParameters[0];
             var parameter = candidate.Parameters[0];
             if (parameter.RefKind != RefKind.Ref ||
-                !ReferenceEquals(parameter.Type, type))
+                !Equals(parameter.Type, type))
             {
                 return AnalysisResult.No;
             }
 
-            if (!ReferenceEquals(candidate.Parameters[1].Type, type) ||
+            if (!Equals(candidate.Parameters[1].Type, type) ||
                 candidate.Parameters[candidate.Parameters.Length - 1].Type != KnownSymbol.String)
             {
                 return AnalysisResult.No;
