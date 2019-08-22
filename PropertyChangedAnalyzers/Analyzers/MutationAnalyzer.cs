@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class MutationAnalyzer : DiagnosticAnalyzer
     {
-        public static readonly string PropertyNameKey = "PropertyName";
+        internal static readonly string PropertyNameKey = "PropertyName";
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(

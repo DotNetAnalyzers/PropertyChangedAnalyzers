@@ -176,7 +176,7 @@ namespace PropertyChangedAnalyzers
 
                     _ = editor.AddMethod(
                         classDeclaration,
-                        InpcFactory.OnPropertyChangedDeclaration(qualifyAccess, type.IsSealed, true));
+                        InpcFactory.OnPropertyChangedDeclaration(qualifyAccess, type.IsSealed, callerMemberName: true));
                 }
 
                 if (addUsings)

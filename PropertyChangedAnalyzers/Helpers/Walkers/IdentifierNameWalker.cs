@@ -14,11 +14,18 @@ namespace PropertyChangedAnalyzers
         {
         }
 
-        public IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
 
-        public static IdentifierNameWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IdentifierNameWalker());
+        public override void VisitIdentifierName(IdentifierNameSyntax node)
+        {
+            this.identifierNames.Add(node);
+            base.VisitIdentifierName(node);
+        }
 
-        public static bool Contains(SyntaxNode node, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal IReadOnlyList<IdentifierNameSyntax> IdentifierNames => this.identifierNames;
+
+        internal static IdentifierNameWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new IdentifierNameWalker());
+
+        internal static bool Contains(SyntaxNode node, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             using (var walker = Borrow(node))
             {
@@ -33,12 +40,6 @@ namespace PropertyChangedAnalyzers
 
                 return false;
             }
-        }
-
-        public override void VisitIdentifierName(IdentifierNameSyntax node)
-        {
-            this.identifierNames.Add(node);
-            base.VisitIdentifierName(node);
         }
 
         protected override void Clear()

@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers
 
     internal static class PropertyChangedEventArgs
     {
-        public static bool IsCreatedWith(ExpressionSyntax expression, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static bool IsCreatedWith(ExpressionSyntax expression, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (TryGetCached(expression, semanticModel, cancellationToken, out var argument))
             {

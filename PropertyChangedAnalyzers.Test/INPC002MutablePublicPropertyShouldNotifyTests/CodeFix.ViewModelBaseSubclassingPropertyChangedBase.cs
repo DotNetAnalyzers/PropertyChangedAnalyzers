@@ -1,11 +1,14 @@
 namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
+    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     public static partial class CodeFix
     {
-        public static class ViewModelBaseSubclassingPropertyChangedBase
+        public static class ViewModelBaseInheritsPropertyChangedBase
         {
             private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
@@ -37,17 +40,7 @@ namespace RoslynSandbox
     }
 }";
 
-            [OneTimeSetUp]
-            public static void OneTimeSetUp()
-            {
-                RoslynAssert.AddTransitiveMetadataReferences(typeof(Caliburn.Micro.PropertyChangedBase).Assembly);
-            }
-
-            [OneTimeTearDown]
-            public static void TearDown()
-            {
-                RoslynAssert.ResetAll();
-            }
+            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.CaliburnMicro;
 
             [Test]
             public static void AutoPropertyToNotifyWhenValueChanges()
@@ -84,8 +77,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -114,8 +107,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -144,8 +137,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -174,8 +167,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -214,8 +207,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -254,8 +247,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -290,8 +283,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -326,8 +319,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -362,8 +355,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -398,8 +391,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -460,8 +453,8 @@ namespace RoslynSandbox.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, metadataReferences: MetadataReferences);
             }
         }
     }

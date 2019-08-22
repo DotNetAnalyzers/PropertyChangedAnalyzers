@@ -1,23 +1,16 @@
 namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
+    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     public static partial class CodeFix
     {
         public static class MvvmLight
         {
-            [OneTimeSetUp]
-            public static void OneTimeSetUp()
-            {
-                RoslynAssert.AddTransitiveMetadataReferences(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly);
-            }
-
-            [OneTimeTearDown]
-            public static void TearDown()
-            {
-                RoslynAssert.ResetAll();
-            }
+            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.MvvmLight;
 
             [Test]
             public static void AutoPropertyToNotifyWhenValueChanges()
@@ -54,8 +47,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -84,8 +77,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -114,8 +107,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -144,8 +137,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -174,8 +167,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -214,8 +207,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -254,8 +247,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -290,8 +283,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -326,8 +319,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -362,8 +355,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -398,8 +391,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref field, newValue)", metadataReferences: MetadataReferences);
             }
         }
     }

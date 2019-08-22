@@ -8,12 +8,6 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
     {
         public static class ThirdParty
         {
-            [TearDown]
-            public static void TearDown()
-            {
-                RoslynAssert.ResetMetadataReferences();
-            }
-
             [Test]
             public static void MvvmLight()
             {
@@ -26,8 +20,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.MvvmLight);
             }
 
             [Test]
@@ -42,8 +35,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.MetadataReferences.AddRange(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.CaliburnMicro);
             }
 
             [Test]
@@ -58,8 +50,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.Stylet);
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.Stylet);
             }
 
             [Test]
@@ -74,8 +65,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.MetadataReferences.AddRange(SpecialMetadataReferences.MvvmCross);
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.MvvmCross);
             }
 
             [Test]
@@ -89,8 +79,7 @@ namespace RoslynSandbox
         public int Bar { get; set; }
     }
 }";
-                RoslynAssert.AddTransitiveMetadataReferences(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase).Assembly);
-                RoslynAssert.Valid(Analyzer, code);
+                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.Prism);
             }
         }
     }

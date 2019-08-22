@@ -121,7 +121,7 @@ namespace PropertyChangedAnalyzers
                 customTags: customTags);
         }
 
-        public static readonly DiagnosticDescriptor INPC008StructMustNotNotify = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC008StructMustNotNotify = Descriptors.Create(
             id: "INPC008",
             title: "Struct must not implement INotifyPropertyChanged",
             messageFormat: "Struct '{0}' implements INotifyPropertyChanged",

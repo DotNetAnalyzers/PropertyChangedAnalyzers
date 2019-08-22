@@ -366,7 +366,7 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(() => string.Empty);
+                this.OnPropertyChanged(↓() => string.Empty);
             }
         }
 

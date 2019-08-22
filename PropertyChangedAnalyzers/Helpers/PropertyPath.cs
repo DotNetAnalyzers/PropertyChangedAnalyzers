@@ -11,7 +11,9 @@ namespace PropertyChangedAnalyzers
     internal static class PropertyPath
     {
         [Obsolete("Don't use this.", error: true)]
-        public static new bool Equals(object x, object y) => throw new InvalidOperationException();
+#pragma warning disable GU0073 // Member of non-public type should be internal.
+        public new static bool Equals(object x, object y) => throw new InvalidOperationException();
+#pragma warning restore GU0073 // Member of non-public type should be internal.
 
         internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode> visited = null)
         {
@@ -89,45 +91,6 @@ namespace PropertyChangedAnalyzers
             {
             }
 
-            public static UsedMemberWalker Borrow(SyntaxNode scope, Search searchOption, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, UsedMemberWalker parent = null)
-            {
-                var pooled = Borrow(() => new UsedMemberWalker());
-                if (parent != null)
-                {
-                    pooled.visited.UnionWith(parent.visited);
-                }
-
-                pooled.semanticModel = semanticModel;
-                pooled.cancellationToken = cancellationToken;
-                pooled.containingType = containingType;
-                pooled.Visit(scope);
-                if (searchOption == Search.Recursive)
-                {
-                    pooled.VisitRecursive();
-                }
-
-                return pooled;
-            }
-
-            public static bool Uses(SyntaxNode scope, MemberPath.PathWalker backing, Search search, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
-            {
-                using (var walker = Borrow(scope, search, containingType, semanticModel, cancellationToken))
-                {
-                    foreach (var used in walker.usedMembers)
-                    {
-                        using (var usedPath = MemberPath.PathWalker.Borrow(used))
-                        {
-                            if (PropertyPath.Equals(usedPath, backing))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-
-                return false;
-            }
-
             public override void VisitParameter(ParameterSyntax node)
             {
                 this.localsAndParameters.Add(node.Identifier);
@@ -172,6 +135,45 @@ namespace PropertyChangedAnalyzers
                 }
 
                 base.VisitInvocationExpression(node);
+            }
+
+            internal static UsedMemberWalker Borrow(SyntaxNode scope, Search searchOption, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, UsedMemberWalker parent = null)
+            {
+                var pooled = Borrow(() => new UsedMemberWalker());
+                if (parent != null)
+                {
+                    pooled.visited.UnionWith(parent.visited);
+                }
+
+                pooled.semanticModel = semanticModel;
+                pooled.cancellationToken = cancellationToken;
+                pooled.containingType = containingType;
+                pooled.Visit(scope);
+                if (searchOption == Search.Recursive)
+                {
+                    pooled.VisitRecursive();
+                }
+
+                return pooled;
+            }
+
+            internal static bool Uses(SyntaxNode scope, MemberPath.PathWalker backing, Search search, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                using (var walker = Borrow(scope, search, containingType, semanticModel, cancellationToken))
+                {
+                    foreach (var used in walker.usedMembers)
+                    {
+                        using (var usedPath = MemberPath.PathWalker.Borrow(used))
+                        {
+                            if (PropertyPath.Equals(usedPath, backing))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
             }
 
             protected override void Clear()
