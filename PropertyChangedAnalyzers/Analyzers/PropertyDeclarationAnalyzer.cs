@@ -34,40 +34,48 @@ namespace PropertyChangedAnalyzers
                 context.Node is PropertyDeclarationSyntax propertyDeclaration &&
                 context.ContainingSymbol is IPropertySymbol property)
             {
-                if (Getter.TrySingleReturned(propertyDeclaration, out var value))
+                using (var walker = ReturnExpressions(propertyDeclaration))
                 {
-                    if (IsProperty(value, property))
+                    foreach (var returnValue in walker.ReturnValues)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, value.GetLocation(), "Getter returns property, infinite recursion"));
-                    }
-
-                    if (value.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
-                        MemberPath.TrySingle(value, out var path) &&
-                        context.SemanticModel.TryGetSymbol(path, context.CancellationToken, out IFieldSymbol backingField) &&
-                        !HasMatchingName(backingField, property))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC017BackingFieldNameMisMatch, path.GetLocation()));
-                    }
-
-                    if (value is LiteralExpressionSyntax &&
-                        propertyDeclaration.TryGetSetter(out var set) &&
-                        Setter.TryFindSingleMutation(set, context.SemanticModel, context.CancellationToken, out var fieldAccess))
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.INPC019GetBackingField,
-                                value.GetLocation(),
-                                additionalLocations: new[] { fieldAccess.GetLocation() }));
-                    }
-                }
-
-                if (propertyDeclaration.TryGetSetter(out var setAccessor))
-                {
-                    using (var mutationWalker = MutationWalker.Borrow(setAccessor, SearchScope.Member, context.SemanticModel, context.CancellationToken))
-                    {
-                        if (mutationWalker.IsEmpty)
+                        if (IsProperty(returnValue, property))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, setAccessor.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, returnValue.GetLocation(), "Getter returns property, infinite recursion"));
+                        }
+                    }
+
+                    if (walker.ReturnValues.TrySingle(out var single))
+                    {
+                        if (single.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
+                            MemberPath.TrySingle(single, out var path) &&
+                            context.SemanticModel.TryGetSymbol(path, context.CancellationToken, out IFieldSymbol backingField))
+                        {
+                            if (!HasMatchingName(backingField, property))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC017BackingFieldNameMisMatch, path.GetLocation()));
+                            }
+
+                            if (propertyDeclaration.TryGetSetter(out var setAccessor))
+                            {
+                                using (var mutationWalker = MutationWalker.Borrow(setAccessor, SearchScope.Member, context.SemanticModel, context.CancellationToken))
+                                {
+                                    if (mutationWalker.IsEmpty)
+                                    {
+                                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, setAccessor.GetLocation()));
+                                    }
+                                }
+                            }
+                        }
+
+                        if (single is LiteralExpressionSyntax &&
+                            propertyDeclaration.TryGetSetter(out var set) &&
+                            Setter.TryFindSingleMutation(set, context.SemanticModel, context.CancellationToken, out var fieldAccess))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.INPC019GetBackingField,
+                                    single.GetLocation(),
+                                    additionalLocations: new[] { fieldAccess.GetLocation() }));
                         }
                     }
                 }
@@ -101,6 +109,21 @@ namespace PropertyChangedAnalyzers
                     }
                 }
             }
+        }
+
+        private static ReturnExpressionsWalker ReturnExpressions(PropertyDeclarationSyntax propertyDeclaration)
+        {
+            if (propertyDeclaration.TryGetGetter(out var getter))
+            {
+                return ReturnExpressionsWalker.Borrow(getter);
+            }
+
+            if (propertyDeclaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
+            {
+                return ReturnExpressionsWalker.Borrow(expressionBody);
+            }
+
+            return ReturnExpressionsWalker.Empty();
         }
 
         private static bool HasMatchingName(IFieldSymbol backingField, IPropertySymbol property)
