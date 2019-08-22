@@ -1,8 +1,13 @@
 namespace ValidCode.Interfaces
 {
-    public class WithString : IValue
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class WithString : IValue, INotifyPropertyChanged
     {
         private string value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public string Value
         {
@@ -14,6 +19,11 @@ namespace ValidCode.Interfaces
         {
             get => this.value;
             set => this.Value = (string)value;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
