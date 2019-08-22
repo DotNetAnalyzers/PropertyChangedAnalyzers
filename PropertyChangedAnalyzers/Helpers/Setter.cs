@@ -56,7 +56,7 @@ namespace PropertyChangedAnalyzers
             backing = null;
             using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken))
             {
-                if (mutations.TrySingle(out var mutation))
+                if (mutations.All().TrySingle(x => x.IsEither(SyntaxKind.SimpleAssignmentExpression, SyntaxKind.Argument), out var mutation))
                 {
                     switch (mutation)
                     {

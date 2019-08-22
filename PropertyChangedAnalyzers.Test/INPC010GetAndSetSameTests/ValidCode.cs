@@ -55,6 +55,58 @@ namespace RoslynSandbox
         }
 
         [Test]
+        public static void WithBackingFieldStatementBodies()
+        {
+            var code = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo
+    {
+        private int value;
+
+        public int Value
+        {
+            get { return this.value; }
+            set { this.value = value; }
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
+        }
+
+        [Test]
+        public static void WithBackingFieldStatementBodiesAssigningTwice()
+        {
+            var code = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo
+    {
+        private int value;
+
+        public int Value
+        {
+            get { return this.value; }
+            set
+            { 
+                this.value = value;
+                this.value = value;
+            }
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
+        }
+
+        [Test]
         public static void WithBackingFieldExpressionBodies()
         {
             var code = @"
