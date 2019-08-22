@@ -20,7 +20,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -46,7 +46,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -105,7 +105,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓internal int Bar { get; set; }
+        internal int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -163,7 +163,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -220,7 +220,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -279,7 +279,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -349,7 +349,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -423,7 +423,7 @@ namespace RoslynSandbox
 
         public int Value => _value;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -488,7 +488,7 @@ namespace RoslynSandbox
         /// <summary>
         /// Some text
         /// </summary>
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -550,7 +550,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -609,7 +609,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get;
             set;
@@ -672,7 +672,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public virtual int Bar { get; set; }
+        public virtual int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -719,7 +719,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void PrivateSet()
+            public static void PrivateSetMutatedOutsideConstructor()
             {
                 var before = @"
 namespace RoslynSandbox
@@ -730,7 +730,7 @@ namespace RoslynSandbox
     {
          public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; private set; }
+        public int ↓Bar { get; private set; }
 
         public void Mutate()
         {
@@ -798,7 +798,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public bool IsTrue { get; set; } = true;
+        public bool ↓IsTrue { get; set; } = true;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -856,7 +856,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public T Bar { get; set; }
+        public T ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
@@ -908,7 +908,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public T Bar { get; set; }
+        public T ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
@@ -961,7 +961,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public T Bar { get; set; }
+        public T ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
@@ -1031,7 +1031,7 @@ namespace RoslynSandbox
             }
         }
 
-        ↓public int B { get; set; }
+        public int ↓B { get; set; }
 
         public int C
         {
@@ -1137,7 +1137,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -1213,7 +1213,7 @@ namespace RoslynSandbox
             }
         }
 
-        ↓public int Bar2 { get; set; }
+        public int ↓Bar2 { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -1290,7 +1290,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar1 { get; set; }
+        public int ↓Bar1 { get; set; }
 
         public int Bar2
         {
@@ -1379,7 +1379,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public string Operator { get; set; }
+        public string ↓Operator { get; set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {

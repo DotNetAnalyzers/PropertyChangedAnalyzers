@@ -22,7 +22,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get
             {
@@ -93,7 +93,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓internal int Value
+        internal int ↓Value
         {
             get
             {
@@ -163,7 +163,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get
             {
@@ -234,7 +234,7 @@ namespace RoslynSandbox
         /// <summary>
         /// Some text
         /// </summary>
-        ↓public int Value
+        public int ↓Value
         {
             /*1*/
             get
@@ -312,7 +312,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value { get { return this.value; } private set { this.value = value; }}
+        public int ↓Value { get { return this.value; } private set { this.value = value; }}
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -360,7 +360,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get { return this.value; }
             private set { this.value = value; }
@@ -420,7 +420,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public virtual int Value
+        public virtual int ↓Value
         {
             get { return this.value; }
             set { this.value = value; }
@@ -518,7 +518,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get { return this.bar.Value; }
             private set { this.bar.Value = value; }
@@ -616,7 +616,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get { return _bar.Value; }
             private set { _bar.Value = value; }
@@ -676,7 +676,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get { return this.value; }
             private set { this.value = value; }

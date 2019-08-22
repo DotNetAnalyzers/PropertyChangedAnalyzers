@@ -24,7 +24,7 @@ namespace RoslynSandbox
         {
         }
 
-        ↓public Exception Exception { get; private set; }
+        public Exception ↓Exception { get; protected set; }
     }
 }";
 
@@ -47,7 +47,7 @@ namespace RoslynSandbox
         public Exception Exception
         {
             get => this.exception;
-            private set
+            protected set
             {
                 if (ReferenceEquals(value, this.exception))
                 {
@@ -84,11 +84,11 @@ namespace RoslynSandbox
         {
         }
 
-        ↓public Exception Exception
+        public Exception ↓Exception
         {
             get => _exception;
 
-            private set
+            protected set
             {
                 _exception = value;
             }
@@ -116,7 +116,7 @@ namespace RoslynSandbox
         {
             get => _exception;
 
-            private set
+            protected set
             {
                 if (ReferenceEquals(value, _exception))
                 {
@@ -153,7 +153,7 @@ namespace RoslynSandbox
         {
         }
 
-        ↓public Exception Exception
+        public Exception ↓Exception
         {
             get => _exception;
 

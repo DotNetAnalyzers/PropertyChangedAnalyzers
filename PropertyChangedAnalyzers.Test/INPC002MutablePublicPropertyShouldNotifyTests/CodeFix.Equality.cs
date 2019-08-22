@@ -24,7 +24,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -89,7 +89,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public ReferenceType Bar { get; set; }
+        public ReferenceType ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -177,7 +177,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public EquatableStruct Bar { get; set; }
+        public EquatableStruct ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -266,7 +266,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public EquatableStruct? Bar { get; set; }
+        public EquatableStruct? ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -365,7 +365,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public EquatableStruct Bar { get; set; }
+        public EquatableStruct ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -463,7 +463,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public EquatableStruct? Bar { get; set; }
+        public EquatableStruct? ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -533,7 +533,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public NotEquatableStruct Bar { get; set; }
+        public NotEquatableStruct ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -603,7 +603,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public NotEquatableStruct? Bar { get; set; }
+        public NotEquatableStruct? ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {

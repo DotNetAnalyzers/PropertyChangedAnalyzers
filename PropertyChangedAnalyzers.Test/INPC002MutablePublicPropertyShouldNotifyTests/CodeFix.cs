@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 
     public static partial class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
         private static readonly CodeFixProvider Fix = new MakePropertyNotifyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify);
 
@@ -24,7 +24,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value { get; set; }
+        public int ↓Value { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -84,7 +84,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -97,7 +97,67 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public static void InternalClass()
+        public static void AutoPropertyPublic()
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int ↓Bar { get; set; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get => this.bar;
+            set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void AutoPropertyInternalClass()
         {
             var before = @"
 namespace RoslynSandbox
@@ -109,7 +169,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -159,7 +219,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public static void InternalProperty()
+        public static void AutoPropertyInternal()
         {
             var before = @"
 namespace RoslynSandbox
@@ -171,7 +231,7 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓internal int Bar { get; set; }
+        internal int ↓Bar { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -218,24 +278,6 @@ namespace RoslynSandbox
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [Test]
-        [Explicit("Not sure how we want this.")]
-        public static void NoFixWhenBaseHasInternalOnPropertyChanged()
-        {
-            var before = @"
-namespace RoslynSandBox
-{
-    using System.Windows.Input;
-
-    public class CustomGesture : MouseGesture
-    {
-        ↓public int Foo { get; set; }
-    }
-}";
-
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
-        }
-
         [TestCase("this.Value = 1;")]
         [TestCase("this.Value++")]
         [TestCase("this.Value--")]
@@ -259,7 +301,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value { get; private set; }
+        public int ↓Value { get; private set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -325,7 +367,7 @@ namespace RoslynSandbox
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.value;
             set
@@ -387,7 +429,7 @@ namespace RoslynSandbox
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.value;
             set => this.value = value;
@@ -441,7 +483,7 @@ namespace RoslynSandbox
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.value;
             set => this.value = value;
@@ -500,7 +542,7 @@ namespace RoslynSandbox
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.value;
             set
@@ -557,7 +599,7 @@ namespace RoslynSandbox
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.value;
             set => this.value = value;
@@ -621,7 +663,7 @@ namespace RoslynSandbox
         private readonly Bar bar = new Bar();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.bar.BarValue;
             set => this.bar.BarValue = value;
@@ -691,7 +733,7 @@ namespace RoslynSandbox
         private readonly Bar bar = new Bar();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.bar.BarValue;
             set => this.bar.BarValue = value;

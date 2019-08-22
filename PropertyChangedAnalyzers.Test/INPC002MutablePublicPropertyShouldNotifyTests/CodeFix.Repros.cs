@@ -193,7 +193,7 @@ namespace RoslynSandbox
     {
         private readonly Bar bar = new Bar();
 
-        ↓public int Value
+        public int ↓Value
         {
             get => this.bar.BarValue;
             set => this.bar.BarValue = value;

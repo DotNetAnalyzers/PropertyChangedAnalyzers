@@ -37,6 +37,41 @@ namespace RoslynSandBox
             }
 
             [Test]
+            public static void GetPrivateSetNeverAssigned()
+            {
+                var code = @"
+namespace RoslynSandBox
+{
+    public class Foo
+    {
+        public int Bar { get; private set; }
+    }
+}";
+
+                RoslynAssert.Valid(Analyzer, code);
+            }
+
+            [Test]
+            public static void GetPrivateSetAssignedInConstructorOnly()
+            {
+                var code = @"
+namespace RoslynSandBox
+{
+    public class Foo
+    {
+        Foo(int bar)
+        {
+            this.Bar = bar;
+        }
+
+        public int Bar { get; private set; }
+    }
+}";
+
+                RoslynAssert.Valid(Analyzer, code);
+            }
+
+            [Test]
             public static void ExpressionBody()
             {
                 var code = @"

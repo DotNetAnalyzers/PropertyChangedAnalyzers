@@ -18,11 +18,13 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 
         private static readonly Gu.Roslyn.Asserts.Benchmark MethodDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.MethodDeclarationAnalyzer());
 
+        private static readonly Gu.Roslyn.Asserts.Benchmark MutationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.MutationAnalyzer());
+
         private static readonly Gu.Roslyn.Asserts.Benchmark PropertyDeclarationAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.PropertyDeclarationAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC003NotifyWhenPropertyChangesBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.MutationAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark SetAccessorAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.SetAccessorAnalyzer());
 
-        private static readonly Gu.Roslyn.Asserts.Benchmark INPC008StructMustNotNotifyBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.StructAnalyzer());
+        private static readonly Gu.Roslyn.Asserts.Benchmark StructAnalyzerBenchmark = Gu.Roslyn.Asserts.Benchmark.Create(Code.ValidCodeProject, new PropertyChangedAnalyzers.StructAnalyzer());
 
         [BenchmarkDotNet.Attributes.Benchmark]
         public void ArgumentAnalyzer()
@@ -67,21 +69,27 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
+        public void MutationAnalyzer()
+        {
+            MutationAnalyzerBenchmark.Run();
+        }
+
+        [BenchmarkDotNet.Attributes.Benchmark]
         public void PropertyDeclarationAnalyzer()
         {
             PropertyDeclarationAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC003NotifyWhenPropertyChanges()
+        public void SetAccessorAnalyzer()
         {
-            INPC003NotifyWhenPropertyChangesBenchmark.Run();
+            SetAccessorAnalyzerBenchmark.Run();
         }
 
         [BenchmarkDotNet.Attributes.Benchmark]
-        public void INPC008StructMustNotNotify()
+        public void StructAnalyzer()
         {
-            INPC008StructMustNotNotifyBenchmark.Run();
+            StructAnalyzerBenchmark.Run();
         }
     }
 }

@@ -13,7 +13,6 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            Descriptors.INPC002MutablePublicPropertyShouldNotify,
             Descriptors.INPC010GetAndSetSame,
             Descriptors.INPC015PropertyIsRecursive,
             Descriptors.INPC017BackingFieldNameMisMatch,
@@ -97,12 +96,6 @@ namespace PropertyChangedAnalyzers
 
                         if (propertyDeclaration.TryGetGetter(out var getter))
                         {
-                            if (property.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) &&
-                                Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify, propertyDeclaration.GetLocation(), property.Name));
-                            }
-
                             if (GetAndSetsSameField(assignmentWalker, getter, context) == false)
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, propertyDeclaration.GetLocation()));

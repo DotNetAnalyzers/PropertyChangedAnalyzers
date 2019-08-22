@@ -32,30 +32,29 @@ namespace PropertyChangedAnalyzers
                                                       .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode<PropertyDeclarationSyntax>(diagnostic, out var propertyDeclaration) &&
+                if (syntaxRoot.TryFindNodeOrAncestor<PropertyDeclarationSyntax>(diagnostic, out var propertyDeclaration) &&
                     propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
                     semanticModel.TryGetSymbol(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
-                    if (PropertyChanged.TryFindTrySet(type, semanticModel, context.CancellationToken, out var setAndRaiseMethod))
+                    if (PropertyChanged.TryFindTrySet(type, semanticModel, context.CancellationToken, out var trySetMethod))
                     {
-                        var key = $"{setAndRaiseMethod.ContainingType.MetadataName}.{setAndRaiseMethod.MetadataName}.";
                         if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
                         {
                             context.RegisterCodeFix(
-                                key,
+                                trySetMethod.DisplaySignature(),
                                 (editor, cancellationToken) => MakeAutoPropertySet(
                                     editor,
                                     propertyDeclaration,
-                                    setAndRaiseMethod,
+                                    trySetMethod,
                                     semanticModel),
-                                key,
+                                trySetMethod.MetadataName,
                                 diagnostic);
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _) &&
-                                InpcFactory.CanCreateTrySetInvocation(setAndRaiseMethod, out var nameParameter))
+                                InpcFactory.CanCreateTrySetInvocation(trySetMethod, out var nameParameter))
                         {
                             context.RegisterCodeFix(
-                                key,
+                                trySetMethod.DisplaySignature(),
                                 async (editor, cancellationToken) =>
                                 {
                                     var qualifyAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
@@ -64,10 +63,10 @@ namespace PropertyChangedAnalyzers
                                                            .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
                                         assignment,
-                                        x => InpcFactory.TrySetInvocation(qualifyAccess, setAndRaiseMethod, assignment.Left, assignment.Right, name)
+                                        x => InpcFactory.TrySetInvocation(qualifyAccess, trySetMethod, assignment.Left, assignment.Right, name)
                                                                  .WithTriviaFrom(x));
                                 },
-                                key,
+                                trySetMethod.MetadataName,
                                 diagnostic);
                         }
                     }

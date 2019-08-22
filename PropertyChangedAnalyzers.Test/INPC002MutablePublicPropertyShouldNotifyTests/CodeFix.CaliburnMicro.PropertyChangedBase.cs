@@ -27,7 +27,7 @@ namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
     }
 }";
 
@@ -66,7 +66,7 @@ namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
     }
 }";
 
@@ -84,8 +84,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
             }
 
             [Test]
@@ -96,7 +96,7 @@ namespace RoslynSandbox
 {
     internal class Foo : Caliburn.Micro.PropertyChangedBase
     {
-        ↓internal int Bar { get; set; }
+        internal int ↓Bar { get; set; }
     }
 }";
 
@@ -114,8 +114,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
             }
 
             [Test]
@@ -126,7 +126,7 @@ namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
-        ↓public int Bar { get; set; } = 1;
+        public int ↓Bar { get; set; } = 1;
     }
 }";
 
@@ -144,8 +144,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
             }
 
             [Test]
@@ -156,7 +156,7 @@ namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
-        ↓public virtual int Bar { get; set; }
+        public virtual int ↓Bar { get; set; }
     }
 }";
 
@@ -174,8 +174,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
             }
 
             [Test]
@@ -186,7 +186,7 @@ namespace RoslynSandbox
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
-        ↓public int Bar { get; private set; }
+        public int ↓Bar { get; private set; }
 
         public void Mutate()
         {
@@ -214,8 +214,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
             }
 
             [Test]
@@ -231,7 +231,7 @@ namespace RoslynSandbox
             Bar = bar;
         }
 
-        ↓public int Bar { get; set; }
+        public int ↓Bar { get; set; }
     }
 }";
 
@@ -254,8 +254,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref oldValue, newValue)");
             }
 
             [Test]
@@ -268,7 +268,7 @@ namespace RoslynSandbox
     {
         private string name;
 
-        ↓public string Name
+        public string ↓Name
         {
             get { return this.name; }
             set { this.name = value; }
@@ -290,8 +290,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
             }
 
             [Test]
@@ -304,7 +304,7 @@ namespace RoslynSandbox
     {
         private string name;
 
-        ↓public string Name
+        public string ↓Name
         {
             get => this.name;
             set => this.name = value;
@@ -326,8 +326,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)");
             }
 
             [Test]
@@ -340,7 +340,7 @@ namespace RoslynSandbox
     {
         private string _name;
 
-        ↓public string Name
+        public string ↓Name
         {
             get { return _name; }
             set { _name = value; }
@@ -362,8 +362,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref oldValue, newValue)");
             }
 
             [Test]
@@ -376,7 +376,7 @@ namespace RoslynSandbox
     {
         private string _name;
 
-        ↓public string Name
+        public string ↓Name
         {
             get => _name;
             set => _name = value;
@@ -398,8 +398,8 @@ namespace RoslynSandbox
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "PropertyChangedBase.Set.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref oldValue, newValue)");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref oldValue, newValue)");
             }
         }
     }

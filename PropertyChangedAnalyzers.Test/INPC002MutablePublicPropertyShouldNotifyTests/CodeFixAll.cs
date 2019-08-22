@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 
     public static class CodeFixAll
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
         private static readonly CodeFixProvider Fix = new MakePropertyNotifyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify);
 
@@ -28,9 +28,9 @@ namespace RoslynSandbox
 
         public int Value => this.value;
 
-        ↓public int Bar1 { get; set; }
+        public int ↓Bar1 { get; set; }
 
-        ↓public int Bar2 { get; set; }
+        public int ↓Bar2 { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -111,11 +111,11 @@ namespace RoslynSandbox
 
         public int Value => this.value;
 
-        ↓public int Bar1 { get; set; }
+        public int ↓Bar1 { get; set; }
 
-        ↓public int Bar2 { get; set; }
+        public int ↓Bar2 { get; set; }
 
-        ↓public int Bar3 { get; set; }
+        public int ↓Bar3 { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -212,11 +212,11 @@ namespace RoslynSandbox
 
         public int Value => _value;
 
-        ↓public int Bar1 { get; set; }
+        public int ↓Bar1 { get; set; }
 
-        ↓public int Bar2 { get; set; }
+        public int ↓Bar2 { get; set; }
 
-        ↓public int Bar3 { get; set; }
+        public int ↓Bar3 { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -326,9 +326,9 @@ namespace RoslynSandbox
             }
         }
 
-        ↓public int Bar2 { get; set; }
+        public int ↓Bar2 { get; set; }
 
-        ↓public int Bar3 { get; set; }
+        public int ↓Bar3 { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -420,7 +420,7 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar1 { get; set; }
+        public int ↓Bar1 { get; set; }
 
         public int Bar2
         {
@@ -437,7 +437,7 @@ namespace RoslynSandbox
             }
         }
 
-        ↓public int Bar3 { get; set; }
+        public int ↓Bar3 { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -529,9 +529,9 @@ namespace RoslynSandbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar1 { get; set; }
+        public int ↓Bar1 { get; set; }
 
-        ↓public int Bar2 { get; set; }
+        public int ↓Bar2 { get; set; }
 
         public int Bar3
         {
@@ -636,11 +636,11 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar1 { get; set; }
+        public int ↓Bar1 { get; set; }
 
-        ↓public int Bar2 { get; set; }
+        public int ↓Bar2 { get; set; }
 
-        ↓public int Bar3 { get; set; }
+        public int ↓Bar3 { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -652,11 +652,11 @@ namespace RoslynSandbox
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        ↓public int Bar1 { get; set; }
+        public int ↓Bar1 { get; set; }
 
-        ↓public int Bar2 { get; set; }
+        public int ↓Bar2 { get; set; }
 
-        ↓public int Bar3 { get; set; }
+        public int ↓Bar3 { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

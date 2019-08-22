@@ -78,7 +78,7 @@ namespace PropertyChangedAnalyzers
                 declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
                 !declaration.TryGetSetter(out _) ||
-                IsAutoPropertyAssignedOnlyInConstructor(declaration))
+                IsAutoPropertyNeverAssignedOutsideConstructor(declaration))
             {
                 return false;
             }
@@ -103,7 +103,7 @@ namespace PropertyChangedAnalyzers
                 property.ContainingType.IsValueType ||
                 property.ContainingType.DeclaredAccessibility == Accessibility.Private ||
                 property.ContainingType.DeclaredAccessibility == Accessibility.Protected ||
-                IsAutoPropertyAssignedOnlyInConstructor(declaration))
+                IsAutoPropertyNeverAssignedOutsideConstructor(declaration))
             {
                 return false;
             }
@@ -396,37 +396,41 @@ namespace PropertyChangedAnalyzers
             return field != null;
         }
 
-        internal static bool IsAutoPropertyAssignedOnlyInConstructor(this PropertyDeclarationSyntax propertyDeclaration)
+        internal static bool IsAutoPropertyNeverAssignedOutsideConstructor(this PropertyDeclarationSyntax propertyDeclaration)
         {
             if (propertyDeclaration.ExpressionBody is null &&
-                propertyDeclaration.TryGetGetter(out var setter) &&
-                setter.ExpressionBody is null &&
-                setter.Body is null)
+                propertyDeclaration.TryGetGetter(out var getter) &&
+                getter.ExpressionBody is null &&
+                getter.Body is null &&
+                propertyDeclaration.Parent is ClassDeclarationSyntax classDeclaration)
             {
-                if (propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword, SyntaxKind.ProtectedKeyword) &&
-                    !setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                if (propertyDeclaration.TryGetSetter(out var setter))
                 {
-                    return false;
+                    if (propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword, SyntaxKind.ProtectedKeyword) &&
+                        !setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return true;
                 }
 
                 var name = propertyDeclaration.Identifier.ValueText;
-                using (var walker = IdentifierNameWalker.Borrow(propertyDeclaration.FirstAncestor<TypeDeclarationSyntax>()))
+                using (var walker = IdentifierNameWalker.Borrow(classDeclaration))
                 {
-                    var isAssigned = false;
                     foreach (var identifierName in walker.IdentifierNames)
                     {
                         if (identifierName.Identifier.ValueText == name &&
-                            IsAssigned(identifierName))
+                            IsAssigned(identifierName) &&
+                            !IsInConstructor(identifierName))
                         {
-                            isAssigned = true;
-                            if (!IsInConstructor(identifierName))
-                            {
-                                return false;
-                            }
+                            return false;
                         }
                     }
 
-                    return isAssigned;
+                    return true;
                 }
             }
 

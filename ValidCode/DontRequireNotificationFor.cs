@@ -1,11 +1,11 @@
 // ReSharper disable All
 namespace ValidCode
 {
-    public class Ignores
+    public class DontRequireNotificationFor
     {
         private int setOnly;
 
-        public Ignores(int only)
+        public DontRequireNotificationFor(int only)
         {
             this.GetOnly = only;
             this.setOnly = only;
