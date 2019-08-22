@@ -2,21 +2,27 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class ValidCode
     {
         private static readonly DiagnosticAnalyzer Analyzer = new EqualityAnalyzer();
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC006UseObjectEqualsForReferenceTypes;
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
         {
-            new TestCaseData("string", "Equals(value, this.bar)"),
-            new TestCaseData("string", "Equals(this.bar, value)"),
-            new TestCaseData("string", "Equals(value, bar)"),
-            new TestCaseData("string", "Equals(value, Bar)"),
-            new TestCaseData("string", "Equals(Bar, value)"),
-            new TestCaseData("string", "Nullable.Equals(value, this.bar)"),
+            new TestCaseData("Foo", "Equals(value, this.bar)"),
+            new TestCaseData("Foo", "Equals(this.bar, value)"),
+            new TestCaseData("Foo", "Equals(value, bar)"),
+            new TestCaseData("Foo", "Equals(value, Bar)"),
+            new TestCaseData("Foo", "Equals(Bar, value)"),
+            new TestCaseData("Foo", "Nullable.Equals(value, this.bar)"),
+            new TestCaseData("Foo", "value.Equals(this.bar)"),
+            new TestCaseData("Foo", "value.Equals(bar)"),
+            new TestCaseData("Foo", "this.bar.Equals(value)"),
+            new TestCaseData("Foo", "bar.Equals(value)"),
             new TestCaseData("int?",   "Nullable.Equals(value, this.bar)"),
             new TestCaseData("string", "value.Equals(this.bar)"),
             new TestCaseData("string", "value.Equals(bar)"),
@@ -34,18 +40,6 @@ namespace RoslynSandbox
     }
 }";
 
-        [OneTimeSetUp]
-        public static void OneTimeSetUp()
-        {
-            RoslynAssert.SuppressedDiagnostics.Add(Descriptors.INPC006UseReferenceEqualsForReferenceTypes.Id);
-        }
-
-        [OneTimeTearDown]
-        public static void OneTimeTearDown()
-        {
-            RoslynAssert.ResetAll();
-        }
-
         [TestCaseSource(nameof(TestCases))]
         public static void Check(string type, string expression)
         {
@@ -58,11 +52,11 @@ namespace RoslynSandbox
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private int bar;
+        private Foo bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public Foo Bar
         {
             get => this.bar;
             set
@@ -83,9 +77,9 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("Equals(value, this.bar)", expression)
-  .AssertReplace("int", type);
+  .AssertReplace("Foo", type);
 
-            RoslynAssert.Valid(Analyzer, Foo, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, Foo, code);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -100,11 +94,11 @@ namespace RoslynSandbox
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private int bar;
+        private Foo bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public Foo Bar
         {
             get => this.bar;
             set
@@ -123,9 +117,9 @@ namespace RoslynSandbox
         }
     }
 }".AssertReplace("Equals(value, this.bar)", expression)
-  .AssertReplace("int", type);
+  .AssertReplace("Foo", type);
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, Foo, code);
         }
 
         [Test]
@@ -156,7 +150,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [Test]
@@ -192,7 +186,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Foo, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, Foo, code);
         }
 
         [Test]
@@ -228,7 +222,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [Test]
@@ -266,7 +260,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [Test]
@@ -302,7 +296,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [Test]
@@ -334,7 +328,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [Test]
@@ -367,7 +361,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [Test]
@@ -415,7 +409,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, fooCode, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, fooCode, code);
         }
 
         [Test]
@@ -461,7 +455,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, fooCode, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, fooCode, code);
         }
 
         [TestCase("string")]
@@ -501,7 +495,7 @@ namespace N
     }
 }".AssertReplace("string", type);
 
-            RoslynAssert.Valid(Analyzer,  code);
+            RoslynAssert.Valid(Analyzer, Descriptor,  code);
         }
 
         [TestCase("string")]
@@ -539,7 +533,7 @@ namespace N
     }
 }".AssertReplace("string", type);
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
     }
 }

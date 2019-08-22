@@ -32,33 +32,22 @@ namespace PropertyChangedAnalyzers
                     case InvocationExpressionSyntax invocation:
                         {
                             if (Gu.Roslyn.AnalyzerExtensions.Equality.IsObjectReferenceEquals(invocation, context.SemanticModel, context.CancellationToken, out var x, out var y) &&
-                                IsReferenceType(x, out _) &&
-                                IsReferenceType(y, out _))
+                                UseEquals(x, y))
                             {
-                                if (IsInSetter() &&
-                                    Descriptors.INPC006UseReferenceEqualsForReferenceTypes.IsSuppressed(context.SemanticModel))
-                                {
-                                    context.ReportDiagnostic(
-                                        Diagnostic.Create(
-                                            Descriptors.INPC006UseObjectEqualsForReferenceTypes,
-                                            invocation.GetLocation()));
-                                }
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.INPC006UseObjectEqualsForReferenceTypes,
+                                        invocation.GetLocation()));
                             }
 
                             if ((Gu.Roslyn.AnalyzerExtensions.Equality.IsObjectEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y) ||
                                  Gu.Roslyn.AnalyzerExtensions.Equality.IsInstanceEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y)) &&
-                                IsReferenceType(x, out var typeX) &&
-                                IsReferenceType(y, out var typeY) &&
-                                Equals(typeX, typeY))
+                                UseReferenceEquals(x, y))
                             {
-                                if (IsInSetter() &&
-                                    Descriptors.INPC006UseObjectEqualsForReferenceTypes.IsSuppressed(context.SemanticModel))
-                                {
-                                    context.ReportDiagnostic(
-                                        Diagnostic.Create(
-                                            Descriptors.INPC006UseReferenceEqualsForReferenceTypes,
-                                            invocation.GetLocation()));
-                                }
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.INPC006UseReferenceEqualsForReferenceTypes,
+                                        invocation.GetLocation()));
                             }
 
                             break;
@@ -66,28 +55,22 @@ namespace PropertyChangedAnalyzers
 
                     case BinaryExpressionSyntax binary:
                         {
-                            if ((Gu.Roslyn.AnalyzerExtensions.Equality.IsOperatorEquals(binary, out var x, out var y) ||
-                                 Gu.Roslyn.AnalyzerExtensions.Equality.IsOperatorNotEquals(binary, out x, out y)) &&
-                                IsReferenceType(x, out var xType) &&
-                                xType != KnownSymbol.String &&
-                                IsReferenceType(y, out _))
+                            if (Gu.Roslyn.AnalyzerExtensions.Equality.IsOperatorEquals(binary, out var x, out var y) ||
+                                Gu.Roslyn.AnalyzerExtensions.Equality.IsOperatorNotEquals(binary, out x, out y))
                             {
-                                if (IsInSetter())
+                                if (UseEquals(x, y))
                                 {
-                                    if (Descriptors.INPC006UseReferenceEqualsForReferenceTypes.IsSuppressed(context.SemanticModel))
-                                    {
-                                        context.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                Descriptors.INPC006UseObjectEqualsForReferenceTypes,
-                                                binary.GetLocation()));
-                                    }
-                                    else if (Descriptors.INPC006UseObjectEqualsForReferenceTypes.IsSuppressed(context.SemanticModel))
-                                    {
-                                        context.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                Descriptors.INPC006UseReferenceEqualsForReferenceTypes,
-                                                binary.GetLocation()));
-                                    }
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.INPC006UseObjectEqualsForReferenceTypes,
+                                            binary.GetLocation()));
+                                }
+                                else if (UseReferenceEquals(x, y))
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            Descriptors.INPC006UseReferenceEqualsForReferenceTypes,
+                                            binary.GetLocation()));
                                 }
                             }
 
@@ -96,16 +79,36 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            bool IsReferenceType(ExpressionSyntax candidate, out ITypeSymbol type)
-            {
-                return context.SemanticModel.TryGetType(candidate, context.CancellationToken, out type) &&
-                       type.IsReferenceType;
-            }
-
             bool IsInSetter()
             {
                 return context.Node.TryFirstAncestor(out AccessorDeclarationSyntax accessor) &&
                        accessor.IsKind(SyntaxKind.SetAccessorDeclaration);
+            }
+
+            bool UseReferenceEquals(ExpressionSyntax x, ExpressionSyntax y)
+            {
+                return context.SemanticModel.TryGetType(x, context.CancellationToken, out var xt) &&
+                       xt.IsReferenceType &&
+                       xt != KnownSymbol.String &&
+                       context.SemanticModel.TryGetType(y, context.CancellationToken, out var yt) &&
+                       yt.IsReferenceType &&
+                       yt != KnownSymbol.String &&
+                       xt.Equals(yt) &&
+                       !Descriptors.INPC006UseReferenceEqualsForReferenceTypes.IsSuppressed(context.SemanticModel) &&
+                       IsInSetter();
+            }
+
+            bool UseEquals(ExpressionSyntax x, ExpressionSyntax y)
+            {
+                return context.SemanticModel.TryGetType(x, context.CancellationToken, out var xt) &&
+                       xt.IsReferenceType &&
+                       xt != KnownSymbol.String &&
+                       context.SemanticModel.TryGetType(y, context.CancellationToken, out var yt) &&
+                       yt.IsReferenceType &&
+                       yt != KnownSymbol.String &&
+                       xt.Equals(yt) &&
+                       !Descriptors.INPC006UseObjectEqualsForReferenceTypes.IsSuppressed(context.SemanticModel) &&
+                       IsInSetter();
             }
         }
     }

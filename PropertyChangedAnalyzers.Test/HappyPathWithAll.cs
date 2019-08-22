@@ -423,7 +423,9 @@ namespace RoslynSandbox
 
             private set
             {
-                if (Equals(value, _exception))
+#pragma warning disable INPC006_b
+                if (ReferenceEquals(value, _exception))
+#pragma warning restore INPC006_b
                 {
                     return;
                 }

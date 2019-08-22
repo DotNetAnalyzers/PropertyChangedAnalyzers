@@ -34,7 +34,9 @@ namespace ValidCode.Repros
                 lock (this.gate)
                 {
                     if (this.disposed ||
+#pragma warning disable INPC006_b
                         ReferenceEquals(value, this.source))
+#pragma warning restore INPC006_b
                     {
                         return;
                     }
