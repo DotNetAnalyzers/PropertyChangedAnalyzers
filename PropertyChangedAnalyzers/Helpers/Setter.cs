@@ -103,15 +103,17 @@ namespace PropertyChangedAnalyzers
 
             bool IsParameter(ExpressionSyntax expression, out IdentifierNameSyntax result)
             {
-                if (expression is IdentifierNameSyntax identifierName &&
-                    identifierName.Identifier.ValueText == "value")
+                switch (expression)
                 {
-                    result = identifierName;
-                    return true;
+                    case IdentifierNameSyntax identifierName when identifierName.Identifier.ValueText == "value":
+                        result = identifierName;
+                        return true;
+                    case CastExpressionSyntax cast:
+                        return IsParameter(cast.Expression, out result);
+                    default:
+                        result = null;
+                        return false;
                 }
-
-                result = null;
-                return false;
             }
 
             bool IsMember(ExpressionSyntax expression)

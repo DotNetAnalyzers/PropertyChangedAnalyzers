@@ -36,7 +36,11 @@ namespace PropertyChangedAnalyzers
                     if (expressionBody.Expression.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
                         Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify, propertyDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.INPC002MutablePublicPropertyShouldNotify,
+                                propertyDeclaration.Identifier.GetLocation(),
+                                property.Name));
                     }
                 }
                 else if (setter.Body is BlockSyntax body)
