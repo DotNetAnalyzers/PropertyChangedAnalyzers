@@ -264,7 +264,7 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(() => this.PropertyChanged);
+                this.OnPropertyChanged(↓() => this.PropertyChanged);
             }
         }
 
@@ -315,7 +315,7 @@ namespace RoslynSandbox
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(() => PropertyChanged);
+                this.OnPropertyChanged(↓() => PropertyChanged);
             }
         }
 

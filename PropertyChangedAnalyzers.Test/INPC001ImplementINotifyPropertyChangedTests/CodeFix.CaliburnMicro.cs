@@ -1,16 +1,16 @@
 namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     public static partial class CodeFix
     {
         public static class CaliburnMicro
         {
-            private static readonly IReadOnlyList<MetadataReference> MetadataReferences = Gu.Roslyn.Asserts.MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase)).ToArray();
+            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.CaliburnMicro;
 
             [Test]
             public static void SubclassPropertyChangedBaseAddUsing()

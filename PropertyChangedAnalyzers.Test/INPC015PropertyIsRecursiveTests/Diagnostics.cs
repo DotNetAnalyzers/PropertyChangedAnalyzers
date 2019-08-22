@@ -34,7 +34,7 @@ namespace RoslynSandbox
     {
         public int Bar
         {
-            get { return this.Bar; }
+            get { return ↓this.Bar; }
         }
     }
 }";
@@ -52,7 +52,7 @@ namespace RoslynSandbox
     {
         public int Bar
         {
-            get => this.Bar;
+            get => ↓this.Bar;
         }
     }
 }";

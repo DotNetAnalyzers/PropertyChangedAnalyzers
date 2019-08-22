@@ -122,5 +122,7 @@
     <Rule Id="GURA06" Action="Info" />
     <Rule Id="GURA10" Action="Hidden" />
     <Rule Id="GURA11" Action="Warning" />
+    <Rule Id="GURA04" Action="None" />
+    <Rule Id="GURA09" Action="None" />
   </Rules>
 </RuleSet>
