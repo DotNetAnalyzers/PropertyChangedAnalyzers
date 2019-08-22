@@ -8,11 +8,11 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 
     public static class SetterTests
     {
-        public static class TryGetBackingMember
+        public static class TryGetBackingField
         {
             [TestCase("P1", true, "p1")]
             [TestCase("P2", true, "p2")]
-            public static void TryGetBackingMemberCases(string propertyName, bool expected, string fieldName)
+            public static void TryGetBackingFieldCases(string propertyName, bool expected, string fieldName)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
@@ -39,8 +39,8 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var property = syntaxTree.FindPropertyDeclaration(propertyName);
                 Assert.AreEqual(true, property.TryGetSetter(out var setter));
-                Assert.AreEqual(expected, Setter.TryGetBackingMember(setter, semanticModel, CancellationToken.None, out var field));
-                Assert.AreEqual(fieldName, field.Symbol?.Name);
+                Assert.AreEqual(expected, Setter.TryGetBackingField(setter, semanticModel, CancellationToken.None, out var field));
+                Assert.AreEqual(fieldName, field?.Name);
             }
 
             [Test]
@@ -65,7 +65,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var property = syntaxTree.FindPropertyDeclaration("P");
                 Assert.AreEqual(true, property.TryGetSetter(out var setter));
-                Assert.AreEqual(true, Setter.TryGetBackingMember(setter, semanticModel, CancellationToken.None, out var field));
+                Assert.AreEqual(true, Setter.TryGetBackingField(setter, semanticModel, CancellationToken.None, out var field));
                 Assert.AreEqual("p", field.Name);
                 Assert.AreEqual("Int32", field.Type.MetadataName);
             }
@@ -114,7 +114,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var property = syntaxTree.FindPropertyDeclaration("P");
                 Assert.AreEqual(true, property.TryGetSetter(out var setter));
-                Assert.AreEqual(true, Setter.TryGetBackingMember(setter, semanticModel, CancellationToken.None, out var field));
+                Assert.AreEqual(true, Setter.TryGetBackingField(setter, semanticModel, CancellationToken.None, out var field));
                 Assert.AreEqual("p", field.Name);
                 Assert.AreEqual("Int32", field.Type.MetadataName);
             }
@@ -161,7 +161,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var property = syntaxTree.FindPropertyDeclaration("P");
                 Assert.AreEqual(true, property.TryGetSetter(out var setter));
-                Assert.AreEqual(false, Setter.TryGetBackingMember(setter, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(false, Setter.TryGetBackingField(setter, semanticModel, CancellationToken.None, out _));
             }
         }
     }

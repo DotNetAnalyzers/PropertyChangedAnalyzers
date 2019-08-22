@@ -281,21 +281,5 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
         }
-
-        private static bool TryGetBackingField(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
-        {
-            field = null;
-            if (candidate is IdentifierNameSyntax)
-            {
-                field = semanticModel.GetSymbolSafe(candidate, cancellationToken) as IFieldSymbol;
-            }
-            else if (candidate is MemberAccessExpressionSyntax memberAccess &&
-                     memberAccess.Expression is ThisExpressionSyntax)
-            {
-                field = semanticModel.GetSymbolSafe(candidate, cancellationToken) as IFieldSymbol;
-            }
-
-            return field != null;
-        }
     }
 }

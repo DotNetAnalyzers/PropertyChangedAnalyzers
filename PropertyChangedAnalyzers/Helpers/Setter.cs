@@ -82,7 +82,7 @@ namespace PropertyChangedAnalyzers
                     return true;
                 case InvocationExpressionSyntax invocation
                     when invocation.ArgumentList is ArgumentListSyntax argumentList &&
-                         argumentList.Arguments.TrySingle(x => IsParameter(x.Expression, out _), out var parameterArg) &&
+                         argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.None) && IsParameter(x.Expression, out _), out var parameterArg) &&
                          argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
                          IsMember(refArgument.Expression):
                     fieldAccess = refArgument.Expression;
@@ -114,21 +114,20 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static bool TryGetBackingMember(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out FieldOrProperty member)
+        internal static bool TryGetBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
             if (TryFindSingleMutation(setter, semanticModel, cancellationToken, out var mutated))
             {
                 switch (mutated)
                 {
                     case IdentifierNameSyntax _:
-                        return semanticModel.TryGetSymbol(mutated, cancellationToken, out var symbol) &&
-                                FieldOrProperty.TryCreate(symbol, out member);
+                        return semanticModel.TryGetSymbol(mutated, cancellationToken, out field);
                     case MemberAccessExpressionSyntax memberAccess when memberAccess.Expression.IsKind(SyntaxKind.ThisExpression):
-                        return semanticModel.TryGetSymbol(mutated, cancellationToken, out symbol) &&
-                               FieldOrProperty.TryCreate(symbol, out member);
+                        return semanticModel.TryGetSymbol(mutated, cancellationToken, out field);
                 }
             }
 
+            field = null;
             return false;
         }
 
