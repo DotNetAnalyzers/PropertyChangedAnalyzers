@@ -219,21 +219,12 @@ namespace PropertyChangedAnalyzers
                                 }
                             }
 
-                            void Notify(DocumentEditor editor, CancellationToken cancellationToken)
+                            async Task Notify(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-                                var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-                                var property =
-                                    semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                                var notifyStatement = SyntaxFactory
-                                                      .ParseStatement(
-                                                          Snippet.OnPropertyChanged(
-                                                              invoker, property.Name, underscoreFields))
-                                                      .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
-                                                      .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
-                                                      .WithSimplifiedNames()
-                                                      .WithAdditionalAnnotations(Formatter.Annotation);
                                 if (setter.ExpressionBody != null)
                                 {
+                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                                                        .ConfigureAwait(false);
                                     editor.ReplaceNode(
                                         setter,
                                         (x, _) =>
@@ -242,7 +233,7 @@ namespace PropertyChangedAnalyzers
                                             return old.WithBody(
                                                           SyntaxFactory.Block(
                                                               SyntaxFactory.ExpressionStatement(assignment),
-                                                              notifyStatement))
+                                                              onPropertyChanged))
                                                       .WithExpressionBody(null)
                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                                         });
@@ -251,7 +242,9 @@ namespace PropertyChangedAnalyzers
                                 else if (setter.Body is BlockSyntax body &&
                                          body.Statements.TrySingle(out var statement))
                                 {
-                                    editor.InsertAfter(statement, notifyStatement);
+                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                                                        .ConfigureAwait(false);
+                                    editor.InsertAfter(statement, onPropertyChanged);
                                     _ = editor.FormatNode(propertyDeclaration);
                                 }
                             }
