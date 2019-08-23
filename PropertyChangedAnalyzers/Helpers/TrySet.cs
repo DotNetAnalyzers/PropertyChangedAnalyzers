@@ -72,7 +72,7 @@ namespace PropertyChangedAnalyzers
             }
 
             if (candidate.TypeParameters.TrySingle(out _) &&
-                candidate.Parameters.TrySingle(x => x.Type.Kind == SymbolKind.TypeParameter && x.RefKind == RefKind.Ref,out field) &&
+                candidate.Parameters.TrySingle(x => x.Type.Kind == SymbolKind.TypeParameter && x.RefKind == RefKind.Ref, out field) &&
                 candidate.Parameters.TrySingle(x => x.Type.Kind == SymbolKind.TypeParameter && x.RefKind != RefKind.Ref, out value) &&
                 candidate.Parameters.TrySingle(x => x.Type == KnownSymbol.String && x.RefKind != RefKind.Ref, out name))
             {

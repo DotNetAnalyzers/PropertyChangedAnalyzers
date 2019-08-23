@@ -249,7 +249,7 @@ namespace PropertyChangedAnalyzers
                                     argumentList: SyntaxFactory.ArgumentList(
                                         openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
                                         arguments: SyntaxFactory.SeparatedList(
-                                            new []
+                                            new[]
                                             {
                                                 ThisArgument(),
                                                 SyntaxFactory.Argument(

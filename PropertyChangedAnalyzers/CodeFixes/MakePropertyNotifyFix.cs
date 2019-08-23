@@ -80,7 +80,6 @@ namespace PropertyChangedAnalyzers
 
                                 _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
                             }
-
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
                         {
