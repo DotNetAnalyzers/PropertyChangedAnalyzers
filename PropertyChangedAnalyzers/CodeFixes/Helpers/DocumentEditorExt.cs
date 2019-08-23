@@ -35,6 +35,26 @@ namespace PropertyChangedAnalyzers
                   InpcFactory.Nameof(InpcFactory.SymbolAccess(propertyName, qualifyPropertyAccess)));
         }
 
+        internal static async Task<InvocationExpressionSyntax> TrySetInvocationAsync(this DocumentEditor editor, IMethodSymbol trySet, ExpressionSyntax field, ExpressionSyntax value, PropertyDeclarationSyntax containingProperty, CancellationToken cancellationToken)
+        {
+            if (trySet.TryFindParameter(KnownSymbol.String, out var nameParameter))
+            {
+                var qualifyMethodAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
+                                                      .ConfigureAwait(false);
+                var nameExpression = await editor.NameOfContainingAsync(containingProperty, nameParameter, cancellationToken)
+                                                 .ConfigureAwait(false);
+
+                return InpcFactory.TrySetInvocation(
+                    qualifyMethodAccess,
+                    trySet,
+                    field,
+                    value,
+                    nameExpression);
+            }
+
+            throw new InvalidOperationException("Could not find name parameter.");
+        }
+
         internal static void MoveOnPropertyChangedInside(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged)
         {
             editor.RemoveNode(onPropertyChanged);
@@ -172,7 +192,7 @@ namespace PropertyChangedAnalyzers
             if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
             {
                 var expression = await NameExpression();
-                return (ExpressionSyntax) editor.Generator.ObjectCreationExpression(
+                return (ExpressionSyntax)editor.Generator.ObjectCreationExpression(
                     editor.Generator.TypeExpression(
                         editor.SemanticModel.Compilation.GetTypeByMetadataName(KnownSymbol.PropertyChangedEventArgs.FullName)),
                     editor.Generator.Argument(RefKind.None, expression));

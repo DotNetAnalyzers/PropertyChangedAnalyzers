@@ -379,5 +379,7 @@ namespace PropertyChangedAnalyzers
 
             return SyntaxFactory.ElasticSpace;
         }
+
+        internal static IdentifierNameSyntax Value() => SyntaxFactory.IdentifierName(SyntaxFactory.Identifier("value"));
     }
 }

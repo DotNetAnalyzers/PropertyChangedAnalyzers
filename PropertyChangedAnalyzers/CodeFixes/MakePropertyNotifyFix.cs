@@ -37,7 +37,7 @@ namespace PropertyChangedAnalyzers
                     semanticModel.TryGetSymbol(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
                     if (TrySet.TryFind(type, semanticModel, context.CancellationToken, out var trySetMethod) &&
-                        TrySet.CanCreateInvocation(trySetMethod, out var nameParameter))
+                        TrySet.CanCreateInvocation(trySetMethod, out _))
                     {
                         if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
                         {
@@ -49,23 +49,17 @@ namespace PropertyChangedAnalyzers
 
                             async Task AutoPropertyToTrySetAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-                                var fieldAccess = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken);
-                                var qualifyMethodAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
-                                                                      .ConfigureAwait(false);
-                                var nameExpression = await editor.NameOfContainingAsync(propertyDeclaration, nameParameter, cancellationToken)
-                                                                        .ConfigureAwait(false);
+                                var fieldAccess = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
+                                                              .ConfigureAwait(false);
+                                var trySet = await editor.TrySetInvocationAsync(trySetMethod, fieldAccess, InpcFactory.Value(), propertyDeclaration, cancellationToken)
+                                                             .ConfigureAwait(false);
+
                                 _ = editor.ReplaceNode(
                                               getter,
                                               x => x.AsExpressionBody(fieldAccess))
                                           .ReplaceNode(
                                               setter,
-                                              x => x.AsExpressionBody(
-                                                        InpcFactory.TrySetInvocation(
-                                                            qualifyMethodAccess,
-                                                            trySetMethod,
-                                                            fieldAccess,
-                                                            SyntaxFactory.IdentifierName(SyntaxFactory.Identifier("value")),
-                                                            nameExpression)));
+                                              x => x.AsExpressionBody(trySet));
 
                                 if (propertyDeclaration.Initializer != null)
                                 {
@@ -83,14 +77,11 @@ namespace PropertyChangedAnalyzers
                                 trySetMethod.DisplaySignature(),
                                 async (editor, cancellationToken) =>
                                 {
-                                    var qualifyMethodAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
-                                                                    .ConfigureAwait(false);
-                                    var name = await editor.NameOfContainingAsync(propertyDeclaration, nameParameter, cancellationToken)
-                                                           .ConfigureAwait(false);
+                                    var trySet = await editor.TrySetInvocationAsync(trySetMethod, assignment.Left, assignment.Right, propertyDeclaration, cancellationToken)
+                                                                                           .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
                                         assignment,
-                                        x => InpcFactory.TrySetInvocation(qualifyMethodAccess, trySetMethod, assignment.Left, assignment.Right, name)
-                                                        .WithTriviaFrom(x));
+                                        x => trySet);
                                 },
                                 trySetMethod.MetadataName,
                                 diagnostic);
