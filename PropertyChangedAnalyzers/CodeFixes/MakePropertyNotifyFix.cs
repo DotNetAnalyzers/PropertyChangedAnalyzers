@@ -43,11 +43,11 @@ namespace PropertyChangedAnalyzers
                         {
                             context.RegisterCodeFix(
                                 trySetMethod.DisplaySignature(),
-                                (editor, cancellationToken) => Update(editor, cancellationToken),
+                                (editor, cancellationToken) => TrySet(editor, cancellationToken),
                                 trySetMethod.MetadataName,
                                 diagnostic);
 
-                            async Task Update(DocumentEditor editor, CancellationToken cancellationToken)
+                            async Task TrySet(DocumentEditor editor, CancellationToken cancellationToken)
                             {
                                 var fieldAccess = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
                                                               .ConfigureAwait(false);
