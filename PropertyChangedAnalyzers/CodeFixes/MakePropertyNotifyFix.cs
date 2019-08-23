@@ -197,8 +197,7 @@ namespace PropertyChangedAnalyzers
                                         (x, _) =>
                                         {
                                             var old = (AccessorDeclarationSyntax)x;
-                                            return old.WithBody(template.Setter()
-                                                                        .Body)
+                                            return old.WithBody(template.Setter().Body)
                                                       .WithExpressionBody(null)
                                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
                                         });
@@ -225,18 +224,9 @@ namespace PropertyChangedAnalyzers
                                 {
                                     var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
                                                                         .ConfigureAwait(false);
-                                    editor.ReplaceNode(
+                                    _ = editor.ReplaceNode(
                                         setter,
-                                        (x, _) =>
-                                        {
-                                            var old = (AccessorDeclarationSyntax)x;
-                                            return old.WithBody(
-                                                          SyntaxFactory.Block(
-                                                              SyntaxFactory.ExpressionStatement(assignment),
-                                                              onPropertyChanged))
-                                                      .WithExpressionBody(null)
-                                                      .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
-                                        });
+                                        x => x.AsBlockBody(SyntaxFactory.ExpressionStatement(assignment), onPropertyChanged));
                                     _ = editor.FormatNode(propertyDeclaration);
                                 }
                                 else if (setter.Body is BlockSyntax body &&
