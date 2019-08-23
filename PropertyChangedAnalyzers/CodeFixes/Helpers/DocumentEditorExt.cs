@@ -153,15 +153,34 @@ namespace PropertyChangedAnalyzers
                 return null;
             }
 
-            if (property.Modifiers.Any(SyntaxKind.StaticKeyword))
+            if (parameter.Type == KnownSymbol.String)
             {
-                return InpcFactory.Nameof(SyntaxFactory.IdentifierName(property.Identifier));
+                return await NameExpression();
             }
 
-            return InpcFactory.Nameof(
-                InpcFactory.SymbolAccess(
-                    property.Identifier.ValueText,
-                    await editor.QualifyEventAccessAsync(cancellationToken).ConfigureAwait(false)));
+            if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
+            {
+                var expression = await NameExpression();
+                return (ExpressionSyntax) editor.Generator.ObjectCreationExpression(
+                    editor.Generator.TypeExpression(
+                        editor.SemanticModel.Compilation.GetTypeByMetadataName(KnownSymbol.PropertyChangedEventArgs.FullName)),
+                    editor.Generator.Argument(RefKind.None, expression));
+            }
+
+            throw new InvalidOperationException("Could not create name for parameter type.");
+
+            async Task<ExpressionSyntax> NameExpression()
+            {
+                if (property.Modifiers.Any(SyntaxKind.StaticKeyword))
+                {
+                    return InpcFactory.Nameof(SyntaxFactory.IdentifierName(property.Identifier));
+                }
+
+                return InpcFactory.Nameof(
+                    InpcFactory.SymbolAccess(
+                        property.Identifier.ValueText,
+                        await editor.QualifyEventAccessAsync(cancellationToken).ConfigureAwait(false)));
+            }
         }
 
         internal static Task<ExpressionSyntax> SymbolAccessAsync(this DocumentEditor editor, ISymbol symbol, SyntaxNode context, CancellationToken cancellationToken)
