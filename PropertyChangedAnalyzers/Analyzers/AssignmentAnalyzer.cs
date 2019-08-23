@@ -1,6 +1,8 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Reflection.Metadata;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -42,41 +44,113 @@ namespace PropertyChangedAnalyzers
             return context.ContainingSymbol is IMethodSymbol ctor &&
                    !ctor.IsStatic &&
                    ctor.MethodKind == MethodKind.Constructor &&
-                   !assignment.TryFirstAncestor(out AnonymousFunctionExpressionSyntax _) &&
-                   !assignment.TryFirstAncestor(out LocalFunctionStatementSyntax _) &&
+                   assignment.Parent is ExpressionStatementSyntax assignmentStatement &&
+                   assignmentStatement.TryFirstAncestor(out ConstructorDeclarationSyntax constructor) &&
+                   constructor.Body is BlockSyntax body &&
+                   body.Statements.Contains(assignmentStatement) &&
                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                    propertyDeclaration.TryGetSetter(out var setter) &&
-                   !ThrowWalker.Throws(setter) &&
-                   Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out fieldAccess) &&
-                   !HasSideEffects(setter, context);
-        }
+                   IsSimple(out fieldAccess);
 
-        private static bool HasSideEffects(AccessorDeclarationSyntax setter, SyntaxNodeAnalysisContext context)
-        {
-            using (var walker = InvocationWalker.Borrow(setter))
+            bool IsSimple(out ExpressionSyntax backing)
             {
-                foreach (var invocation in walker.Invocations)
+                if (setter.ExpressionBody != null)
                 {
-                    if (invocation.TryGetMethodName(out var name) &&
-                        (name == nameof(Equals) ||
-                         name == nameof(ReferenceEquals) ||
-                         name == "nameof"))
+                    return IsAssigningField(out backing);
+                }
+
+                if (setter.Body is BlockSyntax block)
+                {
+                    foreach (var statement in block.Statements)
                     {
-                        continue;
+                        if (IsWhiteListedStatement(statement))
+                        {
+                            continue;
+                        }
+
+                        if (statement is IfStatementSyntax ifStatement &&
+                            IsWhiteListedIfStatement(ifStatement))
+                        {
+                            continue;
+                        }
+
+                        // If there is for example validation or side effects we don't suggest setting the field.
+                        backing = null;
+                        return false;
                     }
 
-                    if (TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
-                        OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
-                        PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken))
-                    {
-                        continue;
-                    }
+                    return IsAssigningField(out backing);
+                }
 
-                    return true;
+                backing = null;
+                return false;
+            }
+
+            bool IsAssigningField(out ExpressionSyntax backingField)
+            {
+                return Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out backingField) &&
+                       MemberPath.TrySingle(backingField, out var single) &&
+                       context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol field) &&
+                       Equals(ctor.ContainingType, field.ContainingType);
+            }
+
+            bool IsWhiteListedExpression(ExpressionStatementSyntax candidate)
+            {
+                switch (candidate.Expression)
+                {
+                    case InvocationExpressionSyntax invocation
+                        when OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
+                             TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No:
+                        return true;
+                    case AssignmentExpressionSyntax candidateAssignment
+                        when Setter.IsMutation(candidateAssignment, context.SemanticModel, context.CancellationToken, out _, out _):
+                        return true;
+                    default:
+                        return false;
                 }
             }
 
-            return false;
+            bool IsWhiteListedStatement(StatementSyntax candidate)
+            {
+                switch (candidate)
+                {
+                    case ReturnStatementSyntax _:
+                        return true;
+                    case ExpressionStatementSyntax expressionStatement
+                        when IsWhiteListedExpression(expressionStatement):
+                        return true;
+                    default:
+                        // If there is for example validation or side effects we don't suggest setting the field.
+                        return false;
+                }
+            }
+
+            bool IsWhiteListedIfStatement(IfStatementSyntax ifStatement)
+            {
+                return IsWhiteListedBranch(ifStatement.Statement) &&
+                       IsWhiteListedBranch(ifStatement.Else?.Statement);
+
+                bool IsWhiteListedBranch(StatementSyntax branch)
+                {
+                    switch (branch)
+                    {
+                        case BlockSyntax branchBlock:
+                            foreach (var branchStatement in branchBlock.Statements)
+                            {
+                                if (!IsWhiteListedStatement(branchStatement))
+                                {
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        case StatementSyntax statement:
+                            return IsWhiteListedStatement(statement);
+                        case null:
+                            return true;
+                    }
+                }
+            }
         }
     }
 }
