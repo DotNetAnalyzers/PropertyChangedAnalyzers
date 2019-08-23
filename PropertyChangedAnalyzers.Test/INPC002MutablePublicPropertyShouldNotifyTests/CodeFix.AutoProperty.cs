@@ -670,6 +670,7 @@ namespace RoslynSandbox
         public int Value
         {
             get => this.value;
+
             set
             {
                 if (value == this.value)
