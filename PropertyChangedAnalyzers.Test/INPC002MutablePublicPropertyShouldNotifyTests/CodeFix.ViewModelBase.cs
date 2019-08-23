@@ -107,7 +107,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public static void AutoPropertyToSet()
+            public static void AutoPropertyToTrySet()
             {
                 var before = @"
 namespace RoslynSandbox.Client
@@ -125,11 +125,7 @@ namespace RoslynSandbox.Client
     {
         private int bar;
 
-        public int Bar
-        {
-            get => this.bar;
-            set => this.TrySet(ref this.bar, value);
-        }
+        public int Bar { get => this.bar; set => this.TrySet(ref this.bar, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
@@ -155,11 +151,7 @@ namespace RoslynSandbox.Client
     {
         private int bar = 1;
 
-        public int Bar
-        {
-            get => this.bar;
-            set => this.TrySet(ref this.bar, value);
-        }
+        public int Bar { get => this.bar; set => this.TrySet(ref this.bar, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
@@ -185,11 +177,7 @@ namespace RoslynSandbox.Client
     {
         private int bar;
 
-        public virtual int Bar
-        {
-            get => this.bar;
-            set => this.TrySet(ref this.bar, value);
-        }
+        public virtual int Bar { get => this.bar; set => this.TrySet(ref this.bar, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
@@ -220,11 +208,7 @@ namespace RoslynSandbox.Client
     {
         private int bar;
 
-        public int Bar
-        {
-            get => this.bar;
-            private set => this.TrySet(ref this.bar, value);
-        }
+        public int Bar { get => this.bar; private set => this.TrySet(ref this.bar, value); }
 
         public void Mutate()
         {
@@ -237,7 +221,7 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public static void AutoPropertyToSetUnderscoreNames()
+            public static void AutoPropertyToTrySetUnderscoreNames()
             {
                 var before = @"
 namespace RoslynSandbox.Client
@@ -265,11 +249,7 @@ namespace RoslynSandbox.Client
             Bar = bar;
         }
 
-        public int Bar
-        {
-            get => _bar;
-            set => TrySet(ref _bar, value);
-        }
+        public int Bar { get => _bar; set => TrySet(ref _bar, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
@@ -531,11 +511,7 @@ namespace RoslynSandbox.Client
     {
         private int bar;
 
-        public int Bar
-        {
-            get => this.bar;
-            set => this.TrySet(ref this.bar, value);
-        }
+        public int Bar { get => this.bar; set => this.TrySet(ref this.bar, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");

@@ -29,8 +29,41 @@ namespace RoslynSandbox
     }
 }";
 
-                var expectedMessage = ExpectedDiagnostic.WithMessage("Property 'Bar' should notify when value changes.");
-                RoslynAssert.Diagnostics(Analyzer, expectedMessage, before);
+                var after = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class Foo : INotifyPropertyChanged
+    {
+        private int bar;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar
+        {
+            get => this.bar;
+            set
+            {
+                if (value == this.bar)
+                {
+                    return;
+                }
+
+                this.bar = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                var expectedDiagnostic = ExpectedDiagnostic.WithMessage("Property 'Bar' should notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
             }
 
             [Test]

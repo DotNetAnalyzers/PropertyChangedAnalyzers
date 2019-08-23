@@ -36,22 +36,53 @@ namespace PropertyChangedAnalyzers
                     propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
                     semanticModel.TryGetSymbol(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
-                    if (TrySet.TryFind(type, semanticModel, context.CancellationToken, out var trySetMethod))
+                    if (TrySet.TryFind(type, semanticModel, context.CancellationToken, out var trySetMethod) &&
+                        TrySet.CanCreateInvocation(trySetMethod, out var nameParameter))
                     {
-                        if (Property.IsMutableAutoProperty(propertyDeclaration, out _, out _))
+                        if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
                         {
                             context.RegisterCodeFix(
                                 trySetMethod.DisplaySignature(),
-                                (editor, cancellationToken) => MakeAutoPropertySet(
-                                    editor,
-                                    propertyDeclaration,
-                                    trySetMethod,
-                                    semanticModel),
+                                (editor, cancellationToken) => AutoPropertyToTrySetAsync(editor, cancellationToken),
                                 trySetMethod.MetadataName,
                                 diagnostic);
+
+                            async Task AutoPropertyToTrySetAsync(DocumentEditor editor, CancellationToken cancellationToken)
+                            {
+                                var backingField = editor.AddBackingField(propertyDeclaration);
+                                var qualifyFieldAccessAsync = await editor.QualifyFieldAccessAsync(cancellationToken)
+                                                                          .ConfigureAwait(false);
+
+                                var qualifyMethodAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
+                                                                          .ConfigureAwait(false);
+                                var fieldAccess = InpcFactory.SymbolAccess(backingField.Name(), qualifyFieldAccessAsync);
+                                var nameExpression = await editor.NameOfContainingAsync(propertyDeclaration, nameParameter, cancellationToken)
+                                                                        .ConfigureAwait(false);
+                                _ = editor.ReplaceNode(
+                                              getter,
+                                              x => x.AsExpressionBody(fieldAccess))
+                                          .ReplaceNode(
+                                              setter,
+                                              x => x.AsExpressionBody(
+                                                        InpcFactory.TrySetInvocation(
+                                                            qualifyMethodAccess,
+                                                            trySetMethod,
+                                                            fieldAccess,
+                                                            SyntaxFactory.IdentifierName(SyntaxFactory.Identifier("value")),
+                                                            nameExpression)));
+
+                                if (propertyDeclaration.Initializer != null)
+                                {
+                                    editor.ReplaceNode(
+                                        propertyDeclaration,
+                                        (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
+                                }
+
+                                _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                            }
+
                         }
-                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _) &&
-                                 TrySet.CanCreateInvocation(trySetMethod, out var nameParameter))
+                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
                         {
                             context.RegisterCodeFix(
                                 trySetMethod.DisplaySignature(),
@@ -64,7 +95,7 @@ namespace PropertyChangedAnalyzers
                                     _ = editor.ReplaceNode(
                                         assignment,
                                         x => InpcFactory.TrySetInvocation(qualifyAccess, trySetMethod, assignment.Left, assignment.Right, name)
-                                                                 .WithTriviaFrom(x));
+                                                        .WithTriviaFrom(x));
                                 },
                                 trySetMethod.MetadataName,
                                 diagnostic);
@@ -170,55 +201,6 @@ namespace PropertyChangedAnalyzers
                     _ = editor.ReplaceNode(
                         propertyDeclaration,
                         x => x.WithoutInitializer());
-                }
-
-                _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
-            }
-        }
-
-        private static void MakeAutoPropertySet(DocumentEditor editor, PropertyDeclarationSyntax propertyDeclaration, IMethodSymbol setAndRaise, SemanticModel semanticModel)
-        {
-            var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-            if (classDeclaration == null)
-            {
-                return;
-            }
-
-            if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
-            {
-                if (getter.Body != null ||
-                    getter.ContainsSkippedText ||
-                    setter.Body != null ||
-                    setter.ContainsSkippedText)
-                {
-                    return;
-                }
-
-                var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-                var backingField = editor.AddBackingField(propertyDeclaration);
-                var fieldAccess = underscoreFields
-                    ? backingField.Name()
-                    : $"this.{backingField.Name()}";
-                var code = StringBuilderPool.Borrow()
-                                            .AppendLine($"public Type PropertyName")
-                                            .AppendLine("{")
-                                            .AppendLine($"    get => {fieldAccess};")
-                                            .AppendLine($"    set => {(underscoreFields ? string.Empty : "this.")}{setAndRaise.Name}(ref {fieldAccess}, value);")
-                                            .AppendLine("}")
-                                            .Return();
-                var template = ParseProperty(code);
-                _ = editor.ReplaceNode(
-                          getter,
-                          x => x.WithExpressionBody(template.Getter().ExpressionBody).WithLeadingLineFeed())
-                      .ReplaceNode(
-                          setter,
-                          x => x.WithExpressionBody(template.Setter().ExpressionBody).WithLeadingLineFeed().WithTrailingLineFeed());
-
-                if (propertyDeclaration.Initializer != null)
-                {
-                    editor.ReplaceNode(
-                        propertyDeclaration,
-                        (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                 }
 
                 _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));

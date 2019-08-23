@@ -52,7 +52,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void AutoPropertyToSet()
+            public static void AutoPropertyToTrySet()
             {
                 var before = @"
 namespace RoslynSandbox
@@ -70,11 +70,7 @@ namespace RoslynSandbox
     {
         private int bar;
 
-        public int Bar
-        {
-            get => this.bar;
-            set => this.Set(ref this.bar, value);
-        }
+        public int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
@@ -100,11 +96,7 @@ namespace RoslynSandbox
     {
         private int bar = 1;
 
-        public int Bar
-        {
-            get => this.bar;
-            set => this.Set(ref this.bar, value);
-        }
+        public int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
@@ -130,11 +122,7 @@ namespace RoslynSandbox
     {
         private int bar;
 
-        public virtual int Bar
-        {
-            get => this.bar;
-            set => this.Set(ref this.bar, value);
-        }
+        public virtual int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
@@ -165,11 +153,7 @@ namespace RoslynSandbox
     {
         private int bar;
 
-        public int Bar
-        {
-            get => this.bar;
-            private set => this.Set(ref this.bar, value);
-        }
+        public int Bar { get => this.bar; private set => this.Set(ref this.bar, value); }
 
         public void Mutate()
         {
@@ -182,7 +166,7 @@ namespace RoslynSandbox
             }
 
             [Test]
-            public static void AutoPropertyToSetUnderscoreNames()
+            public static void AutoPropertyToTrySetUnderscoreNames()
             {
                 var before = @"
 namespace RoslynSandbox
@@ -210,11 +194,7 @@ namespace RoslynSandbox
             Bar = bar;
         }
 
-        public int Bar
-        {
-            get => _bar;
-            set => Set(ref _bar, value);
-        }
+        public int Bar { get => _bar; set => Set(ref _bar, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);

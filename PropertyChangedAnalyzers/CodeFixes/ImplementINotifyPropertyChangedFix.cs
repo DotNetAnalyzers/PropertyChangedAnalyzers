@@ -207,7 +207,6 @@ namespace PropertyChangedAnalyzers
                         return false;
                     }
                 }
-
             }
 
             bool References(string dll)

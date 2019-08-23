@@ -98,10 +98,7 @@ namespace PropertyChangedAnalyzers
                         {
                             context.RegisterCodeFix(
                                 "Check that value is different before notifying.",
-                                (editor, _) =>
-                                {
-                                    editor.MoveOnPropertyChangedInside(ifTrySetStatement, onPropertyChangedStatement);
-                                },
+                                (editor, _) => editor.MoveOnPropertyChangedInside(ifTrySetStatement, onPropertyChangedStatement),
                                 nameof(CheckIfDifferentBeforeNotifyFix),
                                 diagnostic);
                         }
