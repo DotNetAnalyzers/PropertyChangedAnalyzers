@@ -89,186 +89,192 @@ namespace PropertyChangedAnalyzers
                     }
 
                     if (OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var invoker) &&
-                        invoker.Parameters.Length == 1)
+                        invoker.Parameters.TrySingle(out var parameter) &&
+                        parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {
-                        if (invoker.Parameters[0].Type == KnownSymbol.String ||
-                            invoker.Parameters[0].Type == KnownSymbol.PropertyChangedEventArgs)
+                        if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
                         {
-                            if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
-                            {
-                                context.RegisterCodeFix(
-                                    NotifyWhenValueChanges,
-                                    (editor, cancellationToken) => MakeAutoPropertyNotifyWhenValueChanges(editor, cancellationToken),
-                                    NotifyWhenValueChanges,
-                                    diagnostic);
+                            context.RegisterCodeFix(
+                                MakePropertyNotifyFix.NotifyWhenValueChanges,
+                                (editor, cancellationToken) =>
+                                    NotifyWhenValueChanges(editor, cancellationToken),
+                                nameof(NotifyWhenValueChanges),
+                                diagnostic);
 
-                                void MakeAutoPropertyNotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
+                            void NotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
+                            {
+                                var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
+                                var property =
+                                    semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                                var backingField = editor.AddBackingField(propertyDeclaration);
+                                var fieldAccess = underscoreFields
+                                    ? backingField.Name()
+                                    : $"this.{backingField.Name()}";
+                                var code = StringBuilderPool.Borrow()
+                                                            .AppendLine($"public Type PropertyName")
+                                                            .AppendLine("{")
+                                                            .AppendLine($"    get => {fieldAccess};")
+                                                            .AppendLine()
+                                                            .AppendLine("    set")
+                                                            .AppendLine("    {")
+                                                            .AppendLine(
+                                                                $"        if ({Snippet.EqualityCheck(property.Type, "value", fieldAccess, semanticModel)})")
+                                                            .AppendLine("        {")
+                                                            .AppendLine($"           return;")
+                                                            .AppendLine("        }")
+                                                            .AppendLine()
+                                                            .AppendLine($"        {fieldAccess} = value;")
+                                                            .AppendLine(
+                                                                $"        {Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields)}")
+                                                            .AppendLine("    }")
+                                                            .AppendLine("}")
+                                                            .Return();
+                                var template = ParseProperty(code);
+                                _ = editor.ReplaceNode(
+                                    getter,
+                                    x => x.WithExpressionBody(template.Getter()
+                                                                      .ExpressionBody)
+                                          .WithTrailingElasticLineFeed()
+                                          .WithAdditionalAnnotations(Formatter.Annotation));
+                                _ = editor.ReplaceNode(
+                                    setter,
+                                    x => x.WithBody(template.Setter()
+                                                            .Body)
+                                          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
+                                          .WithAdditionalAnnotations(Formatter.Annotation));
+                                if (propertyDeclaration.Initializer != null)
                                 {
-                                    var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
+                                    _ = editor.ReplaceNode(
+                                        propertyDeclaration,
+                                        x => x.WithoutInitializer());
+                                }
+
+                                _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                            }
+                        }
+                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out setter, out _, out var assignment, out _))
+                        {
+                            context.RegisterCodeFix(
+                                MakePropertyNotifyFix.NotifyWhenValueChanges,
+                                (editor, cancellationToken) => NotifyWhenValueChanges(editor, cancellationToken),
+                                nameof(NotifyWhenValueChanges),
+                                diagnostic);
+
+                            context.RegisterCodeFix(
+                                "Notify.",
+                                (editor, cancellationToken) => Notify(editor, cancellationToken),
+                                nameof(Notify),
+                                diagnostic);
+
+                            void NotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
+                            {
+                                if (setter.ExpressionBody != null)
+                                {
                                     var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                                    var backingField = editor.AddBackingField(propertyDeclaration);
-                                    var fieldAccess = underscoreFields
-                                        ? backingField.Name()
-                                        : $"this.{backingField.Name()}";
+                                    var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
                                     var code = StringBuilderPool.Borrow()
                                                                 .AppendLine($"public Type PropertyName")
                                                                 .AppendLine("{")
-                                                                .AppendLine($"    get => {fieldAccess};")
+                                                                .AppendLine($"    get => {assignment.Left};")
                                                                 .AppendLine()
                                                                 .AppendLine("    set")
                                                                 .AppendLine("    {")
-                                                                .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", fieldAccess, semanticModel)})")
+                                                                .AppendLine(
+                                                                    $"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
                                                                 .AppendLine("        {")
                                                                 .AppendLine($"           return;")
                                                                 .AppendLine("        }")
                                                                 .AppendLine()
-                                                                .AppendLine($"        {fieldAccess} = value;")
-                                                                .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields)}")
+                                                                .AppendLine($"        {assignment};")
+                                                                .AppendLine(
+                                                                    $"        {Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields)}")
                                                                 .AppendLine("    }")
                                                                 .AppendLine("}")
                                                                 .Return();
                                     var template = ParseProperty(code);
-                                    _ = editor.ReplaceNode(
-                                        getter,
-                                        x => x.WithExpressionBody(template.Getter().ExpressionBody).WithTrailingElasticLineFeed()
-                                              .WithAdditionalAnnotations(Formatter.Annotation));
-                                    _ = editor.ReplaceNode(
+                                    editor.ReplaceNode(
                                         setter,
-                                        x => x.WithBody(template.Setter().Body)
-                                              .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                              .WithAdditionalAnnotations(Formatter.Annotation));
-                                    if (propertyDeclaration.Initializer != null)
-                                    {
-                                        _ = editor.ReplaceNode(
-                                            propertyDeclaration,
-                                            x => x.WithoutInitializer());
-                                    }
+                                        (x, _) =>
+                                        {
+                                            var old = (AccessorDeclarationSyntax)x;
+                                            return old.WithBody(template.Setter()
+                                                                        .Body)
+                                                      .WithExpressionBody(null)
+                                                      .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
+                                        });
+                                    _ = editor.FormatNode(propertyDeclaration);
+                                }
 
-                                    _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                                if (setter.Body is BlockSyntax body &&
+                                    body.Statements.TrySingle(out var statement))
+                                {
+                                    var property =
+                                        semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                                    var code = StringBuilderPool.Borrow()
+                                                                .AppendLine(
+                                                                    $"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
+                                                                .AppendLine("        {")
+                                                                .AppendLine($"           return;")
+                                                                .AppendLine("        }")
+                                                                .AppendLine()
+                                                                .Return();
+                                    var ifStatement = SyntaxFactory.ParseStatement(code)
+                                                                   .WithSimplifiedNames()
+                                                                   .WithLeadingElasticLineFeed()
+                                                                   .WithTrailingElasticLineFeed()
+                                                                   .WithAdditionalAnnotations(Formatter.Annotation);
+                                    editor.InsertBefore(
+                                        statement,
+                                        ifStatement);
+                                    var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
+                                    var notifyStatement = SyntaxFactory
+                                                          .ParseStatement(
+                                                              Snippet.OnPropertyChanged(
+                                                                  invoker, property.Name, underscoreFields))
+                                                          .WithSimplifiedNames()
+                                                          .WithLeadingElasticLineFeed()
+                                                          .WithTrailingElasticLineFeed()
+                                                          .WithAdditionalAnnotations(Formatter.Annotation);
+                                    editor.InsertAfter(statement, notifyStatement);
+                                    _ = editor.FormatNode(propertyDeclaration);
                                 }
                             }
-                            else if (IsSimpleAssignmentOnly(propertyDeclaration, out setter, out _, out _, out _))
+
+                            void Notify(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-                                context.RegisterCodeFix(
-                                    MakePropertyNotifyFix.NotifyWhenValueChanges,
-                                    (editor, cancellationToken) => NotifyWhenValueChanges(editor, cancellationToken),
-                                    nameof(NotifyWhenValueChanges),
-                                    diagnostic);
-
-                                context.RegisterCodeFix(
-                                    "Notify.",
-                                    (editor, cancellationToken) => Notify(editor, cancellationToken),
-                                    nameof(Notify),
-                                    diagnostic);
-
-                                void NotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
+                                var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
+                                var property =
+                                    semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
+                                var notifyStatement = SyntaxFactory
+                                                      .ParseStatement(
+                                                          Snippet.OnPropertyChanged(
+                                                              invoker, property.Name, underscoreFields))
+                                                      .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
+                                                      .WithTrailingTrivia(SyntaxFactory.ElasticMarker)
+                                                      .WithSimplifiedNames()
+                                                      .WithAdditionalAnnotations(Formatter.Annotation);
+                                if (setter.ExpressionBody != null)
                                 {
-                                    if (setter.ExpressionBody != null &&
-                                        IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
-                                    {
-                                        var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                                        var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-                                        var code = StringBuilderPool.Borrow()
-                                                                    .AppendLine($"public Type PropertyName")
-                                                                    .AppendLine("{")
-                                                                    .AppendLine($"    get => {assignment.Left};")
-                                                                    .AppendLine()
-                                                                    .AppendLine("    set")
-                                                                    .AppendLine("    {")
-                                                                    .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
-                                                                    .AppendLine("        {")
-                                                                    .AppendLine($"           return;")
-                                                                    .AppendLine("        }")
-                                                                    .AppendLine()
-                                                                    .AppendLine($"        {assignment};")
-                                                                    .AppendLine($"        {Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields)}")
-                                                                    .AppendLine("    }")
-                                                                    .AppendLine("}")
-                                                                    .Return();
-                                        var template = ParseProperty(code);
-                                        editor.ReplaceNode(
-                                            setter,
-                                            (x, _) =>
-                                            {
-                                                var old = (AccessorDeclarationSyntax)x;
-                                                return old.WithBody(template.Setter().Body)
-                                                          .WithExpressionBody(null)
-                                                          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
-                                            });
-                                        _ = editor.FormatNode(propertyDeclaration);
-                                    }
-
-                                    if (setter.Body?.Statements.Count == 1 &&
-                                        IsSimpleAssignmentOnly(propertyDeclaration, out _, out var statement, out assignment, out _))
-                                    {
-                                        var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                                        var code = StringBuilderPool.Borrow()
-                                                                    .AppendLine($"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
-                                                                    .AppendLine("        {")
-                                                                    .AppendLine($"           return;")
-                                                                    .AppendLine("        }")
-                                                                    .AppendLine()
-                                                                    .Return();
-                                        var ifStatement = SyntaxFactory.ParseStatement(code)
-                                                                       .WithSimplifiedNames()
-                                                                       .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
-                                                                       .WithAdditionalAnnotations(Formatter.Annotation);
-                                        editor.InsertBefore(
-                                            statement,
-                                            ifStatement);
-                                        var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-                                        var notifyStatement = SyntaxFactory
-                                                              .ParseStatement(
-                                                                  Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
-                                                              .WithSimplifiedNames()
-                                                              .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
-                                                              .WithAdditionalAnnotations(Formatter.Annotation);
-                                        editor.InsertAfter(statement, notifyStatement);
-                                        _ = editor.FormatNode(propertyDeclaration);
-                                    }
+                                    editor.ReplaceNode(
+                                        setter,
+                                        (x, _) =>
+                                        {
+                                            var old = (AccessorDeclarationSyntax)x;
+                                            return old.WithBody(
+                                                          SyntaxFactory.Block(
+                                                              SyntaxFactory.ExpressionStatement(assignment),
+                                                              notifyStatement))
+                                                      .WithExpressionBody(null)
+                                                      .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
+                                        });
+                                    _ = editor.FormatNode(propertyDeclaration);
                                 }
-
-                                void Notify(DocumentEditor editor, CancellationToken cancellationToken)
+                                else if (setter.Body is BlockSyntax body &&
+                                         body.Statements.TrySingle(out var statement))
                                 {
-                                    var classDeclaration = propertyDeclaration.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                                    if (classDeclaration == null)
-                                    {
-                                        return;
-                                    }
-
-                                    if (IsSimpleAssignmentOnly(propertyDeclaration, out setter, out var statement, out var assignment, out _))
-                                    {
-                                        var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-                                        var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                                        var notifyStatement = SyntaxFactory
-                                                              .ParseStatement(Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields))
-                                                              .WithLeadingTrivia(SyntaxFactory.ElasticMarker)
-                                                              .WithTrailingTrivia(SyntaxFactory.ElasticMarker).WithSimplifiedNames()
-                                            .WithAdditionalAnnotations(Formatter.Annotation);
-                                        if (setter.ExpressionBody != null)
-                                        {
-                                            editor.ReplaceNode(
-                                                setter,
-                                                (x, _) =>
-                                                {
-                                                    var old = (AccessorDeclarationSyntax)x;
-                                                    return old.WithBody(
-                                                                  SyntaxFactory.Block(
-                                                                      SyntaxFactory.ExpressionStatement(assignment),
-                                                                      notifyStatement))
-                                                              .WithExpressionBody(null)
-                                                              .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
-                                                });
-                                            _ = editor.FormatNode(propertyDeclaration);
-                                        }
-                                        else if (setter.Body != null)
-                                        {
-                                            editor.InsertAfter(statement, notifyStatement);
-                                            _ = editor.FormatNode(propertyDeclaration);
-                                        }
-                                    }
+                                    editor.InsertAfter(statement, notifyStatement);
+                                    _ = editor.FormatNode(propertyDeclaration);
                                 }
-
                             }
                         }
                     }
