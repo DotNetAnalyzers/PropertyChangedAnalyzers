@@ -31,7 +31,7 @@ namespace PropertyChangedAnalyzers
             var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Properties.TryGetValue(MutationAnalyzer.PropertyNameKey, out var property))
+                if (diagnostic.Properties.TryGetValue(MutationAnalyzer.PropertyNameKey, out var propertyName))
                 {
                     if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionSyntax expression) &&
                         expression.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
@@ -40,19 +40,19 @@ namespace PropertyChangedAnalyzers
                         onPropertyChangedMethod.Parameters.TrySingle(out var parameter) &&
                         parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {
-                        var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-                        var method = semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
-                        if (TrySet.IsMatch(method, semanticModel, context.CancellationToken) != AnalysisResult.No)
+                        if (expression is InvocationExpressionSyntax invocation &&
+                            semanticModel.TryGetSymbol(invocation, context.CancellationToken, out var trySet) &&
+                            TrySet.IsMatch(trySet, semanticModel, context.CancellationToken) != AnalysisResult.No)
                         {
                             if (invocation.Parent is ExpressionStatementSyntax ||
                                 invocation.Parent is ArrowExpressionClauseSyntax)
                             {
                                 context.RegisterCodeFix(
-                                    $"Notify that property {property} changes.",
+                                    $"Notify that property {propertyName} changes.",
                                     (editor, cancellationToken) => MakeNotifyCreateIf(
                                         editor,
                                         invocation,
-                                        property,
+                                        propertyName,
                                         onPropertyChangedMethod,
                                         underscoreFields),
                                     this.GetType(),
@@ -63,11 +63,11 @@ namespace PropertyChangedAnalyzers
                             if (invocation.Parent is IfStatementSyntax ifStatement)
                             {
                                 context.RegisterCodeFix(
-                                    $"Notify that property {property} changes.",
+                                    $"Notify that property {propertyName} changes.",
                                     (editor, _) => MakeNotifyInIf(
                                         editor,
                                         ifStatement,
-                                        property,
+                                        propertyName,
                                         onPropertyChangedMethod,
                                         underscoreFields),
                                     this.GetType(),
@@ -81,11 +81,11 @@ namespace PropertyChangedAnalyzers
                                 ifStatement2.IsReturnOnly())
                             {
                                 context.RegisterCodeFix(
-                                    $"Notify that property {property} changes.",
+                                    $"Notify that property {propertyName} changes.",
                                     (editor, _) => MakeNotify(
                                         editor,
                                         expression,
-                                        property,
+                                        propertyName,
                                         onPropertyChangedMethod,
                                         underscoreFields),
                                     this.GetType(),
@@ -95,11 +95,11 @@ namespace PropertyChangedAnalyzers
                         }
 
                         context.RegisterCodeFix(
-                            $"Notify that property {property} changes.",
+                            $"Notify that property {propertyName} changes.",
                             (editor, _) => MakeNotify(
                                 editor,
                                 expression,
-                                property,
+                                propertyName,
                                 onPropertyChangedMethod,
                                 underscoreFields),
                             this.GetType(),
