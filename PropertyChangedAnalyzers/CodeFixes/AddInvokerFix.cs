@@ -14,17 +14,17 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MissingInvokerFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddInvokerFix))]
     [Shared]
-    internal class MissingInvokerFix : CodeFixProvider
+    internal class AddInvokerFix : DocumentEditorCodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC007MissingInvoker.Id);
 
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        protected override DocumentEditorFixAllProvider FixAllProvider() => DocumentEditorFixAllProvider.Project;
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
                                           .ConfigureAwait(false);
@@ -33,22 +33,13 @@ namespace PropertyChangedAnalyzers
                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (string.IsNullOrEmpty(token.ValueText))
-                {
-                    continue;
-                }
-
-                var classDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                                ?.FirstAncestorOrSelf<EventFieldDeclarationSyntax>()
-                                                ?.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                if (classDeclaration != null)
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax classDeclaration))
                 {
                     context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "Add OnPropertyChanged invoker.",
-                            cancellationToken => AddInvokerAsync(context.Document, classDeclaration, cancellationToken),
-                            "Add OnPropertyChanged invoker."),
+                        "Add OnPropertyChanged()",
+                        (editor, cancellationToken) =>
+                            AddOnPropertyChanged(editor, classDeclaration, cancellationToken),
+                        "Add OnPropertyChanged()",
                         diagnostic);
 
                     if (!classDeclaration.Modifiers.Any(SyntaxKind.AbstractKeyword) &&
@@ -56,23 +47,17 @@ namespace PropertyChangedAnalyzers
                         NoPropertyShouldNotify(classDeclaration, semanticModel, context.CancellationToken))
                     {
                         context.RegisterCodeFix(
-                            CodeAction.Create(
-                                "Seal class.",
-                                _ => Task.FromResult(context.Document.WithSyntaxRoot(
-                                        syntaxRoot.ReplaceNode(
-                                            classDeclaration,
-                                            SealRewriter.Seal(classDeclaration)))),
-                                "Seal class."),
+                            "Seal class.",
+                            (editor, _) => editor.Seal(classDeclaration),
+                            "Seal class.",
                             diagnostic);
                     }
                 }
             }
         }
 
-        private static async Task<Document> AddInvokerAsync(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
+        private static void AddOnPropertyChanged(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
         {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-                                             .ConfigureAwait(false);
             var type = editor.SemanticModel.GetDeclaredSymbolSafe(classDeclaration, cancellationToken);
             var underscoreFields = editor.SemanticModel.UnderscoreFields();
             if (type.IsSealed)
@@ -111,8 +96,6 @@ protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.Caller
 }",
                         underscoreFields));
             }
-
-            return editor.GetChangedDocument();
         }
 
         private static MethodDeclarationSyntax ParseMethod(string code, CodeStyleResult underscoreFields)
