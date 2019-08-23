@@ -39,7 +39,7 @@ namespace PropertyChangedAnalyzers
                         !classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword))
                     {
                         var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-                        if (NoPropertyShouldNotify(classDeclaration, semanticModel, context.CancellationToken))
+                        if (ShouldSeal(classDeclaration, semanticModel, context.CancellationToken))
                         {
                             context.RegisterCodeFix(
                                 "Seal class.",
@@ -52,7 +52,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static bool NoPropertyShouldNotify(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static bool ShouldSeal(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             foreach (var member in classDeclaration.Members)
             {
