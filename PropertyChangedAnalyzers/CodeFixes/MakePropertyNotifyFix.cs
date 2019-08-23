@@ -51,7 +51,7 @@ namespace PropertyChangedAnalyzers
                             {
                                 var fieldAccess = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
                                                               .ConfigureAwait(false);
-                                var trySet = await editor.TrySetInvocationAsync(trySetMethod, fieldAccess, InpcFactory.Value(), propertyDeclaration, cancellationToken)
+                                var trySet = await editor.TrySetInvocationAsync(trySetMethod, fieldAccess, InpcFactory.Value, propertyDeclaration, cancellationToken)
                                                          .ConfigureAwait(false);
 
                                 _ = editor.ReplaceNode(
@@ -92,7 +92,8 @@ namespace PropertyChangedAnalyzers
                         invoker.Parameters.TrySingle(out var parameter) &&
                         parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {
-                        if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
+                        if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter) &&
+                            semanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property))
                         {
                             context.RegisterCodeFix(
                                 MakePropertyNotifyFix.NotifyWhenValueChanges,
@@ -101,47 +102,23 @@ namespace PropertyChangedAnalyzers
                                 nameof(NotifyWhenValueChanges),
                                 diagnostic);
 
-                            void NotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
+                            async Task NotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-                                var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-                                var property =
-                                    semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                                var backingField = editor.AddBackingField(propertyDeclaration);
-                                var fieldAccess = underscoreFields
-                                    ? backingField.Name()
-                                    : $"this.{backingField.Name()}";
-                                var code = StringBuilderPool.Borrow()
-                                                            .AppendLine($"public Type PropertyName")
-                                                            .AppendLine("{")
-                                                            .AppendLine($"    get => {fieldAccess};")
-                                                            .AppendLine()
-                                                            .AppendLine("    set")
-                                                            .AppendLine("    {")
-                                                            .AppendLine(
-                                                                $"        if ({Snippet.EqualityCheck(property.Type, "value", fieldAccess, semanticModel)})")
-                                                            .AppendLine("        {")
-                                                            .AppendLine($"           return;")
-                                                            .AppendLine("        }")
-                                                            .AppendLine()
-                                                            .AppendLine($"        {fieldAccess} = value;")
-                                                            .AppendLine(
-                                                                $"        {Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields)}")
-                                                            .AppendLine("    }")
-                                                            .AppendLine("}")
-                                                            .Return();
-                                var template = ParseProperty(code);
+                                var backingField = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
+                                                               .ConfigureAwait(false);
+                                var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                                                    .ConfigureAwait(false);
                                 _ = editor.ReplaceNode(
                                     getter,
-                                    x => x.WithExpressionBody(template.Getter()
-                                                                      .ExpressionBody)
-                                          .WithTrailingElasticLineFeed()
-                                          .WithAdditionalAnnotations(Formatter.Annotation));
+                                    x => x.AsExpressionBody(backingField)
+                                          .WithTrailingLineFeed());
                                 _ = editor.ReplaceNode(
                                     setter,
-                                    x => x.WithBody(template.Setter()
-                                                            .Body)
-                                          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
-                                          .WithAdditionalAnnotations(Formatter.Annotation));
+                                    x => x.AsBlockBody(
+                                        InpcFactory.IfReturn(
+                                            InpcFactory.Equals(property.Type, InpcFactory.Value, backingField, editor.SemanticModel)),
+                                        SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, backingField, InpcFactory.Value)),
+                                        onPropertyChanged));
                                 if (propertyDeclaration.Initializer != null)
                                 {
                                     _ = editor.ReplaceNode(
@@ -149,7 +126,7 @@ namespace PropertyChangedAnalyzers
                                         x => x.WithoutInitializer());
                                 }
 
-                                _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                                _ = editor.FormatNode(propertyDeclaration);
                             }
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out setter, out _, out var assignment, out _))

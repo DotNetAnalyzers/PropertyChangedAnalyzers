@@ -7,44 +7,6 @@ namespace PropertyChangedAnalyzers
     [Obsolete("Remove this.")]
     internal static class Snippet
     {
-        internal static string EqualityCheck(ITypeSymbol type, string x, string y, SemanticModel semanticModel)
-        {
-            if (type == KnownSymbol.String)
-            {
-                return $"{x} == {y}";
-            }
-
-            if (!type.IsReferenceType)
-            {
-                if (Gu.Roslyn.AnalyzerExtensions.Equality.HasEqualityOperator(type))
-                {
-                    return $"{x} == {y}";
-                }
-
-                if (type == KnownSymbol.NullableOfT)
-                {
-                    return Gu.Roslyn.AnalyzerExtensions.Equality.HasEqualityOperator(((INamedTypeSymbol)type).TypeArguments[0])
-                        ? $"{x} == {y}"
-                        : $"System.Nullable.Equals({x}, {y})";
-                }
-
-                if (type.GetMembers(nameof(Equals))
-                        .TrySingleOfType(m => m.Parameters.Length == 1 && Equals(type, m.Parameters[0].Type), out IMethodSymbol _))
-                {
-                    return $"{x}.Equals({y})";
-                }
-
-                return $"System.Collections.Generic.EqualityComparer<{type.ToDisplayString()}>.Default.Equals({x}, {y})";
-            }
-
-            if (Descriptors.INPC006UseReferenceEqualsForReferenceTypes.IsSuppressed(semanticModel))
-            {
-                return $"Equals({x}, {y})";
-            }
-
-            return $"ReferenceEquals({x}, {y})";
-        }
-
         internal static string OnPropertyChanged(IMethodSymbol invoker, string propertyName, bool usesUnderscoreNames)
         {
             if (invoker != null &&

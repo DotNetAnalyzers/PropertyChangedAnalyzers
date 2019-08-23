@@ -15,6 +15,8 @@ namespace PropertyChangedAnalyzers
         internal static readonly AttributeListSyntax CallerMemberNameAttributeList = SyntaxFactory.AttributeList(
             SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Attribute(ParseQualifiedName("System.Runtime.CompilerServices.CallerMemberName"))));
 
+        internal static readonly IdentifierNameSyntax Value = SyntaxFactory.IdentifierName(SyntaxFactory.Identifier("value"));
+
         internal static QualifiedNameSyntax ParseQualifiedName(string name) => (QualifiedNameSyntax)SyntaxFactory.ParseTypeName(name).WithAdditionalAnnotations(Simplifier.Annotation);
 
         internal static IfStatementSyntax IfReturn(ExpressionSyntax condition)
@@ -410,7 +412,5 @@ namespace PropertyChangedAnalyzers
 
             return SyntaxFactory.ElasticSpace;
         }
-
-        internal static IdentifierNameSyntax Value() => SyntaxFactory.IdentifierName(SyntaxFactory.Identifier("value"));
     }
 }
