@@ -159,7 +159,7 @@ namespace RoslynSandbox
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is EquatableStruct && Equals((EquatableStruct)obj);
+            return obj is EquatableStruct && this.Equals((EquatableStruct)obj);
         }
 
         public override int GetHashCode()
@@ -248,7 +248,7 @@ namespace RoslynSandbox
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is EquatableStruct && Equals((EquatableStruct)obj);
+            return obj is EquatableStruct && this.Equals((EquatableStruct)obj);
         }
 
         public override int GetHashCode()
@@ -347,7 +347,7 @@ namespace RoslynSandbox
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is EquatableStruct && Equals((EquatableStruct)obj);
+            return obj is EquatableStruct && this.Equals((EquatableStruct)obj);
         }
 
         public override int GetHashCode()
@@ -445,7 +445,7 @@ namespace RoslynSandbox
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is EquatableStruct && Equals((EquatableStruct)obj);
+            return obj is EquatableStruct && this.Equals((EquatableStruct)obj);
         }
 
         public override int GetHashCode()

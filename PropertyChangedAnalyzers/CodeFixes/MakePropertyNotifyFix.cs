@@ -98,11 +98,11 @@ namespace PropertyChangedAnalyzers
                             context.RegisterCodeFix(
                                 MakePropertyNotifyFix.NotifyWhenValueChanges,
                                 (editor, cancellationToken) =>
-                                    NotifyWhenValueChanges(editor, cancellationToken),
-                                nameof(NotifyWhenValueChanges),
+                                    NotifyWhenValueChangesAsync(editor, cancellationToken),
+                                nameof(NotifyWhenValueChangesAsync),
                                 diagnostic);
 
-                            async Task NotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
+                            async Task NotifyWhenValueChangesAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
                                 var backingField = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
                                                                .ConfigureAwait(false);
@@ -133,17 +133,17 @@ namespace PropertyChangedAnalyzers
                         {
                             context.RegisterCodeFix(
                                 MakePropertyNotifyFix.NotifyWhenValueChanges,
-                                (editor, cancellationToken) => NotifyWhenValueChanges(editor, cancellationToken),
-                                nameof(NotifyWhenValueChanges),
+                                (editor, cancellationToken) => NotifyWhenValueChangesAsync(editor, cancellationToken),
+                                nameof(NotifyWhenValueChangesAsync),
                                 diagnostic);
 
                             context.RegisterCodeFix(
                                 "Notify.",
-                                (editor, cancellationToken) => Notify(editor, cancellationToken),
-                                nameof(Notify),
+                                (editor, cancellationToken) => NotifyAsync(editor, cancellationToken),
+                                nameof(NotifyAsync),
                                 diagnostic);
 
-                            async Task NotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
+                            async Task NotifyWhenValueChangesAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
                                 if (setter.ExpressionBody != null)
                                 {
@@ -172,7 +172,7 @@ namespace PropertyChangedAnalyzers
                                 }
                             }
 
-                            async Task Notify(DocumentEditor editor, CancellationToken cancellationToken)
+                            async Task NotifyAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
                                 if (setter.ExpressionBody != null)
                                 {
