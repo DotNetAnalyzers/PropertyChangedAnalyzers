@@ -35,6 +35,22 @@ namespace PropertyChangedAnalyzers
                   InpcFactory.Nameof(InpcFactory.SymbolAccess(propertyName, qualifyPropertyAccess)));
         }
 
+        internal static async Task<ExpressionStatementSyntax> OnPropertyChangedInvocationStatementAsync(this DocumentEditor editor, IMethodSymbol invoker, PropertyDeclarationSyntax containingProperty, CancellationToken cancellationToken)
+        {
+            if (invoker.Parameters.TrySingle(out var parameter))
+            {
+                var qualifyMethodAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
+                                                      .ConfigureAwait(false);
+                var nameExpression = await editor.NameOfContainingAsync(containingProperty, parameter, cancellationToken)
+                                                 .ConfigureAwait(false);
+                return InpcFactory.OnPropertyChangedInvocationStatement(
+                    InpcFactory.SymbolAccess(invoker.Name, qualifyMethodAccess),
+                    nameExpression);
+            }
+
+            throw new InvalidOperationException("Could not find name parameter.");
+        }
+
         internal static async Task<InvocationExpressionSyntax> TrySetInvocationAsync(this DocumentEditor editor, IMethodSymbol trySet, ExpressionSyntax field, ExpressionSyntax value, PropertyDeclarationSyntax containingProperty, CancellationToken cancellationToken)
         {
             if (trySet.TryFindParameter(KnownSymbol.String, out var nameParameter))

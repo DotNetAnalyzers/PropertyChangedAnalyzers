@@ -25,7 +25,7 @@ namespace PropertyChangedAnalyzers
                 condition,
                 SyntaxFactory.Token(SyntaxKind.CloseParenToken),
                 SyntaxFactory.Block(SyntaxFactory.ReturnStatement()),
-                null);
+                null).WithTrailingLineFeed();
         }
 
         internal static IfStatementSyntax IfStatement(ExpressionSyntax condition, params StatementSyntax[] statements)
@@ -41,12 +41,43 @@ namespace PropertyChangedAnalyzers
 
         internal static ExpressionSyntax Equals(ExpressionSyntax x, ExpressionSyntax y, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (semanticModel.TryGetType(x, cancellationToken, out var type))
+            if (TryGetType(out var type))
             {
-                return Equals(type, x, y, semanticModel);
+                return Equals(type, x.WithoutTrivia(), y.WithoutTrivia(), semanticModel);
             }
 
             throw new InvalidOperationException("Failed creating equality check.");
+
+            bool TryGetType(out ITypeSymbol result)
+            {
+                if (semanticModel.TryGetType(x, cancellationToken, out result) ||
+                    semanticModel.TryGetType(y, cancellationToken, out result))
+                {
+                    return true;
+                }
+
+                if (semanticModel.TryGetSymbol(x, cancellationToken, out var symbol) ||
+                    semanticModel.TryGetSymbol(y, cancellationToken, out symbol))
+                {
+                    switch (symbol)
+                    {
+                        case IParameterSymbol parameter:
+                            result = parameter.Type;
+                            return true;
+                        case ILocalSymbol local:
+                            result = local.Type;
+                            return true;
+                        case IFieldSymbol field:
+                            result = field.Type;
+                            return true;
+                        case IPropertySymbol property:
+                            result = property.Type;
+                            return true;
+                    }
+                }
+
+                return false;
+            }
         }
 
         internal static ExpressionSyntax Equals(string className, string methodName, ExpressionSyntax x, ExpressionSyntax y)

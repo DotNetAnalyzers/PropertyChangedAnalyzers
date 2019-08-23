@@ -296,6 +296,7 @@ namespace RoslynSandbox
                 {
                     return;
                 }
+
                 /*7*/
                 this.value = value; /*8*/
                 this.OnPropertyChanged();

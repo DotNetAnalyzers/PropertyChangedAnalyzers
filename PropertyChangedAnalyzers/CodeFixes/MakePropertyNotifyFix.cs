@@ -166,7 +166,7 @@ namespace PropertyChangedAnalyzers
                                 nameof(Notify),
                                 diagnostic);
 
-                            void NotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
+                            async Task NotifyWhenValueChanges(DocumentEditor editor, CancellationToken cancellationToken)
                             {
                                 if (setter.ExpressionBody != null)
                                 {
@@ -208,34 +208,13 @@ namespace PropertyChangedAnalyzers
                                 if (setter.Body is BlockSyntax body &&
                                     body.Statements.TrySingle(out var statement))
                                 {
-                                    var property =
-                                        semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                                    var code = StringBuilderPool.Borrow()
-                                                                .AppendLine(
-                                                                    $"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
-                                                                .AppendLine("        {")
-                                                                .AppendLine($"           return;")
-                                                                .AppendLine("        }")
-                                                                .AppendLine()
-                                                                .Return();
-                                    var ifStatement = SyntaxFactory.ParseStatement(code)
-                                                                   .WithSimplifiedNames()
-                                                                   .WithLeadingElasticLineFeed()
-                                                                   .WithTrailingElasticLineFeed()
-                                                                   .WithAdditionalAnnotations(Formatter.Annotation);
                                     editor.InsertBefore(
                                         statement,
-                                        ifStatement);
-                                    var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-                                    var notifyStatement = SyntaxFactory
-                                                          .ParseStatement(
-                                                              Snippet.OnPropertyChanged(
-                                                                  invoker, property.Name, underscoreFields))
-                                                          .WithSimplifiedNames()
-                                                          .WithLeadingElasticLineFeed()
-                                                          .WithTrailingElasticLineFeed()
-                                                          .WithAdditionalAnnotations(Formatter.Annotation);
-                                    editor.InsertAfter(statement, notifyStatement);
+                                        InpcFactory.IfReturn(
+                                            InpcFactory.Equals(assignment.Right, assignment.Left, editor.SemanticModel, cancellationToken)));
+                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                                         .ConfigureAwait(false);
+                                    editor.InsertAfter(statement, onPropertyChanged);
                                     _ = editor.FormatNode(propertyDeclaration);
                                 }
                             }
