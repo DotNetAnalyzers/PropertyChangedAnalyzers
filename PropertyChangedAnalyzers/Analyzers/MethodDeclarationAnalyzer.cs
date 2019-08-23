@@ -31,9 +31,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (OnPropertyChanged.IsMatch(method, context.SemanticModel, context.CancellationToken, out var parameter) == AnalysisResult.Yes)
                 {
-                    if (parameter.Type == KnownSymbol.String &&
-                        !parameter.IsCallerMemberName() &&
-                        methodDeclaration.TryFindParameter(parameter.Name, out var parameterSyntax))
+                    if (ShouldBeCallerMemberName(parameter, out var parameterSyntax))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
                     }
@@ -48,9 +46,7 @@ namespace PropertyChangedAnalyzers
                 }
                 else if (TrySet.IsMatch(method, context.SemanticModel, context.CancellationToken, out _, out _, out parameter) == AnalysisResult.Yes)
                 {
-                    if (parameter.Type == KnownSymbol.String &&
-                        !parameter.IsCallerMemberName() &&
-                        methodDeclaration.TryFindParameter(parameter.Name, out var parameterSyntax))
+                    if (ShouldBeCallerMemberName(parameter, out var parameterSyntax))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
                     }
@@ -63,6 +59,15 @@ namespace PropertyChangedAnalyzers
                                 location));
                     }
                 }
+            }
+
+            bool ShouldBeCallerMemberName(IParameterSymbol candidate, out ParameterSyntax parameterSyntax)
+            {
+                parameterSyntax = null;
+                return !candidate.IsCallerMemberName() &&
+                       candidate.Type == KnownSymbol.String &&
+                       methodDeclaration.TryFindParameter(candidate.Name, out parameterSyntax) &&
+                       CallerMemberNameAttribute.IsAvailable(context.SemanticModel);
             }
 
             bool ShouldBeProtected(out Location result)
