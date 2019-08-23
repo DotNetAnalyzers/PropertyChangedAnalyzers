@@ -57,34 +57,34 @@ namespace PropertyChangedAnalyzers
                     {
                         if (References("GalaSoft.MvvmLight.dll"))
                         {
-                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmLightViewModelBaseType);
+                            RegisterSubclassFixes(MvvmLightViewModelBaseType);
                         }
 
                         if (References("Caliburn.Micro.dll"))
                         {
-                            RegisterSubclassFixes(diagnostic, classDeclaration, CaliburnMicroPropertyChangedBase);
+                            RegisterSubclassFixes(CaliburnMicroPropertyChangedBase);
                         }
 
                         if (References("Stylet.dll"))
                         {
-                            RegisterSubclassFixes(diagnostic, classDeclaration, StyletPropertyChangedBase);
+                            RegisterSubclassFixes(StyletPropertyChangedBase);
                         }
 
                         if (References("MvvmCross.dll"))
                         {
-                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossMvxNotifyPropertyChanged);
-                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossMvxViewModel);
+                            RegisterSubclassFixes(MvvmCrossMvxNotifyPropertyChanged);
+                            RegisterSubclassFixes(MvvmCrossMvxViewModel);
                         }
 
                         if (References("MvvmCross.Core.dll"))
                         {
-                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossCoreMvxNotifyPropertyChanged);
-                            RegisterSubclassFixes(diagnostic, classDeclaration, MvvmCrossCoreMvxViewModel);
+                            RegisterSubclassFixes(MvvmCrossCoreMvxNotifyPropertyChanged);
+                            RegisterSubclassFixes(MvvmCrossCoreMvxViewModel);
                         }
 
                         if (References("Prism.Mvvm.dll"))
                         {
-                            RegisterSubclassFixes(diagnostic, classDeclaration, PrismMvvmBindableBase);
+                            RegisterSubclassFixes(PrismMvvmBindableBase);
                         }
                     }
 
@@ -93,7 +93,6 @@ namespace PropertyChangedAnalyzers
                         (editor, cancellationToken) =>
                             ImplementINotifyPropertyChangedAsync(
                                 editor,
-                                classDeclaration,
                                 addUsings: true,
                                 cancellationToken),
                         "Implement INotifyPropertyChanged and add usings.",
@@ -104,124 +103,121 @@ namespace PropertyChangedAnalyzers
                         (editor, cancellationToken) =>
                             ImplementINotifyPropertyChangedAsync(
                                 editor,
-                                classDeclaration,
                                 addUsings: false,
                                 cancellationToken),
                         "Implement INotifyPropertyChanged fully qualified.",
                         diagnostic);
                 }
+
+                void RegisterSubclassFixes(QualifiedNameSyntax viewModelBaseType)
+                {
+                    context.RegisterCodeFix(
+                        $"Subclass {viewModelBaseType} and add using.",
+                        (editor, _) =>
+                            Subclass(editor, addUsings: true),
+                        $"Subclass {viewModelBaseType} and add usings.",
+                        diagnostic);
+
+                    context.RegisterCodeFix(
+                        $"Subclass {viewModelBaseType} fully qualified.",
+                        (editor, _) =>
+                            Subclass(editor, addUsings: false),
+                        $"Subclass {viewModelBaseType} fully qualified.",
+                        diagnostic);
+
+                    void Subclass(DocumentEditor editor, bool addUsings)
+                    {
+                        if (classDeclaration.BaseList is BaseListSyntax baseList &&
+                            baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out var baseType))
+                        {
+                            _ = editor.ReplaceNode(
+                                baseType,
+                                x => BaseType().WithTriviaFrom(x));
+                        }
+                        else
+                        {
+                            editor.AddBaseType(classDeclaration, BaseType());
+                        }
+
+                        if (addUsings)
+                        {
+                            _ = editor.AddUsing(SyntaxFactory.UsingDirective(viewModelBaseType.Left));
+                        }
+
+                        TypeSyntax BaseType()
+                        {
+                            return addUsings
+                                ? (TypeSyntax)viewModelBaseType.Right
+                                : viewModelBaseType;
+                        }
+                    }
+                }
+
+                async Task ImplementINotifyPropertyChangedAsync(DocumentEditor editor, bool addUsings, CancellationToken cancellationToken)
+                {
+                    if (!type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, editor.SemanticModel.Compilation) &&
+                        !HasINotifyPropertyChangedInterface(out var baseType))
+                    {
+                        if (baseType is null)
+                        {
+                            editor.AddInterfaceType(classDeclaration, INotifyPropertyChangedType);
+                        }
+                        else
+                        {
+                            _ = editor.ReplaceNode(
+                                baseType.Type,
+                                x => INotifyPropertyChangedType.WithTriviaFrom(x));
+                        }
+                    }
+
+                    if (!type.TryFindEventRecursive("PropertyChanged", out _))
+                    {
+                        _ = editor.AddEvent(
+                            classDeclaration,
+                            (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration("PropertyChanged", PropertyChangedEventHandlerType, Accessibility.Public));
+                    }
+
+                    if (!type.TryFindFirstMethodRecursive("OnPropertyChanged", m => m.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.String, out _))
+                    {
+                        var qualifyAccess = await editor.QualifyEventAccessAsync(cancellationToken)
+                                                        .ConfigureAwait(false);
+
+                        _ = editor.AddMethod(
+                            classDeclaration,
+                            InpcFactory.OnPropertyChangedDeclaration(qualifyAccess, type.IsSealed, CallerMemberNameAttribute.IsAvailable(editor.SemanticModel)));
+                    }
+
+                    if (addUsings)
+                    {
+                        _ = editor.AddUsing(SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left))
+                                  .AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
+                    }
+
+                    bool HasINotifyPropertyChangedInterface(out BaseTypeSyntax result)
+                    {
+                        if (classDeclaration.BaseList is BaseListSyntax baseList)
+                        {
+                            if (baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out result))
+                            {
+                                if (addUsings)
+                                {
+                                    return true;
+                                }
+
+                                return result.Type.IsKind(SyntaxKind.QualifiedName);
+                            }
+                        }
+
+                        result = null;
+                        return false;
+                    }
+                }
+
             }
 
             bool References(string dll)
             {
                 return semanticModel.Compilation.References.Any(x => x.Display?.EndsWith(dll) == true);
-            }
-
-            void RegisterSubclassFixes(Diagnostic diagnostic, ClassDeclarationSyntax classDeclaration, QualifiedNameSyntax viewModelBaseType)
-            {
-                context.RegisterCodeFix(
-                    $"Subclass {viewModelBaseType} and add using.",
-                    (editor, _) =>
-                        Subclass(editor, addUsings: true),
-                    $"Subclass {viewModelBaseType} and add usings.",
-                    diagnostic);
-
-                context.RegisterCodeFix(
-                    $"Subclass {viewModelBaseType} fully qualified.",
-                    (editor, _) =>
-                        Subclass(editor, addUsings: false),
-                    $"Subclass {viewModelBaseType} fully qualified.",
-                    diagnostic);
-
-                void Subclass(DocumentEditor editor, bool addUsings)
-                {
-                    if (classDeclaration.BaseList is BaseListSyntax baseList &&
-                        baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out var baseType))
-                    {
-                        _ = editor.ReplaceNode(
-                            baseType,
-                            x => BaseType().WithTriviaFrom(x));
-                    }
-                    else
-                    {
-                        editor.AddBaseType(classDeclaration, BaseType());
-                    }
-
-                    if (addUsings)
-                    {
-                        _ = editor.AddUsing(SyntaxFactory.UsingDirective(viewModelBaseType.Left));
-                    }
-
-                    TypeSyntax BaseType()
-                    {
-                        return addUsings
-                            ? (TypeSyntax)viewModelBaseType.Right
-                            : viewModelBaseType;
-                    }
-                }
-            }
-        }
-
-        private static async Task ImplementINotifyPropertyChangedAsync(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, bool addUsings, CancellationToken cancellationToken)
-        {
-            if (editor.SemanticModel.TryGetSymbol(classDeclaration, cancellationToken, out var type))
-            {
-                if (!type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, editor.SemanticModel.Compilation) &&
-                    !HasINotifyPropertyChangedInterface(out var baseType))
-                {
-                    if (baseType is null)
-                    {
-                        editor.AddInterfaceType(classDeclaration, INotifyPropertyChangedType);
-                    }
-                    else
-                    {
-                        _ = editor.ReplaceNode(
-                            baseType.Type,
-                            x => INotifyPropertyChangedType.WithTriviaFrom(x));
-                    }
-                }
-
-                if (!type.TryFindEventRecursive("PropertyChanged", out _))
-                {
-                    _ = editor.AddEvent(
-                        classDeclaration,
-                        (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration("PropertyChanged", PropertyChangedEventHandlerType, Accessibility.Public));
-                }
-
-                if (!type.TryFindFirstMethodRecursive("OnPropertyChanged", m => m.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.String, out _))
-                {
-                    var qualifyAccess = await editor.QualifyEventAccessAsync(cancellationToken)
-                                                    .ConfigureAwait(false);
-
-                    _ = editor.AddMethod(
-                        classDeclaration,
-                        InpcFactory.OnPropertyChangedDeclaration(qualifyAccess, type.IsSealed, callerMemberName: true));
-                }
-
-                if (addUsings)
-                {
-                    _ = editor.AddUsing(SyntaxFactory.UsingDirective(INotifyPropertyChangedType.Left))
-                              .AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
-                }
-            }
-
-            bool HasINotifyPropertyChangedInterface(out BaseTypeSyntax baseType)
-            {
-                if (classDeclaration.BaseList is BaseListSyntax baseList)
-                {
-                    if (baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out baseType))
-                    {
-                        if (addUsings)
-                        {
-                            return true;
-                        }
-
-                        return baseType.Type.IsKind(SyntaxKind.QualifiedName);
-                    }
-                }
-
-                baseType = null;
-                return false;
             }
         }
 
