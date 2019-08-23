@@ -122,24 +122,43 @@ namespace PropertyChangedAnalyzers
                 context.RegisterCodeFix(
                     $"Subclass {viewModelBaseType} and add using.",
                     (editor, _) =>
-                        Subclass(
-                            editor,
-                            classDeclaration,
-                            viewModelBaseType,
-                            addUsings: true),
+                        Subclass(editor, addUsings: true),
                     $"Subclass {viewModelBaseType} and add usings.",
                     diagnostic);
 
                 context.RegisterCodeFix(
                     $"Subclass {viewModelBaseType} fully qualified.",
                     (editor, _) =>
-                        Subclass(
-                            editor,
-                            classDeclaration,
-                            viewModelBaseType,
-                            addUsings: false),
+                        Subclass(editor, addUsings: false),
                     $"Subclass {viewModelBaseType} fully qualified.",
                     diagnostic);
+
+                void Subclass(DocumentEditor editor, bool addUsings)
+                {
+                    if (classDeclaration.BaseList is BaseListSyntax baseList &&
+                        baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out var baseType))
+                    {
+                        _ = editor.ReplaceNode(
+                            baseType,
+                            x => BaseType().WithTriviaFrom(x));
+                    }
+                    else
+                    {
+                        editor.AddBaseType(classDeclaration, BaseType());
+                    }
+
+                    if (addUsings)
+                    {
+                        _ = editor.AddUsing(SyntaxFactory.UsingDirective(viewModelBaseType.Left));
+                    }
+
+                    TypeSyntax BaseType()
+                    {
+                        return addUsings
+                            ? (TypeSyntax)viewModelBaseType.Right
+                            : viewModelBaseType;
+                    }
+                }
             }
         }
 
@@ -203,33 +222,6 @@ namespace PropertyChangedAnalyzers
 
                 baseType = null;
                 return false;
-            }
-        }
-
-        private static void Subclass(DocumentEditor editor, ClassDeclarationSyntax classDeclaration, QualifiedNameSyntax viewModelBaseType, bool addUsings)
-        {
-            if (classDeclaration.BaseList is BaseListSyntax baseList &&
-                baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out var baseType))
-            {
-                _ = editor.ReplaceNode(
-                       baseType,
-                       x => BaseType().WithTriviaFrom(x));
-            }
-            else
-            {
-                editor.AddBaseType(classDeclaration, BaseType());
-            }
-
-            if (addUsings)
-            {
-                _ = editor.AddUsing(SyntaxFactory.UsingDirective(viewModelBaseType.Left));
-            }
-
-            TypeSyntax BaseType()
-            {
-                return addUsings
-                    ? (TypeSyntax)viewModelBaseType.Right
-                    : viewModelBaseType;
             }
         }
 
