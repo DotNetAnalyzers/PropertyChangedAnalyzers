@@ -170,41 +170,18 @@ namespace PropertyChangedAnalyzers
                             {
                                 if (setter.ExpressionBody != null)
                                 {
-                                    var property = semanticModel.GetDeclaredSymbolSafe(propertyDeclaration, cancellationToken);
-                                    var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
-                                    var code = StringBuilderPool.Borrow()
-                                                                .AppendLine($"public Type PropertyName")
-                                                                .AppendLine("{")
-                                                                .AppendLine($"    get => {assignment.Left};")
-                                                                .AppendLine()
-                                                                .AppendLine("    set")
-                                                                .AppendLine("    {")
-                                                                .AppendLine(
-                                                                    $"        if ({Snippet.EqualityCheck(property.Type, "value", assignment.Left.ToString(), semanticModel)})")
-                                                                .AppendLine("        {")
-                                                                .AppendLine($"           return;")
-                                                                .AppendLine("        }")
-                                                                .AppendLine()
-                                                                .AppendLine($"        {assignment};")
-                                                                .AppendLine(
-                                                                    $"        {Snippet.OnPropertyChanged(invoker, property.Name, underscoreFields)}")
-                                                                .AppendLine("    }")
-                                                                .AppendLine("}")
-                                                                .Return();
-                                    var template = ParseProperty(code);
-                                    editor.ReplaceNode(
+                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                                                        .ConfigureAwait(false);
+                                    _ = editor.ReplaceNode(
                                         setter,
-                                        (x, _) =>
-                                        {
-                                            var old = (AccessorDeclarationSyntax)x;
-                                            return old.WithBody(template.Setter().Body)
-                                                      .WithExpressionBody(null)
-                                                      .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
-                                        });
+                                        x => x.AsBlockBody(
+                                            InpcFactory.IfReturn(
+                                                InpcFactory.Equals(assignment.Right, assignment.Left, editor.SemanticModel, cancellationToken)),
+                                            SyntaxFactory.ExpressionStatement(assignment),
+                                            onPropertyChanged));
                                     _ = editor.FormatNode(propertyDeclaration);
                                 }
-
-                                if (setter.Body is BlockSyntax body &&
+                                else if (setter.Body is BlockSyntax body &&
                                     body.Statements.TrySingle(out var statement))
                                 {
                                     editor.InsertBefore(
@@ -226,7 +203,9 @@ namespace PropertyChangedAnalyzers
                                                                         .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
                                         setter,
-                                        x => x.AsBlockBody(SyntaxFactory.ExpressionStatement(assignment), onPropertyChanged));
+                                        x => x.AsBlockBody(
+                                            SyntaxFactory.ExpressionStatement(assignment),
+                                            onPropertyChanged));
                                     _ = editor.FormatNode(propertyDeclaration);
                                 }
                                 else if (setter.Body is BlockSyntax body &&
