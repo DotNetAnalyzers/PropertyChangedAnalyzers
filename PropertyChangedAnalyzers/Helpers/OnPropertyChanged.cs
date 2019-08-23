@@ -87,7 +87,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (invocation.FirstAncestor<ClassDeclarationSyntax>() is ClassDeclarationSyntax containingClass)
+            if (invocation.TryFirstAncestor(out ClassDeclarationSyntax containingClass))
             {
                 if (containingClass.BaseList?.Types == null ||
                     containingClass.BaseList.Types.Count == 0)
@@ -101,6 +101,24 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
+            return AnalysisResult.No;
+        }
+
+        internal static AnalysisResult IsMatch(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out IParameterSymbol parameter)
+        {
+            var result = IsMatch(method, semanticModel, cancellationToken);
+            if (result == AnalysisResult.No)
+            {
+                parameter = null;
+                return AnalysisResult.No;
+            }
+
+            if (method.Parameters.TrySingle(out parameter))
+            {
+                return result;
+            }
+
+            parameter = null;
             return AnalysisResult.No;
         }
 

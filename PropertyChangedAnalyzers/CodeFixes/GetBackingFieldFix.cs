@@ -25,7 +25,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax expression) &&
                     diagnostic.AdditionalLocations.TrySingle(out var additionalLocation) &&
-                    syntaxRoot.FindNode(additionalLocation.SourceSpan) is ExpressionSyntax fieldAccess)
+                    syntaxRoot.TryFindNode(additionalLocation, out ExpressionSyntax fieldAccess))
                 {
                     context.RegisterCodeFix(
                         "Get backing field.",

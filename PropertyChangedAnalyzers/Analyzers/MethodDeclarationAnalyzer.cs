@@ -27,26 +27,45 @@ namespace PropertyChangedAnalyzers
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.ContainingSymbol is IMethodSymbol method &&
-                method.Parameters.TrySingle(out var parameter) &&
-                context.Node is MethodDeclarationSyntax methodDeclaration &&
-                OnPropertyChanged.IsMatch(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                context.Node is MethodDeclarationSyntax methodDeclaration)
             {
-                if (parameter.Type == KnownSymbol.String &&
-                    !parameter.IsCallerMemberName() &&
-                    methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
-                    parameterList.Parameters.TrySingle(out var parameterSyntax))
+                if (OnPropertyChanged.IsMatch(method, context.SemanticModel, context.CancellationToken, out var parameter) == AnalysisResult.Yes)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
-                }
+                    if (parameter.Type == KnownSymbol.String &&
+                        !parameter.IsCallerMemberName() &&
+                        methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
+                        parameterList.Parameters.TrySingle(out var parameterSyntax))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
+                    }
 
+                    if (ShouldBeProtected(out var location))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.INPC018InvokerShouldBeProtected,
+                                location));
+                    }
+                }
+            }
+
+            bool ShouldBeProtected(out Location result)
+            {
                 if (method.DeclaredAccessibility == Accessibility.Private &&
                     !method.ContainingType.IsSealed)
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptors.INPC018InvokerShouldBeProtected,
-                            methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier) ? modifier.GetLocation() : methodDeclaration.Identifier.GetLocation()));
+                    if (methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier))
+                    {
+                        result = modifier.GetLocation();
+                        return true;
+                    }
+
+                    result = methodDeclaration.Identifier.GetLocation();
+                    return true;
                 }
+
+                result = null;
+                return false;
             }
         }
     }
