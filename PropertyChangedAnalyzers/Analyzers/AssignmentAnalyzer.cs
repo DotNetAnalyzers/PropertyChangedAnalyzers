@@ -2,7 +2,6 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Reflection.Metadata;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;

@@ -15,8 +15,6 @@ namespace PropertyChangedAnalyzers
         internal static readonly AttributeListSyntax CallerMemberNameAttributeList = SyntaxFactory.AttributeList(
             SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Attribute(ParseQualifiedName("System.Runtime.CompilerServices.CallerMemberName"))));
 
-        private static readonly SyntaxTriviaList LineFeed = SyntaxFactory.TriviaList(SyntaxFactory.LineFeed);
-
         internal static QualifiedNameSyntax ParseQualifiedName(string name) => (QualifiedNameSyntax)SyntaxFactory.ParseTypeName(name).WithAdditionalAnnotations(Simplifier.Annotation);
 
         internal static IfStatementSyntax IfReturn(ExpressionSyntax condition)
@@ -251,9 +249,9 @@ namespace PropertyChangedAnalyzers
                                     argumentList: SyntaxFactory.ArgumentList(
                                         openParenToken: SyntaxFactory.Token(SyntaxKind.OpenParenToken),
                                         arguments: SyntaxFactory.SeparatedList(
-                                            new ArgumentSyntax[]
+                                            new []
                                             {
-                                                SyntaxFactory.Argument(SyntaxFactory.ThisExpression()),
+                                                ThisArgument(),
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.ObjectCreationExpression(
                                                         newKeyword: SyntaxFactory.Token(
@@ -265,7 +263,7 @@ namespace PropertyChangedAnalyzers
                                                             openParenToken: SyntaxFactory.Token(
                                                                 SyntaxKind.OpenParenToken),
                                                             arguments: SyntaxFactory
-                                                                .SingletonSeparatedList<ArgumentSyntax>(
+                                                                .SingletonSeparatedList(
                                                                     SyntaxFactory.Argument(SyntaxFactory.IdentifierName("propertyName"))),
                                                             closeParenToken: SyntaxFactory.Token(
                                                                 SyntaxKind.CloseParenToken)),
@@ -278,6 +276,14 @@ namespace PropertyChangedAnalyzers
                                 trailing: SyntaxFactory.TriviaList(SyntaxFactory.LineFeed))))),
                 expressionBody: default,
                 semicolonToken: default);
+
+            ArgumentSyntax ThisArgument()
+            {
+                return SyntaxFactory.Argument(
+                    isStatic
+                        ? (ExpressionSyntax)SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
+                        : SyntaxFactory.ThisExpression());
+            }
 
             SyntaxTokenList Modifiers()
             {
@@ -361,7 +367,7 @@ namespace PropertyChangedAnalyzers
         {
             if (member == null)
             {
-                throw new System.ArgumentNullException(nameof(member));
+                throw new ArgumentNullException(nameof(member));
             }
 
             if (member.HasLeadingTrivia &&

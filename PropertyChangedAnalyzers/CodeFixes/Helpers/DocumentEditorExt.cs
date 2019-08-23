@@ -45,8 +45,10 @@ namespace PropertyChangedAnalyzers
 
         internal static async Task AddOnPropertyChangedMethodAsync(this DocumentEditor editor, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
         {
-            var qualifyAccess = await editor.QualifyEventAccessAsync(cancellationToken)
-                                            .ConfigureAwait(false);
+            var qualifyAccess = classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword)
+                ? CodeStyleResult.No
+                : await editor.QualifyEventAccessAsync(cancellationToken)
+                              .ConfigureAwait(false);
 
             _ = editor.AddMethod(
                 classDeclaration,
