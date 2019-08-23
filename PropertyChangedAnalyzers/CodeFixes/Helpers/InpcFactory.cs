@@ -380,6 +380,11 @@ namespace PropertyChangedAnalyzers
 
         internal static ExpressionSyntax SymbolAccess(string name, CodeStyleResult qualify)
         {
+            if (name[0] == '@')
+            {
+                name = name.TrimStart('@');
+            }
+
             var identifier = SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None
                 ? SyntaxFactory.VerbatimIdentifier(SyntaxTriviaList.Empty, name, name, SyntaxTriviaList.Empty)
                 : SyntaxFactory.Identifier(name);
