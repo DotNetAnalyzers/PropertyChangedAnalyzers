@@ -49,13 +49,9 @@ namespace PropertyChangedAnalyzers
 
                             async Task AutoPropertyToTrySetAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-                                var backingField = editor.AddBackingField(propertyDeclaration);
-                                var qualifyFieldAccessAsync = await editor.QualifyFieldAccessAsync(cancellationToken)
-                                                                          .ConfigureAwait(false);
-
+                                var fieldAccess = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken);
                                 var qualifyMethodAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
-                                                                          .ConfigureAwait(false);
-                                var fieldAccess = InpcFactory.SymbolAccess(backingField.Name(), qualifyFieldAccessAsync);
+                                                                      .ConfigureAwait(false);
                                 var nameExpression = await editor.NameOfContainingAsync(propertyDeclaration, nameParameter, cancellationToken)
                                                                         .ConfigureAwait(false);
                                 _ = editor.ReplaceNode(
@@ -87,13 +83,13 @@ namespace PropertyChangedAnalyzers
                                 trySetMethod.DisplaySignature(),
                                 async (editor, cancellationToken) =>
                                 {
-                                    var qualifyAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
+                                    var qualifyMethodAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
                                                                     .ConfigureAwait(false);
                                     var name = await editor.NameOfContainingAsync(propertyDeclaration, nameParameter, cancellationToken)
                                                            .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
                                         assignment,
-                                        x => InpcFactory.TrySetInvocation(qualifyAccess, trySetMethod, assignment.Left, assignment.Right, name)
+                                        x => InpcFactory.TrySetInvocation(qualifyMethodAccess, trySetMethod, assignment.Left, assignment.Right, name)
                                                         .WithTriviaFrom(x));
                                 },
                                 trySetMethod.MetadataName,

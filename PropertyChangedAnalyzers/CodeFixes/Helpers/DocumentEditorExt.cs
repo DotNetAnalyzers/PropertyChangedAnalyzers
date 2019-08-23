@@ -13,6 +13,17 @@ namespace PropertyChangedAnalyzers
 
     internal static class DocumentEditorExt
     {
+        internal static async Task<ExpressionSyntax> AddBackingFieldAsync(this DocumentEditor editor, PropertyDeclarationSyntax property, CancellationToken cancellationToken)
+        {
+            var backingField = editor.AddBackingField(property);
+            var qualifyFieldAccessAsync = property.Modifiers.Any(SyntaxKind.StaticKeyword)
+                ? CodeStyleResult.No
+                : await editor.QualifyFieldAccessAsync(cancellationToken)
+                              .ConfigureAwait(false);
+
+            return InpcFactory.SymbolAccess(backingField.Name(), qualifyFieldAccessAsync);
+        }
+
         internal static async Task<ExpressionStatementSyntax> OnPropertyChangedInvocationStatementAsync(this DocumentEditor editor, IMethodSymbol invoker, string propertyName, CancellationToken cancellationToken)
         {
             var qualifyMethodAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
