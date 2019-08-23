@@ -4,11 +4,13 @@
     <TargetFramework>net472</TargetFramework>
     <NoWarn>IDE0025,IDE0052</NoWarn>
   </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+  
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

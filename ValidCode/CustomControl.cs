@@ -4,18 +4,18 @@ namespace ValidCode
     using System.Windows;
     using System.Windows.Controls;
 
-    public class FooControl : Control
+    public class CustomControl : Control
     {
         public static readonly DependencyProperty Value1Property = DependencyProperty.Register(
             nameof(Value1),
             typeof(int),
-            typeof(FooControl),
+            typeof(CustomControl),
             new PropertyMetadata(default(int)));
 
         public static readonly DependencyProperty Value2Property = DependencyProperty.Register(
             nameof(Value2),
             typeof(int),
-            typeof(FooControl),
+            typeof(CustomControl),
             new PropertyMetadata(default(int)));
 
         public int Value1
