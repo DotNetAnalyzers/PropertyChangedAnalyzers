@@ -54,6 +54,14 @@ namespace PropertyChangedAnalyzers
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
                     }
+
+                    if (ShouldBeProtected(out var location))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.INPC018InvokerShouldBeProtected,
+                                location));
+                    }
                 }
             }
 
