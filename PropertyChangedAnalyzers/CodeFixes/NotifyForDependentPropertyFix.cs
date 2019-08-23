@@ -37,8 +37,9 @@ namespace PropertyChangedAnalyzers
                                                .FirstAncestorOrSelf<ExpressionSyntax>();
                     var typeDeclaration = expression.FirstAncestorOrSelf<TypeDeclarationSyntax>();
                     var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
-                    if (OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var invoker) &&
-                        invoker.Parameters[0].Type == KnownSymbol.String)
+                    if (OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var onPropertyChangedMethod) &&
+                        onPropertyChangedMethod.Parameters.TrySingle(out var parameter) &&
+                        parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {
                         var invocation = expression.FirstAncestorOrSelf<InvocationExpressionSyntax>();
                         var method = semanticModel.GetSymbolSafe(invocation, context.CancellationToken);
@@ -53,7 +54,7 @@ namespace PropertyChangedAnalyzers
                                         editor,
                                         invocation,
                                         property,
-                                        invoker,
+                                        onPropertyChangedMethod,
                                         underscoreFields),
                                     this.GetType(),
                                     diagnostic);
@@ -68,7 +69,7 @@ namespace PropertyChangedAnalyzers
                                         editor,
                                         ifStatement,
                                         property,
-                                        invoker,
+                                        onPropertyChangedMethod,
                                         underscoreFields),
                                     this.GetType(),
                                     diagnostic);
@@ -86,7 +87,7 @@ namespace PropertyChangedAnalyzers
                                         editor,
                                         expression,
                                         property,
-                                        invoker,
+                                        onPropertyChangedMethod,
                                         underscoreFields),
                                     this.GetType(),
                                     diagnostic);
@@ -100,7 +101,7 @@ namespace PropertyChangedAnalyzers
                                 editor,
                                 expression,
                                 property,
-                                invoker,
+                                onPropertyChangedMethod,
                                 underscoreFields),
                             this.GetType(),
                             diagnostic);
