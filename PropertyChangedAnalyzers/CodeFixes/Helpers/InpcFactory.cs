@@ -400,22 +400,5 @@ namespace PropertyChangedAnalyzers
                 SyntaxFactory.Token(SyntaxKind.DotToken),
                 SyntaxFactory.IdentifierName(identifier));
         }
-
-        internal static SyntaxTrivia LeadingWhitespace(this SyntaxNode member)
-        {
-            if (member == null)
-            {
-                throw new ArgumentNullException(nameof(member));
-            }
-
-            if (member.HasLeadingTrivia &&
-                member.GetLeadingTrivia() is SyntaxTriviaList triviaList &&
-                triviaList.TryFirst(x => x.IsKind(SyntaxKind.WhitespaceTrivia), out var trivia))
-            {
-                return SyntaxFactory.Whitespace(trivia.ToString());
-            }
-
-            return SyntaxFactory.ElasticSpace;
-        }
     }
 }
