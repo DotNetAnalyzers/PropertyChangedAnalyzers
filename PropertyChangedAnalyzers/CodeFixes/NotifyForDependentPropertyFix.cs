@@ -33,11 +33,10 @@ namespace PropertyChangedAnalyzers
             {
                 if (diagnostic.Properties.TryGetValue(MutationAnalyzer.PropertyNameKey, out var property))
                 {
-                    var expression = syntaxRoot.FindNode(diagnostic.Location.SourceSpan)
-                                               .FirstAncestorOrSelf<ExpressionSyntax>();
-                    var typeDeclaration = expression.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-                    var type = semanticModel.GetDeclaredSymbolSafe(typeDeclaration, context.CancellationToken);
-                    if (OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var onPropertyChangedMethod) &&
+                    if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionSyntax expression) &&
+                        expression.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
+                        semanticModel.TryGetNamedType(classDeclaration, context.CancellationToken, out var type) &&
+                        OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var onPropertyChangedMethod) &&
                         onPropertyChangedMethod.Parameters.TrySingle(out var parameter) &&
                         parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {
