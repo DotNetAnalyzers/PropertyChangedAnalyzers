@@ -102,6 +102,138 @@ namespace RoslynSandbox
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
+
+            [Test]
+            public static void TrySet()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, ↓string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            }
+
+            [Test]
+            public static void TrySetWhenUsing()
+            {
+                var before = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, ↓string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+
+                var after = @"
+namespace RoslynSandbox
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            }
         }
     }
 }

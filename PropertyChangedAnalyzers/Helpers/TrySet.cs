@@ -60,6 +60,31 @@ namespace PropertyChangedAnalyzers
                 visited);
         }
 
+        internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IParameterSymbol field, out IParameterSymbol value, out IParameterSymbol name)
+        {
+            var result = IsMatch(candidate, semanticModel, cancellationToken);
+            if (result == AnalysisResult.No)
+            {
+                field = null;
+                value = null;
+                name = null;
+                return AnalysisResult.No;
+            }
+
+            if (candidate.TypeParameters.TrySingle(out _) &&
+                candidate.Parameters.TrySingle(x => x.Type.Kind == SymbolKind.TypeParameter && x.RefKind == RefKind.Ref,out field) &&
+                candidate.Parameters.TrySingle(x => x.Type.Kind == SymbolKind.TypeParameter && x.RefKind != RefKind.Ref, out value) &&
+                candidate.Parameters.TrySingle(x => x.Type == KnownSymbol.String && x.RefKind != RefKind.Ref, out name))
+            {
+                return result;
+            }
+
+            field = null;
+            value = null;
+            name = null;
+            return AnalysisResult.No;
+        }
+
         internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
         {
             if (visited?.Add(candidate) == false)

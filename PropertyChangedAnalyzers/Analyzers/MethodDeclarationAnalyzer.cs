@@ -33,8 +33,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (parameter.Type == KnownSymbol.String &&
                         !parameter.IsCallerMemberName() &&
-                        methodDeclaration.ParameterList is ParameterListSyntax parameterList &&
-                        parameterList.Parameters.TrySingle(out var parameterSyntax))
+                        methodDeclaration.TryFindParameter(parameter.Name, out var parameterSyntax))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
                     }
@@ -45,6 +44,15 @@ namespace PropertyChangedAnalyzers
                             Diagnostic.Create(
                                 Descriptors.INPC018InvokerShouldBeProtected,
                                 location));
+                    }
+                }
+                else if (TrySet.IsMatch(method, context.SemanticModel, context.CancellationToken, out _, out _, out parameter) == AnalysisResult.Yes)
+                {
+                    if (parameter.Type == KnownSymbol.String &&
+                        !parameter.IsCallerMemberName() &&
+                        methodDeclaration.TryFindParameter(parameter.Name, out var parameterSyntax))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
                     }
                 }
             }
