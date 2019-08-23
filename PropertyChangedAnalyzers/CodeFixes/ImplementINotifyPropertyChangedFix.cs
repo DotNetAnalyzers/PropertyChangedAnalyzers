@@ -179,12 +179,7 @@ namespace PropertyChangedAnalyzers
 
                     if (!type.TryFindFirstMethodRecursive("OnPropertyChanged", m => m.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.String, out _))
                     {
-                        var qualifyAccess = await editor.QualifyEventAccessAsync(cancellationToken)
-                                                        .ConfigureAwait(false);
-
-                        _ = editor.AddMethod(
-                            classDeclaration,
-                            InpcFactory.OnPropertyChangedDeclaration(qualifyAccess, type.IsSealed, CallerMemberNameAttribute.IsAvailable(editor.SemanticModel)));
+                        await editor.AddOnPropertyChangedMethodAsync(classDeclaration, cancellationToken);
                     }
 
                     if (addUsings)

@@ -43,6 +43,20 @@ namespace PropertyChangedAnalyzers
             }
         }
 
+        internal static async Task AddOnPropertyChangedMethodAsync(this DocumentEditor editor, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
+        {
+            var qualifyAccess = await editor.QualifyEventAccessAsync(cancellationToken)
+                                            .ConfigureAwait(false);
+
+            _ = editor.AddMethod(
+                classDeclaration,
+                InpcFactory.OnPropertyChangedDeclaration(
+                    qualifyAccess,
+                    classDeclaration.Modifiers.Any(SyntaxKind.SealedKeyword),
+                    classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword),
+                    CallerMemberNameAttribute.IsAvailable(editor.SemanticModel)));
+        }
+
         internal static void AddOnPropertyChanged(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged)
         {
             switch (ifTrySet.Statement)

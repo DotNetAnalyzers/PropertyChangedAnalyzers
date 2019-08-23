@@ -216,7 +216,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static MethodDeclarationSyntax OnPropertyChangedDeclaration(CodeStyleResult qualifyAccess, bool isSealed, bool callerMemberName)
+        internal static MethodDeclarationSyntax OnPropertyChangedDeclaration(CodeStyleResult qualifyAccess, bool isSealed, bool isStatic, bool callerMemberName)
         {
             return SyntaxFactory.MethodDeclaration(
                 attributeLists: default,
@@ -281,6 +281,13 @@ namespace PropertyChangedAnalyzers
 
             SyntaxTokenList Modifiers()
             {
+                if (isStatic)
+                {
+                    return SyntaxFactory.TokenList(
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+                }
+
                 return isSealed
                     ? SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
                     : SyntaxFactory.TokenList(
