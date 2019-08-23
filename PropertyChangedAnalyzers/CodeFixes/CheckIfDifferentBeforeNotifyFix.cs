@@ -53,23 +53,21 @@ namespace PropertyChangedAnalyzers
                             semanticModel.TryGetSymbol(assignment.Left, CancellationToken.None, out var assignedSymbol) &&
                             assignedSymbol.Kind == SymbolKind.Field &&
                             semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol setterSymbol) &&
-                            TrySet.TryFind(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var setAndRaiseMethod) &&
-                            TrySet.CanCreateInvocation(setAndRaiseMethod, out var nameParameter) &&
+                            TrySet.TryFind(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var trySetMethod) &&
+                            TrySet.CanCreateInvocation(trySetMethod, out _) &&
                             setter.TryFirstAncestor(out PropertyDeclarationSyntax property))
                         {
                             context.RegisterCodeFix(
-                                setAndRaiseMethod.DisplaySignature(),
+                                trySetMethod.DisplaySignature(),
                                 async (editor, cancellationToken) =>
                                 {
-                                    var qualifyAccess = await editor.QualifyMethodAccessAsync(cancellationToken)
-                                                                    .ConfigureAwait(false);
-                                    var nameExpression = await editor.NameOfContainingAsync(property, nameParameter, cancellationToken)
-                                                                     .ConfigureAwait(false);
+                                    var trySet = await editor.TrySetInvocationAsync(trySetMethod, assignment.Left, assignment.Right, property, cancellationToken)
+                                                             .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
                                           setter,
-                                          x => x.AsExpressionBody(InpcFactory.TrySetInvocation(qualifyAccess, setAndRaiseMethod, assignment.Left, assignment.Right, nameExpression)));
+                                          x => x.AsExpressionBody(trySet));
                                 },
-                                setAndRaiseMethod.MetadataName,
+                                trySetMethod.MetadataName,
                                 diagnostic);
                         }
                     }
