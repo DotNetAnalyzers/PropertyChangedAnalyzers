@@ -11,7 +11,6 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
-    using Microsoft.CodeAnalysis.Formatting;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MakePropertyNotifyFix))]
     [Shared]
@@ -32,7 +31,7 @@ namespace PropertyChangedAnalyzers
                                                       .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor<PropertyDeclarationSyntax>(diagnostic, out var propertyDeclaration) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax propertyDeclaration) &&
                     propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
                     semanticModel.TryGetSymbol(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
@@ -71,7 +70,7 @@ namespace PropertyChangedAnalyzers
                                 _ = editor.FormatNode(propertyDeclaration);
                             }
                         }
-                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
+                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var assignment))
                         {
                             context.RegisterCodeFix(
                                 trySetMethod.DisplaySignature(),
@@ -96,7 +95,7 @@ namespace PropertyChangedAnalyzers
                             semanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property))
                         {
                             context.RegisterCodeFix(
-                                MakePropertyNotifyFix.NotifyWhenValueChanges,
+                                NotifyWhenValueChanges,
                                 (editor, cancellationToken) =>
                                     NotifyWhenValueChangesAsync(editor, cancellationToken),
                                 nameof(NotifyWhenValueChangesAsync),
@@ -129,10 +128,10 @@ namespace PropertyChangedAnalyzers
                                 _ = editor.FormatNode(propertyDeclaration);
                             }
                         }
-                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out setter, out _, out var assignment, out _))
+                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out setter, out var assignment))
                         {
                             context.RegisterCodeFix(
-                                MakePropertyNotifyFix.NotifyWhenValueChanges,
+                                NotifyWhenValueChanges,
                                 (editor, cancellationToken) => NotifyWhenValueChangesAsync(editor, cancellationToken),
                                 nameof(NotifyWhenValueChangesAsync),
                                 diagnostic);
@@ -200,45 +199,23 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static PropertyDeclarationSyntax ParseProperty(string code)
+        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
         {
-            return Parse.PropertyDeclaration(code)
-                        .WithSimplifiedNames()
-                        .WithLeadingElasticLineFeed()
-                        .WithTrailingElasticLineFeed()
-                        .WithAdditionalAnnotations(Formatter.Annotation);
-        }
-
-        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out ExpressionStatementSyntax statement, out AssignmentExpressionSyntax assignment, out ExpressionSyntax fieldAccess)
-        {
-            if (propertyDeclaration.TryGetSetter(out setter))
-            {
-                if (setter.Body?.Statements.Count == 1)
-                {
-                    if (Setter.AssignsValueToBackingField(setter, out assignment))
-                    {
-                        statement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
-                        fieldAccess = assignment.Left;
-                        return statement != null;
-                    }
-                }
-
-                if (setter.ExpressionBody != null)
-                {
-                    if (Setter.AssignsValueToBackingField(setter, out assignment))
-                    {
-                        statement = assignment.FirstAncestorOrSelf<ExpressionStatementSyntax>();
-                        fieldAccess = assignment.Left;
-                        return true;
-                    }
-                }
-            }
-
-            setter = null;
-            fieldAccess = null;
-            statement = null;
             assignment = null;
-            return false;
+            return propertyDeclaration.TryGetSetter(out setter) &&
+                   Setter.AssignsValueToBackingField(setter, out assignment) &&
+                   IsSimple(setter);
+            bool IsSimple(AccessorDeclarationSyntax localSetter)
+            {
+                if (localSetter.ExpressionBody != null)
+                {
+                    return true;
+
+                }
+
+                return localSetter.Body is BlockSyntax body &&
+                       body.Statements.Count == 1;
+            }
         }
     }
 }
