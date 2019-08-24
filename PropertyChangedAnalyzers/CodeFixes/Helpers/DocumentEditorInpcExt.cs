@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.Editing;
     using Microsoft.CodeAnalysis.Formatting;
 
-    internal static class DocumentEditorExt
+    internal static class DocumentEditorInpcExt
     {
         internal static async Task<ExpressionSyntax> AddBackingFieldAsync(this DocumentEditor editor, PropertyDeclarationSyntax property, CancellationToken cancellationToken)
         {
@@ -131,21 +131,24 @@ namespace PropertyChangedAnalyzers
         {
             switch (mutation.Parent)
             {
-                case SimpleLambdaExpressionSyntax lambda when lambda.Body is ExpressionSyntax:
+                case SimpleLambdaExpressionSyntax lambda
+                    when lambda.Body is ExpressionSyntax:
                     editor.ReplaceNode(
                         lambda,
                         x => x.AsBlockBody(SyntaxFactory.ExpressionStatement((ExpressionSyntax)x.Body), onPropertyChanged));
                     break;
-                case ParenthesizedLambdaExpressionSyntax lambda when lambda.Body is ExpressionSyntax:
+                case ParenthesizedLambdaExpressionSyntax lambda
+                    when lambda.Body is ExpressionSyntax:
                     editor.ReplaceNode(
                         lambda,
                         x => x.AsBlockBody(SyntaxFactory.ExpressionStatement((ExpressionSyntax)x.Body), onPropertyChanged));
                     break;
-                case ExpressionStatementSyntax mutationStatement when mutationStatement.Parent is BlockSyntax block:
-                    editor.AddOnPropertyChanged(block, onPropertyChanged, mutationStatement, cancellationToken);
+                case ExpressionStatementSyntax expressionStatement:
+                    editor.AddOnPropertyChangedAfter(expressionStatement, onPropertyChanged, cancellationToken);
                     break;
-                case PrefixUnaryExpressionSyntax unary when unary.IsKind(SyntaxKind.LogicalNotExpression) &&
-                                                            unary.Parent is IfStatementSyntax ifNot:
+                case PrefixUnaryExpressionSyntax unary
+                    when unary.IsKind(SyntaxKind.LogicalNotExpression) &&
+                         unary.Parent is IfStatementSyntax ifNot:
                     editor.AddOnPropertyChangedAfter(ifNot, onPropertyChanged, cancellationToken);
                     break;
             }
@@ -192,7 +195,9 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                _ = editor.ReplaceNode(block, x => x.AddStatements(onPropertyChanged));
+                _ = editor.ReplaceNode(
+                    block, 
+                    x => x.AddStatements(onPropertyChanged));
             }
         }
 
@@ -306,8 +311,9 @@ namespace PropertyChangedAnalyzers
         {
             switch (statement)
             {
-                case ExpressionStatementSyntax expressionStatement:
-                    return expressionStatement?.Expression.IsKind(SyntaxKind.SimpleAssignmentExpression) == false &&
+                case ExpressionStatementSyntax expressionStatement
+                    when expressionStatement.Expression is ExpressionSyntax expression:
+                    return !expression.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
                            OnPropertyChanged.IsMatch(expressionStatement, semanticModel, cancellationToken) == AnalysisResult.No;
                 default:
                     return true;

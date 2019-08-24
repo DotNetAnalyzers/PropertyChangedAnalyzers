@@ -163,7 +163,7 @@ namespace RoslynSandbox
 
         public int P1 => this.f * this.p3;
 
-        public int P2 => this.f * this.p3;
+        public int P2 => this.f + this.p3;
 
         public int P3
         {
@@ -194,6 +194,7 @@ namespace RoslynSandbox
     }
 }";
 
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 

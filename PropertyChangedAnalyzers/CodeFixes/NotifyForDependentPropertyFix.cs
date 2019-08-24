@@ -7,10 +7,7 @@ namespace PropertyChangedAnalyzers
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Editing;
-    using Microsoft.CodeAnalysis.Formatting;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NotifyForDependentPropertyFix))]
     [Shared]
@@ -28,7 +25,6 @@ namespace PropertyChangedAnalyzers
 
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
-            var underscoreFields = semanticModel.UnderscoreFields() == CodeStyleResult.Yes;
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.TryGetValue(MutationAnalyzer.PropertyNameKey, out var propertyName))
@@ -117,97 +113,18 @@ namespace PropertyChangedAnalyzers
                         {
                             context.RegisterCodeFix(
                                 $"Notify that property {propertyName} changes.",
-                                (editor, _) => MakeNotify(
-                                    editor,
-                                    expression,
-                                    propertyName,
-                                    onPropertyChangedMethod,
-                                    underscoreFields),
+                                async (editor, cancellationToken) =>
+                                {
+                                    var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                                                                 .ConfigureAwait(false);
+                                    editor.AddOnPropertyChanged(expression, onPropertyChangedStatement, cancellationToken);
+                                },
                                 nameof(NotifyForDependentPropertyFix),
                                 diagnostic);
                         }
                     }
                 }
             }
-        }
-
-        private static void MakeNotify(DocumentEditor editor, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
-        {
-            var snippet = assignment.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax propertyDeclaration &&
-                propertyDeclaration.Identifier.ValueText == propertyName
-                    ? Snippet.OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)
-                    : Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames);
-            var onPropertyChanged = SyntaxFactory.ParseStatement(snippet)
-                                                 .WithSimplifiedNames()
-                                                 .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
-                                                 .WithAdditionalAnnotations(Formatter.Annotation);
-            if (assignment.Parent is AnonymousFunctionExpressionSyntax anonymousFunction)
-            {
-                if (anonymousFunction.Body is BlockSyntax block)
-                {
-                    if (block.Statements.Count > 1)
-                    {
-                        var previousStatement = InsertAfter(block, block.Statements.Last(), invoker);
-                        editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
-                    }
-
-                    return;
-                }
-
-                var expressionStatement = (ExpressionStatementSyntax)editor.Generator.ExpressionStatement(anonymousFunction.Body);
-                var withStatements = editor.Generator.WithStatements(anonymousFunction, new[] { expressionStatement, onPropertyChanged });
-                editor.ReplaceNode(anonymousFunction, withStatements);
-            }
-            else if (assignment.Parent is ExpressionStatementSyntax assignStatement &&
-                     assignStatement.Parent is BlockSyntax assignBlock)
-            {
-                var previousStatement = InsertAfter(assignBlock, assignStatement, invoker);
-                editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
-            }
-            else if (assignment.Parent is PrefixUnaryExpressionSyntax unary &&
-                     unary.IsKind(SyntaxKind.LogicalNotExpression) &&
-                     unary.Parent is IfStatementSyntax ifStatement &&
-                     ifStatement.Parent is BlockSyntax ifBlock)
-            {
-                var previousStatement = InsertAfter(ifBlock, ifStatement, invoker);
-                editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
-            }
-        }
-
-        private static StatementSyntax InsertAfter(BlockSyntax block, StatementSyntax assignStatement, IMethodSymbol invoker)
-        {
-            var index = block.Statements.IndexOf(assignStatement);
-            var previousStatement = assignStatement;
-            for (var i = index + 1; i < block.Statements.Count; i++)
-            {
-                if (block.Statements[i] is ExpressionStatementSyntax expressionStatement &&
-                    expressionStatement.Expression is InvocationExpressionSyntax invocation)
-                {
-                    var identifierName = invocation.Expression as IdentifierNameSyntax;
-                    if (identifierName == null)
-                    {
-                        var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
-                        if (!(memberAccess?.Expression is ThisExpressionSyntax))
-                        {
-                            break;
-                        }
-
-                        identifierName = memberAccess.Name as IdentifierNameSyntax;
-                    }
-
-                    if (identifierName == null)
-                    {
-                        break;
-                    }
-
-                    if (identifierName.Identifier.ValueText == invoker.Name)
-                    {
-                        previousStatement = expressionStatement;
-                    }
-                }
-            }
-
-            return previousStatement;
         }
     }
 }

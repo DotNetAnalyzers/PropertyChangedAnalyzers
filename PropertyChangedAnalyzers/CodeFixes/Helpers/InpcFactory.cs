@@ -8,6 +8,7 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Simplification;
 
     internal static class InpcFactory
@@ -193,8 +194,10 @@ namespace PropertyChangedAnalyzers
                 asyncKeyword: lambda.AsyncKeyword,
                 parameter: lambda.Parameter,
                 arrowToken: SyntaxFactory.Token(lambda.ArrowToken.Kind()),
-                body: SyntaxFactory.Block(statements))
-                                .WithTriviaFrom(lambda);
+                body: SyntaxFactory.Block(statements)
+                                   .WithLeadingLineFeed())
+                                .WithTriviaFrom(lambda)
+                                .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         internal static ParenthesizedLambdaExpressionSyntax AsBlockBody(this ParenthesizedLambdaExpressionSyntax lambda, params StatementSyntax[] statements)
@@ -203,8 +206,10 @@ namespace PropertyChangedAnalyzers
                 asyncKeyword: lambda.AsyncKeyword,
                 parameterList: lambda.ParameterList,
                 arrowToken: SyntaxFactory.Token(lambda.ArrowToken.Kind()),
-                body: SyntaxFactory.Block(statements))
-                                .WithTriviaFrom(lambda);
+                body: SyntaxFactory.Block(statements)
+                                   .WithLeadingLineFeed())
+                                .WithTriviaFrom(lambda)
+                                .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         internal static InvocationExpressionSyntax TrySetInvocation(CodeStyleResult qualifyAccess, IMethodSymbol method, ExpressionSyntax fieldAccess, ExpressionSyntax value, ExpressionSyntax name)
