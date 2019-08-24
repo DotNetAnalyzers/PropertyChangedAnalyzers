@@ -40,18 +40,41 @@ namespace PropertyChangedAnalyzers
                         onPropertyChangedMethod.Parameters.TrySingle(out var parameter) &&
                         parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {
-                        if (expression is InvocationExpressionSyntax invocation &&
-                            semanticModel.TryGetSymbol(invocation, context.CancellationToken, out var trySet) &&
-                            TrySet.IsMatch(trySet, semanticModel, context.CancellationToken) != AnalysisResult.No)
+                        if (expression is InvocationExpressionSyntax trySet &&
+                            semanticModel.TryGetSymbol(trySet, context.CancellationToken, out var trySetMethod) &&
+                            TrySet.IsMatch(trySetMethod, semanticModel, context.CancellationToken) != AnalysisResult.No)
                         {
-                            if (invocation.Parent is ExpressionStatementSyntax ||
-                                invocation.Parent is ArrowExpressionClauseSyntax)
+                            switch (trySet.Parent)
+                            {
+                                case ExpressionStatementSyntax expressionStatement:
+                                    context.RegisterCodeFix(
+                                        $"Notify that property {propertyName} changes.",
+                                        async (editor, cancellationToken) =>
+                                        {
+                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                                                                         .ConfigureAwait(false);
+                                            editor.ReplaceNode(
+                                                expressionStatement,
+                                                InpcFactory.IfStatement(
+                                                    trySet,
+                                                    onPropertyChangedStatement));
+                                            if (expressionStatement.TryFirstAncestor(out AccessorDeclarationSyntax setter))
+                                            {
+                                                _ = editor.FormatNode(setter);
+                                            }
+                                        },
+                                        nameof(NotifyForDependentPropertyFix),
+                                        diagnostic);
+                                    continue;
+                            }
+
+                            if (trySet.Parent is ArrowExpressionClauseSyntax)
                             {
                                 context.RegisterCodeFix(
                                     $"Notify that property {propertyName} changes.",
                                     (editor, cancellationToken) => MakeNotifyCreateIf(
                                         editor,
-                                        invocation,
+                                        trySet,
                                         propertyName,
                                         onPropertyChangedMethod,
                                         underscoreFields),
@@ -60,7 +83,7 @@ namespace PropertyChangedAnalyzers
                                 continue;
                             }
 
-                            if (invocation.Parent is IfStatementSyntax ifStatement)
+                            if (trySet.Parent is IfStatementSyntax ifStatement)
                             {
                                 context.RegisterCodeFix(
                                     $"Notify that property {propertyName} changes.",
@@ -75,7 +98,7 @@ namespace PropertyChangedAnalyzers
                                 continue;
                             }
 
-                            if (invocation.Parent is PrefixUnaryExpressionSyntax unary &&
+                            if (trySet.Parent is PrefixUnaryExpressionSyntax unary &&
                                 unary.IsKind(SyntaxKind.LogicalNotExpression) &&
                                 unary.Parent is IfStatementSyntax ifStatement2 &&
                                 ifStatement2.IsReturnOnly())
