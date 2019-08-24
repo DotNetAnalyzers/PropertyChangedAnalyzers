@@ -74,10 +74,10 @@ namespace PropertyChangedAnalyzers
                             diagnostic);
                     }
                     else if (onPropertyChangedStatement.Parent == body &&
-                             Setter.TryFindSingleTrySet(setter, semanticModel, context.CancellationToken, out var setAndRaise))
+                             Setter.TryFindSingleTrySet(setter, semanticModel, context.CancellationToken, out var trySet))
                     {
-                        if (setAndRaise.Parent is ExpressionStatementSyntax setAndRaiseStatement &&
-                            body.Statements.IndexOf(setAndRaiseStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)
+                        if (trySet.Parent is ExpressionStatementSyntax trySetStatement &&
+                            body.Statements.IndexOf(trySetStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)
                         {
                             context.RegisterCodeFix(
                                 "Check that value is different before notifying.",
@@ -85,7 +85,7 @@ namespace PropertyChangedAnalyzers
                                 {
                                     editor.RemoveNode(onPropertyChangedStatement);
                                     _ = editor.ReplaceNode(
-                                        setAndRaiseStatement,
+                                        trySetStatement,
                                         x => InpcFactory.IfStatement(
                                             x.Expression.WithoutTrivia(),
                                             onPropertyChangedStatement));
@@ -93,12 +93,12 @@ namespace PropertyChangedAnalyzers
                                 nameof(CheckIfDifferentBeforeNotifyFix),
                                 diagnostic);
                         }
-                        else if (setAndRaise.Parent is IfStatementSyntax ifTrySetStatement &&
-                                 body.Statements.IndexOf(ifTrySetStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)
+                        else if (trySet.Parent is IfStatementSyntax ifTrySet &&
+                                 body.Statements.IndexOf(ifTrySet) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)
                         {
                             context.RegisterCodeFix(
                                 "Check that value is different before notifying.",
-                                (editor, _) => editor.MoveOnPropertyChangedInside(ifTrySetStatement, onPropertyChangedStatement),
+                                (editor, _) => editor.MoveOnPropertyChangedInside(ifTrySet, onPropertyChangedStatement),
                                 nameof(CheckIfDifferentBeforeNotifyFix),
                                 diagnostic);
                         }
