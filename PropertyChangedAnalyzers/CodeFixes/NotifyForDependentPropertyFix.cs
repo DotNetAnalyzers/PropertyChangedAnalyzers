@@ -84,10 +84,9 @@ namespace PropertyChangedAnalyzers
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);
                                     break;
-                                case IfStatementSyntax ifStatement:
-                                    context.RegisterCodeFix(
+                                case IfStatementSyntax ifStatement:context.RegisterCodeFix(
                                         $"Notify that property {propertyName} changes.",
-                                        (editor, _) => MakeNotifyInIf(
+                                        (editor, cancellationToken) => MakeNotifyInIf(
                                             editor,
                                             ifStatement,
                                             propertyName,
@@ -174,57 +173,6 @@ namespace PropertyChangedAnalyzers
             {
                 var previousStatement = InsertAfter(ifBlock, ifStatement, invoker);
                 editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
-            }
-        }
-
-        private static void MakeNotifyCreateIf(DocumentEditor editor, InvocationExpressionSyntax invocation, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
-        {
-            if (invocation.Parent is ExpressionStatementSyntax assignStatement &&
-                assignStatement.Parent is BlockSyntax)
-            {
-                editor.ReplaceNode(
-                    assignStatement,
-                    (node, _) =>
-                    {
-                        var code = StringBuilderPool.Borrow()
-                                                    .AppendLine($"if ({invocation.ToFullString().TrimEnd('\r', '\n')})")
-                                                    .AppendLine("{")
-                                                    .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
-                                                    .AppendLine("}")
-                                                    .Return();
-
-                        return SyntaxFactory.ParseStatement(code)
-                                            .WithSimplifiedNames()
-                                            .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
-                                            .WithAdditionalAnnotations(Formatter.Annotation);
-                    });
-                _ = editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
-                return;
-            }
-
-            if (invocation.Parent is ArrowExpressionClauseSyntax arrow &&
-                arrow.Parent is AccessorDeclarationSyntax accessor)
-            {
-                editor.RemoveNode(accessor.ExpressionBody);
-                _ = editor.ReplaceNode(
-                    accessor,
-                    x =>
-                    {
-                        var code = StringBuilderPool.Borrow()
-                                                    .AppendLine($"if ({invocation.ToFullString().TrimEnd('\r', '\n')})")
-                                                    .AppendLine("{")
-                                                    .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
-                                                    .AppendLine("}")
-                                                    .Return();
-
-                        var body = SyntaxFactory.ParseStatement(code)
-                                                .WithSimplifiedNames()
-                                                .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
-                                                .WithAdditionalAnnotations(Formatter.Annotation);
-                        return x.WithBody(SyntaxFactory.Block(body))
-                                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None));
-                    });
-                _ = editor.FormatNode(invocation.FirstAncestorOrSelf<PropertyDeclarationSyntax>());
             }
         }
 
