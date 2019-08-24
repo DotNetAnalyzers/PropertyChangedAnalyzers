@@ -55,7 +55,7 @@ namespace PropertyChangedAnalyzers
                                         propertyName,
                                         onPropertyChangedMethod,
                                         underscoreFields),
-                                    this.GetType(),
+                                    nameof(NotifyForDependentPropertyFix),
                                     diagnostic);
                                 continue;
                             }
@@ -70,7 +70,7 @@ namespace PropertyChangedAnalyzers
                                         propertyName,
                                         onPropertyChangedMethod,
                                         underscoreFields),
-                                    this.GetType(),
+                                    nameof(NotifyForDependentPropertyFix),
                                     diagnostic);
                                 continue;
                             }
@@ -88,7 +88,7 @@ namespace PropertyChangedAnalyzers
                                         propertyName,
                                         onPropertyChangedMethod,
                                         underscoreFields),
-                                    this.GetType(),
+                                    nameof(NotifyForDependentPropertyFix),
                                     diagnostic);
                                 continue;
                             }
@@ -102,7 +102,7 @@ namespace PropertyChangedAnalyzers
                                 propertyName,
                                 onPropertyChangedMethod,
                                 underscoreFields),
-                            this.GetType(),
+                            nameof(NotifyForDependentPropertyFix),
                             diagnostic);
                     }
                 }
@@ -111,8 +111,7 @@ namespace PropertyChangedAnalyzers
 
         private static void MakeNotify(DocumentEditor editor, ExpressionSyntax assignment, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
         {
-            var snippet = assignment.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax
-                    propertyDeclaration &&
+            var snippet = assignment.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax propertyDeclaration &&
                 propertyDeclaration.Identifier.ValueText == propertyName
                     ? Snippet.OnPropertyChanged(invoker, propertyName, usesUnderscoreNames)
                     : Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames);
