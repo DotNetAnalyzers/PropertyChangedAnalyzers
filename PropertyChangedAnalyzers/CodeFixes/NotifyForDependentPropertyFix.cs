@@ -95,24 +95,21 @@ namespace PropertyChangedAnalyzers
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);
                                     break;
-                            }
-
-                            if (trySet.Parent is PrefixUnaryExpressionSyntax unary &&
-                                unary.IsKind(SyntaxKind.LogicalNotExpression) &&
-                                unary.Parent is IfStatementSyntax ifStatement2 &&
-                                ifStatement2.IsReturnOnly())
-                            {
-                                context.RegisterCodeFix(
-                                    $"Notify that property {propertyName} changes.",
-                                    (editor, _) => MakeNotify(
-                                        editor,
-                                        expression,
-                                        propertyName,
-                                        onPropertyChangedMethod,
-                                        underscoreFields),
-                                    nameof(NotifyForDependentPropertyFix),
-                                    diagnostic);
-                                break;
+                                case PrefixUnaryExpressionSyntax unary
+                                    when Gu.Roslyn.AnalyzerExtensions.Equality.IsNegated(trySet) &&
+                                         unary.Parent is IfStatementSyntax ifStatement &&
+                                         ifStatement.IsReturnOnly():
+                                    context.RegisterCodeFix(
+                                        $"Notify that property {propertyName} changes.",
+                                        (editor, _) => MakeNotify(
+                                            editor,
+                                            expression,
+                                            propertyName,
+                                            onPropertyChangedMethod,
+                                            underscoreFields),
+                                        nameof(NotifyForDependentPropertyFix),
+                                        diagnostic);
+                                    break;
                             }
                         }
                         else
