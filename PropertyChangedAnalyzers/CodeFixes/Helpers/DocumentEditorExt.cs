@@ -193,6 +193,34 @@ namespace PropertyChangedAnalyzers
             }
         }
 
+        internal static void AddOnPropertyChangedAfter(this DocumentEditor editor, StatementSyntax statement, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
+        {
+            if (statement.Parent is BlockSyntax block)
+            {
+                for (var i = block.Statements.IndexOf(statement) + 1; i < block.Statements.Count; i++)
+                {
+                    switch (block.Statements[i])
+                    {
+                        case ExpressionStatementSyntax expressionStatement
+                            when ShouldInsertAfter(expressionStatement):
+                            continue;
+
+                        case StatementSyntax any:
+                            editor.InsertBefore(any, onPropertyChanged);
+                            return;
+                    }
+                }
+
+                _ = editor.ReplaceNode(block, x => x.AddStatements(onPropertyChanged));
+            }
+
+            bool ShouldInsertAfter(ExpressionStatementSyntax candidate)
+            {
+                return Setter.IsMutation(candidate, editor.SemanticModel, cancellationToken, out _, out _) ||
+                       OnPropertyChanged.IsMatch(candidate, editor.SemanticModel, cancellationToken) != AnalysisResult.No;
+            }
+        }
+
         internal static async Task<ExpressionSyntax> NameOfContainingAsync(this DocumentEditor editor, PropertyDeclarationSyntax property, IParameterSymbol parameter, CancellationToken cancellationToken)
         {
             if (parameter.IsCallerMemberName())

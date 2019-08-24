@@ -102,12 +102,12 @@ namespace PropertyChangedAnalyzers
                                          ifNotTrySetReturn.IsReturnOnly():
                                     context.RegisterCodeFix(
                                         $"Notify that property {propertyName} changes.",
-                                        (editor, _) => MakeNotify(
-                                            editor,
-                                            expression,
-                                            propertyName,
-                                            onPropertyChangedMethod,
-                                            underscoreFields),
+                                        async (editor, cancellationToken) =>
+                                        {
+                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                                                                         .ConfigureAwait(false);
+                                            editor.AddOnPropertyChangedAfter(ifNotTrySetReturn, onPropertyChangedStatement, cancellationToken);
+                                        },
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);
                                     break;

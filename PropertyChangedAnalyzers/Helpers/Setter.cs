@@ -123,6 +123,11 @@ namespace PropertyChangedAnalyzers
             }
         }
 
+        internal static bool IsMutation(ExpressionStatementSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax parameter, out ExpressionSyntax backing)
+        {
+            return IsMutation(candidate?.Expression, semanticModel, cancellationToken, out parameter, out backing);
+        }
+
         internal static bool TryGetBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
         {
             if (TryFindSingleMutation(setter, semanticModel, cancellationToken, out var mutated))
