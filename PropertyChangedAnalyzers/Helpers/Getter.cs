@@ -5,25 +5,6 @@ namespace PropertyChangedAnalyzers
 
     public static class Getter
     {
-        internal static bool TrySingleReturned(PropertyDeclarationSyntax property, out ExpressionSyntax result)
-        {
-            if (property == null)
-            {
-                result = null;
-                return false;
-            }
-
-            if (property.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
-            {
-                result = expressionBody.Expression;
-                return result != null;
-            }
-
-            result = null;
-            return property.TryGetGetter(out var getter) &&
-                   TrySingleReturned(getter, out result);
-        }
-
         internal static bool TrySingleReturned(AccessorDeclarationSyntax getter, out ExpressionSyntax result)
         {
             if (getter.ExpressionBody is ArrowExpressionClauseSyntax getterExpressionBody)

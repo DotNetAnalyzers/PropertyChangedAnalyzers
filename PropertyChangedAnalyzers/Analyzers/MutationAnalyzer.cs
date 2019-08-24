@@ -114,7 +114,7 @@ namespace PropertyChangedAnalyzers
                         {
                             if (context.Node.TryFirstAncestor(out PropertyDeclarationSyntax inProperty) &&
                                 ReferenceEquals(inProperty, propertyDeclaration) &&
-                                Getter.TrySingleReturned(inProperty, out var returned) &&
+                                Property.TrySingleReturned(inProperty, out var returned) &&
                                 PropertyPath.Uses(backing, returned, context))
                             {
                                 // We let INPC002 handle this

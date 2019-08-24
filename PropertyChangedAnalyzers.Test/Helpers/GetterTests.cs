@@ -42,7 +42,7 @@ namespace RoslynSandbox
     }
 }");
             var declaration = syntaxTree.FindPropertyDeclaration(propertyName);
-            Assert.AreEqual(true, Getter.TrySingleReturned(declaration, out var expression));
+            Assert.AreEqual(true, Property.TrySingleReturned(declaration, out var expression));
             Assert.AreEqual(expected, expression.ToString());
         }
     }

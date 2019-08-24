@@ -8,6 +8,25 @@ namespace PropertyChangedAnalyzers
 
     internal static class Property
     {
+        internal static bool TrySingleReturned(PropertyDeclarationSyntax property, out ExpressionSyntax result)
+        {
+            if (property == null)
+            {
+                result = null;
+                return false;
+            }
+
+            if (property.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
+            {
+                result = expressionBody.Expression;
+                return result != null;
+            }
+
+            result = null;
+            return property.TryGetGetter(out var getter) &&
+                   Getter.TrySingleReturned(getter, out result);
+        }
+
         internal static bool? GetsAndSetsSame(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax get, out ExpressionSyntax set)
         {
             if (propertyDeclaration.TryGetGetter(out var getter) &&
@@ -24,7 +43,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (MemberPath.TrySingle(get, out var getMember) &&
                         containing.TryFindProperty(getMember.Text, out var getProperty) &&
-                        Getter.TrySingleReturned(getProperty, out get) &&
+                        TrySingleReturned(getProperty, out get) &&
                         MemberPath.Equals(get, set))
                     {
                         return true;
