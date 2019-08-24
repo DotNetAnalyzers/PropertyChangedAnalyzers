@@ -76,31 +76,34 @@ namespace PropertyChangedAnalyzers
                     else if (onPropertyChangedStatement.Parent == body &&
                              Setter.TryFindSingleTrySet(setter, semanticModel, context.CancellationToken, out var trySet))
                     {
-                        if (trySet.Parent is ExpressionStatementSyntax trySetStatement &&
-                            body.Statements.IndexOf(trySetStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)
+                        switch (trySet.Parent)
                         {
-                            context.RegisterCodeFix(
-                                "Check that value is different before notifying.",
-                                (editor, __) =>
-                                {
-                                    editor.RemoveNode(onPropertyChangedStatement);
-                                    _ = editor.ReplaceNode(
-                                        trySetStatement,
-                                        x => InpcFactory.IfStatement(
-                                            x.Expression.WithoutTrivia(),
-                                            onPropertyChangedStatement));
-                                },
-                                nameof(CheckIfDifferentBeforeNotifyFix),
-                                diagnostic);
-                        }
-                        else if (trySet.Parent is IfStatementSyntax ifTrySet &&
-                                 body.Statements.IndexOf(ifTrySet) == body.Statements.IndexOf(onPropertyChangedStatement) - 1)
-                        {
-                            context.RegisterCodeFix(
-                                "Check that value is different before notifying.",
-                                (editor, _) => editor.MoveOnPropertyChangedInside(ifTrySet, onPropertyChangedStatement),
-                                nameof(CheckIfDifferentBeforeNotifyFix),
-                                diagnostic);
+                            case ExpressionStatementSyntax trySetStatement
+                                when body.Statements.IndexOf(trySetStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1:
+                                context.RegisterCodeFix(
+                                    "Check that value is different before notifying.",
+                                    (editor, __) =>
+                                    {
+                                        editor.RemoveNode(onPropertyChangedStatement);
+                                        _ = editor.ReplaceNode(
+                                            trySetStatement,
+                                            x => InpcFactory.IfStatement(
+                                                x.Expression.WithoutTrivia(),
+                                                onPropertyChangedStatement));
+                                    },
+                                    nameof(CheckIfDifferentBeforeNotifyFix),
+                                    diagnostic);
+                                break;
+                            case IfStatementSyntax ifTrySet
+                                when body.Statements.IndexOf(ifTrySet) == body.Statements.IndexOf(onPropertyChangedStatement) - 1:
+                                context.RegisterCodeFix(
+                                    "Check that value is different before notifying.",
+                                    (editor, _) => editor.MoveOnPropertyChangedInside(
+                                        ifTrySet,
+                                        onPropertyChangedStatement),
+                                    nameof(CheckIfDifferentBeforeNotifyFix),
+                                    diagnostic);
+                                break;
                         }
                     }
                 }
