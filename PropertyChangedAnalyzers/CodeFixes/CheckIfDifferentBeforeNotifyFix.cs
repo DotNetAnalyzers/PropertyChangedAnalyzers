@@ -36,6 +36,30 @@ namespace PropertyChangedAnalyzers
                         assignment.Parent is ExpressionStatementSyntax assignmentStatement &&
                         body.Statements.IndexOf(assignmentStatement) == 0)
                     {
+                        if (semanticModel.TryGetSymbol(assignment.Left, CancellationToken.None, out var assignedSymbol) &&
+                            assignedSymbol.Kind == SymbolKind.Field &&
+                            semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol setterSymbol) &&
+                            TrySet.TryFind(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var trySetMethod) &&
+                            TrySet.CanCreateInvocation(trySetMethod, out _) &&
+                            setter.TryFirstAncestor(out PropertyDeclarationSyntax property))
+                        {
+                            if (setter.Body.Statements.Count == 2)
+                            {
+                                context.RegisterCodeFix(
+                                trySetMethod.DisplaySignature(),
+                                async (editor, cancellationToken) =>
+                                {
+                                    var trySet = await editor.TrySetInvocationAsync(trySetMethod, assignment.Left, assignment.Right, property, cancellationToken)
+                                                             .ConfigureAwait(false);
+                                    _ = editor.ReplaceNode(
+                                          setter,
+                                          x => x.AsExpressionBody(trySet));
+                                },
+                                trySetMethod.MetadataName,
+                                diagnostic);
+                            }
+                        }
+
                         context.RegisterCodeFix(
                             "Check that value is different before notifying.",
                             (editor, cancellationToken) => editor.InsertBefore(
@@ -48,28 +72,6 @@ namespace PropertyChangedAnalyzers
                                         cancellationToken))),
                             nameof(CheckIfDifferentBeforeNotifyFix),
                             diagnostic);
-
-                        if (setter.Body.Statements.Count == 2 &&
-                            semanticModel.TryGetSymbol(assignment.Left, CancellationToken.None, out var assignedSymbol) &&
-                            assignedSymbol.Kind == SymbolKind.Field &&
-                            semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol setterSymbol) &&
-                            TrySet.TryFind(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var trySetMethod) &&
-                            TrySet.CanCreateInvocation(trySetMethod, out _) &&
-                            setter.TryFirstAncestor(out PropertyDeclarationSyntax property))
-                        {
-                            context.RegisterCodeFix(
-                                trySetMethod.DisplaySignature(),
-                                async (editor, cancellationToken) =>
-                                {
-                                    var trySet = await editor.TrySetInvocationAsync(trySetMethod, assignment.Left, assignment.Right, property, cancellationToken)
-                                                             .ConfigureAwait(false);
-                                    _ = editor.ReplaceNode(
-                                          setter,
-                                          x => x.AsExpressionBody(trySet));
-                                },
-                                trySetMethod.MetadataName,
-                                diagnostic);
-                        }
                     }
                     else if (onPropertyChangedStatement.Parent == body &&
                              Setter.TryFindSingleTrySet(setter, semanticModel, context.CancellationToken, out var setAndRaise))
