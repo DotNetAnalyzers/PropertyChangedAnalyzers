@@ -491,6 +491,111 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
+
+        [Test]
+        public static void IfTrySetBlockBodyExplitReturn()
+        {
+            var before = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => this.p;
+
+        public int P2 => this.p * this.p;
+
+        public int P
+        {
+            get => this.p;
+            set
+            {
+                if (this.TrySet(↓ref this.p, value))
+                {
+                    this.OnPropertyChanged(nameof(this.P1));
+                    return;
+                }
+            }
+        }
+
+        protected virtual bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => this.p;
+
+        public int P2 => this.p * this.p;
+
+        public int P
+        {
+            get => this.p;
+            set
+            {
+                if (this.TrySet(ref this.p, value))
+                {
+                    this.OnPropertyChanged(nameof(this.P1));
+                    this.OnPropertyChanged(nameof(this.P2));
+                    return;
+                }
+            }
+        }
+
+        protected virtual bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
         [Test]
         public static void IfTrySetStatementBody()
         {
