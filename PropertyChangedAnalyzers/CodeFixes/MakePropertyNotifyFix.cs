@@ -68,7 +68,7 @@ namespace PropertyChangedAnalyzers
                                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                                 }
 
-                                _ = editor.ReplaceNode(propertyDeclaration, x => x.WithAdditionalAnnotations(Formatter.Annotation));
+                                _ = editor.FormatNode(propertyDeclaration);
                             }
                         }
                         else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out _, out var assignment, out _))
