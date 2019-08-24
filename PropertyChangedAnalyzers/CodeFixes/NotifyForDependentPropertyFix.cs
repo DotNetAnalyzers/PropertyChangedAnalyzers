@@ -84,21 +84,22 @@ namespace PropertyChangedAnalyzers
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);
                                     break;
-                                case IfStatementSyntax ifStatement:context.RegisterCodeFix(
+                                case IfStatementSyntax ifTrySet:
+                                    context.RegisterCodeFix(
                                         $"Notify that property {propertyName} changes.",
-                                        (editor, cancellationToken) => MakeNotifyInIf(
-                                            editor,
-                                            ifStatement,
-                                            propertyName,
-                                            onPropertyChangedMethod,
-                                            underscoreFields),
+                                        async (editor, cancellationToken) =>
+                                        {
+                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                                                                         .ConfigureAwait(false);
+                                            editor.AddOnPropertyChanged(ifTrySet, onPropertyChangedStatement);
+                                        },
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);
                                     break;
                                 case PrefixUnaryExpressionSyntax unary
                                     when Gu.Roslyn.AnalyzerExtensions.Equality.IsNegated(trySet) &&
-                                         unary.Parent is IfStatementSyntax ifStatement &&
-                                         ifStatement.IsReturnOnly():
+                                         unary.Parent is IfStatementSyntax ifNotTrySetReturn &&
+                                         ifNotTrySetReturn.IsReturnOnly():
                                     context.RegisterCodeFix(
                                         $"Notify that property {propertyName} changes.",
                                         (editor, _) => MakeNotify(
@@ -170,48 +171,6 @@ namespace PropertyChangedAnalyzers
             {
                 var previousStatement = InsertAfter(ifBlock, ifStatement, invoker);
                 editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
-            }
-        }
-
-        private static void MakeNotifyInIf(DocumentEditor editor, IfStatementSyntax ifStatement, string propertyName, IMethodSymbol invoker, bool usesUnderscoreNames)
-        {
-            var onPropertyChanged = SyntaxFactory.ParseStatement(Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames))
-                                                 .WithSimplifiedNames()
-                                                 .WithLeadingElasticLineFeed().WithTrailingElasticLineFeed()
-                                                 .WithAdditionalAnnotations(Formatter.Annotation);
-
-            if (ifStatement.Statement is BlockSyntax block)
-            {
-                if (block.Statements.Count == 0)
-                {
-                    editor.ReplaceNode(
-                        block,
-                        block.AddStatements(onPropertyChanged));
-                    return;
-                }
-
-                var previousStatement = InsertAfter(block, ifStatement, invoker);
-                editor.InsertAfter(previousStatement, new[] { onPropertyChanged });
-                return;
-            }
-
-            if (ifStatement.Statement != null)
-            {
-                editor.ReplaceNode(
-                    ifStatement.Statement,
-                    (node, _) =>
-                    {
-                        var code = StringBuilderPool.Borrow()
-                                                    .AppendLine("{")
-                                                    .AppendLine($"{ifStatement.Statement.ToFullString().TrimEnd('\r', '\n')}")
-                                                    .AppendLine($"    {Snippet.OnOtherPropertyChanged(invoker, propertyName, usesUnderscoreNames)}")
-                                                    .AppendLine("}")
-                                                    .Return();
-
-                        return SyntaxFactory.ParseStatement(code)
-                                            .WithSimplifiedNames().WithTrailingElasticLineFeed()
-                                            .WithAdditionalAnnotations(Formatter.Annotation);
-                    });
             }
         }
 
