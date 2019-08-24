@@ -210,7 +210,6 @@ namespace PropertyChangedAnalyzers
                 if (localSetter.ExpressionBody != null)
                 {
                     return true;
-
                 }
 
                 return localSetter.Body is BlockSyntax body &&
