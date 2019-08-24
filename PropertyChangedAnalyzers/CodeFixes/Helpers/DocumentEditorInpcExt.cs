@@ -111,7 +111,7 @@ namespace PropertyChangedAnalyzers
             switch (ifTrySet.Statement)
             {
                 case BlockSyntax block:
-                    editor.AddOnPropertyChanged(block, onPropertyChanged, null, cancellationToken);
+                    editor.AddOnPropertyChanged(block, onPropertyChanged, 0, cancellationToken);
                     break;
                 case ExpressionStatementSyntax expressionStatement:
                     _ = editor.ReplaceNode(
@@ -154,18 +154,12 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static void AddOnPropertyChanged(this DocumentEditor editor, BlockSyntax block, ExpressionStatementSyntax onPropertyChangedStatement, StatementSyntax mutation, CancellationToken cancellationToken)
+        internal static void AddOnPropertyChanged(this DocumentEditor editor, BlockSyntax block, ExpressionStatementSyntax onPropertyChangedStatement, int after, CancellationToken cancellationToken)
         {
-            var start = mutation != null ? block.Statements.IndexOf(mutation) + 1 : 0;
-            if (start < 0)
-            {
-                throw new InvalidOperationException("Statement is not in block.");
-            }
-
-            for (var i = start; i < block.Statements.Count; i++)
+            for (var i = after; i < block.Statements.Count; i++)
             {
                 var statement = block.Statements[i];
-                if (ShouldAddBefore(statement, editor.SemanticModel, cancellationToken))
+                if (ShouldAddBefore(statement))
                 {
                     editor.InsertBefore(
                         statement,
@@ -177,28 +171,30 @@ namespace PropertyChangedAnalyzers
             editor.ReplaceNode(
                 block,
                 block.AddStatements(onPropertyChangedStatement));
+
+            bool ShouldAddBefore(StatementSyntax statement)
+            {
+                switch (statement)
+                {
+                    case ExpressionStatementSyntax expressionStatement
+                        when expressionStatement.Expression is ExpressionSyntax expression:
+                        return !expression.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
+                               OnPropertyChanged.IsMatch(expressionStatement, editor.SemanticModel, cancellationToken) == AnalysisResult.No;
+                    default:
+                        return true;
+                }
+            }
         }
 
         internal static void AddOnPropertyChangedAfter(this DocumentEditor editor, StatementSyntax statement, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
         {
             if (statement.Parent is BlockSyntax block)
             {
-                for (var i = block.Statements.IndexOf(statement) + 1; i < block.Statements.Count; i++)
-                {
-                    var other = block.Statements[i];
-                    if (ShouldAddBefore(other, editor.SemanticModel, cancellationToken))
-                    {
-                        editor.InsertBefore(
-                            other,
-                            onPropertyChanged);
-                        return;
-                    }
-                }
-
-                _ = editor.ReplaceNode(
-                    block, 
-                    x => x.AddStatements(onPropertyChanged));
+                editor.AddOnPropertyChanged(block, onPropertyChanged, block.Statements.IndexOf(statement) + 1, cancellationToken);
+                return;
             }
+
+            throw new InvalidOperationException("Statement not in block. Failed adding OnPropertyChanged()");
         }
 
         internal static async Task<ExpressionSyntax> NameOfContainingAsync(this DocumentEditor editor, PropertyDeclarationSyntax property, IParameterSymbol parameter, CancellationToken cancellationToken)
@@ -305,19 +301,6 @@ namespace PropertyChangedAnalyzers
             }
 
             return InpcFactory.SymbolAccess(symbol.Name, CodeStyleResult.Yes);
-        }
-
-        private static bool ShouldAddBefore(StatementSyntax statement, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            switch (statement)
-            {
-                case ExpressionStatementSyntax expressionStatement
-                    when expressionStatement.Expression is ExpressionSyntax expression:
-                    return !expression.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
-                           OnPropertyChanged.IsMatch(expressionStatement, semanticModel, cancellationToken) == AnalysisResult.No;
-                default:
-                    return true;
-            }
         }
     }
 }
