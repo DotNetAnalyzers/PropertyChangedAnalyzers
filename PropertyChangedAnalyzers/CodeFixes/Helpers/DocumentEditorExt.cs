@@ -71,10 +71,10 @@ namespace PropertyChangedAnalyzers
             throw new InvalidOperationException("Could not find name parameter.");
         }
 
-        internal static void MoveOnPropertyChangedInside(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged)
+        internal static void MoveOnPropertyChangedInside(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
         {
             editor.RemoveNode(onPropertyChanged);
-            editor.AddOnPropertyChanged(ifTrySet, OnPropertyChanged());
+            editor.AddOnPropertyChanged(ifTrySet, OnPropertyChanged(), cancellationToken);
 
             ExpressionStatementSyntax OnPropertyChanged()
             {
@@ -106,12 +106,12 @@ namespace PropertyChangedAnalyzers
                     CallerMemberNameAttribute.IsAvailable(editor.SemanticModel)));
         }
 
-        internal static void AddOnPropertyChanged(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged)
+        internal static void AddOnPropertyChanged(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
         {
             switch (ifTrySet.Statement)
             {
                 case BlockSyntax block:
-                    editor.AddOnPropertyChanged(block, onPropertyChanged, null);
+                    editor.AddOnPropertyChanged(block, onPropertyChanged, null, cancellationToken);
                     break;
                 case ExpressionStatementSyntax expressionStatement:
                     _ = editor.ReplaceNode(
@@ -127,7 +127,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static void AddOnPropertyChanged(this DocumentEditor editor, ExpressionSyntax mutation, ExpressionStatementSyntax onPropertyChanged)
+        internal static void AddOnPropertyChanged(this DocumentEditor editor, ExpressionSyntax mutation, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
         {
             switch (mutation.Parent)
             {
@@ -142,17 +142,16 @@ namespace PropertyChangedAnalyzers
                         x => x.AsBlockBody(SyntaxFactory.ExpressionStatement((ExpressionSyntax)x.Body), onPropertyChanged));
                     break;
                 case ExpressionStatementSyntax mutationStatement when mutationStatement.Parent is BlockSyntax block:
-                    editor.AddOnPropertyChanged(block, onPropertyChanged, mutationStatement);
+                    editor.AddOnPropertyChanged(block, onPropertyChanged, mutationStatement, cancellationToken);
                     break;
                 case PrefixUnaryExpressionSyntax unary when unary.IsKind(SyntaxKind.LogicalNotExpression) &&
-                                                            unary.Parent is IfStatementSyntax ifNot &&
-                                                            ifNot.Parent is BlockSyntax block:
-                    editor.AddOnPropertyChanged(block, onPropertyChanged, ifNot);
+                                                            unary.Parent is IfStatementSyntax ifNot:
+                    editor.AddOnPropertyChangedAfter(ifNot, onPropertyChanged, cancellationToken);
                     break;
             }
         }
 
-        internal static void AddOnPropertyChanged(this DocumentEditor editor, BlockSyntax block, ExpressionStatementSyntax onPropertyChangedStatement, StatementSyntax mutation)
+        internal static void AddOnPropertyChanged(this DocumentEditor editor, BlockSyntax block, ExpressionStatementSyntax onPropertyChangedStatement, StatementSyntax mutation, CancellationToken cancellationToken)
         {
             var start = mutation != null ? block.Statements.IndexOf(mutation) + 1 : 0;
             if (start < 0)
@@ -163,7 +162,7 @@ namespace PropertyChangedAnalyzers
             for (var i = start; i < block.Statements.Count; i++)
             {
                 var statement = block.Statements[i];
-                if (ShouldAddBefore(statement))
+                if (ShouldAddBefore(statement, editor.SemanticModel, cancellationToken))
                 {
                     editor.InsertBefore(
                         statement,
@@ -175,22 +174,6 @@ namespace PropertyChangedAnalyzers
             editor.ReplaceNode(
                 block,
                 block.AddStatements(onPropertyChangedStatement));
-
-            bool ShouldAddBefore(StatementSyntax other)
-            {
-                if (other is ExpressionStatementSyntax expressionStatement)
-                {
-                    switch (expressionStatement.Expression)
-                    {
-                        case InvocationExpressionSyntax invocation when onPropertyChangedStatement.Expression is InvocationExpressionSyntax onPropertyChanged:
-                            return !MemberPath.Equals(invocation.Expression, onPropertyChanged.Expression);
-                        case AssignmentExpressionSyntax _:
-                            return false;
-                    }
-                }
-
-                return true;
-            }
         }
 
         internal static void AddOnPropertyChangedAfter(this DocumentEditor editor, StatementSyntax statement, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
@@ -199,25 +182,17 @@ namespace PropertyChangedAnalyzers
             {
                 for (var i = block.Statements.IndexOf(statement) + 1; i < block.Statements.Count; i++)
                 {
-                    switch (block.Statements[i])
+                    var other = block.Statements[i];
+                    if (ShouldAddBefore(other, editor.SemanticModel, cancellationToken))
                     {
-                        case ExpressionStatementSyntax expressionStatement
-                            when ShouldInsertAfter(expressionStatement):
-                            continue;
-
-                        case StatementSyntax any:
-                            editor.InsertBefore(any, onPropertyChanged);
-                            return;
+                        editor.InsertBefore(
+                            other,
+                            onPropertyChanged);
+                        return;
                     }
                 }
 
                 _ = editor.ReplaceNode(block, x => x.AddStatements(onPropertyChanged));
-            }
-
-            bool ShouldInsertAfter(ExpressionStatementSyntax candidate)
-            {
-                return Setter.IsMutation(candidate, editor.SemanticModel, cancellationToken, out _, out _) ||
-                       OnPropertyChanged.IsMatch(candidate, editor.SemanticModel, cancellationToken) != AnalysisResult.No;
             }
         }
 
@@ -327,33 +302,16 @@ namespace PropertyChangedAnalyzers
             return InpcFactory.SymbolAccess(symbol.Name, CodeStyleResult.Yes);
         }
 
-        private static bool IsInStaticContext(this SyntaxNode node)
+        private static bool ShouldAddBefore(StatementSyntax statement, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (node.TryFirstAncestor(out MemberDeclarationSyntax memberDeclaration))
+            switch (statement)
             {
-                switch (memberDeclaration)
-                {
-                    case FieldDeclarationSyntax declaration:
-                        return declaration.Modifiers.Any(SyntaxKind.StaticKeyword, SyntaxKind.ConstKeyword) ||
-                               (declaration.Declaration is VariableDeclarationSyntax variableDeclaration &&
-                                variableDeclaration.Variables.TryLast(out var last) &&
-                                last.Initializer.Contains(node));
-                    case BaseFieldDeclarationSyntax declaration:
-                        return declaration.Modifiers.Any(SyntaxKind.StaticKeyword, SyntaxKind.ConstKeyword);
-                    case PropertyDeclarationSyntax declaration:
-                        return declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
-                               declaration.Initializer?.Contains(node) == true;
-                    case BasePropertyDeclarationSyntax declaration:
-                        return declaration.Modifiers.Any(SyntaxKind.StaticKeyword);
-                    case BaseMethodDeclarationSyntax declaration:
-                        return declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
-                               node.TryFirstAncestor<ConstructorInitializerSyntax>(out _);
-                    default:
-                        return true;
-                }
+                case ExpressionStatementSyntax expressionStatement:
+                    return expressionStatement?.Expression.IsKind(SyntaxKind.SimpleAssignmentExpression) == false &&
+                           OnPropertyChanged.IsMatch(expressionStatement, semanticModel, cancellationToken) == AnalysisResult.No;
+                default:
+                    return true;
             }
-
-            return true;
         }
     }
 }

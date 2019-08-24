@@ -91,7 +91,7 @@ namespace PropertyChangedAnalyzers
                                         {
                                             var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
                                                                                          .ConfigureAwait(false);
-                                            editor.AddOnPropertyChanged(ifTrySet, onPropertyChangedStatement);
+                                            editor.AddOnPropertyChanged(ifTrySet, onPropertyChangedStatement, cancellationToken);
                                         },
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);

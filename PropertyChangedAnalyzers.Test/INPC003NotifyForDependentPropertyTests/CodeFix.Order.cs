@@ -491,9 +491,8 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-
         [Test]
-        public static void IfTrySetBlockBodyExplitReturn()
+        public static void IfTrySetBlockBodyExplictReturn()
         {
             var before = @"
 namespace N
