@@ -65,37 +65,37 @@ namespace PropertyChangedAnalyzers
                                         },
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);
-                                    continue;
-                            }
-
-                            if (trySet.Parent is ArrowExpressionClauseSyntax)
-                            {
-                                context.RegisterCodeFix(
-                                    $"Notify that property {propertyName} changes.",
-                                    (editor, cancellationToken) => MakeNotifyCreateIf(
-                                        editor,
-                                        trySet,
-                                        propertyName,
-                                        onPropertyChangedMethod,
-                                        underscoreFields),
-                                    nameof(NotifyForDependentPropertyFix),
-                                    diagnostic);
-                                continue;
-                            }
-
-                            if (trySet.Parent is IfStatementSyntax ifStatement)
-                            {
-                                context.RegisterCodeFix(
-                                    $"Notify that property {propertyName} changes.",
-                                    (editor, _) => MakeNotifyInIf(
-                                        editor,
-                                        ifStatement,
-                                        propertyName,
-                                        onPropertyChangedMethod,
-                                        underscoreFields),
-                                    nameof(NotifyForDependentPropertyFix),
-                                    diagnostic);
-                                continue;
+                                    break;
+                                case ArrowExpressionClauseSyntax arrow
+                                    when arrow.Parent is AccessorDeclarationSyntax setter:
+                                    context.RegisterCodeFix(
+                                        $"Notify that property {propertyName} changes.",
+                                        async (editor, cancellationToken) =>
+                                        {
+                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                                                                         .ConfigureAwait(false);
+                                            _ = editor.ReplaceNode(
+                                                setter,
+                                                x => x.AsBlockBody(
+                                                    InpcFactory.IfStatement(
+                                                        trySet,
+                                                        onPropertyChangedStatement)));
+                                        },
+                                        nameof(NotifyForDependentPropertyFix),
+                                        diagnostic);
+                                    break;
+                                case IfStatementSyntax ifStatement:
+                                    context.RegisterCodeFix(
+                                        $"Notify that property {propertyName} changes.",
+                                        (editor, _) => MakeNotifyInIf(
+                                            editor,
+                                            ifStatement,
+                                            propertyName,
+                                            onPropertyChangedMethod,
+                                            underscoreFields),
+                                        nameof(NotifyForDependentPropertyFix),
+                                        diagnostic);
+                                    break;
                             }
 
                             if (trySet.Parent is PrefixUnaryExpressionSyntax unary &&
@@ -113,20 +113,22 @@ namespace PropertyChangedAnalyzers
                                         underscoreFields),
                                     nameof(NotifyForDependentPropertyFix),
                                     diagnostic);
-                                continue;
+                                break;
                             }
                         }
-
-                        context.RegisterCodeFix(
-                            $"Notify that property {propertyName} changes.",
-                            (editor, _) => MakeNotify(
-                                editor,
-                                expression,
-                                propertyName,
-                                onPropertyChangedMethod,
-                                underscoreFields),
-                            nameof(NotifyForDependentPropertyFix),
-                            diagnostic);
+                        else
+                        {
+                            context.RegisterCodeFix(
+                                $"Notify that property {propertyName} changes.",
+                                (editor, _) => MakeNotify(
+                                    editor,
+                                    expression,
+                                    propertyName,
+                                    onPropertyChangedMethod,
+                                    underscoreFields),
+                                nameof(NotifyForDependentPropertyFix),
+                                diagnostic);
+                        }
                     }
                 }
             }
