@@ -806,8 +806,8 @@ namespace RoslynSandbox
 
                 this.firstName = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.FullName));
                 this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.FullName));
             }
         }
 
@@ -933,8 +933,8 @@ namespace RoslynSandbox
 
                 this.firstName = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.FullName));
                 this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.FullName));
             }
         }
 
@@ -1065,8 +1065,8 @@ namespace RoslynSandbox
 
                 this.firstName = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.FullName));
                 this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.FullName));
             }
         }
 

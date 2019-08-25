@@ -172,14 +172,75 @@ namespace PropertyChangedAnalyzers
                 block,
                 block.AddStatements(onPropertyChangedStatement));
 
+            // We can't use the semantic model here as it may not track nodes added before in fixall
             bool ShouldAddBefore(StatementSyntax statement)
             {
                 switch (statement)
                 {
                     case ExpressionStatementSyntax expressionStatement
-                        when expressionStatement.Expression is ExpressionSyntax expression:
-                        return !expression.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
-                               OnPropertyChanged.IsMatch(expressionStatement, editor.SemanticModel, cancellationToken) == AnalysisResult.No;
+                        when expressionStatement.Expression is AssignmentExpressionSyntax:
+                        return false;
+                    case ExpressionStatementSyntax expressionStatement
+                        when expressionStatement.Expression is InvocationExpressionSyntax other &&
+                             onPropertyChangedStatement.Expression is InvocationExpressionSyntax onPropertyChangedInvocation:
+                        return !NamesEqual(other, onPropertyChangedInvocation) ||
+                                PropertyIndex(onPropertyChangedInvocation) < PropertyIndex(other);
+
+                        bool NamesEqual(InvocationExpressionSyntax x, InvocationExpressionSyntax y)
+                        {
+                            return x.TryGetMethodName(out var xn) &&
+                                   y.TryGetMethodName(out var yn) &&
+                                   xn == yn;
+                        }
+
+                        int PropertyIndex(InvocationExpressionSyntax x)
+                        {
+                            if (x.ArgumentList is ArgumentListSyntax argumentList)
+                            {
+                                if (argumentList.Arguments.TrySingle(out var argument))
+                                {
+                                    switch (argument.Expression)
+                                    {
+                                        case LiteralExpressionSyntax literal
+                                            when literal.IsKind(SyntaxKind.StringLiteralExpression) &&
+                                                 TryFindIndex(literal.Token.ValueText, out var index):
+                                            return index;
+                                        case InvocationExpressionSyntax nameof
+                                            when nameof.IsNameOf() &&
+                                                 nameof.ArgumentList.Arguments.TrySingle(out var nameofArg) &&
+                                                 MemberPath.TryFindLast(nameofArg.Expression, out var last) &&
+                                                 TryFindIndex(last.ValueText, out var index):
+                                            return index;
+                                        default:
+                                            return int.MaxValue;
+                                    }
+
+                                    bool TryFindIndex(string name, out int result)
+                                    {
+                                        if (statement.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
+                                            classDeclaration.TryFindProperty(name, out var property))
+                                        {
+                                            if (property.Contains(statement))
+                                            {
+                                                result = 0;
+                                                return true;
+                                            }
+
+                                            result = classDeclaration.Members.IndexOf(property);
+                                            return true;
+                                        }
+
+                                        result = 0;
+                                        return false;
+                                    }
+                                }
+
+                                return -1;
+                            }
+
+                            return int.MaxValue;
+                        }
+
                     default:
                         return true;
                 }
