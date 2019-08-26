@@ -796,5 +796,196 @@ namespace N
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
+
+        [TestCase("this.OnPropertyChanged(nameof(this.P1))")]
+        [TestCase("this.OnPropertyChanged(nameof(this.P2))")]
+        public static void AddAfterOtherFieldAssignment(string expression)
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p3;
+        private int f;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => 2 * this.p3;
+
+        public int P2 => 3 * this.p3;
+
+        public int P3
+        {
+            get => this.p3;
+            set
+            {
+                if (value == this.p3)
+                {
+                    return;
+                }
+
+                ↓this.p3 = value;
+                this.f = value * 2;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P1));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("this.OnPropertyChanged(nameof(this.P1))", expression);
+
+            var after = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p3;
+        private int f;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => 2 * this.p3;
+
+        public int P2 => 3 * this.p3;
+
+        public int P3
+        {
+            get => this.p3;
+            set
+            {
+                if (value == this.p3)
+                {
+                    return;
+                }
+
+                this.p3 = value;
+                this.f = value * 2;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P1));
+                this.OnPropertyChanged(nameof(this.P2));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.FixAllInDocument(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [TestCase("this.OnPropertyChanged(nameof(this.P1))")]
+        [TestCase("this.OnPropertyChanged(nameof(this.P2))")]
+        public static void AddAfterOtherFieldAssignmentBeforeExplicitReturn(string expression)
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p3;
+        private int f;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => 2 * this.p3;
+
+        public int P2 => 3 * this.p3;
+
+        public int P3
+        {
+            get
+            {
+                return this.p3;
+            }
+
+            set
+            {
+                if (value == this.p3)
+                {
+                    return;
+                }
+
+                ↓this.p3 = value;
+                this.f = value * 2;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P1));
+                return;
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("this.OnPropertyChanged(nameof(this.P1))", expression);
+
+            var after = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p3;
+        private int f;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => 2 * this.p3;
+
+        public int P2 => 3 * this.p3;
+
+        public int P3
+        {
+            get
+            {
+                return this.p3;
+            }
+
+            set
+            {
+                if (value == this.p3)
+                {
+                    return;
+                }
+
+                this.p3 = value;
+                this.f = value * 2;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P1));
+                this.OnPropertyChanged(nameof(this.P2));
+                return;
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
     }
 }

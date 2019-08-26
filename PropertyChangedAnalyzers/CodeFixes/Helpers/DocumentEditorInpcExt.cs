@@ -222,7 +222,7 @@ namespace PropertyChangedAnalyzers
                                         {
                                             if (property.Contains(statement))
                                             {
-                                                result = 0;
+                                                result = -1;
                                                 return true;
                                             }
 
@@ -230,7 +230,7 @@ namespace PropertyChangedAnalyzers
                                             return true;
                                         }
 
-                                        result = 0;
+                                        result = default;
                                         return false;
                                     }
                                 }
