@@ -29,9 +29,7 @@ namespace ValidCode.Wrapping
         {
             get => this.withProperties.P2;
 #pragma warning disable INPC003 // Notify when property changes.
-#pragma warning disable INPC015 // Property is recursive.
             set => this.TrySet(ref this.withProperties, new WithProperties { P1 = this.P1, P2 = this.P2 });
-#pragma warning restore INPC015 // Property is recursive.
 #pragma warning restore INPC003 // Notify when property changes.
         }
 
