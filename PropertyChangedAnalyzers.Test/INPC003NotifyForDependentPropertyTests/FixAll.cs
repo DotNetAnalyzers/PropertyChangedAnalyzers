@@ -5,7 +5,6 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    [Explicit("")]
     public static class FixAll
     {
         private static readonly DiagnosticAnalyzer Analyzer = new MutationAnalyzer();
@@ -382,11 +381,7 @@ namespace RoslynSandbox
 
         public int P3
         {
-            get
-            {
-                return this.p3;
-            }
-
+            get => this.p3;
             set
             {
                 if (value == this.p3)
@@ -397,7 +392,6 @@ namespace RoslynSandbox
                 ↓this.p3 = value;
                 ↓this.f = value * 2;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -427,11 +421,7 @@ namespace RoslynSandbox
 
         public int P3
         {
-            get
-            {
-                return this.p3;
-            }
-
+            get => this.p3;
             set
             {
                 if (value == this.p3)
@@ -454,7 +444,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAllInDocument(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
