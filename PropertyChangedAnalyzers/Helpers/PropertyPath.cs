@@ -206,7 +206,8 @@ namespace PropertyChangedAnalyzers
                         VisitRecursive((SyntaxNode)declaration.Body ?? declaration.ExpressionBody);
                     }
                     else if (TryGetProperty(recursive, out var property) &&
-                             property.GetMethod.TrySingleDeclaration<AccessorDeclarationSyntax>(this.cancellationToken, out var getter) &&
+                             property.GetMethod is IMethodSymbol getMethod &&
+                             getMethod.TrySingleDeclaration(this.cancellationToken, out SyntaxNode getter) &&
                              this.visited.Add(getter))
                     {
                         VisitRecursive(getter);

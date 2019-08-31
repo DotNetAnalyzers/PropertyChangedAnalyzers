@@ -181,12 +181,14 @@ namespace PropertyChangedAnalyzers
 
         private static bool TryGeExpressionBodyOrGetter(PropertyDeclarationSyntax property, out SyntaxNode node)
         {
-            node = null;
-            if (property.ExpressionBody != null)
+            if (property.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
             {
-                node = property.ExpressionBody.Expression;
+                node = expressionBody.Expression;
+                return true;
             }
-            else if (property.TryGetGetter(out var getter))
+
+            node = null;
+            if (property.TryGetGetter(out var getter))
             {
                 node = (SyntaxNode)getter.Body ?? getter.ExpressionBody;
             }
