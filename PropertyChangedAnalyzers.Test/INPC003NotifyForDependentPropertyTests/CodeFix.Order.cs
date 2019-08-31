@@ -50,7 +50,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.OnPropertyChanged(nameof(this.P1))",expression);
+}".AssertReplace("this.OnPropertyChanged(nameof(this.P1))", expression);
 
             var after = @"
 namespace N
@@ -986,6 +986,5 @@ namespace RoslynSandbox
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
-
     }
 }
