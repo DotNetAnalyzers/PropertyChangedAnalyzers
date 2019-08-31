@@ -38,7 +38,7 @@ namespace PropertyChangedAnalyzers
                 {
                     foreach (var returnValue in walker.ReturnValues)
                     {
-                        if (IsProperty(returnValue, property))
+                        if (IsProperty(returnValue))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, returnValue.GetLocation(), "Getter returns property, infinite recursion"));
                         }
@@ -94,7 +94,7 @@ namespace PropertyChangedAnalyzers
 
                     using (var assignmentWalker = AssignmentWalker.Borrow(setter))
                     {
-                        if (assignmentWalker.Assignments.TryFirst(x => IsProperty(x.Left, property), out var recursiveAssignment))
+                        if (assignmentWalker.Assignments.TryFirst(x => IsProperty(x.Left) && !x.Parent.IsKind(SyntaxKind.ObjectInitializerExpression), out var recursiveAssignment))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
                         }
@@ -107,6 +107,27 @@ namespace PropertyChangedAnalyzers
                             }
                         }
                     }
+                }
+
+                bool IsProperty(ExpressionSyntax expression)
+                {
+                    if (expression is MemberAccessExpressionSyntax memberAccess &&
+                        !(memberAccess.Expression is ThisExpressionSyntax))
+                    {
+                        return false;
+                    }
+
+                    if (property.ExplicitInterfaceImplementations.Any())
+                    {
+                        return false;
+                    }
+
+                    if (TryGetMemberName(expression, out var name))
+                    {
+                        return name == property.Name;
+                    }
+
+                    return false;
                 }
             }
         }
@@ -178,27 +199,6 @@ namespace PropertyChangedAnalyzers
             }
 
             return true;
-        }
-
-        private static bool IsProperty(ExpressionSyntax expression, IPropertySymbol property)
-        {
-            if (expression is MemberAccessExpressionSyntax memberAccess &&
-                !(memberAccess.Expression is ThisExpressionSyntax))
-            {
-                return false;
-            }
-
-            if (property.ExplicitInterfaceImplementations.Any())
-            {
-                return false;
-            }
-
-            if (TryGetMemberName(expression, out var name))
-            {
-                return name == property.Name;
-            }
-
-            return false;
         }
 
         private static bool TryGetMemberName(ExpressionSyntax expression, out string name)
