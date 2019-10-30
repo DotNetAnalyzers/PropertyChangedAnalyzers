@@ -8,19 +8,20 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BuildOutputTargetFolder>analyzers\dotnet\cs</BuildOutputTargetFolder>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup>
     <Version>2.7.2.0</Version>
+    <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
     <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>BUGFIX: Figure out caching in ConcurrentDictionary</PackageReleaseNotes>
-    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</RepositoryUrl>
   </PropertyGroup>
@@ -31,12 +32,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    <PackageReference Include="Gu.Analyzers" Version="1.6.3-dev" PrivateAssets="all" />
+    <PackageReference Include="Gu.Roslyn.Extensions" Version="0.8.2-dev" />
+    <PackageReference Include="IDisposableAnalyzers" Version="2.1.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.3.1" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.66" PrivateAssets="all" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Exec Command=".paket\paket.exe pack publish" WorkingDirectory="$(SolutionDir)" />
-  </Target>
-
-  <Import Project="..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll;$(OutputPath)\Gu.Roslyn.Extensions.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
 </Project>
