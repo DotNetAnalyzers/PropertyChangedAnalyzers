@@ -5,7 +5,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    [Explicit("")]
+    [Ignore("")]
     public static class FixAll
     {
         private static readonly DiagnosticAnalyzer Analyzer = new MutationAnalyzer();
