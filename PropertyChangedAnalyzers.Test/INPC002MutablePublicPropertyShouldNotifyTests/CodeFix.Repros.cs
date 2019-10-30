@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     {
         public static class Repros
         {
-            [Explicit("#70")]
+            [Ignore("#70")]
             [Test]
             public static void UglyViewModelBase()
             {

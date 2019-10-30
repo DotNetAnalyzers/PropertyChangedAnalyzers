@@ -189,7 +189,7 @@ namespace RoslynSandbox
                 RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
             }
 
-            [Explicit("#87")]
+            [Ignore("#87")]
             [Test]
             public static void OperatorEqualsNoAssignReturn()
             {

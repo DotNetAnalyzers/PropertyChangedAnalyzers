@@ -317,7 +317,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        [Explicit("Not sure how we want this.")]
+        [Ignore("Not sure how we want this.")]
         public static void IgnoresWhenBaseIsMouseGesture()
         {
             var before = @"

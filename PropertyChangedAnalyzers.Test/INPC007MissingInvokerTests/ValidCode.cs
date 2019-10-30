@@ -131,7 +131,7 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        [Explicit("Not sure how we want this.")]
+        [Ignore("Not sure how we want this.")]
         public static void Set()
         {
             var code = @"

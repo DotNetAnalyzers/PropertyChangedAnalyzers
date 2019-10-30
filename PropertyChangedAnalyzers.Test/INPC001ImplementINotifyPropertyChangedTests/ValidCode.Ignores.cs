@@ -322,10 +322,10 @@ namespace RoslynSandBox
                 RoslynAssert.Valid(Analyzer, code);
             }
 
+            [Ignore("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D")]
             [Test]
             public static void WhenBaseHasPropertyChangedEventButNoInterface()
             {
-                Assert.Inconclusive("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D");
                 //// ReSharper disable once HeuristicUnreachableCode
                 var code = @"
 namespace RoslynSandBox

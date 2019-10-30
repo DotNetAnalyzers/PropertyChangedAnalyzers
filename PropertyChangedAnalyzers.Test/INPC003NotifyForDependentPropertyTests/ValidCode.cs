@@ -376,7 +376,7 @@ namespace RoslynSandbox
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [Explicit("Looks like the binary got lost.")]
+        [Ignore("Looks like the binary got lost.")]
         [Test]
         public static void WhenNotifyingMvvmFramework()
         {
