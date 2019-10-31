@@ -32,6 +32,7 @@
     <PackageReference Include="IDisposableAnalyzers" Version="2.1.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.3.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
     <PackageReference Include="MvvmCross" Version="6.4.1" />
     <PackageReference Include="MvvmLight" Version="5.4.1.1" />
     <PackageReference Include="NUnit" Version="3.12.0" />
