@@ -1,5 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -51,13 +52,13 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetPropertyNameArgument(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArgument)
+        internal static bool TryGetPropertyNameArgument(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArgument)
         {
             return TryGetCreation(expression, out nameArgument) ||
                    TryGetCached(expression, semanticModel, cancellationToken, out nameArgument);
         }
 
-        private static bool TryGetCached(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out ArgumentSyntax nameArg)
+        private static bool TryGetCached(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArg)
         {
             if (semanticModel.TryGetSymbol(expression, cancellationToken, out var candidate))
             {

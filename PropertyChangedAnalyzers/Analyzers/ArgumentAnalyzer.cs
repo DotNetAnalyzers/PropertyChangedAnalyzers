@@ -154,7 +154,7 @@ namespace PropertyChangedAnalyzers
             name = null;
             return false;
 
-            bool TryGetName(SyntaxNode node, out string result)
+            static bool TryGetName(SyntaxNode node, out string result)
             {
                 result = null;
                 if (node is IdentifierNameSyntax identifierName)

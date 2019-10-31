@@ -190,48 +190,33 @@ namespace PropertyChangedAnalyzers
             return expected.Equals(semanticModel.GetSymbolSafe(expression, cancellationToken));
         }
 
-        private static ITypeSymbol GetSymbolType(ISymbol symbol)
+        private static ITypeSymbol? GetSymbolType(ISymbol symbol)
         {
-            switch (symbol)
+            return symbol switch
             {
-                case IEventSymbol @event:
-                    return @event.Type;
-                case IFieldSymbol field:
-                    return field.Type;
-                case ILocalSymbol local:
-                    return local.Type;
-                case IMethodSymbol method:
-                    return method.ReturnType;
-                case ITypeSymbol type:
-                    return type;
-                case IParameterSymbol parameter:
-                    return parameter.Type;
-                case IPropertySymbol property:
-                    return property.Type;
-                default:
-                    return null;
-            }
+                IEventSymbol @event => @event.Type,
+                IFieldSymbol field => field.Type,
+                ILocalSymbol local => local.Type,
+                IMethodSymbol method => method.ReturnType,
+                ITypeSymbol type => type,
+                IParameterSymbol parameter => parameter.Type,
+                IPropertySymbol property => property.Type,
+                _ => null,
+            };
         }
 
-        private static string GetSymbolName(ISymbol symbol)
+        private static string? GetSymbolName(ISymbol symbol)
         {
-            switch (symbol)
+            return symbol switch
             {
-                case IEventSymbol @event:
-                    return @event.Name;
-                case IFieldSymbol field:
-                    return field.Name;
-                case ILocalSymbol local:
-                    return local.Name;
-                case IMethodSymbol method:
-                    return method.Name;
-                case IParameterSymbol parameter:
-                    return parameter.Name;
-                case IPropertySymbol property:
-                    return property.Name;
-                default:
-                    return null;
-            }
+                IEventSymbol @event => @event.Name,
+                IFieldSymbol field => field.Name,
+                ILocalSymbol local => local.Name,
+                IMethodSymbol method => method.Name,
+                IParameterSymbol parameter => parameter.Name,
+                IPropertySymbol property => property.Name,
+                _ => null,
+            };
         }
 
         private static bool TryGetName(ExpressionSyntax expression, out string name)

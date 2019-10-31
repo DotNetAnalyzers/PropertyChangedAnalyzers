@@ -1,5 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Globalization;
@@ -37,7 +38,7 @@ namespace PropertyChangedAnalyzers
             "CS0535",
             "CS0246");
 
-        protected override DocumentEditorFixAllProvider FixAllProvider() => null;
+        protected override DocumentEditorFixAllProvider? FixAllProvider() => null;
 
         /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
@@ -178,7 +179,7 @@ namespace PropertyChangedAnalyzers
 
                         if (!type.TryFindFirstMethodRecursive("OnPropertyChanged", m => m.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.String, out _))
                         {
-                            await editor.AddOnPropertyChangedMethodAsync(classDeclaration, cancellationToken);
+                            await editor.AddOnPropertyChangedMethodAsync(classDeclaration, cancellationToken).ConfigureAwait(false);
                         }
 
                         if (addUsings)
@@ -189,7 +190,7 @@ namespace PropertyChangedAnalyzers
 
                         bool HasINotifyPropertyChangedInterface(out BaseTypeSyntax result)
                         {
-                            if (classDeclaration.BaseList is BaseListSyntax baseList)
+                            if (classDeclaration.BaseList is { } baseList)
                             {
                                 if (baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out result))
                                 {
@@ -211,7 +212,7 @@ namespace PropertyChangedAnalyzers
 
             bool References(string dll)
             {
-                return semanticModel.Compilation.References.Any(x => x.Display?.EndsWith(dll) == true);
+                return semanticModel.Compilation.References.Any(x => x.Display?.EndsWith(dll, StringComparison.Ordinal) == true);
             }
         }
 
@@ -225,7 +226,7 @@ namespace PropertyChangedAnalyzers
             if (diagnostic.Id == "CS0535")
             {
                 return diagnostic.GetMessage(CultureInfo.InvariantCulture)
-                                 .EndsWith("does not implement interface member 'INotifyPropertyChanged.PropertyChanged'");
+                                 .EndsWith("does not implement interface member 'INotifyPropertyChanged.PropertyChanged'", StringComparison.Ordinal);
             }
 
             return IsINotifyPropertyChangedMissing(diagnostic);

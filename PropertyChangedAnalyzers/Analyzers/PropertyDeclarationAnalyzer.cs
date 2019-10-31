@@ -175,16 +175,13 @@ namespace PropertyChangedAnalyzers
                         return false;
                     }
 
-                    switch (fi)
+                    return fi switch
                     {
-                        case 0:
-                            return true;
-                        case 1:
-                            return backingField.Name[0] == '_' ||
-                                   backingField.Name[0] == '@';
-                        default:
-                            return false;
-                    }
+                        0 => true,
+                        1 => backingField.Name[0] == '_' ||
+                             backingField.Name[0] == '@',
+                        _ => false,
+                    };
                 }
 
                 if (property.Name[pi] != backingField.Name[fi])

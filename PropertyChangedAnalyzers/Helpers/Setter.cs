@@ -1,5 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -101,7 +102,7 @@ namespace PropertyChangedAnalyzers
                     return false;
             }
 
-            bool IsParameter(ExpressionSyntax expression, out IdentifierNameSyntax result)
+            static bool IsParameter(ExpressionSyntax expression, out IdentifierNameSyntax result)
             {
                 switch (expression)
                 {
@@ -128,7 +129,7 @@ namespace PropertyChangedAnalyzers
             return IsMutation(candidate?.Expression, semanticModel, cancellationToken, out parameter, out backing);
         }
 
-        internal static bool TryGetBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out IFieldSymbol field)
+        internal static bool TryGetBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IFieldSymbol? field)
         {
             if (TryFindSingleMutation(setter, semanticModel, cancellationToken, out var mutated))
             {

@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -9,7 +10,7 @@ namespace PropertyChangedAnalyzers
 
     internal static class TrySet
     {
-        internal static bool CanCreateInvocation(IMethodSymbol candidate, out IParameterSymbol nameParameter)
+        internal static bool CanCreateInvocation(IMethodSymbol candidate, [NotNullWhen(true)] out IParameterSymbol? nameParameter)
         {
             nameParameter = null;
             return candidate.IsGenericMethod &&
@@ -38,12 +39,12 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static bool TryFind(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        internal static bool TryFind(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? method)
         {
             return type.TryFindFirstMethodRecursive(x => TrySet.CanCreateInvocation(x, out _) && IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
         }
 
-        internal static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
+        internal static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol>? visited = null)
         {
             if (candidate?.ArgumentList == null ||
                 candidate.ArgumentList.Arguments.Count < 2 ||
@@ -85,7 +86,7 @@ namespace PropertyChangedAnalyzers
             return AnalysisResult.No;
         }
 
-        internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol> visited = null)
+        internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol>? visited = null)
         {
             if (visited?.Add(candidate) == false)
             {

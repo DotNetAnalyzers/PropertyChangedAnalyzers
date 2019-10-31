@@ -137,7 +137,7 @@ namespace PropertyChangedAnalyzers
                 base.VisitInvocationExpression(node);
             }
 
-            internal static UsedMemberWalker Borrow(SyntaxNode scope, Search searchOption, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, UsedMemberWalker parent = null)
+            internal static UsedMemberWalker Borrow(SyntaxNode scope, Search searchOption, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, UsedMemberWalker? parent = null)
             {
                 var pooled = Borrow(() => new UsedMemberWalker());
                 if (parent != null)

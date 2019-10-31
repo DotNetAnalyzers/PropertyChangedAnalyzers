@@ -1,5 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -8,7 +9,7 @@ namespace PropertyChangedAnalyzers
 
     internal static class PropertyChangedEvent
     {
-        internal static bool TryFind(ITypeSymbol type, out IEventSymbol propertyChangedEvent)
+        internal static bool TryFind(ITypeSymbol type, [NotNullWhen(true)] out IEventSymbol? propertyChangedEvent)
         {
             return type.TryFindEventRecursive("PropertyChanged", out propertyChangedEvent);
         }

@@ -1,5 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -177,7 +178,7 @@ namespace PropertyChangedAnalyzers
             return IsMutableAutoProperty(property, out _, out _);
         }
 
-        internal static bool IsMutableAutoProperty(PropertyDeclarationSyntax property, out AccessorDeclarationSyntax getter, out AccessorDeclarationSyntax setter)
+        internal static bool IsMutableAutoProperty(PropertyDeclarationSyntax property, [NotNullWhen(true)] out AccessorDeclarationSyntax? getter, [NotNullWhen(true)] out AccessorDeclarationSyntax? setter)
         {
             if (property.TryGetGetter(out getter) &&
                 getter.Body == null &&
@@ -194,7 +195,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryGetAssignedProperty(AssignmentExpressionSyntax assignment, out PropertyDeclarationSyntax propertyDeclaration)
+        internal static bool TryGetAssignedProperty(AssignmentExpressionSyntax assignment, [NotNullWhen(true)] out PropertyDeclarationSyntax? propertyDeclaration)
         {
             propertyDeclaration = null;
             var typeDeclaration = assignment?.FirstAncestor<TypeDeclarationSyntax>();
@@ -257,7 +258,7 @@ namespace PropertyChangedAnalyzers
 
             return false;
 
-            bool IsAssigned(IdentifierNameSyntax identifierName)
+            static bool IsAssigned(IdentifierNameSyntax identifierName)
             {
                 var parent = identifierName.Parent;
                 if (parent is MemberAccessExpressionSyntax memberAccess)

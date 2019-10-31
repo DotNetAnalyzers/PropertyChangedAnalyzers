@@ -36,7 +36,7 @@ namespace PropertyChangedAnalyzers
 
         internal static readonly QualifiedType JetbrainsNotifyPropertyChangedInvocatorAttribute = new QualifiedType("Jetbrains.Annotations.NotifyPropertyChangedInvocatorAttribute");
 
-        private static QualifiedType Create(string qualifiedName, string alias = null)
+        private static QualifiedType Create(string qualifiedName, string? alias = null)
         {
             return new QualifiedType(qualifiedName, alias);
         }

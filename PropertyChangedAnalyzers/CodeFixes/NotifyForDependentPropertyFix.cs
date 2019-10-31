@@ -87,7 +87,7 @@ namespace PropertyChangedAnalyzers
                                         {
                                             var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
                                                                                          .ConfigureAwait(false);
-                                            editor.AddOnPropertyChanged(ifTrySet, onPropertyChangedStatement, cancellationToken);
+                                            editor.AddOnPropertyChanged(ifTrySet, onPropertyChangedStatement);
                                         },
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);
@@ -102,7 +102,7 @@ namespace PropertyChangedAnalyzers
                                         {
                                             var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
                                                                                          .ConfigureAwait(false);
-                                            editor.AddOnPropertyChangedAfter(ifNotTrySetReturn, onPropertyChangedStatement, cancellationToken);
+                                            editor.AddOnPropertyChangedAfter(ifNotTrySetReturn, onPropertyChangedStatement);
                                         },
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);

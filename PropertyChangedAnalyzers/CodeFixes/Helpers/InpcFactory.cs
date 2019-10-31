@@ -103,19 +103,17 @@ namespace PropertyChangedAnalyzers
                 }
                 else
                 {
-                    switch (className)
+                    return className switch
                     {
-                        case "object":
-                            return SyntaxFactory.MemberAccessExpression(
+                        "object" => SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        ParseQualifiedName(className),
+                                        SyntaxFactory.IdentifierName(methodName)),
+                        _ => SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 ParseQualifiedName(className),
-                                SyntaxFactory.IdentifierName(methodName));
-                        default:
-                            return SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                ParseQualifiedName(className),
-                                SyntaxFactory.IdentifierName(methodName));
-                    }
+                                SyntaxFactory.IdentifierName(methodName)),
+                    };
                 }
             }
         }

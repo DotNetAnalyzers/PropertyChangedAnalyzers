@@ -98,10 +98,9 @@ namespace PropertyChangedAnalyzers
                                 when body.Statements.IndexOf(ifTrySet) == body.Statements.IndexOf(onPropertyChangedStatement) - 1:
                                 context.RegisterCodeFix(
                                     "Check that value is different before notifying.",
-                                    (editor, cancellationToken) => editor.MoveOnPropertyChangedInside(
+                                    (editor, _) => editor.MoveOnPropertyChangedInside(
                                         ifTrySet,
-                                        onPropertyChangedStatement,
-                                        cancellationToken),
+                                        onPropertyChangedStatement),
                                     nameof(CheckIfDifferentBeforeNotifyFix),
                                     diagnostic);
                                 break;

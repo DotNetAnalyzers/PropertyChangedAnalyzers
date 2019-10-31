@@ -35,6 +35,7 @@ namespace PropertyChangedAnalyzers.Test
             Assert.Pass($"Count: {AllAnalyzers.Count}");
         }
 
+        [Ignore("Does not pick up nullable attributes.")]
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void AnalyzersProject(DiagnosticAnalyzer analyzer)
         {

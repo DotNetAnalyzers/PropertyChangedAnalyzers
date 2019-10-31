@@ -71,10 +71,10 @@ namespace PropertyChangedAnalyzers
             throw new InvalidOperationException("Could not find name parameter.");
         }
 
-        internal static void MoveOnPropertyChangedInside(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
+        internal static void MoveOnPropertyChangedInside(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged)
         {
             editor.RemoveNode(onPropertyChanged);
-            editor.AddOnPropertyChanged(ifTrySet, OnPropertyChanged(), cancellationToken);
+            editor.AddOnPropertyChanged(ifTrySet, OnPropertyChanged());
 
             ExpressionStatementSyntax OnPropertyChanged()
             {
@@ -106,12 +106,12 @@ namespace PropertyChangedAnalyzers
                     CallerMemberNameAttribute.IsAvailable(editor.SemanticModel)));
         }
 
-        internal static void AddOnPropertyChanged(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
+        internal static void AddOnPropertyChanged(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged)
         {
             switch (ifTrySet.Statement)
             {
                 case BlockSyntax block:
-                    editor.AddOnPropertyChanged(block, onPropertyChanged, 0, cancellationToken);
+                    editor.AddOnPropertyChanged(block, onPropertyChanged, 0);
                     break;
                 case ExpressionStatementSyntax expressionStatement:
                     _ = editor.ReplaceNode(
@@ -144,17 +144,17 @@ namespace PropertyChangedAnalyzers
                         x => x.AsBlockBody(SyntaxFactory.ExpressionStatement((ExpressionSyntax)x.Body), onPropertyChanged));
                     break;
                 case ExpressionStatementSyntax expressionStatement:
-                    editor.AddOnPropertyChangedAfter(expressionStatement, onPropertyChanged, cancellationToken);
+                    editor.AddOnPropertyChangedAfter(expressionStatement, onPropertyChanged);
                     break;
                 case PrefixUnaryExpressionSyntax unary
                     when unary.IsKind(SyntaxKind.LogicalNotExpression) &&
                          unary.Parent is IfStatementSyntax ifNot:
-                    editor.AddOnPropertyChangedAfter(ifNot, onPropertyChanged, cancellationToken);
+                    editor.AddOnPropertyChangedAfter(ifNot, onPropertyChanged);
                     break;
             }
         }
 
-        internal static void AddOnPropertyChanged(this DocumentEditor editor, BlockSyntax block, ExpressionStatementSyntax onPropertyChangedStatement, int after, CancellationToken cancellationToken)
+        internal static void AddOnPropertyChanged(this DocumentEditor editor, BlockSyntax block, ExpressionStatementSyntax onPropertyChangedStatement, int after)
         {
             for (var i = after; i < block.Statements.Count; i++)
             {
@@ -247,18 +247,18 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static void AddOnPropertyChangedAfter(this DocumentEditor editor, StatementSyntax statement, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
+        internal static void AddOnPropertyChangedAfter(this DocumentEditor editor, StatementSyntax statement, ExpressionStatementSyntax onPropertyChanged)
         {
             if (statement.Parent is BlockSyntax block)
             {
-                editor.AddOnPropertyChanged(block, onPropertyChanged, block.Statements.IndexOf(statement) + 1, cancellationToken);
+                editor.AddOnPropertyChanged(block, onPropertyChanged, block.Statements.IndexOf(statement) + 1);
                 return;
             }
 
             throw new InvalidOperationException("Statement not in block. Failed adding OnPropertyChanged()");
         }
 
-        internal static async Task<ExpressionSyntax> NameOfContainingAsync(this DocumentEditor editor, PropertyDeclarationSyntax property, IParameterSymbol parameter, CancellationToken cancellationToken)
+        internal static async Task<ExpressionSyntax?> NameOfContainingAsync(this DocumentEditor editor, PropertyDeclarationSyntax property, IParameterSymbol parameter, CancellationToken cancellationToken)
         {
             if (parameter.IsCallerMemberName())
             {
@@ -267,12 +267,12 @@ namespace PropertyChangedAnalyzers
 
             if (parameter.Type == KnownSymbol.String)
             {
-                return await NameExpression();
+                return await NameExpression().ConfigureAwait(false);
             }
 
             if (parameter.Type == KnownSymbol.PropertyChangedEventArgs)
             {
-                var expression = await NameExpression();
+                var expression = await NameExpression().ConfigureAwait(false);
                 return (ExpressionSyntax)editor.Generator.ObjectCreationExpression(
                     editor.Generator.TypeExpression(
                         editor.SemanticModel.Compilation.GetTypeByMetadataName(KnownSymbol.PropertyChangedEventArgs.FullName)),
