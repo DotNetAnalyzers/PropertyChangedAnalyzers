@@ -39,7 +39,7 @@ namespace PropertyChangedAnalyzers
                     }
                 }
                 else if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
-                         method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax declaration))
+                         method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax? declaration))
                 {
                     switch (Notifies(declaration))
                     {

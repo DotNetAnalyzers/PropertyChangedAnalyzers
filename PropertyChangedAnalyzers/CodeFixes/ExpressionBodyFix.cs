@@ -2,6 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
@@ -38,7 +39,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static bool TryGetExpression(StatementSyntax statement, out ExpressionSyntax expression)
+        private static bool TryGetExpression(StatementSyntax statement, [NotNullWhen(true)] out ExpressionSyntax? expression)
         {
             switch (statement)
             {

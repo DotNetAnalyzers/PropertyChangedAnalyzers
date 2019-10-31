@@ -40,7 +40,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static bool TryGetPropertyName(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, out string propertyName)
+        internal static bool TryGetPropertyName(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out string? propertyName)
         {
             if (TryGetCreation(expression, out var nameArgument) ||
                 TryGetCached(expression, semanticModel, cancellationToken, out nameArgument))

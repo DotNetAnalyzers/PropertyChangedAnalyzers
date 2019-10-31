@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers
         public static new bool Equals(object x, object y) => throw new InvalidOperationException();
 #pragma warning restore GU0073 // Member of non-public type should be internal.
 
-        internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode> visited = null)
+        internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode>? visited = null)
         {
             if (assigned is null ||
                 returned is null)

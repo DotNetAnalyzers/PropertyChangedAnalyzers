@@ -2,6 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -151,7 +152,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        private static bool TryGetAssignedExpression(ITypeSymbol containingType, SyntaxNode node, out ExpressionSyntax backing)
+        private static bool TryGetAssignedExpression(ITypeSymbol containingType, SyntaxNode node, [NotNullWhen(true)] out ExpressionSyntax? backing)
         {
             backing = null;
             if (node.IsMissing)

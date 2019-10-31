@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers
 
     internal static class Setter
     {
-        internal static bool TryFindSingleTrySet(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out InvocationExpressionSyntax invocation)
+        internal static bool TryFindSingleTrySet(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? invocation)
         {
             invocation = null;
             if (setter == null)
@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static bool TryFindSingleAssignment(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
+        internal static bool TryFindSingleAssignment(AccessorDeclarationSyntax setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)
         {
             assignment = null;
             if (setter == null)
@@ -45,14 +45,14 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool TryFindSingleMutation(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax backing)
+        internal static bool TryFindSingleMutation(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? backing)
         {
             backing = null;
             return property.TryGetSetter(out var setter) &&
                    TryFindSingleMutation(setter, semanticModel, cancellationToken, out backing);
         }
 
-        internal static bool TryFindSingleMutation(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax backing)
+        internal static bool TryFindSingleMutation(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? backing)
         {
             backing = null;
             using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken))
@@ -79,7 +79,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool IsMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax parameter, out ExpressionSyntax backing)
+        internal static bool IsMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IdentifierNameSyntax? parameter, [NotNullWhen(true)] out ExpressionSyntax? backing)
         {
             switch (candidate)
             {
@@ -146,7 +146,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
+        internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)
         {
             using (var walker = AssignmentWalker.Borrow(setter))
             {

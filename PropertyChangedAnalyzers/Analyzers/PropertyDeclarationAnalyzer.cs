@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -198,7 +199,7 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        private static bool TryGetMemberName(ExpressionSyntax expression, out string name)
+        private static bool TryGetMemberName(ExpressionSyntax expression, [NotNullWhen(true)] out string? name)
         {
             if (expression is IdentifierNameSyntax identifierName)
             {

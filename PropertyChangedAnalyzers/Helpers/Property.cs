@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers
 
     internal static class Property
     {
-        internal static bool TrySingleReturned(PropertyDeclarationSyntax property, out ExpressionSyntax result)
+        internal static bool TrySingleReturned(PropertyDeclarationSyntax property, [NotNullWhen(true)] out ExpressionSyntax? result)
         {
             if (property == null)
             {

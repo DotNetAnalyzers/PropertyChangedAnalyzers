@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -60,7 +61,7 @@ namespace PropertyChangedAnalyzers
             return invoker != null;
         }
 
-        internal static bool TryFind(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
+        internal static bool TryFind(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? invoker)
         {
             if (PropertyChangedEvent.TryFind(type, out var propertyChangedEvent))
             {

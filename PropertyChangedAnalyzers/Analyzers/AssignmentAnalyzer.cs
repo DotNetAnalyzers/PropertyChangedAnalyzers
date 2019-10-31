@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -37,7 +38,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static bool ShouldSetBackingField(AssignmentExpressionSyntax assignment, SyntaxNodeAnalysisContext context, out ExpressionSyntax fieldAccess)
+        private static bool ShouldSetBackingField(AssignmentExpressionSyntax assignment, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ExpressionSyntax? fieldAccess)
         {
             fieldAccess = null;
             return context.ContainingSymbol is IMethodSymbol ctor &&

@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -139,7 +140,7 @@ namespace PropertyChangedAnalyzers
             return symbol.Name;
         }
 
-        private static bool TryGetNameFromLambda(AnonymousFunctionExpressionSyntax lambda, out string name)
+        private static bool TryGetNameFromLambda(AnonymousFunctionExpressionSyntax lambda, [NotNullWhen(true)] out string? name)
         {
             if (TryGetName(lambda.Body, out name))
             {
