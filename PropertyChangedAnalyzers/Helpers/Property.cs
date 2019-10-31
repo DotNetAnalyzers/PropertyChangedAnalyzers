@@ -90,7 +90,7 @@ namespace PropertyChangedAnalyzers
                             return true;
                         }
 
-                        if (semanticModel.TryGetSymbol(returnValue, cancellationToken, out IFieldSymbol returnedField) &&
+                        if (semanticModel.TryGetSymbol(returnValue, cancellationToken, out IFieldSymbol? returnedField) &&
                             AssignmentExecutionWalker.FirstFor(returnedField, getter, SearchScope.Instance, semanticModel, cancellationToken, out _))
                         {
                             return true;
@@ -101,14 +101,14 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            return propertyDeclaration.ExpressionBody is ArrowExpressionClauseSyntax arrow &&
+            return propertyDeclaration.ExpressionBody is { } arrow &&
                    IsCoalesceAssign(arrow.Expression);
 
             bool IsCoalesceAssign(ExpressionSyntax expression)
             {
                 return expression is BinaryExpressionSyntax binary &&
                        binary.IsKind(SyntaxKind.CoalesceExpression) &&
-                       semanticModel.TryGetSymbol(binary.Left, cancellationToken, out IFieldSymbol coalesceField) &&
+                       semanticModel.TryGetSymbol(binary.Left, cancellationToken, out IFieldSymbol? coalesceField) &&
                        AssignmentExecutionWalker.FirstFor(coalesceField, binary.Right, SearchScope.Instance, semanticModel, cancellationToken, out _);
             }
         }
@@ -287,7 +287,7 @@ namespace PropertyChangedAnalyzers
 
             bool IsInConstructor(SyntaxNode node)
             {
-                if (node.TryFirstAncestor(out ConstructorDeclarationSyntax ctor) &&
+                if (node.TryFirstAncestor(out ConstructorDeclarationSyntax? ctor) &&
                     propertyDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword) == ctor.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
                     // Could be in an event handler in ctor.

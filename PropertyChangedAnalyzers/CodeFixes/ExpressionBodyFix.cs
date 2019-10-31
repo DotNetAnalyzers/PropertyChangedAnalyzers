@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AccessorDeclarationSyntax accessor) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AccessorDeclarationSyntax? accessor) &&
                     accessor.Body is BlockSyntax block &&
                     block.Statements.TrySingle(out var statement) &&
                     TryGetExpression(statement, out var expression))

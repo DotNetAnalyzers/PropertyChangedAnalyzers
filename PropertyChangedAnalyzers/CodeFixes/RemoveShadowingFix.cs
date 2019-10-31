@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out MemberDeclarationSyntax eventDeclaration))
+                if (syntaxRoot.TryFindNode(diagnostic, out MemberDeclarationSyntax? eventDeclaration))
                 {
                     context.RegisterCodeFix(
                         "Remove shadowing event.",

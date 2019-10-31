@@ -28,7 +28,7 @@ namespace PropertyChangedAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ParameterSyntax parameter))
+                if (syntaxRoot.TryFindNode(diagnostic, out ParameterSyntax? parameter))
                 {
                     context.RegisterCodeFix(
                         "Use [CallerMemberName]",
@@ -38,7 +38,7 @@ namespace PropertyChangedAnalyzers
                         nameof(UseCallerMemberNameFix),
                         diagnostic);
                 }
-                else if (syntaxRoot.TryFindNode(diagnostic, out ArgumentSyntax argument) &&
+                else if (syntaxRoot.TryFindNode(diagnostic, out ArgumentSyntax? argument) &&
                          argument.Parent is ArgumentListSyntax argumentList &&
                          argumentList.Parent is InvocationExpressionSyntax invocation &&
                          semanticModel.TryGetSymbol(invocation, context.CancellationToken, out var method) &&

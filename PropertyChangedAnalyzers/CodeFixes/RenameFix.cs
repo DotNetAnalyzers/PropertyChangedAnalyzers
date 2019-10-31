@@ -33,8 +33,8 @@ namespace PropertyChangedAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNode<ExpressionSyntax>(diagnostic, out var expression) &&
-                    semanticModel.TryGetSymbol(expression, context.CancellationToken, out IFieldSymbol field) &&
-                    expression.TryFirstAncestor(out PropertyDeclarationSyntax propertyDeclaration) &&
+                    semanticModel.TryGetSymbol(expression, context.CancellationToken, out IFieldSymbol? field) &&
+                    expression.TryFirstAncestor(out PropertyDeclarationSyntax? propertyDeclaration) &&
                     semanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property))
                 {
                     var documentOptions = await context.Document.GetOptionsAsync(context.CancellationToken)

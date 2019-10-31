@@ -97,7 +97,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (invocation.TryFirstAncestor(out ClassDeclarationSyntax containingClass))
+            if (invocation.TryFirstAncestor(out ClassDeclarationSyntax? containingClass))
             {
                 if (containingClass.BaseList?.Types == null ||
                     containingClass.BaseList.Types.Count == 0)
@@ -152,7 +152,7 @@ namespace PropertyChangedAnalyzers
 
             var result = AnalysisResult.No;
             if (method.Parameters.TrySingle(out var parameter) &&
-                method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax declaration))
+                method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax? declaration))
             {
                 using (var walker = InvocationWalker.Borrow(declaration))
                 {

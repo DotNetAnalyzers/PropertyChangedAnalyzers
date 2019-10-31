@@ -29,8 +29,8 @@ namespace PropertyChangedAnalyzers
             {
                 if (diagnostic.Properties.TryGetValue(MutationAnalyzer.PropertyNameKey, out var propertyName))
                 {
-                    if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionSyntax expression) &&
-                        expression.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
+                    if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionSyntax? expression) &&
+                        expression.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
                         semanticModel.TryGetNamedType(classDeclaration, context.CancellationToken, out var type) &&
                         OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var onPropertyChangedMethod) &&
                         onPropertyChangedMethod.Parameters.TrySingle(out var parameter) &&
@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
                                                 InpcFactory.IfStatement(
                                                     trySet,
                                                     onPropertyChangedStatement));
-                                            if (expressionStatement.TryFirstAncestor(out AccessorDeclarationSyntax setter))
+                                            if (expressionStatement.TryFirstAncestor(out AccessorDeclarationSyntax? setter))
                                             {
                                                 _ = editor.FormatNode(setter);
                                             }

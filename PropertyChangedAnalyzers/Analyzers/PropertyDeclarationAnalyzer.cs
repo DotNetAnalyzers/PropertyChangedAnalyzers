@@ -48,7 +48,7 @@ namespace PropertyChangedAnalyzers
                     {
                         if (single.IsEither(SyntaxKind.SimpleMemberAccessExpression, SyntaxKind.IdentifierName) &&
                             MemberPath.TrySingle(single, out var path) &&
-                            context.SemanticModel.TryGetSymbol(path, context.CancellationToken, out IFieldSymbol backingField))
+                            context.SemanticModel.TryGetSymbol(path, context.CancellationToken, out IFieldSymbol? backingField))
                         {
                             if (!HasMatchingName(backingField, property))
                             {

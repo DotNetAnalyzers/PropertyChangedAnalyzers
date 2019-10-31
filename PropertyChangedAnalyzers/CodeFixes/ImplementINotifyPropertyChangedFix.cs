@@ -49,7 +49,7 @@ namespace PropertyChangedAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (IsSupportedDiagnostic(diagnostic) &&
-                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax classDeclaration) &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration) &&
                     semanticModel.TryGetNamedType(classDeclaration, context.CancellationToken, out var type))
                 {
                     if (type.BaseType == KnownSymbol.Object &&

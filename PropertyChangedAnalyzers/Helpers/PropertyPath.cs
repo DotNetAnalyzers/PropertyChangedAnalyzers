@@ -198,16 +198,16 @@ namespace PropertyChangedAnalyzers
 
                     if (recursive is InvocationExpressionSyntax invocation &&
                         invocation.IsPotentialThisOrBase() &&
-                        this.semanticModel.GetSymbolSafe(invocation, this.cancellationToken) is IMethodSymbol method &&
+                        this.semanticModel.GetSymbolSafe(invocation, this.cancellationToken) is { } method &&
                         Equals(this.containingType, method.ContainingType) &&
-                        method.TrySingleDeclaration(this.cancellationToken, out MethodDeclarationSyntax declaration) &&
+                        method.TrySingleDeclaration(this.cancellationToken, out MethodDeclarationSyntax? declaration) &&
                         this.visited.Add(declaration))
                     {
                         VisitRecursive((SyntaxNode)declaration.Body ?? declaration.ExpressionBody);
                     }
                     else if (TryGetProperty(recursive, out var property) &&
-                             property.GetMethod is IMethodSymbol getMethod &&
-                             getMethod.TrySingleDeclaration(this.cancellationToken, out SyntaxNode getter) &&
+                             property.GetMethod is { } getMethod &&
+                             getMethod.TrySingleDeclaration(this.cancellationToken, out SyntaxNode? getter) &&
                              this.visited.Add(getter))
                     {
                         VisitRecursive(getter);

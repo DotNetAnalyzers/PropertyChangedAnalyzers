@@ -2,6 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -31,7 +32,7 @@ namespace PropertyChangedAnalyzers
                                                       .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax propertyDeclaration) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax? propertyDeclaration) &&
                     propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
                     semanticModel.TryGetSymbol(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
@@ -199,7 +200,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, out AccessorDeclarationSyntax setter, out AssignmentExpressionSyntax assignment)
+        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, [NotNullWhen(true)] out AccessorDeclarationSyntax? setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)
         {
             assignment = null;
             return propertyDeclaration.TryGetSetter(out setter) &&
@@ -212,7 +213,7 @@ namespace PropertyChangedAnalyzers
                     return true;
                 }
 
-                return localSetter.Body is BlockSyntax body &&
+                return localSetter.Body is { } body &&
                        body.Statements.Count == 1;
             }
         }

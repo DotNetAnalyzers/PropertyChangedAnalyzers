@@ -26,7 +26,7 @@ namespace PropertyChangedAnalyzers
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is AccessorDeclarationSyntax setter &&
-                setter.TryFirstAncestor(out PropertyDeclarationSyntax propertyDeclaration) &&
+                setter.TryFirstAncestor(out PropertyDeclarationSyntax? propertyDeclaration) &&
                 context.ContainingSymbol is IMethodSymbol setMethod &&
                 setMethod.AssociatedSymbol is IPropertySymbol property &&
                 property.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation))

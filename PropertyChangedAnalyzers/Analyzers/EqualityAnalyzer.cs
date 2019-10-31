@@ -81,7 +81,7 @@ namespace PropertyChangedAnalyzers
 
             bool IsInSetter()
             {
-                return context.Node.TryFirstAncestor(out AccessorDeclarationSyntax accessor) &&
+                return context.Node.TryFirstAncestor(out AccessorDeclarationSyntax? accessor) &&
                        accessor.IsKind(SyntaxKind.SetAccessorDeclaration);
             }
 

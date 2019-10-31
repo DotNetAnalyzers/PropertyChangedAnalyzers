@@ -26,7 +26,7 @@ namespace PropertyChangedAnalyzers
                                                    .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out InvocationExpressionSyntax invocation) &&
+                if (syntaxRoot.TryFindNode(diagnostic, out InvocationExpressionSyntax? invocation) &&
                     invocation.ArgumentList is ArgumentListSyntax argumentList &&
                     TryGetMethodName(out var name))
                 {
@@ -54,7 +54,7 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                if (syntaxRoot.TryFindNode(diagnostic, out BinaryExpressionSyntax binary) &&
+                if (syntaxRoot.TryFindNode(diagnostic, out BinaryExpressionSyntax? binary) &&
                     TryGetMethodName(out name))
                 {
                     switch (binary.Kind())

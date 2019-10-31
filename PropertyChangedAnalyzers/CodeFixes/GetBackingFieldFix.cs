@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax expression) &&
+                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression) &&
                     diagnostic.AdditionalLocations.TrySingle(out var additionalLocation) &&
                     syntaxRoot.TryFindNode(additionalLocation, out ExpressionSyntax fieldAccess))
                 {

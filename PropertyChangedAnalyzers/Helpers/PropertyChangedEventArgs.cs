@@ -65,14 +65,14 @@ namespace PropertyChangedAnalyzers
                 {
                     case IFieldSymbol field when field.TrySingleDeclaration(cancellationToken, out var declaration) &&
                                                  declaration.Declaration.Variables.TryLast(out var variable) &&
-                                                 variable.Initializer is EqualsValueClauseSyntax initializer:
+                                                 variable.Initializer is { } initializer:
                         return TryGetCreation(initializer.Value, out nameArg);
-                    case IPropertySymbol property when property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax declaration) &&
-                                                       declaration.Initializer is EqualsValueClauseSyntax initializer:
+                    case IPropertySymbol property when property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? declaration) &&
+                                                       declaration.Initializer is { } initializer:
                         return TryGetCreation(initializer.Value, out nameArg);
-                    case ILocalSymbol local when local.TrySingleDeclaration(cancellationToken, out VariableDeclarationSyntax declaration) &&
+                    case ILocalSymbol local when local.TrySingleDeclaration(cancellationToken, out VariableDeclarationSyntax? declaration) &&
                                                  declaration.Variables.TryLast(out var variable) &&
-                                                 variable.Initializer is EqualsValueClauseSyntax initializer:
+                                                 variable.Initializer is { } initializer:
                         return TryGetCreation(initializer.Value, out nameArg) ||
                                TryGetCached(initializer.Value, semanticModel, cancellationToken, out nameArg);
                     case IMethodSymbol method when method.Name == "GetOrAdd" &&

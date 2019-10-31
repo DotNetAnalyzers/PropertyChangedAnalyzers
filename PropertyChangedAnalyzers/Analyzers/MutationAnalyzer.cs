@@ -112,7 +112,7 @@ namespace PropertyChangedAnalyzers
                             context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
                             PropertyChanged.InvokesPropertyChangedFor(mutation, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                         {
-                            if (context.Node.TryFirstAncestor(out PropertyDeclarationSyntax inProperty) &&
+                            if (context.Node.TryFirstAncestor(out PropertyDeclarationSyntax? inProperty) &&
                                 ReferenceEquals(inProperty, propertyDeclaration) &&
                                 Property.TrySingleReturned(inProperty, out var returned) &&
                                 PropertyPath.Uses(backing, returned, context))

@@ -31,7 +31,7 @@ namespace PropertyChangedAnalyzers
                 context.Node is InvocationExpressionSyntax invocation &&
                 PropertyChanged.TryGetName(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No)
             {
-                if (invocation.TryFirstAncestor(out AccessorDeclarationSyntax setter) &&
+                if (invocation.TryFirstAncestor(out AccessorDeclarationSyntax? setter) &&
                     setter.IsKind(SyntaxKind.SetAccessorDeclaration))
                 {
                     if (Setter.TryFindSingleAssignment(setter, out var assignment))

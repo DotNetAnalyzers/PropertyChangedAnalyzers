@@ -27,7 +27,7 @@ namespace PropertyChangedAnalyzers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax classDeclaration))
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration))
                 {
                     context.RegisterCodeFix(
                         "Add OnPropertyChanged()",

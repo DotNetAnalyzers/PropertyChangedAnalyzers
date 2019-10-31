@@ -26,12 +26,12 @@ namespace PropertyChangedAnalyzers
                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax argument) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax? argument) &&
                     TryGetNameExpression(argument, out var nameExpression) &&
                     argument.Parent is ArgumentListSyntax argumentList &&
                     argumentList.Arguments.Count == 1 &&
                     argumentList.Parent is InvocationExpressionSyntax invocation &&
-                    argument.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
+                    argument.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
                     semanticModel.TryGetSymbol(classDeclaration, context.CancellationToken, out var type) &&
                     OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var invoker) &&
                     invoker.Parameters.TrySingle(out var parameter) &&
@@ -39,7 +39,7 @@ namespace PropertyChangedAnalyzers
                     PropertyChanged.TryGetName(invocation, semanticModel, context.CancellationToken, out var name) == AnalysisResult.Yes)
                 {
                     if (parameter.IsCallerMemberName() &&
-                        argument.TryFirstAncestor(out PropertyDeclarationSyntax propertyDeclaration) &&
+                        argument.TryFirstAncestor(out PropertyDeclarationSyntax? propertyDeclaration) &&
                         propertyDeclaration.Identifier.ValueText == name)
                     {
                         context.RegisterCodeFix(

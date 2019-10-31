@@ -25,7 +25,7 @@ namespace PropertyChangedAnalyzers
                                        .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ArgumentSyntax argument) &&
+                if (syntaxRoot.TryFindNode(diagnostic, out ArgumentSyntax? argument) &&
                     argument.Expression is LiteralExpressionSyntax literal &&
                     semanticModel.LookupSymbols(argument.SpanStart, name: literal.Token.ValueText).TryFirst(out var member))
                 {

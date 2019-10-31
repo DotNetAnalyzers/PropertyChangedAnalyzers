@@ -217,7 +217,7 @@ namespace PropertyChangedAnalyzers
 
                                     bool TryFindIndex(string name, out int result)
                                     {
-                                        if (statement.TryFirstAncestor(out ClassDeclarationSyntax classDeclaration) &&
+                                        if (statement.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
                                             classDeclaration.TryFindProperty(name, out var property))
                                         {
                                             if (property.Contains(statement))

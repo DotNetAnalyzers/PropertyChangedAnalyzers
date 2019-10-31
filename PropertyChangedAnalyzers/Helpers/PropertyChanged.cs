@@ -58,8 +58,8 @@ namespace PropertyChangedAnalyzers
                      (assignmentExpression.Left is IdentifierNameSyntax ||
                       (assignmentExpression.Left is MemberAccessExpressionSyntax memberAccess &&
                        memberAccess.Expression is ThisExpressionSyntax)) &&
-                      semanticModel.TryGetSymbol(assignmentExpression.Left, cancellationToken, out IPropertySymbol otherProperty) &&
-                      otherProperty.SetMethod.TrySingleDeclaration(cancellationToken, out AccessorDeclarationSyntax otherSetter) &&
+                      semanticModel.TryGetSymbol(assignmentExpression.Left, cancellationToken, out IPropertySymbol? otherProperty) &&
+                      otherProperty.SetMethod.TrySingleDeclaration(cancellationToken, out AccessorDeclarationSyntax? otherSetter) &&
                     Notifies(otherSetter) == AnalysisResult.Yes)
             {
                 return AnalysisResult.Yes;

@@ -27,8 +27,8 @@ namespace PropertyChangedAnalyzers
                                                       .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionStatementSyntax onPropertyChangedStatement) &&
-                    onPropertyChangedStatement.TryFirstAncestor(out AccessorDeclarationSyntax setter) &&
+                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionStatementSyntax? onPropertyChangedStatement) &&
+                    onPropertyChangedStatement.TryFirstAncestor(out AccessorDeclarationSyntax? setter) &&
                     setter.IsKind(SyntaxKind.SetAccessorDeclaration) &&
                     setter.Body is BlockSyntax body)
                 {
@@ -38,10 +38,10 @@ namespace PropertyChangedAnalyzers
                     {
                         if (semanticModel.TryGetSymbol(assignment.Left, CancellationToken.None, out var assignedSymbol) &&
                             assignedSymbol.Kind == SymbolKind.Field &&
-                            semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol setterSymbol) &&
+                            semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol? setterSymbol) &&
                             TrySet.TryFind(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var trySetMethod) &&
                             TrySet.CanCreateInvocation(trySetMethod, out _) &&
-                            setter.TryFirstAncestor(out PropertyDeclarationSyntax property))
+                            setter.TryFirstAncestor(out PropertyDeclarationSyntax? property))
                         {
                             if (setter.Body.Statements.Count == 2)
                             {

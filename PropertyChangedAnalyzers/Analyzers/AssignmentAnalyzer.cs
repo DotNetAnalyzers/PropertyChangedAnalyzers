@@ -44,7 +44,7 @@ namespace PropertyChangedAnalyzers
                    !ctor.IsStatic &&
                    ctor.MethodKind == MethodKind.Constructor &&
                    assignment.Parent is ExpressionStatementSyntax assignmentStatement &&
-                   assignmentStatement.TryFirstAncestor(out ConstructorDeclarationSyntax constructor) &&
+                   assignmentStatement.TryFirstAncestor(out ConstructorDeclarationSyntax? constructor) &&
                    constructor.Body is BlockSyntax body &&
                    body.Statements.Contains(assignmentStatement) &&
                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
@@ -89,7 +89,7 @@ namespace PropertyChangedAnalyzers
             {
                 return Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out backingField) &&
                        MemberPath.TrySingle(backingField, out var single) &&
-                       context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol field) &&
+                       context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol? field) &&
                        Equals(ctor.ContainingType, field.ContainingType);
             }
 
