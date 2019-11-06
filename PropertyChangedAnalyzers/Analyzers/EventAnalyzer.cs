@@ -41,15 +41,13 @@ namespace PropertyChangedAnalyzers
 
             bool Shadows()
             {
-                return !eventSymbol.IsOverride &&
-                       !eventSymbol.IsStatic &&
+                return eventSymbol is { IsStatic: false, IsOverride: false } &&
                        eventSymbol.ContainingType.BaseType.TryFindEventRecursive(eventSymbol.Name, out _);
             }
 
             bool MissingInvoker()
             {
-                if (!eventSymbol.IsStatic &&
-                    eventSymbol.ContainingType.TypeKind != TypeKind.Interface &&
+                if (eventSymbol is { IsStatic: false, ContainingType: { TypeKind: TypeKind.Class } } &&
                     eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
                     !OnPropertyChanged.TryFind(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
                 {

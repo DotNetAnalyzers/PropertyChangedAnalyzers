@@ -24,22 +24,14 @@ namespace PropertyChangedAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is StructDeclarationSyntax structDeclaration &&
+                context.Node is StructDeclarationSyntax { BaseList: { } baseList } declaration &&
                 context.ContainingSymbol is INamedTypeSymbol type &&
                 type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC008StructMustNotNotify, GetNode().GetLocation(), context.ContainingSymbol.Name));
-            }
-
-            SyntaxNode GetNode()
-            {
-                if (structDeclaration.BaseList != null &&
-                    structDeclaration.BaseList.Types.TryFirst(x => x == KnownSymbol.INotifyPropertyChanged, out var inpc))
-                {
-                    return inpc;
-                }
-
-                return structDeclaration;
+                var location = baseList.Types.TryFirst(x => x == KnownSymbol.INotifyPropertyChanged, out var inpc)
+                    ? inpc.GetLocation()
+                    : declaration.Identifier.GetLocation();
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC008StructMustNotNotify, location, context.ContainingSymbol.Name));
             }
         }
     }
