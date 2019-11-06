@@ -105,7 +105,7 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            static bool IsWhiteListedStatement(StatementSyntax candidate)
+            bool IsWhiteListedStatement(StatementSyntax candidate)
             {
                 switch (candidate)
                 {
@@ -120,12 +120,12 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            static bool IsWhiteListedIfStatement(IfStatementSyntax ifStatement)
+            bool IsWhiteListedIfStatement(IfStatementSyntax ifStatement)
             {
                 return IsWhiteListedBranch(ifStatement.Statement) &&
                        IsWhiteListedBranch(ifStatement.Else?.Statement);
 
-                static bool IsWhiteListedBranch(StatementSyntax? branch)
+                bool IsWhiteListedBranch(StatementSyntax? branch)
                 {
                     switch (branch)
                     {
