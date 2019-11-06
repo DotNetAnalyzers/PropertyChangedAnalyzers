@@ -143,30 +143,24 @@ namespace PropertyChangedAnalyzers
 
         private static bool TryGetAssignedExpression(ITypeSymbol containingType, SyntaxNode node, [NotNullWhen(true)] out ExpressionSyntax? backing)
         {
-            backing = null;
-            if (node.IsMissing)
+            switch (node)
             {
-                return false;
-            }
-
-            if (node is IdentifierNameSyntax identifierName &&
-                !IdentifierTypeWalker.IsLocalOrParameter(identifierName) &&
-                !containingType.TryFindProperty(identifierName.Identifier.ValueText, out _))
-            {
-                backing = identifierName;
-            }
-            else if (node is MemberAccessExpressionSyntax memberAccess)
-            {
-                if (memberAccess.Expression is ThisExpressionSyntax &&
-                    containingType.TryFindProperty(memberAccess.Name.Identifier.ValueText, out _))
-                {
+                case IdentifierNameSyntax identifierName
+                    when !IdentifierTypeWalker.IsLocalOrParameter(identifierName) &&
+                         !containingType.TryFindProperty(identifierName.Identifier.ValueText, out _):
+                    backing = identifierName;
+                    return true;
+                case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name } memberAccess
+                    when !containingType.TryFindProperty(name.Identifier.ValueText, out _):
+                    backing = memberAccess;
+                    return true;
+                case MemberAccessExpressionSyntax memberAccess:
+                    backing = memberAccess;
+                    return true;
+                default:
+                    backing = null;
                     return false;
-                }
-
-                backing = memberAccess;
             }
-
-            return backing != null;
         }
 
         private static bool TryGeExpressionBodyOrGetter(PropertyDeclarationSyntax property, [NotNullWhen(true)] out SyntaxNode? node)
