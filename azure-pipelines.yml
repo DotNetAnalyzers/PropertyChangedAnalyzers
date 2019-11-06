@@ -9,7 +9,6 @@ steps:
 - task: VSBuild@1
   displayName: Build
   inputs:
-    solution: '.'
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/restore'
 
@@ -17,5 +16,4 @@ steps:
   displayName: Test
   inputs:
     command: 'test'
-    projects: 'PropertyChangedAnalyzers.Test'
     arguments: '--no-build --configuration=$(buildConfiguration)'
