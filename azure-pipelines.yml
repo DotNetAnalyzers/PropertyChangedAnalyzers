@@ -12,9 +12,9 @@ steps:
   displayName: Build
   inputs:
     solution: '$(solution)'
-    restoreNugetPackages: true
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    msbuildArgs: '/restore'
 
 - task: DotNetCoreCLI@2
   displayName: Test
