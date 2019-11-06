@@ -1,6 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Runtime.InteropServices.ComTypes;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -25,71 +26,35 @@ namespace PropertyChangedAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is AccessorDeclarationSyntax setter &&
-                setter.TryFirstAncestor(out PropertyDeclarationSyntax? propertyDeclaration) &&
-                context.ContainingSymbol is IMethodSymbol setMethod &&
-                setMethod.AssociatedSymbol is IPropertySymbol property &&
+                context.Node is AccessorDeclarationSyntax { Parent: AccessorListSyntax { Parent: PropertyDeclarationSyntax containingProperty } } setter &&
+                context.ContainingSymbol is IMethodSymbol { AssociatedSymbol: IPropertySymbol property } &&
                 property.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation))
             {
-                if (setter.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
+                switch (setter)
                 {
-                    if (expressionBody.Expression.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
-                        Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.INPC002MutablePublicPropertyShouldNotify,
-                                propertyDeclaration.Identifier.GetLocation(),
-                                property.Name));
-                    }
-                }
-                else if (setter.Body is BlockSyntax body)
-                {
-                    if (Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.INPC002MutablePublicPropertyShouldNotify,
-                                propertyDeclaration.Identifier.GetLocation(),
-                                property.Name));
-                    }
+                    case { ExpressionBody: { Expression: { } expression } }:
+                        if (expression.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
+                            Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.INPC002MutablePublicPropertyShouldNotify,
+                                    containingProperty.Identifier.GetLocation(),
+                                    property.Name));
+                        }
 
-                    Walk(body);
-                }
-                else
-                {
-                    if (Property.ShouldNotify(propertyDeclaration, property, context.SemanticModel, context.CancellationToken))
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.INPC002MutablePublicPropertyShouldNotify,
-                                propertyDeclaration.Identifier.GetLocation(),
-                                property.Name));
-                    }
-                }
-            }
+                        break;
+                    case { Body: { } }:
+                        if (Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.INPC002MutablePublicPropertyShouldNotify,
+                                    containingProperty.Identifier.GetLocation(),
+                                    property.Name));
+                        }
 
-            void Walk(BlockSyntax body)
-            {
-                var hasCheckedEquals = false;
-                var hasAssigned = false;
-                var hasNotified = false;
-                foreach (var statement in body.Statements)
-                {
-                    switch (statement)
-                    {
-                        case ExpressionStatementSyntax expressionStatement
-                            when expressionStatement.Expression is AssignmentExpressionSyntax assignment &&
-                                 Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out var fieldAccess) &&
-                                 assignment.Left == fieldAccess:
-                            hasAssigned = true;
-                            break;
-                        case ExpressionStatementSyntax expressionStatement
-                            when Setter.IsMutation(expressionStatement.Expression, context.SemanticModel, context.CancellationToken, out _, out _):
-
-                        default:
-                            return;
-                    }
+                        break;
                 }
             }
         }
