@@ -27,16 +27,13 @@ namespace PropertyChangedAnalyzers
 
             bool IsMatch(ArgumentSyntax candidate)
             {
-                switch (candidate.Expression)
+                return candidate.Expression switch
                 {
-                    case IdentifierNameSyntax identifierName:
-                        return identifierName.Identifier.ValueText == parameter.Name;
-                    case BinaryExpressionSyntax binary when binary.IsKind(SyntaxKind.CoalesceExpression) &&
-                                                            binary.Left is IdentifierNameSyntax identifierName:
-                        return identifierName.Identifier.ValueText == parameter.Name;
-                    default:
-                        return false;
-                }
+                    IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText == parameter.Name,
+                    BinaryExpressionSyntax { Left: IdentifierNameSyntax left } binary => binary.IsKind(SyntaxKind.CoalesceExpression) &&
+                                                                                         left.Identifier.ValueText == parameter.Name,
+                    _ => false,
+                };
             }
         }
 
