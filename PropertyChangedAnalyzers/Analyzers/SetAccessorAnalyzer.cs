@@ -12,7 +12,8 @@ namespace PropertyChangedAnalyzers
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            Descriptors.INPC002MutablePublicPropertyShouldNotify);
+            Descriptors.INPC002MutablePublicPropertyShouldNotify,
+            Descriptors.INPC016NotifyAfterMutation);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -43,7 +44,7 @@ namespace PropertyChangedAnalyzers
                         }
 
                         break;
-                    case { Body: { } }:
+                    case { Body: { } body }:
                         if (Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
                         {
                             context.ReportDiagnostic(
@@ -53,6 +54,7 @@ namespace PropertyChangedAnalyzers
                                     property.Name));
                         }
 
+                        Walk(body);
                         break;
                     case { Body: null, ExpressionBody: null }:
                         if (Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
@@ -65,6 +67,53 @@ namespace PropertyChangedAnalyzers
                         }
 
                         break;
+                }
+
+                void Walk(BlockSyntax body)
+                {
+                    bool? equals = null;
+                    ExpressionSyntax backing = null;
+                    foreach (var statement in body.Statements)
+                    {
+                        switch (statement)
+                        {
+                            case IfStatementSyntax { Condition: { } condition } ifStatement
+                                when Gu.Roslyn.AnalyzerExtensions.Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out var left, out var right):
+                                equals = true;
+                                //foreach (var VARIABLE in ifStatement.Statement)
+                                //{
+
+                                //}
+                                break;
+                            case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: { } left, Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } } }:
+                                backing = left;
+                                break;
+                            case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax { ArgumentList: { Arguments: { } arguments } } invocation }:
+                                if (TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No &&
+                                    arguments.TrySingle<ArgumentSyntax>(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var temp))
+                                {
+                                    backing = temp.Expression;
+                                }
+                                else if (backing == null &&
+                                    (OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
+                                     PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken)))
+                                {
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
+                                }
+
+                                break;
+                            case ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax invocation } }:
+                                if (backing == null &&
+                                    PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken))
+                                {
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
+                                }
+
+                                break;
+                            default:
+                                return;
+                        }
+                    }
                 }
             }
         }

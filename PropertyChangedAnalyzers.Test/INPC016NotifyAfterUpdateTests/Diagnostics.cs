@@ -6,10 +6,9 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC016NotifyAfterAssign);
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC016NotifyAfterMutation);
 
-#pragma warning disable SA1203 // Constants must appear before fields
         private const string ViewModelBaseCode = @"
 namespace RoslynSandbox.Core
 {
@@ -46,7 +45,6 @@ namespace RoslynSandbox.Core
         }
     }
 }";
-#pragma warning restore SA1203 // Constants must appear before fields
 
         [Test]
         public static void OnPropertyChangedBeforeAssign()
@@ -135,7 +133,6 @@ namespace RoslynSandbox
 namespace RoslynSandbox
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class ViewModel : INotifyPropertyChanged
     {
@@ -168,8 +165,9 @@ namespace RoslynSandbox
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
-        [Test]
-        public static void BeforeTrySet()
+        [TestCase("this.TrySet(ref this.name, value)")]
+        [TestCase("_ = this.TrySet(ref this.name, value)")]
+        public static void BeforeTrySet(string trySet)
         {
             var code = @"
 namespace RoslynSandbox.Client
@@ -190,7 +188,7 @@ namespace RoslynSandbox.Client
             }
         }
     }
-}";
+}".AssertReplace("this.TrySet(ref this.name, value)", trySet);
 
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, ViewModelBaseCode, code);
         }

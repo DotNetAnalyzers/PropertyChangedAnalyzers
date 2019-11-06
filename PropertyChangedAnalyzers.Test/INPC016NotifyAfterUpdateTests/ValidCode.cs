@@ -6,7 +6,44 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
 
     public static class ValidCode
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
+
+        private const string ViewModelBaseCode = @"
+namespace RoslynSandbox.Core
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq.Expressions;
+    using System.Runtime.CompilerServices;
+
+    public abstract class ViewModelBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+        {
+            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
 
         [Test]
         public static void OnPropertyChangedAfterAssign()
@@ -94,6 +131,90 @@ namespace RoslynSandbox
 }";
 
             RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [TestCase("this.TrySet(ref this.name, value);")]
+        [TestCase("_ = this.TrySet(ref this.name, value);")]
+        public static void AfterTrySet(string trySet)
+        {
+            var code = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                this.TrySet(ref this.name, value);
+                this.OnPropertyChanged(nameof(this.Greeting));
+            }
+        }
+    }
+}".AssertReplace("this.TrySet(ref this.name, value);", trySet);
+
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
+
+        [Test]
+        public static void InsideIfTrySetStatement()
+        {
+            var code = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.TrySet(ref this.name, value))
+                    this.OnPropertyChanged(nameof(this.Greeting));
+            }
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
+
+        [Test]
+        public static void InsideIfTrySetBlock()
+        {
+            var code = @"
+namespace RoslynSandbox.Client
+{
+    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.TrySet(ref this.name, value))
+                {
+                    this.OnPropertyChanged(nameof(this.Greeting));
+                }
+            }
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
         }
     }
 }

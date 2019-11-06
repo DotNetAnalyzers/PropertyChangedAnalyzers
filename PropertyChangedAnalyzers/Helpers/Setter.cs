@@ -65,10 +65,8 @@ namespace PropertyChangedAnalyzers
                             when IsMutation(assignment, semanticModel, cancellationToken, out _, out backing):
                             return true;
 
-                        case ArgumentSyntax argument
-                            when argument.Parent is ArgumentListSyntax argumentList &&
-                                 argumentList.Parent is InvocationExpressionSyntax invocation &&
-                                 IsMutation(invocation, semanticModel, cancellationToken, out _, out backing):
+                        case ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } }
+                            when IsMutation(invocation, semanticModel, cancellationToken, out _, out backing):
                             return true;
                         default:
                             return false;
