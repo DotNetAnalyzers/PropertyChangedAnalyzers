@@ -132,24 +132,13 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsInIgnoredScope(SyntaxNodeAnalysisContext context)
         {
-            if (context.ContainingSymbol is IMethodSymbol method &&
-                method.Name == "Dispose")
+            return context switch
             {
-                return true;
-            }
-
-            if (context.Node.FirstAncestorOrSelf<InitializerExpressionSyntax>() != null ||
-                context.Node.FirstAncestorOrSelf<ConstructorDeclarationSyntax>() != null)
-            {
-                if (context.Node.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>() != null)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-
-            return false;
+                { ContainingSymbol: IMethodSymbol { Name: "Dispose" } } => true,
+                { Node: { Parent: ObjectCreationExpressionSyntax _ } } => true,
+                { ContainingSymbol: IMethodSymbol { MethodKind: MethodKind.Constructor } } => !context.Node.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _),
+                _ => false
+            };
         }
 
         private static bool TryGetAssignedExpression(ITypeSymbol containingType, SyntaxNode node, [NotNullWhen(true)] out ExpressionSyntax? backing)
