@@ -29,8 +29,7 @@ namespace PropertyChangedAnalyzers
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is ArgumentSyntax argument &&
-                argument.Parent is ArgumentListSyntax argumentList)
+                context.Node is ArgumentSyntax { Parent: ArgumentListSyntax argumentList } argument)
             {
                 if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var text))
                 {
@@ -88,9 +87,8 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                if (argumentList.Parent is InvocationExpressionSyntax invocation &&
-                    argument.Expression is AnonymousFunctionExpressionSyntax lambda &&
-                    argumentList.Arguments.Count == 1 &&
+                if (argument is { Expression: AnonymousFunctionExpressionSyntax lambda } &&
+                    argumentList is { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
                     TryGetNameFromLambda(lambda, out var lambdaName))
                 {
                     if (OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
@@ -107,7 +105,7 @@ namespace PropertyChangedAnalyzers
                     argument.Expression is MemberAccessExpressionSyntax) &&
                     argumentList.Parent is InvocationExpressionSyntax invokeCandidate)
                 {
-                    if (invokeCandidate.ArgumentList?.Arguments.Count == 1 &&
+                    if (argumentList.Arguments.Count == 1 &&
                         OnPropertyChanged.IsMatch(invokeCandidate, context.SemanticModel, context.CancellationToken) != AnalysisResult.No &&
                         PropertyChanged.TryGetName(invokeCandidate, context.SemanticModel, context.CancellationToken, out var propertyName) == AnalysisResult.Yes &&
                         !string.IsNullOrEmpty(propertyName) &&
@@ -131,8 +129,7 @@ namespace PropertyChangedAnalyzers
 
         private static string ContainingSymbolName(ISymbol symbol)
         {
-            if (symbol is IMethodSymbol method &&
-                method.AssociatedSymbol is ISymbol associated)
+            if (symbol is IMethodSymbol { AssociatedSymbol: { } associated })
             {
                 return associated.Name;
             }
@@ -142,34 +139,24 @@ namespace PropertyChangedAnalyzers
 
         private static bool TryGetNameFromLambda(AnonymousFunctionExpressionSyntax lambda, [NotNullWhen(true)] out string? name)
         {
-            if (TryGetName(lambda.Body, out name))
-            {
-                return true;
-            }
-
-            if (lambda.Body is InvocationExpressionSyntax invocation)
-            {
-                return TryGetName(invocation.Expression, out name);
-            }
-
-            name = null;
-            return false;
+            return TryGetName(lambda.Body, out name);
 
             static bool TryGetName(SyntaxNode node, out string result)
             {
+                switch (node)
+                {
+                    case IdentifierNameSyntax identifierName:
+                        result = identifierName.Identifier.ValueText;
+                        return true;
+                    case MemberAccessExpressionSyntax { Name: { } memberName }:
+                        result = memberName.Identifier.ValueText;
+                        return true;
+                    case InvocationExpressionSyntax { Expression: { } expression }:
+                        return TryGetName(expression, out result);
+                }
+
                 result = null;
-                if (node is IdentifierNameSyntax identifierName)
-                {
-                    result = identifierName.Identifier.ValueText;
-                }
-
-                if (node is MemberAccessExpressionSyntax memberAccess &&
-                    memberAccess.Name is SimpleNameSyntax nameSyntax)
-                {
-                    result = nameSyntax.Identifier.ValueText;
-                }
-
-                return result != null;
+                return false;
             }
         }
     }
