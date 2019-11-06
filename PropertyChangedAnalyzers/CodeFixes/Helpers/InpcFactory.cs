@@ -83,7 +83,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static ExpressionSyntax Equals(string className, string methodName, ExpressionSyntax x, ExpressionSyntax y)
+        internal static ExpressionSyntax Equals(string? className, string methodName, ExpressionSyntax x, ExpressionSyntax y)
         {
             return SyntaxFactory.InvocationExpression(
                 Expression(),
@@ -232,7 +232,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static ExpressionStatementSyntax OnPropertyChangedInvocationStatement(ExpressionSyntax methodAccess, ExpressionSyntax nameExpression)
+        internal static ExpressionStatementSyntax OnPropertyChangedInvocationStatement(ExpressionSyntax methodAccess, ExpressionSyntax? nameExpression)
         {
             return SyntaxFactory.ExpressionStatement(
                 SyntaxFactory.InvocationExpression(

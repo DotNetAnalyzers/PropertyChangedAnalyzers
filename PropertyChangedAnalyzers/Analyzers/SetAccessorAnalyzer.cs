@@ -1,7 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
-    using System.Runtime.InteropServices.ComTypes;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -45,6 +44,17 @@ namespace PropertyChangedAnalyzers
 
                         break;
                     case { Body: { } }:
+                        if (Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.INPC002MutablePublicPropertyShouldNotify,
+                                    containingProperty.Identifier.GetLocation(),
+                                    property.Name));
+                        }
+
+                        break;
+                    case { Body: null, ExpressionBody: null }:
                         if (Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
                         {
                             context.ReportDiagnostic(
