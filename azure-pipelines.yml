@@ -2,8 +2,6 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
@@ -11,8 +9,7 @@ steps:
 - task: VSBuild@1
   displayName: Build
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
+    solution: '.'
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/restore'
 
