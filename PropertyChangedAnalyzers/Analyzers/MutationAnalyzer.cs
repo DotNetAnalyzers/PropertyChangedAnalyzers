@@ -48,8 +48,8 @@ namespace PropertyChangedAnalyzers
         {
             if (!context.IsExcludedFromAnalysis() &&
                 !IsInIgnoredScope(context) &&
-                context.Node is PostfixUnaryExpressionSyntax postfix &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, postfix.Operand, out var backing))
+                context.Node is PostfixUnaryExpressionSyntax { Operand: { } operand } postfix &&
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, operand, out var backing))
             {
                 Handle(postfix, backing, context);
             }
@@ -70,8 +70,8 @@ namespace PropertyChangedAnalyzers
         {
             if (!context.IsExcludedFromAnalysis() &&
                 !IsInIgnoredScope(context) &&
-                context.Node is AssignmentExpressionSyntax assignment &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, assignment.Left, out var backing))
+                context.Node is AssignmentExpressionSyntax { Left: { } left } assignment &&
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, left, out var backing))
             {
                 Handle(assignment, backing, context);
             }
@@ -91,7 +91,7 @@ namespace PropertyChangedAnalyzers
 
         private static void Handle(ExpressionSyntax mutation, ExpressionSyntax backing, SyntaxNodeAnalysisContext context)
         {
-            if (context.ContainingSymbol.ContainingType is INamedTypeSymbol containingType &&
+            if (context.ContainingSymbol.ContainingType is { } containingType &&
                 containingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) &&
                 mutation.TryFirstAncestorOrSelf<TypeDeclarationSyntax>(out var typeDeclaration))
             {
@@ -110,7 +110,7 @@ namespace PropertyChangedAnalyzers
                             !getter.Contains(backing) &&
                             PropertyPath.Uses(getter, pathWalker, context) &&
                             !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
-                            context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is IPropertySymbol property &&
+                            context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is { } property &&
                             PropertyChanged.InvokesPropertyChangedFor(mutation, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                         {
                             if (context.Node.TryFirstAncestor(out PropertyDeclarationSyntax? inProperty) &&
