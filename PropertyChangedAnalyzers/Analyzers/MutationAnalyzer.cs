@@ -169,21 +169,21 @@ namespace PropertyChangedAnalyzers
             return backing != null;
         }
 
-        private static bool TryGeExpressionBodyOrGetter(PropertyDeclarationSyntax property, out SyntaxNode node)
+        private static bool TryGeExpressionBodyOrGetter(PropertyDeclarationSyntax property, [NotNullWhen(true)] out SyntaxNode? node)
         {
-            if (property.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
+            switch (property)
             {
-                node = expressionBody.Expression;
-                return true;
+                case { ExpressionBody: { Expression: { } expression } }:
+                    node = expression;
+                    return true;
+                case { AccessorList: { } }
+                    when property.TryGetGetter(out var getter):
+                    node = (SyntaxNode)getter.Body ?? getter.ExpressionBody;
+                    return node != null;
+                default:
+                    node = null;
+                    return false;
             }
-
-            node = null;
-            if (property.TryGetGetter(out var getter))
-            {
-                node = (SyntaxNode)getter.Body ?? getter.ExpressionBody;
-            }
-
-            return node != null;
         }
     }
 }
