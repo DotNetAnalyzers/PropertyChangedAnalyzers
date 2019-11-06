@@ -1,7 +1,7 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -99,53 +99,43 @@ namespace PropertyChangedAnalyzers
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
                         }
+                    }
 
-                        if (propertyDeclaration.TryGetGetter(out var getter))
+                    if (propertyDeclaration.TryGetGetter(out var getter))
+                    {
+                        if (ShouldBeExpressionBody(getter))
                         {
-                            if (ShouldBeExpressionBody(getter))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, getter.GetLocation()));
-                            }
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, getter.GetLocation()));
                         }
                     }
                 }
 
                 bool IsProperty(ExpressionSyntax expression)
                 {
-                    if (expression is MemberAccessExpressionSyntax memberAccess &&
-                        !(memberAccess.Expression is ThisExpressionSyntax))
-                    {
-                        return false;
-                    }
-
                     if (property.ExplicitInterfaceImplementations.Any())
                     {
                         return false;
                     }
 
-                    if (TryGetMemberName(expression, out var name))
+                    return expression switch
                     {
-                        return name == property.Name;
-                    }
-
-                    return false;
+                        IdentifierNameSyntax { Identifier: { ValueText: { } name } } => property.Name == name,
+                        MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { Identifier: { ValueText: { } name } } } => property.Name == name,
+                        _ => false
+                    };
                 }
             }
         }
 
-        private static ReturnExpressionsWalker ReturnExpressions(PropertyDeclarationSyntax propertyDeclaration)
+        private static ReturnExpressionsWalker ReturnExpressions(PropertyDeclarationSyntax property)
         {
-            if (propertyDeclaration.TryGetGetter(out var getter))
+            return property switch
             {
-                return ReturnExpressionsWalker.Borrow(getter);
-            }
-
-            if (propertyDeclaration.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
-            {
-                return ReturnExpressionsWalker.Borrow(expressionBody);
-            }
-
-            return ReturnExpressionsWalker.Empty();
+                { ExpressionBody: { Expression: { } } expressionBody } => ReturnExpressionsWalker.Borrow(expressionBody),
+                { AccessorList: { } }
+                    when property.TryGetGetter(out var getter) => ReturnExpressionsWalker.Borrow(getter),
+                _ => ReturnExpressionsWalker.Empty(),
+            };
         }
 
         private static bool HasMatchingName(IFieldSymbol backingField, IPropertySymbol property)
@@ -171,7 +161,7 @@ namespace PropertyChangedAnalyzers
                 var fi = pi + diff;
                 if (pi == 0)
                 {
-                    if (char.ToLower(property.Name[pi]) != backingField.Name[fi])
+                    if (char.ToLower(property.Name[pi], CultureInfo.InvariantCulture) != backingField.Name[fi])
                     {
                         return false;
                     }
@@ -189,7 +179,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (pi == 0 ||
                         !char.IsUpper(property.Name[pi - 1]) ||
-                        char.ToUpper(backingField.Name[fi]) != property.Name[pi])
+                        char.ToUpper(backingField.Name[fi], CultureInfo.InvariantCulture) != property.Name[pi])
                     {
                         return false;
                     }
@@ -199,31 +189,10 @@ namespace PropertyChangedAnalyzers
             return true;
         }
 
-        private static bool TryGetMemberName(ExpressionSyntax expression, [NotNullWhen(true)] out string? name)
-        {
-            if (expression is IdentifierNameSyntax identifierName)
-            {
-                name = identifierName.Identifier.ValueText;
-                return true;
-            }
-
-            if (expression is MemberAccessExpressionSyntax memberAccess &&
-                memberAccess.Expression is InstanceExpressionSyntax &&
-                memberAccess.Name is IdentifierNameSyntax nameIdentifier)
-            {
-                name = nameIdentifier.Identifier.ValueText;
-                return true;
-            }
-
-            name = null;
-            return false;
-        }
-
         private static bool ShouldBeExpressionBody(AccessorDeclarationSyntax accessor)
         {
-            return accessor.Body is BlockSyntax block &&
-                   block.Statements.TrySingle(out var statement) &&
-                   statement.IsEither(SyntaxKind.ReturnStatement, SyntaxKind.ExpressionStatement);
+            return accessor.Body is { Statements: { Count: 1 } statements } &&
+                   statements[0].IsEither(SyntaxKind.ReturnStatement, SyntaxKind.ExpressionStatement);
         }
     }
 }

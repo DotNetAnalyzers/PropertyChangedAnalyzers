@@ -55,7 +55,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public static void GetSetExpressionBodyAccessors()
+        public static void GetSetBackingFieldExpressionBodies()
         {
             var code = @"
 namespace RoslynSandbox
@@ -79,7 +79,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public static void BaseCall()
+        public static void ExpressionBodyReturnBase()
         {
             var code = @"
 namespace RoslynSandbox
@@ -92,6 +92,30 @@ namespace RoslynSandbox
     public class B : A
     {
         public override int Value => base.Value;
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void ExpressionBodiesGetAndSetBase()
+        {
+            var code = @"
+namespace RoslynSandbox
+{
+    public class A
+    {
+        public virtual int Value { get; set; }
+    }
+
+    public class B : A
+    {
+        public int Value
+        {
+            get => base.Value;
+            set => base.Value = value;
+        }
     }
 }";
 
