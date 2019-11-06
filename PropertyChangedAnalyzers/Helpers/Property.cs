@@ -11,16 +11,10 @@ namespace PropertyChangedAnalyzers
     {
         internal static bool TrySingleReturned(PropertyDeclarationSyntax property, [NotNullWhen(true)] out ExpressionSyntax? result)
         {
-            if (property == null)
+            if (property.ExpressionBody is { Expression: { } expression })
             {
-                result = null;
-                return false;
-            }
-
-            if (property.ExpressionBody is ArrowExpressionClauseSyntax expressionBody)
-            {
-                result = expressionBody.Expression;
-                return result != null;
+                result = expression;
+                return true;
             }
 
             result = null;
@@ -197,38 +191,28 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryGetAssignedProperty(AssignmentExpressionSyntax assignment, [NotNullWhen(true)] out PropertyDeclarationSyntax? propertyDeclaration)
         {
+            if (assignment.TryFirstAncestor(out TypeDeclarationSyntax? containingType))
+            {
+                return assignment switch
+                {
+                    { Left: IdentifierNameSyntax identifierName } => containingType.TryFindProperty(identifierName.Identifier.ValueText, out propertyDeclaration),
+                    { Left: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name } } => containingType.TryFindProperty(name.Identifier.ValueText, out propertyDeclaration),
+                };
+            }
+
             propertyDeclaration = null;
-            var typeDeclaration = assignment?.FirstAncestor<TypeDeclarationSyntax>();
-            if (typeDeclaration == null)
-            {
-                return false;
-            }
-
-            if (assignment.Left is IdentifierNameSyntax identifierName)
-            {
-                return typeDeclaration.TryFindProperty(identifierName.Identifier.ValueText, out propertyDeclaration);
-            }
-
-            if (assignment.Left is MemberAccessExpressionSyntax memberAccess &&
-                memberAccess.Expression is ThisExpressionSyntax)
-            {
-                return typeDeclaration.TryFindProperty(memberAccess.Name.Identifier.ValueText, out propertyDeclaration);
-            }
-
             return false;
         }
 
-        internal static bool IsAutoPropertyNeverAssignedOutsideConstructor(this PropertyDeclarationSyntax propertyDeclaration)
+        internal static bool IsAutoPropertyNeverAssignedOutsideConstructor(this PropertyDeclarationSyntax property)
         {
-            if (propertyDeclaration.ExpressionBody is null &&
-                propertyDeclaration.TryGetGetter(out var getter) &&
-                getter.ExpressionBody is null &&
-                getter.Body is null &&
-                propertyDeclaration.Parent is ClassDeclarationSyntax classDeclaration)
+            if (property is { ExpressionBody: null, Parent: ClassDeclarationSyntax containingClass } &&
+                property.TryGetGetter(out var getter) &&
+                getter is { ExpressionBody: null, Body: null })
             {
-                if (propertyDeclaration.TryGetSetter(out var setter))
+                if (property.TryGetSetter(out var setter))
                 {
-                    if (propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword, SyntaxKind.ProtectedKeyword) &&
+                    if (property.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword, SyntaxKind.ProtectedKeyword) &&
                         !setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
                     {
                         return false;
@@ -239,8 +223,8 @@ namespace PropertyChangedAnalyzers
                     return true;
                 }
 
-                var name = propertyDeclaration.Identifier.ValueText;
-                using (var walker = IdentifierNameWalker.Borrow(classDeclaration))
+                var name = property.Identifier.ValueText;
+                using (var walker = IdentifierNameWalker.Borrow(containingClass))
                 {
                     foreach (var identifierName in walker.IdentifierNames)
                     {
@@ -273,23 +257,19 @@ namespace PropertyChangedAnalyzers
                     }
                 }
 
-                switch (parent)
+                return parent switch
                 {
-                    case AssignmentExpressionSyntax a:
-                        return a.Left.Contains(identifierName);
-                    case PostfixUnaryExpressionSyntax _:
-                        return true;
-                    case PrefixUnaryExpressionSyntax p:
-                        return !p.IsKind(SyntaxKind.LogicalNotExpression);
-                    default:
-                        return false;
-                }
+                    AssignmentExpressionSyntax a => a.Left.Contains(identifierName),
+                    PostfixUnaryExpressionSyntax _ => true,
+                    PrefixUnaryExpressionSyntax p => !p.IsKind(SyntaxKind.LogicalNotExpression),
+                    _ => false
+                };
             }
 
             bool IsInConstructor(SyntaxNode node)
             {
                 if (node.TryFirstAncestor(out ConstructorDeclarationSyntax? ctor) &&
-                    propertyDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword) == ctor.Modifiers.Any(SyntaxKind.StaticKeyword))
+                    property.Modifiers.Any(SyntaxKind.StaticKeyword) == ctor.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
                     // Could be in an event handler in ctor.
                     return !node.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _);

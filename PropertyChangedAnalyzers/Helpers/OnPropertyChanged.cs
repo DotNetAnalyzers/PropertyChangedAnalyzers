@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers
 
     internal static class OnPropertyChanged
     {
-        internal static bool TryFind(IEventSymbol propertyChangedEvent, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol invoker)
+        internal static bool TryFind(IEventSymbol propertyChangedEvent, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? invoker)
         {
             invoker = null;
             var containingType = propertyChangedEvent.ContainingType;
@@ -17,8 +17,7 @@ namespace PropertyChangedAnalyzers
             {
                 foreach (var member in propertyChangedEvent.ContainingType.GetMembers())
                 {
-                    if (member is IMethodSymbol candidate &&
-                        candidate.MethodKind == MethodKind.Ordinary &&
+                    if (member is IMethodSymbol { MethodKind: MethodKind.Ordinary } candidate &&
                         candidate.IsStatic == propertyChangedEvent.IsStatic)
                     {
                         if (!Equals(candidate.ContainingType, containingType) &&

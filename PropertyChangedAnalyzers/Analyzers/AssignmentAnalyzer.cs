@@ -128,7 +128,7 @@ namespace PropertyChangedAnalyzers
                 return IsWhiteListedBranch(ifStatement.Statement) &&
                        IsWhiteListedBranch(ifStatement.Else?.Statement);
 
-                static bool IsWhiteListedBranch(StatementSyntax branch)
+                static bool IsWhiteListedBranch(StatementSyntax? branch)
                 {
                     switch (branch)
                     {
@@ -142,7 +142,7 @@ namespace PropertyChangedAnalyzers
                             }
 
                             return true;
-                        case StatementSyntax statement:
+                        case { } statement:
                             return IsWhiteListedStatement(statement);
                         case null:
                             return true;

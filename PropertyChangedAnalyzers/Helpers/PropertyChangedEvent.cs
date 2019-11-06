@@ -16,19 +16,18 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsInvoke(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation.ArgumentList?.Arguments.Count == 2 &&
-                invocation.ArgumentList.Arguments[0].Expression.IsEither(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
+            if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+                arguments[0].Expression.IsEither(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
                 invocation.IsPotentialReturnVoid())
             {
-                switch (invocation.Parent)
+                return invocation.Parent switch
                 {
-                    case ConditionalAccessExpressionSyntax conditionalAccess when IsPotential(conditionalAccess):
-                        return semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _);
-                    case ExpressionStatementSyntax _ when semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol):
-                        return symbol == KnownSymbol.PropertyChangedEventHandler.Invoke;
-                    default:
-                        return false;
-                }
+                    ConditionalAccessExpressionSyntax conditionalAccess => IsPotential(conditionalAccess) &&
+                                                                           semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _),
+                    ExpressionStatementSyntax _ => semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol) &&
+                                                   symbol == KnownSymbol.PropertyChangedEventHandler.Invoke,
+                    _ => false,
+                };
             }
 
             return false;

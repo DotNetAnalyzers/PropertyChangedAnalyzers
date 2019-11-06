@@ -11,14 +11,12 @@ namespace PropertyChangedAnalyzers
     {
         internal static AnalysisResult InvokesPropertyChangedFor(ExpressionSyntax mutation, IPropertySymbol property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (mutation.Parent is ArgumentSyntax argument &&
+            if (mutation.Parent is ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
-                argument.Parent is ArgumentListSyntax argumentList &&
-                argumentList.Parent is InvocationExpressionSyntax invocation &&
                 invocation.IsPotentialThisOrBase())
             {
                 if (TrySet.IsMatch(invocation, semanticModel, cancellationToken) != AnalysisResult.No &&
-                    semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol setAndRaiseMethod &&
+                    semanticModel.GetSymbolSafe(invocation, cancellationToken) is { } setAndRaiseMethod &&
                     setAndRaiseMethod.Parameters.TryLast(x => x.Type == KnownSymbol.String, out var nameParameter))
                 {
                     if (invocation.TryFindArgument(nameParameter, out var nameArg))
@@ -32,13 +30,13 @@ namespace PropertyChangedAnalyzers
                             }
                         }
                     }
-                    else if (invocation.FirstAncestor<PropertyDeclarationSyntax>() is PropertyDeclarationSyntax propertyDeclaration &&
+                    else if (invocation.FirstAncestor<PropertyDeclarationSyntax>() is { } propertyDeclaration &&
                              propertyDeclaration.Identifier.ValueText == property.Name)
                     {
                         return AnalysisResult.Yes;
                     }
                 }
-                else if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is IMethodSymbol method &&
+                else if (semanticModel.GetSymbolSafe(invocation, cancellationToken) is { } method &&
                          method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax? declaration))
                 {
                     switch (Notifies(declaration))
@@ -56,8 +54,7 @@ namespace PropertyChangedAnalyzers
             }
             else if (mutation is AssignmentExpressionSyntax assignmentExpression &&
                      (assignmentExpression.Left is IdentifierNameSyntax ||
-                      (assignmentExpression.Left is MemberAccessExpressionSyntax memberAccess &&
-                       memberAccess.Expression is ThisExpressionSyntax)) &&
+                      assignmentExpression.Left is MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ }) &&
                       semanticModel.TryGetSymbol(assignmentExpression.Left, cancellationToken, out IPropertySymbol? otherProperty) &&
                       otherProperty.SetMethod.TrySingleDeclaration(cancellationToken, out AccessorDeclarationSyntax? otherSetter) &&
                     Notifies(otherSetter) == AnalysisResult.Yes)
