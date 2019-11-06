@@ -27,12 +27,12 @@
     <PackageReference Include="Caliburn.Micro" Version="3.2" />
     <PackageReference Include="Gu.Analyzers" Version="1.6.3-dev" PrivateAssets="all" />
     <PackageReference Include="Gu.Roslyn.Asserts" Version="3.2.5" />
-    <PackageReference Include="Gu.Roslyn.Asserts.Analyzers" Version="3.2.4" PrivateAssets="all" />
+    <PackageReference Include="Gu.Roslyn.Asserts.Analyzers" Version="3.2.5" PrivateAssets="all" />
     <PackageReference Include="Gu.Wpf.Reactive" Version="4.2.0" />
     <PackageReference Include="IDisposableAnalyzers" Version="2.1.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.3.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <PackageReference Include="MvvmCross" Version="6.4.1" />
     <PackageReference Include="MvvmLight" Version="5.4.1.1" />
     <PackageReference Include="NUnit" Version="3.12.0" />
