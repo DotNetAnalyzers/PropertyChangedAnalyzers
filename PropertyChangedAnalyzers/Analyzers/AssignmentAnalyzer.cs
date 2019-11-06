@@ -42,11 +42,9 @@ namespace PropertyChangedAnalyzers
         {
             fieldAccess = null;
             return context.ContainingSymbol is IMethodSymbol { IsStatic: false, MethodKind: MethodKind.Constructor } ctor &&
-                   assignment.Parent is ExpressionStatementSyntax assignmentStatement &&
-                   assignmentStatement.TryFirstAncestor(out ConstructorDeclarationSyntax? constructor) &&
-                   constructor.Body is { Statements: { } statements } &&
-                   statements.Contains(assignmentStatement) &&
                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
+                   !assignment.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _) &&
+                   !assignment.TryFirstAncestor<LocalFunctionStatementSyntax>(out _) &&
                    propertyDeclaration.TryGetSetter(out var setter) &&
                    IsSimple(out fieldAccess);
 
@@ -57,9 +55,9 @@ namespace PropertyChangedAnalyzers
                     return IsAssigningField(out backing);
                 }
 
-                if (setter.Body is BlockSyntax block)
+                if (setter.Body is { Statements: { } statements })
                 {
-                    foreach (var statement in block.Statements)
+                    foreach (var statement in statements)
                     {
                         if (IsWhiteListedStatement(statement))
                         {

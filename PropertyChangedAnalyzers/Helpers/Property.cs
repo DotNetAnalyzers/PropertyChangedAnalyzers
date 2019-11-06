@@ -191,17 +191,18 @@ namespace PropertyChangedAnalyzers
 
         internal static bool TryGetAssignedProperty(AssignmentExpressionSyntax assignment, [NotNullWhen(true)] out PropertyDeclarationSyntax? propertyDeclaration)
         {
-            if (assignment.TryFirstAncestor(out TypeDeclarationSyntax? containingType))
-            {
-                return assignment switch
-                {
-                    { Left: IdentifierNameSyntax identifierName } => containingType.TryFindProperty(identifierName.Identifier.ValueText, out propertyDeclaration),
-                    { Left: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name } } => containingType.TryFindProperty(name.Identifier.ValueText, out propertyDeclaration),
-                };
-            }
-
             propertyDeclaration = null;
-            return false;
+            switch (assignment)
+            {
+                case { Left: IdentifierNameSyntax identifierName }:
+                    return assignment.TryFirstAncestor(out TypeDeclarationSyntax? containingType) &&
+                           containingType.TryFindProperty(identifierName.Identifier.ValueText, out propertyDeclaration);
+                case { Left: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name } }:
+                    return assignment.TryFirstAncestor(out containingType) &&
+                           containingType.TryFindProperty(name.Identifier.ValueText, out propertyDeclaration);
+                default:
+                    return false;
+            }
         }
 
         internal static bool IsAutoPropertyNeverAssignedOutsideConstructor(this PropertyDeclarationSyntax property)
