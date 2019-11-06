@@ -61,16 +61,15 @@ namespace PropertyChangedAnalyzers
                         }
                     }
                 }
-                else if (invocation.ArgumentList is ArgumentListSyntax argumentList &&
-                         argumentList.Arguments.Count == 0)
+                else if (invocation.ArgumentList is { Arguments: { Count: 0 } })
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, invocation.GetLocation()));
                 }
             }
 
             Location GetLocation()
             {
-                if (context.Node.FirstAncestor<StatementSyntax>() is StatementSyntax statement)
+                if (context.Node.FirstAncestor<StatementSyntax>() is { } statement)
                 {
                     return statement.GetLocation();
                 }
@@ -81,7 +80,7 @@ namespace PropertyChangedAnalyzers
 
         private static bool IsFirstCall(InvocationExpressionSyntax invocation)
         {
-            if (invocation.FirstAncestorOrSelf<BlockSyntax>() is BlockSyntax block &&
+            if (invocation.FirstAncestorOrSelf<BlockSyntax>() is { } block &&
                 invocation.TryGetMethodName(out var name))
             {
                 using (var walker = InvocationWalker.Borrow(block))

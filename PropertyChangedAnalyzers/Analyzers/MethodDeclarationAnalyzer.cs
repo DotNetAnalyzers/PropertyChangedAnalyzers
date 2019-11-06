@@ -72,16 +72,11 @@ namespace PropertyChangedAnalyzers
 
             bool ShouldBeProtected(out Location result)
             {
-                if (method.DeclaredAccessibility == Accessibility.Private &&
-                    !method.ContainingType.IsSealed)
+                if (method is { DeclaredAccessibility: Accessibility.Private, ContainingType: { IsSealed: false } })
                 {
-                    if (methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier))
-                    {
-                        result = modifier.GetLocation();
-                        return true;
-                    }
-
-                    result = methodDeclaration.Identifier.GetLocation();
+                    result = methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier)
+                        ? modifier.GetLocation()
+                        : methodDeclaration.Identifier.GetLocation();
                     return true;
                 }
 
