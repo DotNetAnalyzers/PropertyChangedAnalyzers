@@ -13,14 +13,14 @@ namespace PropertyChangedAnalyzers
         internal static bool CanCreateInvocation(IMethodSymbol candidate, [NotNullWhen(true)] out IParameterSymbol? nameParameter)
         {
             nameParameter = null;
-            return candidate.IsGenericMethod &&
+            return candidate is { IsGenericMethod: true } &&
                    candidate.TypeParameters.TrySingle(out var typeParameter) &&
                    candidate.Parameters.Length > 2 &&
                    candidate.Parameters[0].RefKind == RefKind.Ref &&
                    candidate.Parameters[0].Type.Equals(typeParameter) &&
                    candidate.Parameters[1].RefKind == RefKind.None &&
                    candidate.Parameters[1].Type.Equals(typeParameter) &&
-                   candidate.Parameters.TrySingle(x => x.Type == KnownSymbol.String, out nameParameter) &&
+                   candidate.Parameters.TrySingle<IParameterSymbol>(x => x.Type == KnownSymbol.String, out nameParameter) &&
                    RestAreOptional();
 
             bool RestAreOptional()

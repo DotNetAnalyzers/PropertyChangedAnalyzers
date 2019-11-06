@@ -76,13 +76,12 @@ namespace PropertyChangedAnalyzers
                                                  variable.Initializer is { } initializer:
                         return TryGetCreation(initializer.Value, out nameArg) ||
                                TryGetCached(initializer.Value, semanticModel, cancellationToken, out nameArg);
-                    case IMethodSymbol method when method.Name == "GetOrAdd" &&
-                                       method.ContainingType == KnownSymbol.ConcurrentDictionaryOfTKeyTValue &&
-                                       method.ContainingType.TypeArguments.Length == 2 &&
-                                       method.ContainingType.TypeArguments[0] == KnownSymbol.String &&
-                                       method.ContainingType.TypeArguments[1] == KnownSymbol.PropertyChangedEventArgs &&
-                                       expression is InvocationExpressionSyntax invocation &&
-                                       invocation.TryFindArgument(method.Parameters[0], out nameArg):
+                    case IMethodSymbol { Name: "GetOrAdd", ContainingType: { TypeArguments: { Length: 2 } typeArguments } } method
+                        when method.ContainingType == KnownSymbol.ConcurrentDictionaryOfTKeyTValue &&
+                             typeArguments[0] == KnownSymbol.String &&
+                             typeArguments[1] == KnownSymbol.PropertyChangedEventArgs &&
+                             expression is InvocationExpressionSyntax invocation &&
+                             invocation.TryFindArgument(method.Parameters[0], out nameArg):
                         return true;
                 }
             }
@@ -91,13 +90,12 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        private static bool TryGetCreation(this ExpressionSyntax expression, out ArgumentSyntax nameArg)
+        private static bool TryGetCreation(this ExpressionSyntax expression, [NotNullWhen(true)] out ArgumentSyntax? nameArg)
         {
             nameArg = null;
-            return expression is ObjectCreationExpressionSyntax objectCreation &&
-                   objectCreation.ArgumentList is ArgumentListSyntax argumentList &&
-                   objectCreation.Type == KnownSymbol.PropertyChangedEventArgs &&
-                   argumentList.Arguments.TrySingle(out nameArg);
+            return expression is ObjectCreationExpressionSyntax { Type: { } type, ArgumentList: { Arguments: { Count: 1 } arguments } } &&
+                   type == KnownSymbol.PropertyChangedEventArgs &&
+                   arguments.TrySingle(out nameArg);
         }
     }
 }

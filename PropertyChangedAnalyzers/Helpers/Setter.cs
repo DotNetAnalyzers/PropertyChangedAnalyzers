@@ -19,7 +19,7 @@ namespace PropertyChangedAnalyzers
 
             using (var walker = InvocationWalker.Borrow(setter))
             {
-                return walker.Invocations.TrySingle(x => TrySet.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
+                return walker.Invocations.TrySingle<InvocationExpressionSyntax>(x => TrySet.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
             }
         }
 
@@ -33,7 +33,7 @@ namespace PropertyChangedAnalyzers
 
             using (var walker = AssignmentWalker.Borrow(setter))
             {
-                if (walker.Assignments.TrySingle(out assignment) &&
+                if (walker.Assignments.TrySingle<AssignmentExpressionSyntax>(out assignment) &&
                     assignment.Right is IdentifierNameSyntax identifierName &&
                     identifierName.Identifier.ValueText == "value")
                 {
@@ -83,15 +83,14 @@ namespace PropertyChangedAnalyzers
         {
             switch (candidate)
             {
-                case AssignmentExpressionSyntax assignment
-                    when IsParameter(assignment.Right, out parameter) &&
-                         IsMember(assignment.Left):
-                    backing = assignment.Left;
+                case AssignmentExpressionSyntax { Left: { } left, Right: { } right }
+                    when IsParameter(right, out parameter) &&
+                         IsMember(left):
+                    backing = left;
                     return true;
-                case InvocationExpressionSyntax invocation
-                    when invocation.ArgumentList is ArgumentListSyntax argumentList &&
-                         argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.None) && IsParameter(x.Expression, out _), out var parameterArg) &&
-                         argumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
+                case InvocationExpressionSyntax { ArgumentList: { Arguments: { } arguments } } invocation
+                    when arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.None) && IsParameter(x.Expression, out _), out var parameterArg) &&
+                         arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
                          IsMember(refArgument.Expression):
                     backing = refArgument.Expression;
                     parameter = (IdentifierNameSyntax)parameterArg.Expression;
@@ -124,9 +123,9 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static bool IsMutation(ExpressionStatementSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IdentifierNameSyntax parameter, out ExpressionSyntax backing)
+        internal static bool IsMutation(ExpressionStatementSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IdentifierNameSyntax? parameter, [NotNullWhen(true)] out ExpressionSyntax? backing)
         {
-            return IsMutation(candidate?.Expression, semanticModel, cancellationToken, out parameter, out backing);
+            return IsMutation(candidate.Expression, semanticModel, cancellationToken, out parameter, out backing);
         }
 
         internal static bool TryGetBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IFieldSymbol? field)
@@ -137,7 +136,7 @@ namespace PropertyChangedAnalyzers
                 {
                     case IdentifierNameSyntax _:
                         return semanticModel.TryGetSymbol(mutated, cancellationToken, out field);
-                    case MemberAccessExpressionSyntax memberAccess when memberAccess.Expression.IsKind(SyntaxKind.ThisExpression):
+                    case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ }:
                         return semanticModel.TryGetSymbol(mutated, cancellationToken, out field);
                 }
             }
@@ -163,8 +162,7 @@ namespace PropertyChangedAnalyzers
                         return true;
                     }
 
-                    if (a.Left is MemberAccessExpressionSyntax memberAccess &&
-                        memberAccess.Name is IdentifierNameSyntax)
+                    if (a.Left is MemberAccessExpressionSyntax { Name: IdentifierNameSyntax _ } memberAccess)
                     {
                         if (memberAccess.Expression is ThisExpressionSyntax ||
                             memberAccess.Expression is IdentifierNameSyntax)
