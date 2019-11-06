@@ -41,13 +41,11 @@ namespace PropertyChangedAnalyzers
         private static bool ShouldSetBackingField(AssignmentExpressionSyntax assignment, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ExpressionSyntax? fieldAccess)
         {
             fieldAccess = null;
-            return context.ContainingSymbol is IMethodSymbol ctor &&
-                   !ctor.IsStatic &&
-                   ctor.MethodKind == MethodKind.Constructor &&
+            return context.ContainingSymbol is IMethodSymbol { IsStatic: false, MethodKind: MethodKind.Constructor } ctor &&
                    assignment.Parent is ExpressionStatementSyntax assignmentStatement &&
                    assignmentStatement.TryFirstAncestor(out ConstructorDeclarationSyntax? constructor) &&
-                   constructor.Body is BlockSyntax body &&
-                   body.Statements.Contains(assignmentStatement) &&
+                   constructor.Body is { Statements: { } statements } &&
+                   statements.Contains(assignmentStatement) &&
                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                    propertyDeclaration.TryGetSetter(out var setter) &&
                    IsSimple(out fieldAccess);
