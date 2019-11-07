@@ -188,11 +188,11 @@ namespace PropertyChangedAnalyzers
                                       .AddUsing(SyntaxFactory.UsingDirective(CallerMemberNameType.Left));
                         }
 
-                        bool HasINotifyPropertyChangedInterface(out BaseTypeSyntax result)
+                        bool HasINotifyPropertyChangedInterface(out BaseTypeSyntax? result)
                         {
                             if (classDeclaration.BaseList is { Types: { } types })
                             {
-                                if (types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out result))
+                                if (types.TryFirst<BaseTypeSyntax>(x => x.Type == KnownSymbol.INotifyPropertyChanged, out result))
                                 {
                                     if (addUsings)
                                     {

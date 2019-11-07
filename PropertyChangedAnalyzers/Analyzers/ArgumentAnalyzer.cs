@@ -1,7 +1,6 @@
 namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -89,7 +88,7 @@ namespace PropertyChangedAnalyzers
 
                 if (argument is { Expression: AnonymousFunctionExpressionSyntax lambda } &&
                     argumentList is { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
-                    TryGetNameFromLambda(lambda, out var lambdaName))
+                    GetNameFromLambda(lambda) is { } lambdaName)
                 {
                     if (OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
                     {
@@ -137,26 +136,19 @@ namespace PropertyChangedAnalyzers
             return symbol.Name;
         }
 
-        private static bool TryGetNameFromLambda(AnonymousFunctionExpressionSyntax lambda, [NotNullWhen(true)] out string? name)
+        private static string? GetNameFromLambda(AnonymousFunctionExpressionSyntax lambda)
         {
-            return TryGetName(lambda.Body, out name);
+            return TryGetName(lambda.Body);
 
-            static bool TryGetName(SyntaxNode node, out string result)
+            static string? TryGetName(SyntaxNode node)
             {
-                switch (node)
+                return node switch
                 {
-                    case IdentifierNameSyntax identifierName:
-                        result = identifierName.Identifier.ValueText;
-                        return true;
-                    case MemberAccessExpressionSyntax { Name: { } memberName }:
-                        result = memberName.Identifier.ValueText;
-                        return true;
-                    case InvocationExpressionSyntax { Expression: { } expression }:
-                        return TryGetName(expression, out result);
-                }
-
-                result = null;
-                return false;
+                    IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText,
+                    MemberAccessExpressionSyntax { Name: { } memberName } => memberName.Identifier.ValueText,
+                    InvocationExpressionSyntax { Expression: { } expression } => TryGetName(expression),
+                    _ => null,
+                };
             }
         }
     }

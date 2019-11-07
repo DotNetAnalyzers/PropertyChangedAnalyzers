@@ -33,7 +33,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (ShouldBeCallerMemberName(parameter, out var parameterSyntax))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax!.GetLocation()));
                     }
 
                     if (ShouldBeProtected(out var location))
@@ -48,7 +48,7 @@ namespace PropertyChangedAnalyzers
                 {
                     if (ShouldBeCallerMemberName(parameter, out var parameterSyntax))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax!.GetLocation()));
                     }
 
                     if (ShouldBeProtected(out var location))
@@ -61,7 +61,7 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            bool ShouldBeCallerMemberName(IParameterSymbol candidate, out ParameterSyntax parameterSyntax)
+            bool ShouldBeCallerMemberName(IParameterSymbol candidate, out ParameterSyntax? parameterSyntax)
             {
                 parameterSyntax = null;
                 return !candidate.IsCallerMemberName() &&
@@ -70,7 +70,7 @@ namespace PropertyChangedAnalyzers
                        CallerMemberNameAttribute.IsAvailable(context.SemanticModel);
             }
 
-            bool ShouldBeProtected(out Location result)
+            bool ShouldBeProtected(out Location? result)
             {
                 if (method is { DeclaredAccessibility: Accessibility.Private, ContainingType: { IsSealed: false, IsStatic: false } })
                 {

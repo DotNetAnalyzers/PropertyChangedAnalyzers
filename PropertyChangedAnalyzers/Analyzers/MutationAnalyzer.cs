@@ -81,9 +81,9 @@ namespace PropertyChangedAnalyzers
         {
             if (!context.IsExcludedFromAnalysis() &&
                 !IsInIgnoredScope(context) &&
-                context.Node is ArgumentSyntax argument &&
+                context.Node is ArgumentSyntax { Expression: { } expression } argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, argument.Expression, out var backing))
+                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, expression, out var backing))
             {
                 Handle(argument.Expression, backing, context);
             }

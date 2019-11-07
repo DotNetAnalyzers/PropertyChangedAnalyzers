@@ -47,7 +47,7 @@ namespace PropertyChangedAnalyzers
                    propertyDeclaration.TryGetSetter(out var setter) &&
                    IsSimple(out fieldAccess);
 
-            bool IsSimple(out ExpressionSyntax backing)
+            bool IsSimple(out ExpressionSyntax? backing)
             {
                 if (setter.ExpressionBody != null)
                 {
@@ -81,7 +81,7 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            bool IsAssigningField(out ExpressionSyntax backingField)
+            bool IsAssigningField(out ExpressionSyntax? backingField)
             {
                 return Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out backingField) &&
                        MemberPath.TrySingle(backingField, out var single) &&

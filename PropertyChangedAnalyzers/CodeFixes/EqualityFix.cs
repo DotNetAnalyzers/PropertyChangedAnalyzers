@@ -100,7 +100,7 @@ namespace PropertyChangedAnalyzers
                         return true;
                     }
 
-                    result = null;
+                    result = null!;
                     return false;
                 }
             }

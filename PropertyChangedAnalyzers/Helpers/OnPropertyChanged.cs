@@ -41,7 +41,7 @@ namespace PropertyChangedAnalyzers
                                 break;
                             case AnalysisResult.Maybe:
                                 if (invoker is null ||
-                                    (candidate.Parameters.TrySingle(out parameter) &&
+                                    (candidate.Parameters.TrySingle<IParameterSymbol>(out parameter) &&
                                      parameter.Type == KnownSymbol.String))
                                 {
                                     invoker = candidate;
@@ -86,7 +86,7 @@ namespace PropertyChangedAnalyzers
             return AnalysisResult.No;
         }
 
-        internal static AnalysisResult IsMatch(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol method)
+        internal static AnalysisResult IsMatch(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol? method)
         {
             method = null;
             if (invocation == null ||
@@ -158,13 +158,8 @@ namespace PropertyChangedAnalyzers
                 {
                     foreach (var invocation in walker.Invocations)
                     {
-                        if (invocation.ArgumentList == null ||
-                            invocation.ArgumentList.Arguments.Count == 0)
-                        {
-                            continue;
-                        }
-
-                        if (invocation.ArgumentList.Arguments.TryElementAt(1, out var argument) &&
+                        if (invocation is { ArgumentList: { Arguments: { Count: 2 } oneArg } } &&
+                            oneArg.TryElementAt(1, out var argument) &&
                             PropertyChangedEvent.IsInvoke(invocation, semanticModel, cancellationToken))
                         {
                             if (argument.Expression is IdentifierNameSyntax identifierName &&
@@ -178,11 +173,12 @@ namespace PropertyChangedAnalyzers
                                 return AnalysisResult.Yes;
                             }
                         }
-                        else if (invocation.ArgumentList.Arguments.TrySingle(out argument) &&
+                        else if (invocation is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
+                                 arguments[0] is { Expression: { } expression } &&
                                  invocation.IsPotentialThisOrBase())
                         {
-                            if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, semanticModel, cancellationToken) ||
-                                IdentifierNameWalker.Contains(argument.Expression, parameter, semanticModel, cancellationToken))
+                            if (PropertyChangedEventArgs.IsCreatedWith(expression, parameter, semanticModel, cancellationToken) ||
+                                IdentifierNameWalker.Contains(expression, parameter, semanticModel, cancellationToken))
                             {
                                 if (semanticModel.TryGetSymbol(invocation, cancellationToken, out var invokedMethod))
                                 {

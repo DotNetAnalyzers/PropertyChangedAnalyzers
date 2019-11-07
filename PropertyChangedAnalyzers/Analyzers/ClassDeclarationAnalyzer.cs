@@ -31,7 +31,6 @@ namespace PropertyChangedAnalyzers
                 context.Node is ClassDeclarationSyntax classDeclaration &&
                 !IsExcludedType())
             {
-
                 if (classDeclaration.Members.TryFirstOfType(x => Property.ShouldNotify(x, context.SemanticModel, context.CancellationToken), out PropertyDeclarationSyntax _))
                 {
                     var properties = string.Join(

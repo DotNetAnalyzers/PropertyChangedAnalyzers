@@ -83,9 +83,9 @@ namespace PropertyChangedAnalyzers
             private readonly HashSet<SyntaxToken> localsAndParameters = new HashSet<SyntaxToken>(SyntaxTokenComparer.ByValueText);
             private readonly HashSet<SyntaxNode> visited = new HashSet<SyntaxNode>();
 
-            private SemanticModel semanticModel;
+            private SemanticModel semanticModel = null!;
             private CancellationToken cancellationToken;
-            private ITypeSymbol containingType;
+            private ITypeSymbol containingType = null!;
 
             private UsedMemberWalker()
             {
@@ -182,9 +182,9 @@ namespace PropertyChangedAnalyzers
                 this.recursives.Clear();
                 this.localsAndParameters.Clear();
                 this.visited.Clear();
-                this.semanticModel = null;
+                this.semanticModel = null!;
                 this.cancellationToken = CancellationToken.None;
-                this.containingType = null;
+                this.containingType = null!;
             }
 
             private void VisitRecursive()
