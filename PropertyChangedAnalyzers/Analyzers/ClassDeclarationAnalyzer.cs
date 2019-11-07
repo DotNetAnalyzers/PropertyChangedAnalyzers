@@ -41,11 +41,9 @@ namespace PropertyChangedAnalyzers
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged, classDeclaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
                 }
 
-                if (type.TryFindEvent("PropertyChanged", out var eventSymbol))
+                if (PropertyChangedEvent.TryFind(type, out var eventSymbol))
                 {
-                    if (eventSymbol.Name != KnownSymbol.INotifyPropertyChanged.PropertyChanged.Name ||
-                        eventSymbol.Type != KnownSymbol.PropertyChangedEventHandler ||
-                        eventSymbol.IsStatic)
+                    if (eventSymbol.IsStatic)
                     {
                         return;
                     }

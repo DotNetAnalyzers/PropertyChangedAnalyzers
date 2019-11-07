@@ -251,15 +251,13 @@ namespace PropertyChangedAnalyzers
                 return true;
             }
 
-            if (method != null &&
-                method.ReturnsVoid &&
-                method.MethodKind == MethodKind.Ordinary &&
+            if (method is { ReturnsVoid: true, MethodKind: MethodKind.Ordinary, Parameters: { Length: 1 } } &&
                 method.Parameters.TrySingle(out var parameter) &&
                 parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs, KnownSymbol.LinqExpressionOfT))
             {
                 if (method.IsStatic)
                 {
-                    return method.ContainingType.TryFindEvent("PropertyChanged", out var @event) &&
+                    return PropertyChangedEvent.TryFind(method.ContainingType, out var @event) &&
                            @event.IsStatic;
                 }
 
