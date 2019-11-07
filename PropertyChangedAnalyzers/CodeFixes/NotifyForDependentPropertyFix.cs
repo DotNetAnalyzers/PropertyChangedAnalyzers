@@ -62,8 +62,7 @@ namespace PropertyChangedAnalyzers
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);
                                     break;
-                                case ArrowExpressionClauseSyntax arrow
-                                    when arrow.Parent is AccessorDeclarationSyntax setter:
+                                case ArrowExpressionClauseSyntax { Parent: AccessorDeclarationSyntax setter }:
                                     context.RegisterCodeFix(
                                         $"Notify that property {propertyName} changes.",
                                         async (editor, cancellationToken) =>
@@ -92,9 +91,8 @@ namespace PropertyChangedAnalyzers
                                         nameof(NotifyForDependentPropertyFix),
                                         diagnostic);
                                     break;
-                                case PrefixUnaryExpressionSyntax unary
+                                case PrefixUnaryExpressionSyntax { Parent: IfStatementSyntax ifNotTrySetReturn }
                                     when Gu.Roslyn.AnalyzerExtensions.Equality.IsNegated(trySet) &&
-                                         unary.Parent is IfStatementSyntax ifNotTrySetReturn &&
                                          ifNotTrySetReturn.IsReturnOnly():
                                     context.RegisterCodeFix(
                                         $"Notify that property {propertyName} changes.",

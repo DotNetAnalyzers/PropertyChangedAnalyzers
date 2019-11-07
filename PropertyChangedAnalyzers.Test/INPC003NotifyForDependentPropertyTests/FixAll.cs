@@ -538,7 +538,6 @@ namespace RoslynSandbox
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [Ignore("Fix")]
         [Test]
         public static void AddOneAfterOtherFieldAssignmentBeforeExplicitReturn()
         {
@@ -638,7 +637,6 @@ namespace RoslynSandbox
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [Ignore("Fix")]
         [Test]
         public static void AddTwoAfterOtherFieldAssignmentBeforeExplicitReturn()
         {

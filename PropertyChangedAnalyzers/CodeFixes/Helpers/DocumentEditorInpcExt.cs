@@ -153,37 +153,29 @@ namespace PropertyChangedAnalyzers
 
         internal static void AddOnPropertyChanged(this DocumentEditor editor, BlockSyntax block, ExpressionStatementSyntax onPropertyChangedStatement, int after)
         {
-            for (var i = after; i < block.Statements.Count; i++)
-            {
-                var statement = block.Statements[i];
-                if (ShouldAddBefore(statement))
-                {
-                    editor.InsertBefore(
-                        statement,
-                        onPropertyChangedStatement);
-                    return;
-                }
-            }
-
             _ = editor.ReplaceNode(
                 block,
                 x =>
                 {
                     if (onPropertyChangedStatement.Expression is InvocationExpressionSyntax onPropertyChanged)
                     {
-                        for (var i = x.Statements.Count - 1; i >= 0; i--)
+                        for (var i = after; i < x.Statements.Count; i++)
                         {
-                            if (x.Statements[i] is ExpressionStatementSyntax { Expression: InvocationExpressionSyntax other } &&
-                                NamesEqual(other, onPropertyChanged))
+                            var statement = x.Statements[i];
+                            // We can't use the semantic model here as it may not track nodes added before in fixall
+                            switch (statement)
                             {
-                                if (onPropertyChanged.IsEquivalentTo(other))
-                                {
+                                case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax _ }:
+                                    break;
+                                case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax other }
+                                    when onPropertyChanged.IsEquivalentTo(other):
                                     return x;
-                                }
-                            }
-                            else
-                            {
-                                break;
+                                case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax other }
+                                    when NamesEqual(other, onPropertyChanged) &&
+                                         PropertyIndex(onPropertyChanged, statement) > PropertyIndex(other, statement):
+                                    break;
+                                default:
+                                    return x.InsertNodesBefore(statement, new[] { onPropertyChangedStatement });
                             }
                         }
                     }
@@ -191,76 +183,59 @@ namespace PropertyChangedAnalyzers
                     return x.AddStatements(onPropertyChangedStatement);
                 });
 
-            // We can't use the semantic model here as it may not track nodes added before in fixall
-            bool ShouldAddBefore(StatementSyntax statement)
-            {
-                switch (statement)
-                {
-                    case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax _ }:
-                        return false;
-                    case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax other }
-                        when onPropertyChangedStatement.Expression is InvocationExpressionSyntax onPropertyChanged:
-                        return !NamesEqual(other, onPropertyChanged) ||
-                                PropertyIndex(onPropertyChanged) < PropertyIndex(other);
-
-                        int PropertyIndex(InvocationExpressionSyntax x)
-                        {
-                            if (x.ArgumentList is { Arguments: { } arguments })
-                            {
-                                if (arguments.TrySingle(out var argument))
-                                {
-                                    switch (argument.Expression)
-                                    {
-                                        case LiteralExpressionSyntax literal
-                                            when literal.IsKind(SyntaxKind.StringLiteralExpression) &&
-                                                 TryFindIndex(literal.Token.ValueText, out var index):
-                                            return index;
-                                        case InvocationExpressionSyntax nameof
-                                            when nameof.IsNameOf() &&
-                                                 nameof.ArgumentList.Arguments.TrySingle(out var nameofArg) &&
-                                                 MemberPath.TryFindLast(nameofArg.Expression, out var last) &&
-                                                 TryFindIndex(last.ValueText, out var index):
-                                            return index;
-                                        default:
-                                            return int.MaxValue;
-                                    }
-
-                                    bool TryFindIndex(string name, out int result)
-                                    {
-                                        if (statement.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
-                                            classDeclaration.TryFindProperty(name, out var property))
-                                        {
-                                            if (property.Contains(statement))
-                                            {
-                                                result = -1;
-                                                return true;
-                                            }
-
-                                            result = classDeclaration.Members.IndexOf(property);
-                                            return true;
-                                        }
-
-                                        result = default;
-                                        return false;
-                                    }
-                                }
-
-                                return -1;
-                            }
-
-                            return int.MaxValue;
-                        }
-
-                    default:
-                        return true;
-                }
-            }
-
             static bool NamesEqual(InvocationExpressionSyntax x, InvocationExpressionSyntax y)
             {
                 return x.TryGetMethodName(out var xn) &&
                        y.TryGetMethodName(out var yn) &&
                        xn == yn;
+            }
+
+            static int PropertyIndex(InvocationExpressionSyntax x, StatementSyntax statement)
+            {
+                if (x.ArgumentList is { Arguments: { } arguments })
+                {
+                    if (arguments.TrySingle(out var argument))
+                    {
+                        switch (argument.Expression)
+                        {
+                            case LiteralExpressionSyntax literal
+                                when literal.IsKind(SyntaxKind.StringLiteralExpression) &&
+                                     TryFindIndex(literal.Token.ValueText, out var index):
+                                return index;
+                            case InvocationExpressionSyntax nameof
+                                when nameof.IsNameOf() &&
+                                     nameof.ArgumentList.Arguments.TrySingle(out var nameofArg) &&
+                                     MemberPath.TryFindLast(nameofArg.Expression, out var last) &&
+                                     TryFindIndex(last.ValueText, out var index):
+                                return index;
+                            default:
+                                return int.MaxValue;
+                        }
+
+                        bool TryFindIndex(string name, out int result)
+                        {
+                            if (statement.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
+                                classDeclaration.TryFindProperty(name, out var property))
+                            {
+                                if (property.Contains(statement))
+                                {
+                                    result = -1;
+                                    return true;
+                                }
+
+                                result = classDeclaration.Members.IndexOf(property);
+                                return true;
+                            }
+
+                            result = default;
+                            return false;
+                        }
+                    }
+
+                    return -1;
+                }
+
+                return int.MaxValue;
             }
         }
 

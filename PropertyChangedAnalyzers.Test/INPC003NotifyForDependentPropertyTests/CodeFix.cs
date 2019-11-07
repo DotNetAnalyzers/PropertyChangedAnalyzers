@@ -3569,5 +3569,94 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
+
+        [Test]
+        public static void AddsBeforeExplicitReturn()
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p3;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => this.p3 * this.p3;
+
+        public int P3
+        {
+            get
+            {
+                return this.p3;
+            }
+
+            set
+            {
+                if (value == this.p3)
+                {
+                    return;
+                }
+
+                ↓this.p3 = value;
+                this.OnPropertyChanged();
+                return;
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace RoslynSandbox
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p3;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P1 => this.p3 * this.p3;
+
+        public int P3
+        {
+            get
+            {
+                return this.p3;
+            }
+
+            set
+            {
+                if (value == this.p3)
+                {
+                    return;
+                }
+
+                this.p3 = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P1));
+                return;
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
     }
 }
