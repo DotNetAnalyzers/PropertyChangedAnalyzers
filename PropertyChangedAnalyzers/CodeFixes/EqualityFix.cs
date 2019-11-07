@@ -27,7 +27,7 @@ namespace PropertyChangedAnalyzers
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNode(diagnostic, out InvocationExpressionSyntax? invocation) &&
-                    invocation.ArgumentList is ArgumentListSyntax argumentList &&
+                    invocation.ArgumentList is { } argumentList &&
                     TryGetMethodName(out var name))
                 {
                     if (argumentList.Arguments.Count == 2)
@@ -41,8 +41,7 @@ namespace PropertyChangedAnalyzers
                             diagnostic);
                     }
                     else if (argumentList.Arguments.TrySingle(out var argument) &&
-                             invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                             memberAccess.Expression is ExpressionSyntax expression)
+                             invocation.Expression is MemberAccessExpressionSyntax { Expression: { } expression })
                     {
                         context.RegisterCodeFix(
                             $"Use {name}",

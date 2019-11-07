@@ -204,8 +204,8 @@ namespace PropertyChangedAnalyzers
         {
             assignment = null;
             return property.TryGetSetter(out setter) &&
-                   Setter.AssignsValueToBackingField(setter, out assignment) &&
-                   IsSimple(setter);
+                   IsSimple(setter) &&
+                   Setter.AssignsValueToBackingField(setter, out assignment);
 
             static bool IsSimple(AccessorDeclarationSyntax localSetter)
             {

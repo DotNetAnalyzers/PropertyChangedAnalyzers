@@ -16,13 +16,8 @@ namespace PropertyChangedAnalyzers
                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.None))
                            .WithAccessorList(
                                property.AccessorList.WithCloseBraceToken(
-                                   property
-                                       .AccessorList
-                                       .CloseBraceToken
-                                       .WithTrailingTrivia(
-                                           property
-                                               .SemicolonToken
-                                               .TrailingTrivia)));
+                                   property.AccessorList.CloseBraceToken
+                                       .WithTrailingTrivia(property.SemicolonToken.TrailingTrivia)));
         }
     }
 }

@@ -28,7 +28,8 @@ namespace PropertyChangedAnalyzers
                 condition,
                 SyntaxFactory.Token(SyntaxKind.CloseParenToken),
                 SyntaxFactory.Block(SyntaxFactory.ReturnStatement()),
-                null).WithTrailingLineFeed();
+                null)
+                                .WithTrailingLineFeed();
         }
 
         internal static IfStatementSyntax IfStatement(ExpressionSyntax condition, params StatementSyntax[] statements)
@@ -46,12 +47,12 @@ namespace PropertyChangedAnalyzers
         {
             if (TryGetType(out var type))
             {
-                return Equals(type, x.WithoutTrivia(), y.WithoutTrivia(), semanticModel);
+                return Equals(type!, x.WithoutTrivia(), y.WithoutTrivia(), semanticModel);
             }
 
             throw new InvalidOperationException("Failed creating equality check.");
 
-            bool TryGetType(out ITypeSymbol result)
+            bool TryGetType(out ITypeSymbol? result)
             {
                 if (semanticModel.TryGetType(x, cancellationToken, out result) ||
                     semanticModel.TryGetType(y, cancellationToken, out result))
@@ -97,24 +98,20 @@ namespace PropertyChangedAnalyzers
 
             ExpressionSyntax Expression()
             {
-                if (className is null)
+                return className switch
                 {
-                    return SyntaxFactory.IdentifierName(methodName);
-                }
-                else
-                {
-                    return className switch
-                    {
-                        "object" => SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        ParseQualifiedName(className),
-                                        SyntaxFactory.IdentifierName(methodName)),
-                        _ => SyntaxFactory.MemberAccessExpression(
+                    null => (ExpressionSyntax)SyntaxFactory.IdentifierName(methodName),
+
+                    "object" => SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 ParseQualifiedName(className),
                                 SyntaxFactory.IdentifierName(methodName)),
-                    };
-                }
+
+                    _ => SyntaxFactory.MemberAccessExpression(
+                         SyntaxKind.SimpleMemberAccessExpression,
+                         ParseQualifiedName(className),
+                         SyntaxFactory.IdentifierName(methodName)),
+                };
             }
         }
 
@@ -210,7 +207,7 @@ namespace PropertyChangedAnalyzers
                                 .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        internal static InvocationExpressionSyntax TrySetInvocation(CodeStyleResult qualifyAccess, IMethodSymbol method, ExpressionSyntax fieldAccess, ExpressionSyntax value, ExpressionSyntax name)
+        internal static InvocationExpressionSyntax TrySetInvocation(CodeStyleResult qualifyAccess, IMethodSymbol method, ExpressionSyntax fieldAccess, ExpressionSyntax value, ExpressionSyntax? name)
         {
             return SyntaxFactory.InvocationExpression(
                 qualifyAccess == CodeStyleResult.No
