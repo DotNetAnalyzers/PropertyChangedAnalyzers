@@ -131,19 +131,15 @@ namespace PropertyChangedAnalyzers
         {
             switch (mutation.Parent)
             {
-                case SimpleLambdaExpressionSyntax { Body: ExpressionSyntax body } lambda:
+                case SimpleLambdaExpressionSyntax lambda:
                     editor.ReplaceNode(
                         lambda,
-                        x => x.AsBlockBody(
-                            SyntaxFactory.ExpressionStatement(body),
-                            onPropertyChanged));
+                        x => x.AddStatements(onPropertyChanged));
                     break;
-                case ParenthesizedLambdaExpressionSyntax { Body: ExpressionSyntax body } lambda:
+                case ParenthesizedLambdaExpressionSyntax lambda:
                     editor.ReplaceNode(
                         lambda,
-                        x => x.AsBlockBody(
-                            SyntaxFactory.ExpressionStatement(body),
-                            onPropertyChanged));
+                        x => x.AddStatements(onPropertyChanged));
                     break;
                 case ExpressionStatementSyntax expressionStatement:
                     editor.AddOnPropertyChangedAfter(expressionStatement, onPropertyChanged);

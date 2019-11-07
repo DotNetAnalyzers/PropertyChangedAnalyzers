@@ -2,6 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
@@ -183,28 +184,44 @@ namespace PropertyChangedAnalyzers
                                 .WithTriviaFrom(accessor);
         }
 
-        internal static SimpleLambdaExpressionSyntax AsBlockBody(this SimpleLambdaExpressionSyntax lambda, params StatementSyntax[] statements)
+        internal static SimpleLambdaExpressionSyntax AddStatements(this SimpleLambdaExpressionSyntax lambda, params StatementSyntax[] statements)
         {
-            return SyntaxFactory.SimpleLambdaExpression(
-                asyncKeyword: lambda.AsyncKeyword,
-                parameter: lambda.Parameter,
-                arrowToken: SyntaxFactory.Token(lambda.ArrowToken.Kind()),
-                body: SyntaxFactory.Block(statements)
-                                   .WithLeadingLineFeed())
-                                .WithTriviaFrom(lambda)
-                                .WithAdditionalAnnotations(Formatter.Annotation);
+            switch (lambda)
+            {
+                case { Body: ExpressionSyntax body }:
+                    return SyntaxFactory.SimpleLambdaExpression(
+                                            asyncKeyword: lambda.AsyncKeyword,
+                                            parameter: lambda.Parameter,
+                                            arrowToken: SyntaxFactory.Token(lambda.ArrowToken.Kind()),
+                                            body: SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
+                                                               .WithLeadingLineFeed())
+                                        .WithTriviaFrom(lambda)
+                                        .WithAdditionalAnnotations(Formatter.Annotation);
+                case { Body: BlockSyntax block }:
+                    return lambda.ReplaceNode(block, block.AddStatements(statements));
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
-        internal static ParenthesizedLambdaExpressionSyntax AsBlockBody(this ParenthesizedLambdaExpressionSyntax lambda, params StatementSyntax[] statements)
+        internal static ParenthesizedLambdaExpressionSyntax AddStatements(this ParenthesizedLambdaExpressionSyntax lambda, params StatementSyntax[] statements)
         {
-            return SyntaxFactory.ParenthesizedLambdaExpression(
-                asyncKeyword: lambda.AsyncKeyword,
-                parameterList: lambda.ParameterList,
-                arrowToken: SyntaxFactory.Token(lambda.ArrowToken.Kind()),
-                body: SyntaxFactory.Block(statements)
-                                   .WithLeadingLineFeed())
-                                .WithTriviaFrom(lambda)
-                                .WithAdditionalAnnotations(Formatter.Annotation);
+            switch (lambda)
+            {
+                case { Body: ExpressionSyntax body }:
+                    return SyntaxFactory.ParenthesizedLambdaExpression(
+                                            asyncKeyword: lambda.AsyncKeyword,
+                                            parameterList: lambda.ParameterList,
+                                            arrowToken: SyntaxFactory.Token(lambda.ArrowToken.Kind()),
+                                            body: SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
+                                                               .WithLeadingLineFeed())
+                                        .WithTriviaFrom(lambda)
+                                        .WithAdditionalAnnotations(Formatter.Annotation);
+                case { Body: BlockSyntax block }:
+                    return lambda.ReplaceNode(block, block.AddStatements(statements));
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         internal static InvocationExpressionSyntax TrySetInvocation(CodeStyleResult qualifyAccess, IMethodSymbol method, ExpressionSyntax fieldAccess, ExpressionSyntax value, ExpressionSyntax? name)

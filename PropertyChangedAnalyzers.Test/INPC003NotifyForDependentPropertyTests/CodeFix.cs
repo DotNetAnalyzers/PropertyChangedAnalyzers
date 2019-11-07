@@ -2830,7 +2830,138 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        public static void InLambda()
+        public static void InSimpleLambdaExpressionBody()
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private string name;
+
+        public C()
+        {
+            Action<int> action = x => ↓this.name = this.name + ""meh"";
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private string name;
+
+        public C()
+        {
+            Action<int> action = x =>
+            {
+                this.name = this.name + ""meh"";
+                this.OnPropertyChanged(nameof(this.Name));
+            };
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void InSimpleLambdaStatementBody()
+        {
+            var before = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private string name;
+
+        public C()
+        {
+            Action<int> action = x =>
+            {
+                ↓this.name = this.name + ""meh"";
+            };
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace RoslynSandbox
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private string name;
+
+        public C()
+        {
+            Action<int> action = x =>
+            {
+                this.name = this.name + ""meh"";
+                this.OnPropertyChanged(nameof(this.Name));
+            };
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name => this.name;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void InParenthesizedLambdaExpressionBody()
         {
             var before = @"
 namespace RoslynSandbox
@@ -2892,7 +3023,7 @@ namespace RoslynSandbox
         }
 
         [Test]
-        public static void InLambdaStatementBody()
+        public static void InParenthesizedLambdaStatementBody()
         {
             var before = @"
 namespace RoslynSandbox

@@ -30,11 +30,7 @@ public class ViewModel : INotifyPropertyChanged
 
     public string FirstName
     {
-        get
-        {
-            return this.firstName;
-        }
-
+        get => this.firstName;
         set
         {
             if (value == this.firstName)
@@ -49,11 +45,7 @@ public class ViewModel : INotifyPropertyChanged
 
     public string LastName
     {
-        get
-        {
-            return this.lastName;
-        }
-
+        get => this.lastName;
         set
         {
             if (value == this.lastName)
@@ -87,11 +79,7 @@ public class ViewModel : INotifyPropertyChanged
 
     public string FirstName
     {
-        get
-        {
-            return this.firstName;
-        }
-
+        get => this.firstName;
         set
         {
             if (value == this.firstName)
@@ -107,11 +95,7 @@ public class ViewModel : INotifyPropertyChanged
 
     public string LastName
     {
-        get
-        {
-            return this.lastName;
-        }
-
+        get => this.lastName;
         set
         {
             if (value == this.lastName)
