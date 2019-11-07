@@ -2,9 +2,7 @@ namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
-    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -20,13 +18,12 @@ namespace PropertyChangedAnalyzers
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
+                                                   .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AccessorDeclarationSyntax? accessor) &&
-                    accessor.Body is BlockSyntax block &&
-                    block.Statements.TrySingle(out var statement) &&
-                    TryGetExpression(statement, out var expression))
+                    accessor.Body is { Statements: { Count: 1 } statements } &&
+                    GetExpression(statements[0]) is { } expression)
                 {
                     context.RegisterCodeFix(
                         "To expression body.",
@@ -39,22 +36,14 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static bool TryGetExpression(StatementSyntax statement, [NotNullWhen(true)] out ExpressionSyntax? expression)
+        private static ExpressionSyntax? GetExpression(StatementSyntax statement)
         {
-            switch (statement)
+            return statement switch
             {
-                case ReturnStatementSyntax returnStatement:
-                    expression = returnStatement.Expression;
-                    break;
-                case ExpressionStatementSyntax expressionStatement:
-                    expression = expressionStatement.Expression;
-                    break;
-                default:
-                    expression = null;
-                    break;
-            }
-
-            return expression != null;
+                ReturnStatementSyntax { Expression: { } expression } => expression,
+                ExpressionStatementSyntax { Expression: { } expression } => expression,
+                _ => null,
+            };
         }
     }
 }

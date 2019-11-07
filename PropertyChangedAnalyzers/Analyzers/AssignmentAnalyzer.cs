@@ -91,33 +91,23 @@ namespace PropertyChangedAnalyzers
 
             bool IsWhiteListedExpression(ExpressionStatementSyntax candidate)
             {
-                switch (candidate.Expression)
+                return candidate.Expression switch
                 {
-                    case InvocationExpressionSyntax invocation
-                        when OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
-                             TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No:
-                        return true;
-                    case AssignmentExpressionSyntax candidateAssignment
-                        when Setter.IsMutation(candidateAssignment, context.SemanticModel, context.CancellationToken, out _, out _):
-                        return true;
-                    default:
-                        return false;
-                }
+                    InvocationExpressionSyntax invocation => OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
+                                                             TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No,
+                    AssignmentExpressionSyntax candidateAssignment => Setter.IsMutation(candidateAssignment, context.SemanticModel, context.CancellationToken, out _, out _),
+                    _ => false,
+                };
             }
 
             bool IsWhiteListedStatement(StatementSyntax candidate)
             {
-                switch (candidate)
+                return candidate switch
                 {
-                    case ReturnStatementSyntax _:
-                        return true;
-                    case ExpressionStatementSyntax expressionStatement
-                        when IsWhiteListedExpression(expressionStatement):
-                        return true;
-                    default:
-                        // If there is for example validation or side effects we don't suggest setting the field.
-                        return false;
-                }
+                    ReturnStatementSyntax _ => true,
+                    ExpressionStatementSyntax expressionStatement => IsWhiteListedExpression(expressionStatement),
+                    _ => false,
+                };
             }
 
             bool IsWhiteListedIfStatement(IfStatementSyntax ifStatement)

@@ -19,7 +19,7 @@ namespace PropertyChangedAnalyzers
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
+                                                   .ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {

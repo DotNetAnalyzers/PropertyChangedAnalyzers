@@ -106,8 +106,8 @@ namespace PropertyChangedAnalyzers
 
                             void Subclass(DocumentEditor editor, bool addUsings)
                             {
-                                if (classDeclaration.BaseList is BaseListSyntax baseList &&
-                                    baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out var baseType))
+                                if (classDeclaration.BaseList is { Types: { } types } &&
+                                    types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out var baseType))
                                 {
                                     _ = editor.ReplaceNode(
                                         baseType,
@@ -190,9 +190,9 @@ namespace PropertyChangedAnalyzers
 
                         bool HasINotifyPropertyChangedInterface(out BaseTypeSyntax result)
                         {
-                            if (classDeclaration.BaseList is { } baseList)
+                            if (classDeclaration.BaseList is { Types: { } types })
                             {
-                                if (baseList.Types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out result))
+                                if (types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out result))
                                 {
                                     if (addUsings)
                                     {

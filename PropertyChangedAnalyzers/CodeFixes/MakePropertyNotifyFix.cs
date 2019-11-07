@@ -158,8 +158,8 @@ namespace PropertyChangedAnalyzers
                                             onPropertyChanged));
                                     _ = editor.FormatNode(propertyDeclaration);
                                 }
-                                else if (setter.Body is BlockSyntax body &&
-                                    body.Statements.TrySingle(out var statement))
+                                else if (setter.Body is { Statements: { Count: 1 } } body &&
+                                         body.Statements.TrySingle(out var statement))
                                 {
                                     editor.InsertBefore(
                                         statement,
@@ -185,7 +185,7 @@ namespace PropertyChangedAnalyzers
                                             onPropertyChanged));
                                     _ = editor.FormatNode(propertyDeclaration);
                                 }
-                                else if (setter.Body is BlockSyntax body &&
+                                else if (setter.Body is { Statements: { Count: 1 } } body &&
                                          body.Statements.TrySingle(out var statement))
                                 {
                                     var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
@@ -200,10 +200,10 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax propertyDeclaration, [NotNullWhen(true)] out AccessorDeclarationSyntax? setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)
+        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax property, [NotNullWhen(true)] out AccessorDeclarationSyntax? setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)
         {
             assignment = null;
-            return propertyDeclaration.TryGetSetter(out setter) &&
+            return property.TryGetSetter(out setter) &&
                    Setter.AssignsValueToBackingField(setter, out assignment) &&
                    IsSimple(setter);
 
@@ -214,8 +214,7 @@ namespace PropertyChangedAnalyzers
                     return true;
                 }
 
-                return localSetter.Body is { } body &&
-                       body.Statements.Count == 1;
+                return localSetter.Body is { Statements: { Count: 1 } };
             }
         }
     }

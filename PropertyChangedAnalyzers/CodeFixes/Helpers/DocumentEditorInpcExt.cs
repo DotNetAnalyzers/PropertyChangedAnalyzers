@@ -131,24 +131,25 @@ namespace PropertyChangedAnalyzers
         {
             switch (mutation.Parent)
             {
-                case SimpleLambdaExpressionSyntax lambda
-                    when lambda.Body is ExpressionSyntax:
+                case SimpleLambdaExpressionSyntax { Body: ExpressionSyntax body } lambda:
                     editor.ReplaceNode(
                         lambda,
-                        x => x.AsBlockBody(SyntaxFactory.ExpressionStatement((ExpressionSyntax)x.Body), onPropertyChanged));
+                        x => x.AsBlockBody(
+                            SyntaxFactory.ExpressionStatement(body),
+                            onPropertyChanged));
                     break;
-                case ParenthesizedLambdaExpressionSyntax lambda
-                    when lambda.Body is ExpressionSyntax:
+                case ParenthesizedLambdaExpressionSyntax { Body: ExpressionSyntax body } lambda:
                     editor.ReplaceNode(
                         lambda,
-                        x => x.AsBlockBody(SyntaxFactory.ExpressionStatement((ExpressionSyntax)x.Body), onPropertyChanged));
+                        x => x.AsBlockBody(
+                            SyntaxFactory.ExpressionStatement(body),
+                            onPropertyChanged));
                     break;
                 case ExpressionStatementSyntax expressionStatement:
                     editor.AddOnPropertyChangedAfter(expressionStatement, onPropertyChanged);
                     break;
-                case PrefixUnaryExpressionSyntax unary
-                    when unary.IsKind(SyntaxKind.LogicalNotExpression) &&
-                         unary.Parent is IfStatementSyntax ifNot:
+                case PrefixUnaryExpressionSyntax { Parent: IfStatementSyntax ifNot } unary
+                    when unary.IsKind(SyntaxKind.LogicalNotExpression):
                     editor.AddOnPropertyChangedAfter(ifNot, onPropertyChanged);
                     break;
             }
@@ -177,14 +178,12 @@ namespace PropertyChangedAnalyzers
             {
                 switch (statement)
                 {
-                    case ExpressionStatementSyntax expressionStatement
-                        when expressionStatement.Expression is AssignmentExpressionSyntax:
+                    case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax _ }:
                         return false;
-                    case ExpressionStatementSyntax expressionStatement
-                        when expressionStatement.Expression is InvocationExpressionSyntax other &&
-                             onPropertyChangedStatement.Expression is InvocationExpressionSyntax onPropertyChangedInvocation:
-                        return !NamesEqual(other, onPropertyChangedInvocation) ||
-                                PropertyIndex(onPropertyChangedInvocation) < PropertyIndex(other);
+                    case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax other }
+                        when onPropertyChangedStatement.Expression is InvocationExpressionSyntax onPropertyChanged:
+                        return !NamesEqual(other, onPropertyChanged) ||
+                                PropertyIndex(onPropertyChanged) < PropertyIndex(other);
 
                         bool NamesEqual(InvocationExpressionSyntax x, InvocationExpressionSyntax y)
                         {
@@ -195,9 +194,9 @@ namespace PropertyChangedAnalyzers
 
                         int PropertyIndex(InvocationExpressionSyntax x)
                         {
-                            if (x.ArgumentList is ArgumentListSyntax argumentList)
+                            if (x.ArgumentList is { Arguments: { } arguments })
                             {
-                                if (argumentList.Arguments.TrySingle(out var argument))
+                                if (arguments.TrySingle(out var argument))
                                 {
                                     switch (argument.Expression)
                                     {
