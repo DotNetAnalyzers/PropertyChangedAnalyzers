@@ -73,6 +73,7 @@ namespace PropertyChangedAnalyzers
 
         internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IParameterSymbol field, out IParameterSymbol value, out IParameterSymbol name)
         {
+
             var result = IsMatch(candidate, semanticModel, cancellationToken);
             if (result == AnalysisResult.No)
             {
@@ -82,18 +83,15 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (candidate.TypeParameters.TrySingle(out _) &&
-                candidate.Parameters.TrySingle(x => x.Type.Kind == SymbolKind.TypeParameter && x.RefKind == RefKind.Ref, out field) &&
-                candidate.Parameters.TrySingle(x => x.Type.Kind == SymbolKind.TypeParameter && x.RefKind != RefKind.Ref, out value) &&
-                candidate.Parameters.TrySingle(x => x.Type == KnownSymbol.String && x.RefKind != RefKind.Ref, out name))
+            if (candidate is { Parameters: { } parameters } &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out field) &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out value) &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { SpecialType: SpecialType.System_String } } }, out name))
             {
                 return result;
             }
 
-            field = null;
-            value = null;
-            name = null;
-            return AnalysisResult.No;
+            throw new InvalidOperationException("Bug in PropertyChangedAnalyzers. Could not get parameters.");
         }
 
         internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol>? visited = null)
@@ -103,97 +101,83 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (candidate == null ||
-                candidate.IsStatic)
+            if (candidate is { MethodKind: MethodKind.Ordinary, ReturnType: { SpecialType: SpecialType.System_Boolean }, IsGenericMethod: true, TypeParameters: { Length: 1 }, Parameters: { } parameters } &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var _) &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var _) &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { SpecialType: SpecialType.System_String } } }, out _) &&
+                ShouldCheck())
             {
-                return AnalysisResult.No;
-            }
-
-            if (candidate.MethodKind != MethodKind.Ordinary ||
-                candidate.ReturnType != KnownSymbol.Boolean ||
-                !candidate.IsGenericMethod ||
-                candidate.TypeParameters.Length != 1 ||
-                candidate.Parameters.Length < 3 ||
-                !candidate.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation))
-            {
-                return AnalysisResult.No;
-            }
-
-            var type = candidate.TypeArguments.Length == 1
-                ? candidate.TypeArguments[0]
-                : candidate.TypeParameters[0];
-            var parameter = candidate.Parameters[0];
-            if (parameter.RefKind != RefKind.Ref ||
-                !Equals(parameter.Type, type))
-            {
-                return AnalysisResult.No;
-            }
-
-            if (!Equals(candidate.Parameters[1].Type, type) ||
-                candidate.Parameters[candidate.Parameters.Length - 1].Type != KnownSymbol.String)
-            {
-                return AnalysisResult.No;
-            }
-
-            if (candidate.TrySingleMethodDeclaration(cancellationToken, out var methodDeclaration))
-            {
-                using (var walker = InvocationWalker.Borrow(methodDeclaration))
+                if (candidate.TrySingleMethodDeclaration(cancellationToken, out var methodDeclaration))
                 {
-                    if (!walker.Invocations.TrySingle(
-                        x => OnPropertyChanged.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No ||
-                             PropertyChangedEvent.IsInvoke(x, semanticModel, cancellationToken),
-                        out _))
+                    using (var walker = InvocationWalker.Borrow(methodDeclaration))
                     {
-                        using (var set = visited.IncrementUsage())
+                        if (!walker.Invocations.TrySingle(
+                            x => OnPropertyChanged.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No ||
+                                 PropertyChangedEvent.IsInvoke(x, semanticModel, cancellationToken),
+                            out _))
                         {
-                            var result = AnalysisResult.No;
-                            foreach (var invocation in walker.Invocations)
+                            using (var set = visited.IncrementUsage())
                             {
-                                switch (IsMatch(invocation, semanticModel, cancellationToken, set))
+                                var result = AnalysisResult.No;
+                                foreach (var invocation in walker.Invocations)
                                 {
-                                    case AnalysisResult.No:
-                                        break;
-                                    case AnalysisResult.Yes:
-                                        return AnalysisResult.Yes;
-                                    case AnalysisResult.Maybe:
-                                        result = AnalysisResult.Maybe;
-                                        break;
-                                    default:
-                                        throw new InvalidOperationException("Unknown AnalysisResult");
+                                    switch (IsMatch(invocation, semanticModel, cancellationToken, set))
+                                    {
+                                        case AnalysisResult.No:
+                                            break;
+                                        case AnalysisResult.Yes:
+                                            return AnalysisResult.Yes;
+                                        case AnalysisResult.Maybe:
+                                            result = AnalysisResult.Maybe;
+                                            break;
+                                        default:
+                                            throw new InvalidOperationException("Unknown AnalysisResult");
+                                    }
                                 }
-                            }
 
-                            return result;
+                                return result;
+                            }
                         }
                     }
-                }
 
-                using (var walker = AssignmentWalker.Borrow(methodDeclaration))
-                {
-                    if (!walker.Assignments.TrySingle(
-                        x => semanticModel.GetSymbolSafe(x.Left, cancellationToken)?.Name == candidate.Parameters[0].Name &&
-                             semanticModel.GetSymbolSafe(x.Right, cancellationToken)?.Name == candidate.Parameters[1].Name,
-                        out _))
+                    using (var walker = AssignmentWalker.Borrow(methodDeclaration))
                     {
-                        return AnalysisResult.No;
+                        if (!walker.Assignments.TrySingle(
+                            x => semanticModel.GetSymbolSafe(x.Left, cancellationToken)?.Name == candidate.Parameters[0].Name &&
+                                 semanticModel.GetSymbolSafe(x.Right, cancellationToken)?.Name == candidate.Parameters[1].Name,
+                            out _))
+                        {
+                            return AnalysisResult.No;
+                        }
                     }
+
+                    return AnalysisResult.Yes;
                 }
 
-                return AnalysisResult.Yes;
+                if (candidate == KnownSymbol.MvvmLightViewModelBase.Set ||
+                    candidate == KnownSymbol.MvvmLightObservableObject.Set ||
+                    candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
+                    candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
+                    candidate == KnownSymbol.MvvmCrossMvxNotifyPropertyChanged.SetProperty ||
+                    candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
+                    candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty)
+                {
+                    return AnalysisResult.Yes;
+                }
+
+                return candidate.Parameters.Length == 3 ? AnalysisResult.Maybe : AnalysisResult.No;
             }
 
-            if (candidate == KnownSymbol.MvvmLightViewModelBase.Set ||
-                candidate == KnownSymbol.MvvmLightObservableObject.Set ||
-                candidate == KnownSymbol.CaliburnMicroPropertyChangedBase.Set ||
-                candidate == KnownSymbol.StyletPropertyChangedBase.SetAndNotify ||
-                candidate == KnownSymbol.MvvmCrossMvxNotifyPropertyChanged.SetProperty ||
-                candidate == KnownSymbol.MvvmCrossCoreMvxNotifyPropertyChanged.SetProperty ||
-                candidate == KnownSymbol.MicrosoftPracticesPrismMvvmBindableBase.SetProperty)
+            return AnalysisResult.No;
+
+            bool ShouldCheck()
             {
-                return AnalysisResult.Yes;
+                return candidate switch
+                {
+                    { IsStatic: true } => PropertyChangedEvent.TryFind(candidate.ContainingType, out _),
+                    { IsStatic: false } => candidate.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation),
+                };
             }
-
-            return candidate.Parameters.Length == 3 ? AnalysisResult.Maybe : AnalysisResult.No;
         }
     }
 }

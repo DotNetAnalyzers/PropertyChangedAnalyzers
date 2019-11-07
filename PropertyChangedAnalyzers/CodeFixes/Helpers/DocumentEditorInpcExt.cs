@@ -127,7 +127,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static void AddOnPropertyChanged(this DocumentEditor editor, ExpressionSyntax mutation, ExpressionStatementSyntax onPropertyChanged, CancellationToken cancellationToken)
+        internal static void AddOnPropertyChanged(this DocumentEditor editor, ExpressionSyntax mutation, ExpressionStatementSyntax onPropertyChanged)
         {
             switch (mutation.Parent)
             {
