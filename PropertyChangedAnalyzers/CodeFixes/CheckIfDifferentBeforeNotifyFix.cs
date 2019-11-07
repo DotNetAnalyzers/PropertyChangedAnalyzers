@@ -30,7 +30,7 @@ namespace PropertyChangedAnalyzers
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionStatementSyntax? onPropertyChangedStatement) &&
                     onPropertyChangedStatement.TryFirstAncestor(out AccessorDeclarationSyntax? setter) &&
                     setter.IsKind(SyntaxKind.SetAccessorDeclaration) &&
-                    setter.Body is BlockSyntax body)
+                    setter.Body is { } body)
                 {
                     if (Setter.TryFindSingleAssignment(setter, out var assignment) &&
                         assignment.Parent is ExpressionStatementSyntax assignmentStatement &&

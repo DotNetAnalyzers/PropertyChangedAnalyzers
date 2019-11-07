@@ -100,9 +100,8 @@ namespace PropertyChangedAnalyzers
 
         private static bool IncorrectOrMissingCheckIfDifferent(SyntaxNodeAnalysisContext context, AccessorDeclarationSyntax setter, InvocationExpressionSyntax invocation, AssignmentExpressionSyntax assignment)
         {
-            if (context.ContainingSymbol is IMethodSymbol setMethod &&
-                setMethod.Parameters.TrySingle(out var value) &&
-                setMethod.AssociatedSymbol is IPropertySymbol property)
+            if (context.ContainingSymbol is IMethodSymbol { Parameters: { Length: 1 } parameters, AssociatedSymbol: IPropertySymbol property } &&
+                parameters.TrySingle(out var value))
             {
                 using (var walker = IfStatementWalker.Borrow(setter))
                 {

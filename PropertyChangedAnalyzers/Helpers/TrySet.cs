@@ -159,7 +159,7 @@ namespace PropertyChangedAnalyzers
                                         result = AnalysisResult.Maybe;
                                         break;
                                     default:
-                                        throw new ArgumentOutOfRangeException();
+                                        throw new InvalidOperationException("Unknown AnalysisResult");
                                 }
                             }
 
