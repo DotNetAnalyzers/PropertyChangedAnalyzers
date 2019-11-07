@@ -165,9 +165,31 @@ namespace PropertyChangedAnalyzers
                 }
             }
 
-            editor.ReplaceNode(
+            _ = editor.ReplaceNode(
                 block,
-                block.AddStatements(onPropertyChangedStatement));
+                x =>
+                {
+                    if (onPropertyChangedStatement.Expression is InvocationExpressionSyntax onPropertyChanged)
+                    {
+                        for (var i = x.Statements.Count - 1; i >= 0; i--)
+                        {
+                            if (x.Statements[i] is ExpressionStatementSyntax { Expression: InvocationExpressionSyntax other } &&
+                                NamesEqual(other, onPropertyChanged))
+                            {
+                                if (onPropertyChanged.IsEquivalentTo(other))
+                                {
+                                    return x;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    return x.AddStatements(onPropertyChangedStatement);
+                });
 
             // We can't use the semantic model here as it may not track nodes added before in fixall
             bool ShouldAddBefore(StatementSyntax statement)
@@ -180,13 +202,6 @@ namespace PropertyChangedAnalyzers
                         when onPropertyChangedStatement.Expression is InvocationExpressionSyntax onPropertyChanged:
                         return !NamesEqual(other, onPropertyChanged) ||
                                 PropertyIndex(onPropertyChanged) < PropertyIndex(other);
-
-                        bool NamesEqual(InvocationExpressionSyntax x, InvocationExpressionSyntax y)
-                        {
-                            return x.TryGetMethodName(out var xn) &&
-                                   y.TryGetMethodName(out var yn) &&
-                                   xn == yn;
-                        }
 
                         int PropertyIndex(InvocationExpressionSyntax x)
                         {
@@ -239,6 +254,13 @@ namespace PropertyChangedAnalyzers
                     default:
                         return true;
                 }
+            }
+
+            static bool NamesEqual(InvocationExpressionSyntax x, InvocationExpressionSyntax y)
+            {
+                return x.TryGetMethodName(out var xn) &&
+                       y.TryGetMethodName(out var yn) &&
+                       xn == yn;
             }
         }
 

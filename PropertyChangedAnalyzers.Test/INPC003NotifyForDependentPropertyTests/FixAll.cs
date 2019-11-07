@@ -5,7 +5,6 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    [Ignore("")]
     public static class FixAll
     {
         private static readonly DiagnosticAnalyzer Analyzer = new MutationAnalyzer();
@@ -210,6 +209,7 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
+        [Ignore("Fix")]
         [Test]
         public static void SimpleLambda()
         {
@@ -278,6 +278,7 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
+        [Ignore("Fix")]
         [Test]
         public static void ParenthesizedLambda()
         {
@@ -537,6 +538,7 @@ namespace RoslynSandbox
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
+        [Ignore("Fix")]
         [Test]
         public static void AddOneAfterOtherFieldAssignmentBeforeExplicitReturn()
         {
@@ -636,6 +638,7 @@ namespace RoslynSandbox
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
+        [Ignore("Fix")]
         [Test]
         public static void AddTwoAfterOtherFieldAssignmentBeforeExplicitReturn()
         {
