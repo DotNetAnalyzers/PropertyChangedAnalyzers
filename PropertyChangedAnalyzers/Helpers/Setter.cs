@@ -59,18 +59,12 @@ namespace PropertyChangedAnalyzers
             {
                 if (mutations.All().TrySingle(x => x.IsEither(SyntaxKind.SimpleAssignmentExpression, SyntaxKind.Argument), out var mutation))
                 {
-                    switch (mutation)
+                    return mutation switch
                     {
-                        case AssignmentExpressionSyntax assignment
-                            when IsMutation(assignment, semanticModel, cancellationToken, out _, out backing):
-                            return true;
-
-                        case ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } }
-                            when IsMutation(invocation, semanticModel, cancellationToken, out _, out backing):
-                            return true;
-                        default:
-                            return false;
-                    }
+                        AssignmentExpressionSyntax assignment => IsMutation(assignment, semanticModel, cancellationToken, out _, out backing),
+                        ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } => IsMutation(invocation, semanticModel, cancellationToken, out _, out backing),
+                        _ => false,
+                    };
                 }
             }
 

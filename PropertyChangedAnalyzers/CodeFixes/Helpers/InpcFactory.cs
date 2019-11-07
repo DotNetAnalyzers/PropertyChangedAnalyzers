@@ -186,19 +186,17 @@ namespace PropertyChangedAnalyzers
 
         internal static LambdaExpressionSyntax AddStatements(this LambdaExpressionSyntax lambda, params StatementSyntax[] statements)
         {
-            switch (lambda)
+            return lambda switch
             {
-                case { Body: ExpressionSyntax body }:
-                    return lambda.ReplaceNode(
-                                     body,
-                                     SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
-                                                  .WithLeadingLineFeed())
-                                 .WithAdditionalAnnotations(Formatter.Annotation);
-                case { Body: BlockSyntax block }:
-                    return lambda.ReplaceNode(block, block.AddStatements(statements));
-                default:
-                    throw new NotSupportedException($"No support for adding statements to lambda with the shape: {lambda?.ToString() ?? "null"}");
-            }
+                { Body: ExpressionSyntax body } => lambda.ReplaceNode(
+                                                             body,
+                                                             SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
+                                                                          .WithLeadingLineFeed())
+                                                         .WithAdditionalAnnotations(Formatter.Annotation),
+                { Body: BlockSyntax block } => lambda.ReplaceNode(block, block.AddStatements(statements)),
+                _ => throw new NotSupportedException(
+                    $"No support for adding statements to lambda with the shape: {lambda?.ToString() ?? "null"}"),
+            };
         }
 
         internal static InvocationExpressionSyntax TrySetInvocation(CodeStyleResult qualifyAccess, IMethodSymbol method, ExpressionSyntax fieldAccess, ExpressionSyntax value, ExpressionSyntax? name)
