@@ -200,7 +200,7 @@ namespace PropertyChangedAnalyzers
                 case { Body: BlockSyntax block }:
                     return lambda.ReplaceNode(block, block.AddStatements(statements));
                 default:
-                    throw new NotSupportedException();
+                    throw new NotSupportedException($"No support for adding statements to lambda with the shape: {lambda?.ToString() ?? "null"}");
             }
         }
 
@@ -220,7 +220,7 @@ namespace PropertyChangedAnalyzers
                 case { Body: BlockSyntax block }:
                     return lambda.ReplaceNode(block, block.AddStatements(statements));
                 default:
-                    throw new NotSupportedException();
+                    throw new NotSupportedException($"No support for adding statements to lambda with the shape: {lambda?.ToString() ?? "null"}");
             }
         }
 
