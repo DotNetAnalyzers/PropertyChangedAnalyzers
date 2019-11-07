@@ -16,12 +16,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.7.2.0</Version>
+    <Version>2.7.3.0</Version>
     <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
     <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
-    <PackageReleaseNotes>BUGFIX: Figure out caching in ConcurrentDictionary</PackageReleaseNotes>
+    <PackageReleaseNotes>
+      BUGFIX INPC015: don't warn on object initializer in setter.
+      BUGFIX INPC003: Handle chained expression bodied properties.
+    </PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers</RepositoryUrl>
