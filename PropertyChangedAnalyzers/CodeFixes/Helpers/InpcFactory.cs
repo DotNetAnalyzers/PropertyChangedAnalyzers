@@ -184,39 +184,16 @@ namespace PropertyChangedAnalyzers
                                 .WithTriviaFrom(accessor);
         }
 
-        internal static SimpleLambdaExpressionSyntax AddStatements(this SimpleLambdaExpressionSyntax lambda, params StatementSyntax[] statements)
+        internal static LambdaExpressionSyntax AddStatements(this LambdaExpressionSyntax lambda, params StatementSyntax[] statements)
         {
             switch (lambda)
             {
                 case { Body: ExpressionSyntax body }:
-                    return SyntaxFactory.SimpleLambdaExpression(
-                                            asyncKeyword: lambda.AsyncKeyword,
-                                            parameter: lambda.Parameter,
-                                            arrowToken: SyntaxFactory.Token(lambda.ArrowToken.Kind()),
-                                            body: SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
-                                                               .WithLeadingLineFeed())
-                                        .WithTriviaFrom(lambda)
-                                        .WithAdditionalAnnotations(Formatter.Annotation);
-                case { Body: BlockSyntax block }:
-                    return lambda.ReplaceNode(block, block.AddStatements(statements));
-                default:
-                    throw new NotSupportedException($"No support for adding statements to lambda with the shape: {lambda?.ToString() ?? "null"}");
-            }
-        }
-
-        internal static ParenthesizedLambdaExpressionSyntax AddStatements(this ParenthesizedLambdaExpressionSyntax lambda, params StatementSyntax[] statements)
-        {
-            switch (lambda)
-            {
-                case { Body: ExpressionSyntax body }:
-                    return SyntaxFactory.ParenthesizedLambdaExpression(
-                                            asyncKeyword: lambda.AsyncKeyword,
-                                            parameterList: lambda.ParameterList,
-                                            arrowToken: SyntaxFactory.Token(lambda.ArrowToken.Kind()),
-                                            body: SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
-                                                               .WithLeadingLineFeed())
-                                        .WithTriviaFrom(lambda)
-                                        .WithAdditionalAnnotations(Formatter.Annotation);
+                    return lambda.ReplaceNode(
+                                     body,
+                                     SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
+                                                  .WithLeadingLineFeed())
+                                 .WithAdditionalAnnotations(Formatter.Annotation);
                 case { Body: BlockSyntax block }:
                     return lambda.ReplaceNode(block, block.AddStatements(statements));
                 default:

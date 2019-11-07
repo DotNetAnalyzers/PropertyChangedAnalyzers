@@ -209,7 +209,6 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [Ignore("Fix")]
         [Test]
         public static void SimpleLambda()
         {
@@ -278,7 +277,6 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [Ignore("Fix")]
         [Test]
         public static void ParenthesizedLambda()
         {
