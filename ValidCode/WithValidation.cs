@@ -43,7 +43,7 @@ namespace ValidCode
             get => this.p2;
             set
             {
-                if (value < 0)
+                if (value < this.p1)
                 {
                     throw new ArgumentException("Expected greater or equal to zero.");
                 }
