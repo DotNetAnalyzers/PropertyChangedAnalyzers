@@ -131,46 +131,6 @@ namespace RoslynSandbox.Client
         }
 
         [Test]
-        [Ignore("Not sure how we want this.")]
-        public static void Set()
-        {
-            var code = @"
-namespace RoslynSandbox.Client
-{
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class ViewModel : INotifyPropertyChanged
-    {
-        private string name;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Name
-        {
-            get { return this.name; }
-            set { this.TrySet(ref this.name, value); }
-        }
-
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            return true;
-        }
-    }
-}";
-
-            RoslynAssert.Valid(Analyzer, code);
-        }
-
-        [Test]
         public static void Interface()
         {
             var code = @"

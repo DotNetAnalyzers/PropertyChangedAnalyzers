@@ -394,5 +394,82 @@ namespace RoslynSandbox
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, before }, after, fixTitle: "Add OnPropertyChanged()");
         }
+
+        [Test]
+        public static void TrySetOnly()
+        {
+            var before = @"
+namespace RoslynSandbox.Client
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        ↓public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get { return this.name; }
+            set { this.TrySet(ref this.name, value); }
+        }
+
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return true;
+        }
+    }
+}";
+
+            var after = @"
+namespace RoslynSandbox.Client
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private string name;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Name
+        {
+            get { return this.name; }
+            set { this.TrySet(ref this.name, value); }
+        }
+
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Add OnPropertyChanged()");
+        }
     }
 }
