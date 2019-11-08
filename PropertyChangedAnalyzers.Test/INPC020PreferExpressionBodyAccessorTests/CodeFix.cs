@@ -9,7 +9,9 @@ namespace PropertyChangedAnalyzers.Test.INPC020PreferExpressionBodyAccessorTests
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new ExpressionBodyFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor);
+
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic =
+            ExpectedDiagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor);
 
         [Test]
         public static void TrySet()
@@ -250,54 +252,5 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [Test]
-        public static void DependencyProperty()
-        {
-            var before = @"
-namespace N
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            nameof(Bar),
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(default(int)));
-
-        public int Bar
-        {
-            ↓get { return (int)this.GetValue(BarProperty); }
-            ↓set { this.SetValue(BarProperty, value); }
-        }
-    }
-}";
-            var after = @"
-namespace N
-{
-    using System.Windows;
-    using System.Windows.Controls;
-
-    public class FooControl : Control
-    {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            nameof(Bar),
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(default(int)));
-
-        public int Bar
-        {
-            get => (int)this.GetValue(BarProperty);
-            set => this.SetValue(BarProperty, value);
-        }
-    }
-}";
-
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
     }
 }
