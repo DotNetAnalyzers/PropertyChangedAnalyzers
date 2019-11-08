@@ -20,7 +20,7 @@ namespace N
 {
     public class ↓Foo
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -31,7 +31,7 @@ namespace N
 
     public class Foo : PropertyChangedBase
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase and add using.", metadataReferences: MetadataReferences);
@@ -45,7 +45,7 @@ namespace N
 {
     public class ↓Foo
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -54,7 +54,7 @@ namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase fully qualified.", metadataReferences: MetadataReferences);
@@ -68,7 +68,7 @@ namespace N
 {
     public class ↓Foo
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -82,7 +82,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -101,7 +101,7 @@ namespace N
 {
     public class ↓Foo
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -112,7 +112,7 @@ namespace N
     {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
