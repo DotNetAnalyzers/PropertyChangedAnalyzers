@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
         public static void WhenThrowingArgumentException()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -34,7 +34,7 @@ namespace RoslynSandbox
         public static void ArgumentOutOfRangeException()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -57,7 +57,7 @@ namespace RoslynSandbox
         public static void IgnoresDebuggerDisplay()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     [System.Diagnostics.DebuggerDisplay(""{Name}"")]
     public class Foo
@@ -72,7 +72,7 @@ namespace RoslynSandbox
         public static void IgnoresTypeName()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -96,7 +96,7 @@ namespace RoslynSandbox
         public static void IgnoresVariableDeclaredAfter()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -120,7 +120,7 @@ namespace RoslynSandbox
         public static void IgnoresNamespaceName()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 

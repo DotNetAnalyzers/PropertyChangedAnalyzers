@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
         public static void SimpleStruct()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public struct Foo
     {

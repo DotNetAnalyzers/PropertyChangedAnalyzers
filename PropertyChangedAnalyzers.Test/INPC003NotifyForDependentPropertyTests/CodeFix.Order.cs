@@ -103,7 +103,7 @@ namespace N
         public static void AddAfterLastOnPropertyChanged()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -146,7 +146,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -197,7 +197,7 @@ namespace RoslynSandbox
         public static void AddBeforeSideEffect()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -241,7 +241,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -293,7 +293,7 @@ namespace RoslynSandbox
         public static void AddBeforeSideEffectUnderscore()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -337,7 +337,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -802,7 +802,7 @@ namespace N
         public static void AddAfterOtherFieldAssignment(string expression)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -843,7 +843,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.OnPropertyChanged(nameof(this.P1))", expression);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -892,7 +892,7 @@ namespace RoslynSandbox
         public static void AddAfterOtherFieldAssignmentBeforeExplicitReturn(string expression)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -938,7 +938,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.OnPropertyChanged(nameof(this.P1))", expression);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

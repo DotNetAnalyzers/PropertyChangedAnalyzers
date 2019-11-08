@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
             public static void SetProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -36,7 +36,7 @@ namespace RoslynSandbox
             public static void SetPropertyExpressionBodies()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -56,7 +56,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -84,7 +84,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyStringEmpty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -106,7 +106,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyExpression()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -134,7 +134,7 @@ namespace RoslynSandbox
             public static void WhenOverriddenSetAndNotify()
             {
                 var fooBaseCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public abstract class FooBase : Stylet.PropertyChangedBase
     {
@@ -146,7 +146,7 @@ namespace RoslynSandbox
 }";
 
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : FooBase
     {

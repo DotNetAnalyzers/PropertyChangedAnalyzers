@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             public static void ExceptionHandlingRelayCommandGetSet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;
@@ -29,7 +29,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;
@@ -69,7 +69,7 @@ namespace RoslynSandbox
             public static void ExceptionHandlingRelayCommand()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;
@@ -97,7 +97,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;
@@ -138,7 +138,7 @@ namespace RoslynSandbox
             public static void ExceptionHandlingRelayCommandNotify()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;
@@ -166,7 +166,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;

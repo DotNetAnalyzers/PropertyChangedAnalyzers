@@ -200,7 +200,7 @@ namespace N
         public static void TimeSpanTicks()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -241,7 +241,7 @@ namespace RoslynSandbox
         public static void ExceptionHandlingRelayCommand()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;

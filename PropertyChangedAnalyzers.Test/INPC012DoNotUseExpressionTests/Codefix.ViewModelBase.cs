@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
         public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System;
     using System.Collections.Generic;
@@ -48,9 +48,9 @@ namespace RoslynSandbox.Core
             public static void SetAffectsCalculatedPropertyExpression()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private int name;
 
@@ -71,9 +71,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private int name;
 
@@ -99,9 +99,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    internal class ViewModel : RoslynSandbox.Core.ViewModelBase
+    internal class ViewModel : N.Core.ViewModelBase
     {
         private int name;
 
@@ -122,9 +122,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    internal class ViewModel : RoslynSandbox.Core.ViewModelBase
+    internal class ViewModel : N.Core.ViewModelBase
     {
         private int name;
 

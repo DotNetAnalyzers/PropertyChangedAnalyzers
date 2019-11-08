@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             public static void Invoker(string member)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -34,7 +34,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.PropertyChanged", member);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -58,7 +58,7 @@ namespace RoslynSandbox
             public static void ChainedInvoker(string member)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -79,7 +79,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.OnPropertyChanged", member);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -107,7 +107,7 @@ namespace RoslynSandbox
             public static void TrySet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -136,7 +136,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -172,7 +172,7 @@ namespace RoslynSandbox
             public static void TrySetWhenUsing()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -202,7 +202,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;

@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
         public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -41,9 +41,9 @@ namespace RoslynSandbox.Core
             public static void Set()
             {
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private int value;
 
@@ -62,9 +62,9 @@ namespace RoslynSandbox.Client
             public static void SetWithThisGetWithout()
             {
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private int value;
 
@@ -83,9 +83,9 @@ namespace RoslynSandbox.Client
             public static void SetExpressionBodies()
             {
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private int value;
 
@@ -108,9 +108,9 @@ namespace RoslynSandbox.Client
             public static void RaisePropertyChanged(string propertyName)
             {
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private int bar;
 

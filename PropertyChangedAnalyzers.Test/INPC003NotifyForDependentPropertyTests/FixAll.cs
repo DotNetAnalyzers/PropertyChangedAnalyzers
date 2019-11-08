@@ -347,7 +347,7 @@ namespace N
         public static void AddOneAfterOtherFieldAssignment()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -392,7 +392,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -444,7 +444,7 @@ namespace RoslynSandbox
         public static void AddTwoAfterOtherFieldAssignment()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -488,7 +488,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -540,7 +540,7 @@ namespace RoslynSandbox
         public static void AddOneAfterOtherFieldAssignmentBeforeExplicitReturn()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -586,7 +586,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -639,7 +639,7 @@ namespace RoslynSandbox
         public static void AddTwoAfterOtherFieldAssignmentBeforeExplicitReturn()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -684,7 +684,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

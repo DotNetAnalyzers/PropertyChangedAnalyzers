@@ -53,7 +53,7 @@ namespace PropertyChangedAnalyzers.Test
         public static void SomewhatRealisticSample(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -83,7 +83,7 @@ namespace RoslynSandbox.Core
 }";
 
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -92,9 +92,9 @@ namespace RoslynSandbox
 }";
 
             var viewModel1Code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    using RoslynSandbox.Core;
+    using N.Core;
 
     public class ViewModel1 : ViewModelBase
     {
@@ -139,7 +139,7 @@ namespace RoslynSandbox.Client
 }";
 
             var viewModel2Code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -197,7 +197,7 @@ namespace RoslynSandbox
 }";
 
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -237,7 +237,7 @@ namespace RoslynSandbox
 }";
 
             var foo1Code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Drawing;
@@ -291,7 +291,7 @@ namespace RoslynSandbox
 }";
 
             var foo2Code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -326,7 +326,7 @@ namespace RoslynSandbox
 }";
 
             var foo3Code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -369,7 +369,7 @@ namespace RoslynSandbox
 }";
 
             var foo4Code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -387,7 +387,7 @@ namespace RoslynSandbox
     }
 }";
             var foo5Code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo5 : Foo4
     {
@@ -404,7 +404,7 @@ namespace RoslynSandbox
 }";
 
             var exceptionHandlingRelayCommand = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;
@@ -457,7 +457,7 @@ namespace RoslynSandbox
         public static void SomewhatRealisticSampleGeneric(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -486,9 +486,9 @@ namespace RoslynSandbox.Core
     }
 }";
             var viewModelSubclassCode = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    using RoslynSandbox.Core;
+    using N.Core;
 
     public class ViewModel1 : ViewModelBase<int>
     {
@@ -533,7 +533,7 @@ namespace RoslynSandbox.Client
 }";
 
             var viewModelCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;

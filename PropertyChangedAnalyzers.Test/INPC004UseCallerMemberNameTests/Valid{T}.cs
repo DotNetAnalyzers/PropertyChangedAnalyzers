@@ -20,7 +20,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedCallerMemberName()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -99,7 +99,7 @@ namespace RoslynSandbox
         public static void Invokes(string propertyName)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -134,7 +134,7 @@ namespace RoslynSandbox
         public static void InvokesCached()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -216,7 +216,7 @@ namespace N
         public static void IgnoreWhenRaiseForOtherInstance()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -265,7 +265,7 @@ namespace RoslynSandbox
         public static void IgnoreWhenRaiseForOtherInstanceOfOtherType()
         {
             var viewModelCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -303,7 +303,7 @@ namespace RoslynSandbox
 }";
 
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -321,7 +321,7 @@ namespace RoslynSandbox
         public static void IgnoreWhenCallingFrameworkBaseClass()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
@@ -423,7 +423,7 @@ namespace RoslynSandbox
         public static void TimeSpanTicks()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -464,7 +464,7 @@ namespace RoslynSandbox
         public static void ExceptionHandlingRelayCommand()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;

@@ -24,7 +24,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
         public static void IntFieldUpdatedInMethod(string update)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -50,7 +50,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.value = value;", update);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -93,7 +93,7 @@ namespace RoslynSandbox
         public static void IntFieldUpdatedInMethodUnderscoreNames(string update)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -120,7 +120,7 @@ namespace RoslynSandbox
 }".AssertReplace("_value = value;", update);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -157,7 +157,7 @@ namespace RoslynSandbox
         public static void BoolFieldUpdatedInMethod(string update)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -183,7 +183,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.value = value;", update);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -217,7 +217,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesExpressionBodyStringInterpolation()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -278,7 +278,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -347,7 +347,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesExpressionBodyStringInterpolationInternalClassInternalProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -408,7 +408,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -477,7 +477,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesCopyLocalNullCheckInvoke()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -539,7 +539,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -609,7 +609,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesExpressionBodyTernarySimple()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -649,7 +649,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -697,7 +697,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesExpressionBodyNested()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -768,7 +768,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -847,7 +847,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesExpressionBodyNestedSimple()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -896,7 +896,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -954,7 +954,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesExpressionCallingMethod(string call)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1027,7 +1027,7 @@ namespace RoslynSandbox
 }".AssertReplace("=> CreateGreeting()", call);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1108,7 +1108,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesExpressionBodyTernary()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1169,7 +1169,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1238,7 +1238,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesStatementBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1305,7 +1305,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1380,7 +1380,7 @@ namespace RoslynSandbox
         public static void WhenUsingPropertiesStatementBodyUnderscoreNames()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1447,7 +1447,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1521,7 +1521,7 @@ namespace RoslynSandbox
         public static void WhenUsingBackingFieldsExpressionBodyStringInterpolation()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1582,7 +1582,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1650,7 +1650,7 @@ namespace RoslynSandbox
         public static void WhenUsingBackingFieldsExpressionBodyStringFormat()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1711,7 +1711,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2102,7 +2102,7 @@ namespace N
         public static void WhenUsingBackingFieldsExpressionBodyReturningArray()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2163,7 +2163,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2378,7 +2378,7 @@ namespace N
         public static void WhenUsingBackingFieldsStatementBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2445,7 +2445,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2519,7 +2519,7 @@ namespace RoslynSandbox
         public static void WhenUsingBackingFieldsStatementBodyWithSwitch()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2571,7 +2571,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2630,7 +2630,7 @@ namespace RoslynSandbox
         public static void WhenUsingBackingFieldsStatementBodyUnderscoreNames()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2697,7 +2697,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2771,7 +2771,7 @@ namespace RoslynSandbox
         public static void FieldUpdatedInMethodWithInvokerInBaseClass()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2788,12 +2788,12 @@ namespace RoslynSandbox.Core
 }";
 
             var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C : RoslynSandbox.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string text;
 
@@ -2807,12 +2807,12 @@ namespace RoslynSandbox.Client
 }";
 
             var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C : RoslynSandbox.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string text;
 
@@ -2833,7 +2833,7 @@ namespace RoslynSandbox.Client
         public static void InSimpleLambdaExpressionBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -2860,7 +2860,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -2897,7 +2897,7 @@ namespace RoslynSandbox
         public static void InSimpleLambdaStatementBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -2927,7 +2927,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -2964,7 +2964,7 @@ namespace RoslynSandbox
         public static void InParenthesizedLambdaExpressionBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2990,7 +2990,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3026,7 +3026,7 @@ namespace RoslynSandbox
         public static void InParenthesizedLambdaStatementBody()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3055,7 +3055,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3091,7 +3091,7 @@ namespace RoslynSandbox
         public static void AssigningFieldsInGetter()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3122,7 +3122,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3161,7 +3161,7 @@ namespace RoslynSandbox
         public static void WhenAssigningNestedField(string path)
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -3169,7 +3169,7 @@ namespace RoslynSandbox
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3194,7 +3194,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("this.bar.BarValue", path);
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3228,7 +3228,7 @@ namespace RoslynSandbox
         public static void WhenAssigningNestedFieldRoot()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -3236,7 +3236,7 @@ namespace RoslynSandbox
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3261,7 +3261,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3294,7 +3294,7 @@ namespace RoslynSandbox
         public static void WhenAssigningRootForNestedField()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -3302,7 +3302,7 @@ namespace RoslynSandbox
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3327,7 +3327,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3360,7 +3360,7 @@ namespace RoslynSandbox
         public static void OverriddenProperty()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3378,7 +3378,7 @@ namespace RoslynSandbox
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : FooBase
     {
@@ -3393,7 +3393,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : FooBase
     {
@@ -3416,7 +3416,7 @@ namespace RoslynSandbox
         public static void WhenNotifyingInElseOnly()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3449,7 +3449,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3574,7 +3574,7 @@ namespace N
         public static void AddsBeforeExplicitReturn()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -3615,7 +3615,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
             public static void SetAffectsCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -33,7 +33,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -62,7 +62,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -79,7 +79,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -108,7 +108,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -128,7 +128,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -160,7 +160,7 @@ namespace RoslynSandbox
             public static void SetExpressionBodiesAffectsCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -177,7 +177,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -206,7 +206,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -228,7 +228,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -257,7 +257,7 @@ namespace RoslynSandbox
             public static void SetAffectsSecondCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -282,7 +282,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -314,7 +314,7 @@ namespace RoslynSandbox
             public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -337,7 +337,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -369,7 +369,7 @@ namespace RoslynSandbox
             public static void RaisePropertyChangedAffectsCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -420,7 +420,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -478,7 +478,7 @@ namespace RoslynSandbox
             public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -505,7 +505,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -539,7 +539,7 @@ namespace RoslynSandbox
             public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -564,7 +564,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {

@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
         public static void ExpressionInvokerToCallerMemberName()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -60,7 +60,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -111,7 +111,7 @@ namespace RoslynSandbox
         public static void ExpressionInvokerCalculatedCallerMemberName()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -159,7 +159,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -213,7 +213,7 @@ namespace RoslynSandbox
         public static void ExpressionInvokerCalculatedCallerMemberNameUnderscore()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -261,7 +261,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -315,7 +315,7 @@ namespace RoslynSandbox
         public static void ExpressionInvokerToCallerMemberNameInternalClassInternalProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -360,7 +360,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -411,7 +411,7 @@ namespace RoslynSandbox
         public static void ExpressionInvokerToCallerMemberNameCalculatedProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -459,7 +459,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -513,7 +513,7 @@ namespace RoslynSandbox
         public static void ExpressionInvokerToNameOf()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -557,7 +557,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;

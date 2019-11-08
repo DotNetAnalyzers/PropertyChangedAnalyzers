@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
         public static void NotifyingProperty()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         public static void GetSetBackingFieldExpressionBodies()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -82,7 +82,7 @@ namespace RoslynSandbox
         public static void ExpressionBodyReturnBase()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class A
     {
@@ -102,7 +102,7 @@ namespace RoslynSandbox
         public static void ExpressionBodiesGetAndSetBase()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class A
     {
@@ -126,7 +126,7 @@ namespace RoslynSandbox
         public static void ExplicitInterfaceImplementation()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections;
     using System.Collections.Generic;

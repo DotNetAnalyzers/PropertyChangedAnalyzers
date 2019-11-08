@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC011DoNotShadowTests
         public static void ShadowingEvent()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -32,22 +32,22 @@ namespace RoslynSandbox.Core
 }";
 
             var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
     }
 }";
 
             var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
     }
 }";

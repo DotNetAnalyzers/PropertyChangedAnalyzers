@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -41,7 +41,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -69,7 +69,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -97,7 +97,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -140,7 +140,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.Generic;
@@ -198,7 +198,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
     {
@@ -223,7 +223,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
     {
@@ -248,7 +248,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -288,7 +288,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

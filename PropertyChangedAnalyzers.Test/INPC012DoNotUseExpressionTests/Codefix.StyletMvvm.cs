@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
             public static void SetAffectsCalculatedPropertyExpression()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -39,7 +39,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -67,7 +67,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class ViewModel : Stylet.PropertyChangedBase
     {
@@ -90,7 +90,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class ViewModel : Stylet.PropertyChangedBase
     {

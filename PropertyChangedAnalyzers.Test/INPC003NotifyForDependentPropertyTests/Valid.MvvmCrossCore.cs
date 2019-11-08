@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
             public static void SetProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -36,7 +36,7 @@ namespace RoslynSandbox
             public static void SetPropertyExpressionBodies()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -56,7 +56,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -84,7 +84,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyExpression()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -112,7 +112,7 @@ namespace RoslynSandbox
             public static void WhenOverriddenSetProperty()
             {
                 var fooBaseCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public abstract class FooBase : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -124,7 +124,7 @@ namespace RoslynSandbox
 }";
 
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : FooBase
     {

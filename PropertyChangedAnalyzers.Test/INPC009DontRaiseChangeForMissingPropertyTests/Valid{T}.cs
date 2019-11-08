@@ -23,7 +23,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
         public static void OnPropertyChangedWithEventArgs(string propertyName)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -61,7 +61,7 @@ namespace RoslynSandbox
         public static void OnPropertyChangedCallerMemberName()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -97,7 +97,7 @@ namespace RoslynSandbox
         public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckInvoke()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -137,7 +137,7 @@ namespace RoslynSandbox
         public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckImplicitInvoke()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -182,7 +182,7 @@ namespace RoslynSandbox
         public static void Invokes(string propertyName)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -217,7 +217,7 @@ namespace RoslynSandbox
         public static void InvokesCached()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -296,7 +296,7 @@ namespace N
         public static void RaisesForIndexer()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel;
@@ -326,7 +326,7 @@ namespace RoslynSandbox
         public static void IgnoresWhenNotInvokingReproIssue122()
         {
             var extCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -340,7 +340,7 @@ namespace RoslynSandbox
 }";
 
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -396,7 +396,7 @@ namespace RoslynSandbox
         public static void RaiseForOtherInstance()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -557,7 +557,7 @@ namespace N
         public static void WhenNotAnInvoker()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -598,7 +598,7 @@ namespace RoslynSandbox
         public static void NotifyThatAllPropertiesChanges(string arg)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -632,7 +632,7 @@ namespace RoslynSandbox
         public static void WithViewModelBase()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -661,9 +661,9 @@ namespace RoslynSandbox.Core
     }
 }";
             var viewModelCode = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    using RoslynSandbox.Core;
+    using N.Core;
 
     public class ViewModel : ViewModelBase
     {
@@ -713,7 +713,7 @@ namespace RoslynSandbox.Client
         public static void OverriddenProperty()
         {
             var fooBase = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -731,9 +731,9 @@ namespace RoslynSandbox.Core
     }
 }";
             var foo = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    using RoslynSandbox.Core;
+    using N.Core;
 
     public class Foo : FooBase
     {

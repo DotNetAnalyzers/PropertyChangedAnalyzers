@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             public static void WhenInterfaceOnlyAddUsings()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : ↓INotifyPropertyChanged
     {
@@ -22,7 +22,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -44,7 +44,7 @@ namespace RoslynSandbox
             public static void WhenInterfaceOnlyFullyQualified()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : ↓INotifyPropertyChanged
     {
@@ -52,7 +52,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -71,7 +71,7 @@ namespace RoslynSandbox
             public static void WhenInterfaceOnlySealedAddUsings()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public sealed class Foo : ↓INotifyPropertyChanged
     {
@@ -79,7 +79,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -101,7 +101,7 @@ namespace RoslynSandbox
             public static void WhenInterfaceOnlySealedFullyQualified()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public sealed class Foo : ↓INotifyPropertyChanged
     {
@@ -109,7 +109,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public sealed class Foo : System.ComponentModel.INotifyPropertyChanged
     {

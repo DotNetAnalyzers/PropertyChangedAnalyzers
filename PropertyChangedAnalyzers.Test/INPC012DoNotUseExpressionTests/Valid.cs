@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
         public static void NoBaseClass()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -59,7 +59,7 @@ namespace RoslynSandbox
         public static void CallerMemberName()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -103,7 +103,7 @@ namespace RoslynSandbox
         public static void NotInvoker()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;

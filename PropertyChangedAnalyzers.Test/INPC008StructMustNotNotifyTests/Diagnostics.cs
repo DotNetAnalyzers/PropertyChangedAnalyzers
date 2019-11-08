@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
         public static void WhenNotifying()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -28,7 +28,7 @@ namespace RoslynSandbox
         public static void WhenNotifyingFullyQualified()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public struct Foo : ↓System.ComponentModel.INotifyPropertyChanged
     {

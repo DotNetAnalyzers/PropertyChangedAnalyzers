@@ -19,7 +19,7 @@ namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
         public static void ExpressionBody(string fieldName)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -30,7 +30,7 @@ namespace RoslynSandbox
 }".AssertReplace("wrong", fieldName);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -50,7 +50,7 @@ namespace RoslynSandbox
         public static void ExpressionBodyUnderscore(string fieldName)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -61,7 +61,7 @@ namespace RoslynSandbox
 }".AssertReplace("_wrong", fieldName);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -81,7 +81,7 @@ namespace RoslynSandbox
         public static void ExpressionBodyGetter(string fieldName)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -94,7 +94,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("wrong", fieldName);
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -118,7 +118,7 @@ namespace RoslynSandbox
         public static void StatementBodyGetter(string fieldName)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -132,7 +132,7 @@ namespace RoslynSandbox
 }".AssertReplace("wrong", fieldName);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -156,7 +156,7 @@ namespace RoslynSandbox
         public static void ExpressionBodyGetterUnderscore(string fieldName)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -169,7 +169,7 @@ namespace RoslynSandbox
     }
 }".AssertReplace("_wrong", fieldName);
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {

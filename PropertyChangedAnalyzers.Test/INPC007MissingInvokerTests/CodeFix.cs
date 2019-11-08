@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
         public static void EventOnlyAddInvoker()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -26,7 +26,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -47,7 +47,7 @@ namespace RoslynSandbox
         public static void EventOnlyMakeSealed()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -58,7 +58,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -74,7 +74,7 @@ namespace RoslynSandbox
         public static void EventOnlyWithUsing()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -86,7 +86,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -108,7 +108,7 @@ namespace RoslynSandbox
         public static void EventOnlySealed()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -121,7 +121,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -144,7 +144,7 @@ namespace RoslynSandbox
         public static void EventOnlyStatic()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -155,7 +155,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -176,7 +176,7 @@ namespace RoslynSandbox
         public static void OverridingEvent()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -193,22 +193,22 @@ namespace RoslynSandbox.Core
 }";
 
             var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         ↓public override event PropertyChangedEventHandler PropertyChanged;
     }
 }";
 
             var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
 
@@ -226,7 +226,7 @@ namespace RoslynSandbox.Client
         public static void WithNoMutablePropertiesAddInvoker()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -245,7 +245,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -276,7 +276,7 @@ namespace RoslynSandbox
         public static void WithNoMutablePropertiesSeal()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -295,7 +295,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -321,7 +321,7 @@ namespace RoslynSandbox
         public static void UsesCorrectStyleIssue107()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -355,7 +355,7 @@ namespace RoslynSandbox
 }";
 
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel;
@@ -371,7 +371,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel;
@@ -399,7 +399,7 @@ namespace RoslynSandbox
         public static void TrySetOnly()
         {
             var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -432,7 +432,7 @@ namespace RoslynSandbox.Client
 }";
 
             var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     using System.Collections.Generic;
     using System.ComponentModel;

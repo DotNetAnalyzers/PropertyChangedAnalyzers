@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
             public static void CallsOnPropertyChanged()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -44,7 +44,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -88,7 +88,7 @@ namespace RoslynSandbox
             public static void CallsOnPropertyChangedInternalClassInternalProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -121,7 +121,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -165,7 +165,7 @@ namespace RoslynSandbox
             public static void CallsRaisePropertyChangedWithEventArgs()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -193,7 +193,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -232,7 +232,7 @@ namespace RoslynSandbox
             public static void PropertyChangedInvokeElvis()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -259,7 +259,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -297,7 +297,7 @@ namespace RoslynSandbox
             public static void PropertyChangedInvoke()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -325,7 +325,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -364,7 +364,7 @@ namespace RoslynSandbox
             public static void PropertyChangedInvokeStaticClass()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -392,7 +392,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -431,7 +431,7 @@ namespace RoslynSandbox
             public static void PropertyChangedInvokeUnderscore()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -459,7 +459,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -498,7 +498,7 @@ namespace RoslynSandbox
             public static void PropertyChangedInvokeCachedEventArgs()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -527,7 +527,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -567,7 +567,7 @@ namespace RoslynSandbox
             public static void PropertyChangedInvokeNoNullCheck()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -595,7 +595,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -634,7 +634,7 @@ namespace RoslynSandbox
             public static void WarnOnlyOnFirst()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -670,7 +670,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -717,7 +717,7 @@ namespace RoslynSandbox
             public static void WhenSettingNestedField()
             {
                 var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -725,7 +725,7 @@ namespace RoslynSandbox
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -752,7 +752,7 @@ namespace RoslynSandbox
     }
 }";
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

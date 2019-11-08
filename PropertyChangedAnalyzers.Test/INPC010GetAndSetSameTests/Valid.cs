@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
         public static void NotifyingProperty()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         public static void WithBackingFieldStatementBodies()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -82,7 +82,7 @@ namespace RoslynSandbox
         public static void WithBackingFieldStatementBodiesAssigningTwice()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -110,7 +110,7 @@ namespace RoslynSandbox
         public static void WithBackingFieldExpressionBodies()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -134,7 +134,7 @@ namespace RoslynSandbox
         public static void NestedField()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -142,7 +142,7 @@ namespace RoslynSandbox
     }
 }";
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -180,7 +180,7 @@ namespace RoslynSandbox
         public static void NestedProperties()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -189,7 +189,7 @@ namespace RoslynSandbox
     }
 }";
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -228,7 +228,7 @@ namespace RoslynSandbox
         public static void TimeSpanTicks()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -269,7 +269,7 @@ namespace RoslynSandbox
         public static void WrappingPoint()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Drawing;
@@ -326,7 +326,7 @@ namespace RoslynSandbox
         public static void IsSpeed1(string getter)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -375,7 +375,7 @@ namespace RoslynSandbox
         public static void ExplicitImplementationWithCast()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo<T> : IFoo
     {
@@ -751,7 +751,7 @@ namespace ValidCode.Repros
         public static void TrySet()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;

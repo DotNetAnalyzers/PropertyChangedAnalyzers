@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             public static void Struct()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public struct Foo
     {
@@ -26,7 +26,7 @@ namespace RoslynSandbox
             public static void GetOnly()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -41,7 +41,7 @@ namespace RoslynSandbox
             public static void SetOnly()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -74,7 +74,7 @@ namespace RoslynSandbox
             public static void ExpressionBody()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -89,7 +89,7 @@ namespace RoslynSandbox
             public static void CalculatedBody()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -107,7 +107,7 @@ namespace RoslynSandbox
             public static void Abstract()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public abstract class Foo
     {
@@ -123,7 +123,7 @@ namespace RoslynSandbox
             {
                 // maybe this should notify?
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -139,7 +139,7 @@ namespace RoslynSandbox
             {
                 // maybe this should notify?
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class Foo
     {
@@ -155,7 +155,7 @@ namespace RoslynSandbox
             {
                 // maybe this should notify?
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -170,7 +170,7 @@ namespace RoslynSandbox
             public static void DependencyProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -197,7 +197,7 @@ namespace RoslynSandbox
             public static void PrivateSetterOnlyAssignedInCtor()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.Serialization;

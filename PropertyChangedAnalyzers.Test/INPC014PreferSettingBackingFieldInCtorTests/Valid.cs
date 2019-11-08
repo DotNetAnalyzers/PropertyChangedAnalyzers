@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
         public static void WhenSettingField()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.Serialization;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         public static void AutoProperty()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.Serialization;
@@ -89,7 +89,7 @@ namespace RoslynSandbox
         public static void IgnoreWhenValidationThrows()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -138,7 +138,7 @@ namespace RoslynSandbox
         public static void IgnoreWhenValidationCall()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.Generic;
@@ -196,7 +196,7 @@ namespace RoslynSandbox
         public static void IgnoreWhenSideEffect()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -242,7 +242,7 @@ namespace RoslynSandbox
         public static void SettingNotifyingPropertyInLambda(string lambda)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -286,7 +286,7 @@ namespace RoslynSandbox
         public static void SettingNotifyingPropertyInLocalFunction()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 

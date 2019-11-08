@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC019GetBackingFieldTests
         public static void SimpleExpressionBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public sealed class C
     {
@@ -29,7 +29,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public sealed class C
     {

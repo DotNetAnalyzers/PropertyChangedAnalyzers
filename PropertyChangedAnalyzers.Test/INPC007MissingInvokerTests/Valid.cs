@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
         public static void OnPropertyChangedCallerMemberName()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -56,7 +56,7 @@ namespace RoslynSandbox
         public static void OnPropertyChangedCallerMemberNameSealed()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -100,7 +100,7 @@ namespace RoslynSandbox
         public static void OverridingEvent()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -117,11 +117,11 @@ namespace RoslynSandbox.Core
 }";
 
             var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }
@@ -134,7 +134,7 @@ namespace RoslynSandbox.Client
         public static void Interface()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -151,7 +151,7 @@ namespace RoslynSandbox
         public static void InterfaceRepro()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.Generic;
@@ -190,7 +190,7 @@ namespace RoslynSandbox
         public static void SealedWithNoMutableProperties()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -216,7 +216,7 @@ namespace RoslynSandbox
         public static void WhenCreatingPropertyChangedEventArgsSeparately()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -262,7 +262,7 @@ namespace RoslynSandbox
         public static void StaticWithInvoker()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -285,7 +285,7 @@ namespace RoslynSandbox
         public static void WrappingPoint()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Drawing;

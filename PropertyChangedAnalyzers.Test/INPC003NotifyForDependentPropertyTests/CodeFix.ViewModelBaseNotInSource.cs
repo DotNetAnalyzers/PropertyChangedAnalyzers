@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
         {
             private static readonly ImmutableArray<MetadataReference> MetadataReferences = Gu.Roslyn.Asserts.MetadataReferences.FromAttributes()
                                                                                            .Add(Gu.Roslyn.Asserts.MetadataReferences.CreateBinary(@"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System;
     using System.Collections.Generic;
@@ -51,9 +51,9 @@ namespace RoslynSandbox.Core
             public static void AssignedAffectsCalculatedPropertyOnPropertyChanged()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string firstName;
         private string lastName;
@@ -102,9 +102,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string firstName;
         private string lastName;
@@ -160,9 +160,9 @@ namespace RoslynSandbox.Client
             public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -187,9 +187,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -221,9 +221,9 @@ namespace RoslynSandbox.Client
             public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -246,9 +246,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -278,9 +278,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -295,9 +295,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -324,9 +324,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -344,9 +344,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -376,9 +376,9 @@ namespace RoslynSandbox.Client
             public static void SetExpressionBodiesAffectsCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -393,9 +393,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -422,9 +422,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -444,9 +444,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -473,9 +473,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsSecondCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -498,9 +498,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -530,9 +530,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -553,9 +553,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 

@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
             public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -63,7 +63,7 @@ namespace RoslynSandbox
             public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -101,7 +101,7 @@ namespace RoslynSandbox
             public static void Invokes(string propertyName)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -145,7 +145,7 @@ namespace RoslynSandbox
             public static void InvokesSimple()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -183,7 +183,7 @@ namespace RoslynSandbox
             public static void ExpressionInvokerWithMethod()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -236,7 +236,7 @@ namespace RoslynSandbox
             public static void ExpressionInvokerWithThisEvent()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -287,7 +287,7 @@ namespace RoslynSandbox
             public static void ExpressionInvokerWithEvent()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -338,7 +338,7 @@ namespace RoslynSandbox
             public static void ExpressionInvokerWithStringEmpty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -389,7 +389,7 @@ namespace RoslynSandbox
             public static void PropertyChangedInvokeWithCachedEventArgs()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -434,7 +434,7 @@ namespace RoslynSandbox
             public static void CallsOnPropertyChangedWithCachedEventArgs(string cached)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

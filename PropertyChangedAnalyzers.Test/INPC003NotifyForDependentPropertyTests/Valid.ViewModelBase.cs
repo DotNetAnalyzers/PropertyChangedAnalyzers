@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
         public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System;
     using System.Collections.Generic;
@@ -48,9 +48,9 @@ namespace RoslynSandbox.Core
             public static void SetProperty()
             {
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -68,7 +68,7 @@ namespace RoslynSandbox.Client
             public static void SetPropertyWhenNullCoalescingInTrySet()
             {
                 var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -98,9 +98,9 @@ namespace RoslynSandbox.Core
 }";
 
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -118,9 +118,9 @@ namespace RoslynSandbox.Client
             public static void SetPropertyExpressionBodies()
             {
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -138,9 +138,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsCalculatedPropertyExplicitNameOf()
             {
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -166,9 +166,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsCalculatedPropertyNameOf()
             {
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -194,9 +194,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsCalculatedPropertyStringEmpty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -216,9 +216,9 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyExpression()
             {
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private int name;
 
@@ -244,9 +244,9 @@ namespace RoslynSandbox.Client
             public static void WhenOverriddenSet()
             {
                 var fooBaseCode = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public abstract class FooBase : RoslynSandbox.Core.ViewModelBase
+    public abstract class FooBase : N.Core.ViewModelBase
     {
         protected override bool TrySet<T>(ref T oldValue, T newValue, string propertyName = null)
         {
@@ -256,7 +256,7 @@ namespace RoslynSandbox.Client
 }";
 
                 var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
     public class Foo : FooBase
     {

@@ -19,7 +19,7 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             public static void CallsOnPropertyChangedWithExplicitNameOfCallerWhenParameterIsCallerMemberName(string propertyName)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -57,7 +57,7 @@ namespace RoslynSandbox
 }".AssertReplace(@"nameof(Value)", propertyName);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -104,7 +104,7 @@ namespace RoslynSandbox
             public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -142,7 +142,7 @@ namespace RoslynSandbox
 }".AssertReplace(@"nameof(Value)", propertyName);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -187,7 +187,7 @@ namespace RoslynSandbox
             public static void InternalClassInternalProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -225,7 +225,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -269,7 +269,7 @@ namespace RoslynSandbox
             public static void SecondArgument()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -307,7 +307,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -351,7 +351,7 @@ namespace RoslynSandbox
             public static void StyletSetAndNotify()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -366,7 +366,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -387,7 +387,7 @@ namespace RoslynSandbox
             public static void FixAll()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -448,7 +448,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -514,7 +514,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyExplicitNameOf()
             {
                 var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System;
     using System.Collections.Generic;
@@ -551,9 +551,9 @@ namespace RoslynSandbox.Core
 }";
 
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -574,9 +574,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 

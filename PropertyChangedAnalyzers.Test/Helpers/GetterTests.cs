@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(
                 @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {

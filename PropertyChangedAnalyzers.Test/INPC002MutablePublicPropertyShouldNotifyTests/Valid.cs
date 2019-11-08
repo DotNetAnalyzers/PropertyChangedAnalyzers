@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
         public static void CallsOnPropertyChanged(string propertyName)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -54,7 +54,7 @@ namespace RoslynSandbox
         public static void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -99,7 +99,7 @@ namespace RoslynSandbox
         public static void CallsOnPropertyChangedExpressionBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -132,7 +132,7 @@ namespace RoslynSandbox
         public static void ExpressionInvoker()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -188,7 +188,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -224,7 +224,7 @@ namespace RoslynSandbox
         public static void CallsOnPropertyChangedWithCachedEventArgs()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -261,7 +261,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedCallerMemberName()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -297,7 +297,7 @@ namespace RoslynSandbox
         public static void CallsChainedOnPropertyChanged()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -346,7 +346,7 @@ namespace RoslynSandbox
         public static void CallsChainedOnPropertyChangedInBase()
         {
             var baseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -368,9 +368,9 @@ namespace RoslynSandbox.Core
 }";
 
             var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private string meh;
 
@@ -401,7 +401,7 @@ namespace RoslynSandbox.Client
         public static void CallsChainedOnPropertyChangedInGenericBase()
         {
             var baseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -423,9 +423,9 @@ namespace RoslynSandbox.Core
 }";
 
             var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo<T> : RoslynSandbox.Core.ViewModelBase<T>
+    public class Foo<T> : N.Core.ViewModelBase<T>
     {
         private T meh;
 
@@ -457,7 +457,7 @@ namespace RoslynSandbox.Client
         public static void WhenCreatingPropertyChangedEventArgsSeparately()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -508,7 +508,7 @@ namespace RoslynSandbox
         public static void Invokes(string propertyName)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -541,7 +541,7 @@ namespace RoslynSandbox
         public static void InvokesCached()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -574,7 +574,7 @@ namespace RoslynSandbox
         public static void WhenSettingNestedField()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -582,7 +582,7 @@ namespace RoslynSandbox
     }
 }";
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -620,7 +620,7 @@ namespace RoslynSandbox
         public static void WrappingPoint()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Drawing;
@@ -676,7 +676,7 @@ namespace RoslynSandbox
         public static void TimeSpanTicks()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -717,7 +717,7 @@ namespace RoslynSandbox
         public static void ExceptionHandlingRelayCommand()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;

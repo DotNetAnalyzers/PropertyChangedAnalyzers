@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTe
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC014SetBackingFieldInConstructor);
 
         private const string ViewModelBase = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -45,7 +45,7 @@ namespace RoslynSandbox.Core
         public static void SimplePropertyWithBackingFieldStatementBodySetter()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -68,7 +68,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -96,7 +96,7 @@ namespace RoslynSandbox
         public static void SimplePropertyWithBackingFieldExpressionBodySetter()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -116,7 +116,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -141,7 +141,7 @@ namespace RoslynSandbox
         public static void SimplePropertyWithBackingFieldExpressionBodySetterKeyword()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -161,7 +161,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -186,7 +186,7 @@ namespace RoslynSandbox
         public static void SimplePropertyWithBackingFieldExpressionBodySetterCollisionParameter()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -206,7 +206,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -231,7 +231,7 @@ namespace RoslynSandbox
         public static void SimplePropertyWithBackingFieldExpressionBodySetterCollisionLocal()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -252,7 +252,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -278,7 +278,7 @@ namespace RoslynSandbox
         public static void SimplePropertyWithBackingFieldUnderscoreNames()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -301,7 +301,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel
     {
@@ -336,7 +336,7 @@ namespace RoslynSandbox
         public static void NotifyingProperty(string equals)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.Serialization;
@@ -377,7 +377,7 @@ namespace RoslynSandbox
 }".AssertReplace("value == this.value", equals);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.Serialization;
@@ -423,9 +423,9 @@ namespace RoslynSandbox
         public static void WhenSettingFieldUsingTrySet()
         {
             var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private int bar;
 
@@ -442,9 +442,9 @@ namespace RoslynSandbox.Client
     }
 }";
             var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private int bar;
 
@@ -467,9 +467,9 @@ namespace RoslynSandbox.Client
         public static void WhenSettingFieldUsingTrySetAndNotifyForOther()
         {
             var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private string name;
 
@@ -494,9 +494,9 @@ namespace RoslynSandbox.Client
     }
 }";
             var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private string name;
 
@@ -527,7 +527,7 @@ namespace RoslynSandbox.Client
         public static void WhenShadowingParameter()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -565,7 +565,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -609,7 +609,7 @@ namespace RoslynSandbox
         public static void WhenShadowingLocal()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -648,7 +648,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -693,7 +693,7 @@ namespace RoslynSandbox
         public static void WhenShadowingLocalKeyword()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -732,7 +732,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             public static void Set()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -37,7 +37,7 @@ namespace RoslynSandbox
             public static void SetExpressionBodies()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -62,7 +62,7 @@ namespace RoslynSandbox
             public static void RaisePropertyChanged(string propertyName)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {

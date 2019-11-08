@@ -33,7 +33,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
         };
 
         private static readonly string Foo = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -44,7 +44,7 @@ namespace RoslynSandbox
         public static void Check(string type, string expression)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -86,7 +86,7 @@ namespace RoslynSandbox
         public static void CheckNegated(string type, string expression)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -126,7 +126,7 @@ namespace RoslynSandbox
         public static void SimpleProperty()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -157,7 +157,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedWithEventArgsIfReturn()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -193,7 +193,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -229,7 +229,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedWithEventArgsIfBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -267,7 +267,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedCallerMemberName()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -303,7 +303,7 @@ namespace RoslynSandbox
         public static void Invokes()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -335,7 +335,7 @@ namespace RoslynSandbox
         public static void InvokesCached()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -368,14 +368,14 @@ namespace RoslynSandbox
         public static void IgnoreEqualityComparerEquals()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
     }
 }";
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -416,7 +416,7 @@ namespace RoslynSandbox
         public static void IgnoreNegatedEqualityComparerEquals()
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -424,7 +424,7 @@ namespace RoslynSandbox
 }";
 
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;

@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System;
     using System.Collections.Generic;
@@ -48,9 +48,9 @@ namespace RoslynSandbox.Core
             public static void SetAffectsCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -76,9 +76,9 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -104,9 +104,9 @@ namespace RoslynSandbox
             public static void SetAffectsSecondCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -135,9 +135,9 @@ namespace RoslynSandbox
             public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -166,9 +166,9 @@ namespace RoslynSandbox
             public static void OnPropertyChangedAffectsCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string firstName;
         private string lastName;
@@ -223,9 +223,9 @@ namespace RoslynSandbox
             public static void IfNotSetReturnCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 

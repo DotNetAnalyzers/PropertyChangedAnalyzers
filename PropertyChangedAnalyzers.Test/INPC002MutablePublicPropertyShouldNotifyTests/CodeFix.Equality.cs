@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             public static void OpEqualsFor(string typeCode)
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -34,7 +34,7 @@ namespace RoslynSandbox
 }".AssertReplace("int", typeCode);
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -74,14 +74,14 @@ namespace RoslynSandbox
             public static void ReferenceType()
             {
                 var refTypeCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ReferenceType
     {
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -99,7 +99,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -138,7 +138,7 @@ namespace RoslynSandbox
             public static void EquatableStruct()
             {
                 var equatableStruct = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -169,7 +169,7 @@ namespace RoslynSandbox
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -187,7 +187,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -227,7 +227,7 @@ namespace RoslynSandbox
             public static void NullableEquatableStruct()
             {
                 var equatableStruct = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -258,7 +258,7 @@ namespace RoslynSandbox
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -276,7 +276,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -315,7 +315,7 @@ namespace RoslynSandbox
             public static void EquatableStructWithOpEquals()
             {
                 var equatableStruct = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -357,7 +357,7 @@ namespace RoslynSandbox
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -375,7 +375,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -414,7 +414,7 @@ namespace RoslynSandbox
             public static void NullableEquatableStructOpEquals()
             {
                 var equatableStruct = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -455,7 +455,7 @@ namespace RoslynSandbox
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -473,7 +473,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -512,7 +512,7 @@ namespace RoslynSandbox
             public static void NotEquatableStruct()
             {
                 var equatableStruct = @"
-namespace RoslynSandbox
+namespace N
 {
     public struct NotEquatableStruct
     {
@@ -525,7 +525,7 @@ namespace RoslynSandbox
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -543,7 +543,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -582,7 +582,7 @@ namespace RoslynSandbox
             public static void NullableNotEquatableStruct()
             {
                 var equatableStruct = @"
-namespace RoslynSandbox
+namespace N
 {
     public struct NotEquatableStruct
     {
@@ -595,7 +595,7 @@ namespace RoslynSandbox
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -613,7 +613,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 

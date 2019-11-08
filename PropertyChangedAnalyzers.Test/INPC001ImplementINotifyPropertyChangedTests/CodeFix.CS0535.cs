@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             public static void WhenInterfaceAndUsingSealedAddUsings()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -24,7 +24,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -46,7 +46,7 @@ namespace RoslynSandbox
             public static void WhenInterfaceAndUsingSealedFullyQualified()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -56,7 +56,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -77,7 +77,7 @@ namespace RoslynSandbox
             public static void WhenInterfaceOnlyWithUsingAddUsing()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -87,7 +87,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -109,7 +109,7 @@ namespace RoslynSandbox
             public static void WhenInterfaceOnlyWithUsingFullyQualified()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -119,7 +119,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -141,7 +141,7 @@ namespace RoslynSandbox
             {
                 var before = @"
 #pragma warning disable 169
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -153,7 +153,7 @@ namespace RoslynSandbox
 
                 var after = @"
 #pragma warning disable 169
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -178,7 +178,7 @@ namespace RoslynSandbox
             {
                 var before = @"
 #pragma warning disable 169
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -190,7 +190,7 @@ namespace RoslynSandbox
 
                 var after = @"
 #pragma warning disable 169
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -214,7 +214,7 @@ namespace RoslynSandbox
             {
                 var before = @"
 #pragma warning disable 8019
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -226,7 +226,7 @@ namespace RoslynSandbox
 
                 var after = @"
 #pragma warning disable 8019
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -249,7 +249,7 @@ namespace RoslynSandbox
             {
                 var before = @"
 #pragma warning disable 8019
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -261,7 +261,7 @@ namespace RoslynSandbox
 
                 var after = @"
 #pragma warning disable 8019
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

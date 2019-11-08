@@ -38,7 +38,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         public static void Check(string type, string expression)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -80,7 +80,7 @@ namespace RoslynSandbox
         public static void NegatedCheck(string type, string expression)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -120,7 +120,7 @@ namespace RoslynSandbox
         public static void SimpleProperty()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -150,7 +150,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedWithEventArgsIfReturn()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -186,7 +186,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -221,7 +221,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedWithEventArgsIfBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -258,7 +258,7 @@ namespace RoslynSandbox
         public static void CallsRaisePropertyChangedCallerMemberName()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -293,7 +293,7 @@ namespace RoslynSandbox
         public static void Invokes()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -325,7 +325,7 @@ namespace RoslynSandbox
         public static void InvokesCached()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -358,7 +358,7 @@ namespace RoslynSandbox
         public static void CheckSideEffectReturn()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -400,7 +400,7 @@ namespace RoslynSandbox
         public static void WithCheckAndThrowBefore()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -445,7 +445,7 @@ namespace RoslynSandbox
         public static void WithCheckAndThrowBefore(string expression)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -484,7 +484,7 @@ namespace RoslynSandbox
         public static void CheckInLock()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -532,7 +532,7 @@ namespace RoslynSandbox
         public static void CheckLockCheck()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -580,7 +580,7 @@ namespace RoslynSandbox
         public static void WhenSettingNestedField()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -588,7 +588,7 @@ namespace RoslynSandbox
     }
 }";
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -626,7 +626,7 @@ namespace RoslynSandbox
         public static void WrappingPoint()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Drawing;
@@ -681,7 +681,7 @@ namespace RoslynSandbox
         public static void TimeSpanTicks()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;

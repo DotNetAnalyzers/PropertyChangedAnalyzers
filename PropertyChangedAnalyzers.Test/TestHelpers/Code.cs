@@ -6,7 +6,7 @@ namespace PropertyChangedAnalyzers.Test
         /// A class that uses underscore field conventions.
         /// </summary>
         public const string UnderScoreFieldsUnqualified = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     class UnderScoreFieldsUnqualified

@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
         public static void NotifyingProperty()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         public static void ExpressionBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -75,7 +75,7 @@ namespace RoslynSandbox
         public static void ExpressionBodyWhenKeyword()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -92,7 +92,7 @@ namespace RoslynSandbox
         public static void WithBackingFieldExpressionBodies()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -113,7 +113,7 @@ namespace RoslynSandbox
         public static void WhenSettingNestedField()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -121,7 +121,7 @@ namespace RoslynSandbox
     }
 }";
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -159,7 +159,7 @@ namespace RoslynSandbox
         public static void TimeSpanTicks()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -200,7 +200,7 @@ namespace RoslynSandbox
         public static void WrappingPoint()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Drawing;
@@ -256,7 +256,7 @@ namespace RoslynSandbox
         public static void ExplicitImplementationWithCast()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo<T> : IFoo
     {
@@ -288,7 +288,7 @@ namespace RoslynSandbox
         public static void BackingFiledSum()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Linq;
 
@@ -307,7 +307,7 @@ namespace RoslynSandbox
         public static void TextLength()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -324,7 +324,7 @@ namespace RoslynSandbox
         public static void WhenUsingMoreThanOneField()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -390,7 +390,7 @@ namespace RoslynSandbox
         public static void StaticField()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -407,7 +407,7 @@ namespace RoslynSandbox
         public static void StaticPropertyAndField()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -424,7 +424,7 @@ namespace RoslynSandbox
         public static void ConstField()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -441,7 +441,7 @@ namespace RoslynSandbox
         public static void SequenceOfUpperCase()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -462,7 +462,7 @@ namespace RoslynSandbox
         public static void SequenceOfUpperCaseUnderscore()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {

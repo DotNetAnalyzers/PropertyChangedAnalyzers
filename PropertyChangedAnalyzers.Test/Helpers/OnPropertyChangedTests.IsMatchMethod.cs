@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             public static void Elvis()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -40,7 +40,7 @@ namespace RoslynSandbox
             public static void CopyLocalInvoke()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -67,7 +67,7 @@ namespace RoslynSandbox
             public static void WhenCreatingPropertyChangedEventArgsSeparately()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -117,7 +117,7 @@ namespace RoslynSandbox
             public static void IgnoreWhenRaiseForOtherInstance()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -171,7 +171,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -205,7 +205,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -242,7 +242,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -279,7 +279,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -308,7 +308,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -355,7 +355,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -395,7 +395,7 @@ namespace RoslynSandbox
             public static void WhenRecursive(string signature)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -433,7 +433,7 @@ namespace RoslynSandbox
             public static void ExceptionHandlingRelayCommand()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using Gu.Reactive;

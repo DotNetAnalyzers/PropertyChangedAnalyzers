@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
             public static void NoCheckAddIfReturn()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -35,7 +35,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -65,7 +65,7 @@ namespace RoslynSandbox
             public static void NoCheckToUseTrySet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -84,7 +84,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -105,7 +105,7 @@ namespace RoslynSandbox
             public static void NoCheckExpressionToUseTrySet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -124,7 +124,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -145,7 +145,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -166,7 +166,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -195,7 +195,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -216,7 +216,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -245,7 +245,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -269,7 +269,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -298,7 +298,7 @@ namespace RoslynSandbox
             public static void SetAffectsSecondCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -325,7 +325,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -357,7 +357,7 @@ namespace RoslynSandbox
             public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -381,7 +381,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {

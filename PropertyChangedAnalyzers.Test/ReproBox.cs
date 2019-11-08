@@ -1,3 +1,4 @@
+#pragma warning disable GURA06 // Move test to correct class.
 namespace PropertyChangedAnalyzers.Test
 {
     using System;
@@ -37,7 +38,7 @@ namespace PropertyChangedAnalyzers.Test
         {
             Assert.Inconclusive("VS does not understand [Explicit]");
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {

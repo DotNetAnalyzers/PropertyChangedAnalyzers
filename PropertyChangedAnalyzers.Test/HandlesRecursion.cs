@@ -1,3 +1,4 @@
+#pragma warning disable GURA06 // Move test to correct class.
 namespace PropertyChangedAnalyzers.Test
 {
     using System;
@@ -28,7 +29,7 @@ namespace PropertyChangedAnalyzers.Test
         public static async Task InTrySet(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -50,9 +51,9 @@ namespace RoslynSandbox.Core
 }";
 
             var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private int value2;
 
@@ -72,7 +73,7 @@ namespace RoslynSandbox.Client
         public static async Task InOnPropertyChanged(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -89,9 +90,9 @@ namespace RoslynSandbox.Core
 }";
 
             var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class Foo : RoslynSandbox.Core.ViewModelBase
+    public class Foo : N.Core.ViewModelBase
     {
         private int value2;
 
@@ -124,7 +125,7 @@ namespace RoslynSandbox.Client
         public static async Task InProperty(DiagnosticAnalyzer analyzer)
         {
             var fooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -273,7 +274,7 @@ namespace RoslynSandbox
         public static void Repro(DiagnosticAnalyzer analyzer)
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;

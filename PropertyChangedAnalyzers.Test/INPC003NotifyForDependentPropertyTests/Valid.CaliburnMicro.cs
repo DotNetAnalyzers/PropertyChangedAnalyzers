@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
             public static void SetProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -36,7 +36,7 @@ namespace RoslynSandbox
             public static void SetPropertyExpressionBodies()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -56,7 +56,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -84,7 +84,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyExpression()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -112,7 +112,7 @@ namespace RoslynSandbox
             public static void WhenOverriddenSet()
             {
                 var fooBaseCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
     {
@@ -124,7 +124,7 @@ namespace RoslynSandbox
 }";
 
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : FooBase
     {

@@ -78,7 +78,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             public static void MiscPropertiesUnderscoreNames(string propertyName, bool expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -130,7 +130,7 @@ namespace RoslynSandbox
             public static void PrivateSetAssignedInLambdaInCtor(string assignCode)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 

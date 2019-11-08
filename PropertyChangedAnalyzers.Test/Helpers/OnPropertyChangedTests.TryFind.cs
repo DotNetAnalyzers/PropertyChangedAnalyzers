@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -34,7 +34,7 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("RoslynSandbox.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [Test]
@@ -42,7 +42,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -63,7 +63,7 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("RoslynSandbox.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [Test]
@@ -71,7 +71,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -98,7 +98,7 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("RoslynSandbox.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [Test]
@@ -106,7 +106,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -133,14 +133,14 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("RoslynSandbox.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [Test]
             public static void OverridingEvent()
             {
                 var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -157,11 +157,11 @@ namespace RoslynSandbox
 }");
 
                 var code = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : RoslynSandbox.ViewModelBase
+    public class ViewModel : N.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }
@@ -172,14 +172,14 @@ namespace RoslynSandbox
                 var classDeclaration = code.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("RoslynSandbox.ViewModelBase.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.ViewModelBase.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [Test]
             public static void OverridingEventPrivateInvokerInBase()
             {
                 var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -196,11 +196,11 @@ namespace RoslynSandbox
 }");
 
                 var code = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : RoslynSandbox.ViewModelBase
+    public class ViewModel : N.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }
@@ -217,7 +217,7 @@ namespace RoslynSandbox
             public static void WhenCreatingPropertyChangedEventArgsSeparately()
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -261,7 +261,7 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("RoslynSandbox.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [Test]
@@ -269,7 +269,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -289,7 +289,7 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("RoslynSandbox.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [Test]
@@ -297,7 +297,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -332,7 +332,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Concurrent;
     using System.ComponentModel;
@@ -355,7 +355,7 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("RoslynSandbox.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
             }
 
             [TestCase("propertyName ?? string.Empty")]
@@ -364,7 +364,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Concurrent;
     using System.ComponentModel;
@@ -388,7 +388,7 @@ namespace RoslynSandbox
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
                 Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("RoslynSandbox.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
             }
         }
     }

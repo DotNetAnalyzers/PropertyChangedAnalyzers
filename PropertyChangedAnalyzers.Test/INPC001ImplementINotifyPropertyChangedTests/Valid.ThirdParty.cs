@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             public static void MvvmLight()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -27,7 +27,7 @@ namespace RoslynSandbox
             public static void CaliburnMicro()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -42,7 +42,7 @@ namespace RoslynSandbox
             public static void Stylet()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -57,7 +57,7 @@ namespace RoslynSandbox
             public static void MvvmCross()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -72,7 +72,7 @@ namespace RoslynSandbox
             public static void SubclassBindableBase()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {

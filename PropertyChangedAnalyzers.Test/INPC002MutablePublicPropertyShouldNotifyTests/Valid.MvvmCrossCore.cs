@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             public static void SetProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -37,7 +37,7 @@ namespace RoslynSandbox
             public static void SetExpressionBodies()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -62,7 +62,7 @@ namespace RoslynSandbox
             public static void RaisePropertyChanged(string propertyName)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {

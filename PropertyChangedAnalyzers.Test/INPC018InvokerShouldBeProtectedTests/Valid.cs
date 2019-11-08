@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtectedTests
         public static void ProtectedOnPropertyChanged()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -35,7 +35,7 @@ namespace RoslynSandbox
         public static void PrivateOnPropertyChangedInSealed()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -58,7 +58,7 @@ namespace RoslynSandbox
         public static void ProtectedTrySet()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -94,7 +94,7 @@ namespace RoslynSandbox
         public static void PrivateOnTrySetInSealed()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;

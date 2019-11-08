@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.Collections.Generic;
@@ -121,7 +121,7 @@ namespace RoslynSandbox
             public static void TrySetCallerMemberName(string trySetCode, AnalysisResult expected)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -175,7 +175,7 @@ namespace RoslynSandbox
             public static void TrySet(string trySetCode, AnalysisResult expected)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -227,7 +227,7 @@ namespace RoslynSandbox
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
                     @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;

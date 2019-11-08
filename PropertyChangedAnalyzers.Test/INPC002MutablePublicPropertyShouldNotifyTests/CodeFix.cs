@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
         public static void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -35,7 +35,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -76,7 +76,7 @@ namespace RoslynSandbox
         public static void AutoPropertyExplicitNameHandlesRecursionInInvoker()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -100,7 +100,7 @@ namespace RoslynSandbox
         public static void AutoPropertyPublic()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -119,7 +119,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -160,7 +160,7 @@ namespace RoslynSandbox
         public static void AutoPropertyInternalClass()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -180,7 +180,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -222,7 +222,7 @@ namespace RoslynSandbox
         public static void AutoPropertyInternal()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -241,7 +241,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -284,7 +284,7 @@ namespace RoslynSandbox
         public static void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -311,7 +311,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.Value = 1", assignCode);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -359,7 +359,7 @@ namespace RoslynSandbox
         public static void WhenBackingFieldNotifyWhenValueChanged()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -384,7 +384,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -421,7 +421,7 @@ namespace RoslynSandbox
         public static void WhenBackingFieldNotifyCallerMemberName()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -443,7 +443,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -475,7 +475,7 @@ namespace RoslynSandbox
         public static void WhenBackingFieldExpressionBodyAccessors()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -497,7 +497,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -534,7 +534,7 @@ namespace RoslynSandbox
         public static void WhenBackingFieldNotify()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -559,7 +559,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -591,7 +591,7 @@ namespace RoslynSandbox
         public static void WhenBackingFieldExpressionBodyAccessorsNotify()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -613,7 +613,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -645,7 +645,7 @@ namespace RoslynSandbox
         public static void WhenSettingNestedField()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -653,7 +653,7 @@ namespace RoslynSandbox
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -676,7 +676,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -715,7 +715,7 @@ namespace RoslynSandbox
         public static void WhenSettingNestedFieldNotify()
         {
             var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -723,7 +723,7 @@ namespace RoslynSandbox
     }
 }";
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -746,7 +746,7 @@ namespace RoslynSandbox
     }
 }";
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

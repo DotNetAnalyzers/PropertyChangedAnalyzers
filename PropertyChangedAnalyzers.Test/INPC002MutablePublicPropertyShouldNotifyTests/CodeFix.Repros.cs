@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             public static void UglyViewModelBase()
             {
                 var barCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Bar
     {
@@ -185,7 +185,7 @@ namespace MVVM
     }
 }";
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using MVVM;
 
@@ -202,7 +202,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using MVVM;
 

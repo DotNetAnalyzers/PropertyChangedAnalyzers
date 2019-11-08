@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
             public static void SetProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -36,7 +36,7 @@ namespace RoslynSandbox
             public static void SetPropertyExpressionBodies()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -56,7 +56,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyNameOf()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -84,7 +84,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyExpression()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {

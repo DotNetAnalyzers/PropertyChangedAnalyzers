@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             public static void SubclassBindableBaseAddUsing()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -25,7 +25,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using Microsoft.Practices.Prism.Mvvm;
 
@@ -41,7 +41,7 @@ namespace RoslynSandbox
             public static void SubclassBindableBaseFullyQualified()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -50,7 +50,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -64,7 +64,7 @@ namespace RoslynSandbox
             public static void ImplementINotifyPropertyChangedAddUsings()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -73,7 +73,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -97,7 +97,7 @@ namespace RoslynSandbox
             public static void ImplementINotifyPropertyChangedFullyQualified()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -106,7 +106,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {

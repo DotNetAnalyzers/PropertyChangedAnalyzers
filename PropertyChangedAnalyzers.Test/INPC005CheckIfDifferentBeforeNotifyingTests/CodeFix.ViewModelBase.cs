@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
         public static class ViewModelBase
         {
             private const string ViewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System;
     using System.Collections.Generic;
@@ -48,9 +48,9 @@ namespace RoslynSandbox.Core
             public static void NoCheckAddIfReturn()
             {
                 var before = @"
-namespace RoslynSandbox.Client 
+namespace N.Client 
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -67,9 +67,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client 
+namespace N.Client 
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -97,9 +97,9 @@ namespace RoslynSandbox.Client
             public static void NoCheckToUseTrySet()
             {
                 var before = @"
-namespace RoslynSandbox.Client 
+namespace N.Client 
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -116,9 +116,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client 
+namespace N.Client 
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -137,9 +137,9 @@ namespace RoslynSandbox.Client
             public static void NoCheckToUseTrySetUnderscoreNames()
             {
                 var before = @"
-namespace RoslynSandbox.Client 
+namespace N.Client 
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string _name;
 
@@ -156,9 +156,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client 
+namespace N.Client 
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string _name;
 
@@ -177,9 +177,9 @@ namespace RoslynSandbox.Client
             public static void NoCheckExpressionToUseTrySet()
             {
                 var before = @"
-namespace RoslynSandbox.Client 
+namespace N.Client 
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -196,9 +196,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client 
+namespace N.Client 
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -217,9 +217,9 @@ namespace RoslynSandbox.Client
             public static void NoIfForTrySet()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -238,9 +238,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -267,9 +267,9 @@ namespace RoslynSandbox.Client
             public static void OutsideIfTrySet()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -291,9 +291,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -318,41 +318,12 @@ namespace RoslynSandbox.Client
             }
 
             [Test]
-            public static void InsideIfNegatedTrySet()
-            {
-                var code = @"
-namespace RoslynSandbox.Client
-{
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
-    {
-        private string name;
-
-        public string Greeting => $""Hello {this.Name}"";
-
-        public string Name
-        {
-            get { return this.name; }
-            set
-            {
-                if (!this.TrySet(ref this.name, value))
-                {
-                    ↓this.OnPropertyChanged(nameof(this.Greeting));
-                }
-            }
-        }
-    }
-}";
-
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
-            }
-
-            [Test]
             public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    internal class ViewModel : RoslynSandbox.Core.ViewModelBase
+    internal class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -371,9 +342,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    internal class ViewModel : RoslynSandbox.Core.ViewModelBase
+    internal class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -400,9 +371,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -424,9 +395,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -453,9 +424,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsSecondCalculatedProperty()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -480,9 +451,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -512,9 +483,9 @@ namespace RoslynSandbox.Client
             public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var before = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -536,9 +507,9 @@ namespace RoslynSandbox.Client
 }";
 
                 var after = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 

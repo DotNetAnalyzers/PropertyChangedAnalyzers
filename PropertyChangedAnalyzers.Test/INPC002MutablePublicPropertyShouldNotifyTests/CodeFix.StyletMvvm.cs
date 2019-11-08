@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             public static void AutoPropertyToNotifyWhenValueChanges()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -25,7 +25,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -55,7 +55,7 @@ namespace RoslynSandbox
             public static void AutoPropertyToTrySet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -64,7 +64,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -81,7 +81,7 @@ namespace RoslynSandbox
             public static void InternalClassInternalPropertyAutoPropertyToTrySet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class Foo : Stylet.PropertyChangedBase
     {
@@ -90,7 +90,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class Foo : Stylet.PropertyChangedBase
     {
@@ -107,7 +107,7 @@ namespace RoslynSandbox
             public static void AutoPropertyInitializedToSet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -116,7 +116,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -133,7 +133,7 @@ namespace RoslynSandbox
             public static void AutoPropertyVirtualToSet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -142,7 +142,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -159,7 +159,7 @@ namespace RoslynSandbox
             public static void AutoPropertyPrivateSetToSet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -173,7 +173,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -195,7 +195,7 @@ namespace RoslynSandbox
             public static void AutoPropertyToTrySetUnderscoreNames()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -209,7 +209,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
@@ -231,7 +231,7 @@ namespace RoslynSandbox
             public static void WithBackingFieldToSetStatementBody()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -246,7 +246,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -267,7 +267,7 @@ namespace RoslynSandbox
             public static void WithBackingFieldToSetExpressionBody()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -282,7 +282,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -303,7 +303,7 @@ namespace RoslynSandbox
             public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -318,7 +318,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -339,7 +339,7 @@ namespace RoslynSandbox
             public static void WithBackingFieldToSetUnderscoreNames()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {
@@ -354,7 +354,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Stylet.PropertyChangedBase
     {

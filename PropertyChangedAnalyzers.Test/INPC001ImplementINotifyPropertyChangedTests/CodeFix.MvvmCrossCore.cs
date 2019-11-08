@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             public static void SubclassMvxNotifyPropertyChangedAddUsing()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -25,7 +25,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using MvvmCross.ViewModels;
 
@@ -41,7 +41,7 @@ namespace RoslynSandbox
             public static void SubclassMvxNotifyPropertyChangedFullyQualified()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -50,7 +50,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
@@ -64,7 +64,7 @@ namespace RoslynSandbox
             public static void SubclassMvxViewModelAddUsing()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -73,7 +73,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using MvvmCross.ViewModels;
 
@@ -89,7 +89,7 @@ namespace RoslynSandbox
             public static void SubclassMvxViewModelFullyQualified()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -98,7 +98,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : MvvmCross.ViewModels.MvxViewModel
     {
@@ -112,7 +112,7 @@ namespace RoslynSandbox
             public static void ImplementINotifyPropertyChangedAddUsings()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -121,7 +121,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -145,7 +145,7 @@ namespace RoslynSandbox
             public static void ImplementINotifyPropertyChangedFullyQualified()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -154,7 +154,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {

@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC016NotifyAfterMutation);
 
         private const string ViewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System;
     using System.Collections.Generic;
@@ -50,7 +50,7 @@ namespace RoslynSandbox.Core
         public static void OnPropertyChangedBeforeAssign()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -90,7 +90,7 @@ namespace RoslynSandbox
         public static void OnPropertyChangedPropertyChangedEventArgsBeforeAssign()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -130,7 +130,7 @@ namespace RoslynSandbox
         public static void PropertyChangedInvokeBeforeAssign()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -170,9 +170,9 @@ namespace RoslynSandbox
         public static void BeforeTrySet(string trySet)
         {
             var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 

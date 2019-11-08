@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             public static void SetProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -37,7 +37,7 @@ namespace RoslynSandbox
             public static void SetPropertyExpressionBodies()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
@@ -62,7 +62,7 @@ namespace RoslynSandbox
             public static void OnPropertyChanged(string propertyName)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
     {

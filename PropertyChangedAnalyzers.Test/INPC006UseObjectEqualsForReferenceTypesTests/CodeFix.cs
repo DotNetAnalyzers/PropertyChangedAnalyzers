@@ -35,7 +35,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
             };
 
         private static readonly string FooCode = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         public static void Check(string expressionBefore, string expressionAfter)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -81,7 +81,7 @@ namespace RoslynSandbox
 }".AssertReplace("ReferenceEquals(value, this.bar)", expressionBefore);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -122,7 +122,7 @@ namespace RoslynSandbox
         public static void CheckNegated(string expressionBefore, string expressionAfter)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -155,7 +155,7 @@ namespace RoslynSandbox
 }".AssertReplace("ReferenceEquals(value, this.bar)", expressionBefore);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;
@@ -194,7 +194,7 @@ namespace RoslynSandbox
         public static void OperatorEquals()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -228,7 +228,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -268,7 +268,7 @@ namespace RoslynSandbox
         public static void OperatorEqualsInternalClassInternalProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -302,7 +302,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -342,7 +342,7 @@ namespace RoslynSandbox
         public static void OperatorNotEquals()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -374,7 +374,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

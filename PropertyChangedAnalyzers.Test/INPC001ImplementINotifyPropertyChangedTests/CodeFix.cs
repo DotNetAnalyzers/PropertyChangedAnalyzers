@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
         public static void Message()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -33,7 +33,7 @@ namespace RoslynSandbox
         public static void WhenPublicClassPublicAutoProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -42,7 +42,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -65,7 +65,7 @@ namespace RoslynSandbox
         public static void WhenInternalClassInternalAutoProperty()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class ↓Foo
     {
@@ -74,7 +74,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -96,7 +96,7 @@ namespace RoslynSandbox
         public static void WhenNotNotifyingWithBackingField()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -117,7 +117,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -151,7 +151,7 @@ namespace RoslynSandbox
         public static void WhenNotNotifyingWithBackingFieldExpressionBodies()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -166,7 +166,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -194,7 +194,7 @@ namespace RoslynSandbox
         public static void WhenNotNotifyingWithBackingFieldUnderscoreNames()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ↓Foo
     {
@@ -215,7 +215,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : System.ComponentModel.INotifyPropertyChanged
     {
@@ -249,7 +249,7 @@ namespace RoslynSandbox
         public static void WhenEventOnly()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -260,7 +260,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -281,7 +281,7 @@ namespace RoslynSandbox
         public static void WhenEventAndInvokerOnly()
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -298,7 +298,7 @@ namespace RoslynSandbox
 }";
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -340,7 +340,7 @@ namespace N
         public static void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
         {
             var before = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 
@@ -358,7 +358,7 @@ namespace RoslynSandbox
 }".AssertReplace("this.Value = 1", assignCode);
 
             var after = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
 

@@ -140,7 +140,7 @@ namespace N
             {
                 // maybe this should notify?
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
@@ -347,7 +347,7 @@ namespace N
             public static void PrivateSetterOnlyAssignedInCtor(string expression)
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.Serialization;

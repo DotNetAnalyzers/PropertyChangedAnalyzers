@@ -564,7 +564,7 @@ namespace N
             public static void Recursive()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System;
     using System.ComponentModel;

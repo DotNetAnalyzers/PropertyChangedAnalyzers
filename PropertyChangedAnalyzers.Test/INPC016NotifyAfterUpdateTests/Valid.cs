@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
         private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
 
         private const string ViewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System;
     using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace RoslynSandbox.Core
         public static void OnPropertyChangedAfterAssign()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -93,7 +93,7 @@ namespace RoslynSandbox
         public static void PropertyChangedInvokeAfterAssign()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -138,9 +138,9 @@ namespace RoslynSandbox
         public static void AfterTrySet(string trySet)
         {
             var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -165,9 +165,9 @@ namespace RoslynSandbox.Client
         public static void InsideIfTrySetStatement()
         {
             var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 
@@ -192,9 +192,9 @@ namespace RoslynSandbox.Client
         public static void InsideIfTrySetBlock()
         {
             var code = @"
-namespace RoslynSandbox.Client
+namespace N.Client
 {
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         private string name;
 

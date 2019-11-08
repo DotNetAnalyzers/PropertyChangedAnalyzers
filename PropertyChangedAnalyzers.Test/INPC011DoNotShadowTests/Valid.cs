@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC011DoNotShadowTests
         public static void NoBaseClass()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -56,7 +56,7 @@ namespace RoslynSandbox
         public static void OverridingEvent()
         {
             var viewModelBaseCode = @"
-namespace RoslynSandbox.Core
+namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -73,11 +73,11 @@ namespace RoslynSandbox.Core
 }";
 
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : RoslynSandbox.Core.ViewModelBase
+    public class ViewModel : N.Core.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }

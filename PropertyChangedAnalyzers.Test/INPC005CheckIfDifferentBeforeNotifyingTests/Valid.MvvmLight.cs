@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
             public static void SetAffectsCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -44,7 +44,7 @@ namespace RoslynSandbox
             public static void SetAffectsCalculatedPropertyEmptyIf()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -72,7 +72,7 @@ namespace RoslynSandbox
             public static void SetAffectsSecondCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -103,7 +103,7 @@ namespace RoslynSandbox
             public static void SetAffectsSecondCalculatedPropertyMissingBraces()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -134,7 +134,7 @@ namespace RoslynSandbox
             public static void RaisePropertyChangedAffectsCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
@@ -191,7 +191,7 @@ namespace RoslynSandbox
             public static void IfNotSetReturnCalculatedProperty()
             {
                 var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
     {

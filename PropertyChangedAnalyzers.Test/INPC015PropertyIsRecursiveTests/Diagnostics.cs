@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
         public static void ExpressionBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -28,7 +28,7 @@ namespace RoslynSandbox
         public static void GetterStatementBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -46,7 +46,7 @@ namespace RoslynSandbox
         public static void GetterExpressionBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -64,7 +64,7 @@ namespace RoslynSandbox
         public static void SetterStatementBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {
@@ -85,7 +85,7 @@ namespace RoslynSandbox
         public static void SetterExpressionBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo
     {

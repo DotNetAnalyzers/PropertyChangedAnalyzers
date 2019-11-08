@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC019GetBackingFieldTests
         public static void ExpressionBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -111,7 +111,7 @@ namespace ValidCode.TrySet
         public static void StatementBody()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -155,7 +155,7 @@ namespace RoslynSandbox
         public static void DependencyProperty()
         {
             var code = @"
-namespace RoslynSandbox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;

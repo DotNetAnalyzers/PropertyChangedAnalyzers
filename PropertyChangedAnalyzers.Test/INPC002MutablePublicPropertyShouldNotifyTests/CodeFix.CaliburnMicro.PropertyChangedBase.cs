@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             public static void AutoPropertyToNotifyWhenValueChanges()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -25,7 +25,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -55,7 +55,7 @@ namespace RoslynSandbox
             public static void AutoPropertyToTrySet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -64,7 +64,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -81,7 +81,7 @@ namespace RoslynSandbox
             public static void InternalClassInternalPropertyAutoPropertyToTrySet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -90,7 +90,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     internal class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -107,7 +107,7 @@ namespace RoslynSandbox
             public static void AutoPropertyInitializedToSet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -116,7 +116,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -133,7 +133,7 @@ namespace RoslynSandbox
             public static void AutoPropertyVirtualToSet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -142,7 +142,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -159,7 +159,7 @@ namespace RoslynSandbox
             public static void AutoPropertyPrivateSetToSet()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -173,7 +173,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -195,7 +195,7 @@ namespace RoslynSandbox
             public static void AutoPropertyToTrySetUnderscoreNames()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -209,7 +209,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
@@ -231,7 +231,7 @@ namespace RoslynSandbox
             public static void WithBackingFieldToSetStatementBody()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -246,7 +246,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -267,7 +267,7 @@ namespace RoslynSandbox
             public static void WithBackingFieldToSetExpressionBodiesSeparateLines()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -282,7 +282,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -303,7 +303,7 @@ namespace RoslynSandbox
             public static void WithBackingFieldToSetExpressionBodiesSingleLine()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -314,7 +314,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -331,7 +331,7 @@ namespace RoslynSandbox
             public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -346,7 +346,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -367,7 +367,7 @@ namespace RoslynSandbox
             public static void WithBackingFieldToSetUnderscoreNamesExpressionBody()
             {
                 var before = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
@@ -382,7 +382,7 @@ namespace RoslynSandbox
 }";
 
                 var after = @"
-namespace RoslynSandbox
+namespace N
 {
     public class ViewModel : Caliburn.Micro.PropertyChangedBase
     {
