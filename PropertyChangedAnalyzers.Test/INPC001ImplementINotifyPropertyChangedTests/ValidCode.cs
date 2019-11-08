@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
         public static void CallsOnPropertyChanged(string propertyName)
         {
             var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -57,7 +57,7 @@ namespace RoslynSandBox
         public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
         {
             var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -93,7 +93,7 @@ namespace RoslynSandBox
         public static void CallsRaisePropertyChangedCallerMemberName()
         {
             var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -134,7 +134,7 @@ namespace RoslynSandBox
         public static void Invokes(string propertyName)
         {
             var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
 
@@ -167,7 +167,7 @@ namespace RoslynSandBox
         public static void InvokesCached()
         {
             var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
 

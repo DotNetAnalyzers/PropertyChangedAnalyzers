@@ -321,7 +321,7 @@ namespace RoslynSandbox
         public static void IgnoresWhenBaseIsMouseGesture()
         {
             var before = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.Windows.Input;
 

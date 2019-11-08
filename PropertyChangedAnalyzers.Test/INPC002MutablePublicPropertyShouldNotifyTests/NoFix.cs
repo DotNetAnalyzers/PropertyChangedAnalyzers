@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
         public static void NoFixWhenBaseHasInternalOnPropertyChanged()
         {
             var before = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.Windows.Input;
 

@@ -167,7 +167,7 @@ namespace RoslynSandbox
         public static void UpdateMethod()
         {
             var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

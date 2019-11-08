@@ -250,7 +250,7 @@ namespace RoslynSandbox
         public static void OnPropertyChangedInBaseClass()
         {
             var vmCode = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
 
@@ -263,7 +263,7 @@ namespace RoslynSandBox
 }";
 
             var code = @"
-namespace RoslynSandBox
+namespace N
 {
     public class ViewModel : ViewModelBase
     {
@@ -445,7 +445,7 @@ namespace RoslynSandbox
         public static void RaiseForOtherInstanceOfOtherType()
         {
             var vmCode = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -480,7 +480,7 @@ namespace RoslynSandBox
 }";
 
             var code = @"
-namespace RoslynSandBox
+namespace N
 {
     internal class Foo
     {
@@ -498,7 +498,7 @@ namespace RoslynSandBox
         public static void RaiseForOtherInstanceOfOtherTypeWithBaseClass()
         {
             var vmBaseCode = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
 
@@ -511,7 +511,7 @@ namespace RoslynSandBox
 }";
 
             var vmCode = @"
-namespace RoslynSandBox
+namespace N
 {
     public class ViewModel : ViewModelBase
     {
@@ -539,7 +539,7 @@ namespace RoslynSandBox
 }";
 
             var code = @"
-namespace RoslynSandBox
+namespace N
 {
     internal class Foo
     {

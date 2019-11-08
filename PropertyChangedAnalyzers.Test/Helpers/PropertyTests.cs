@@ -19,7 +19,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
         public static void IsLazy(string code, bool expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandBox
+namespace N
 {
     using System;
 
@@ -109,7 +109,7 @@ namespace RoslynSandBox
         public static void IsMutableAutoProperty(string propertyName, bool expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandBox
+namespace N
 {
     using System;
     using System.ComponentModel;

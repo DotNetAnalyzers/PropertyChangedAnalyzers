@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
             public static void Lazy1()
             {
                 var commandCode = @"
-namespace RoslynSandBox
+namespace N
 {
     using System;
     using System.Windows.Input;
@@ -37,7 +37,7 @@ namespace RoslynSandBox
     }
 }";
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -91,7 +91,7 @@ namespace RoslynSandBox
             public static void Lazy2()
             {
                 var commandCode = @"
-namespace RoslynSandBox
+namespace N
 {
     using System;
     using System.Windows.Input;
@@ -117,7 +117,7 @@ namespace RoslynSandBox
     }
 }";
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -171,7 +171,7 @@ namespace RoslynSandBox
             public static void LazyNullCoalesce()
             {
                 var commandCode = @"
-namespace RoslynSandBox
+namespace N
 {
     using System;
     using System.Windows.Input;
@@ -197,7 +197,7 @@ namespace RoslynSandBox
     }
 }";
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -246,7 +246,7 @@ namespace RoslynSandBox
             public static void LazyNullCoalesceExpressionBody()
             {
                 var commandCode = @"
-namespace RoslynSandBox
+namespace N
 {
     using System;
     using System.Windows.Input;
@@ -272,7 +272,7 @@ namespace RoslynSandBox
     }
 }";
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -315,7 +315,7 @@ namespace RoslynSandBox
             public static void InCtor()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -347,7 +347,7 @@ namespace RoslynSandBox
             public static void InInitializer()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -379,7 +379,7 @@ namespace RoslynSandBox
             public static void SimplePropertyWithBackingField()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -410,7 +410,7 @@ namespace RoslynSandBox
             public static void AssigningFieldsInGetter()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -445,7 +445,7 @@ namespace RoslynSandBox
             public static void LazyGetter()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -483,7 +483,7 @@ namespace RoslynSandBox
             public static void LazyGetterExpressionBody()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -510,7 +510,7 @@ namespace RoslynSandBox
             public static void DisposeMethod()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System;
     using System.ComponentModel;

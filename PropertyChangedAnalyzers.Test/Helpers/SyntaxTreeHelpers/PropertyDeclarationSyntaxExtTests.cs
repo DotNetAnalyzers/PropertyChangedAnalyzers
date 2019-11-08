@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers.SyntaxTreeHelpers
         public void TryGetGetAccessorDeclarationBlock(string propertyName, string getter)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandBox
+namespace N
 {
     public class Foo
     {
@@ -42,7 +42,7 @@ namespace RoslynSandBox
         public void TryGetSetAccessorDeclarationBlock(string propertyName, string setter)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace RoslynSandBox
+namespace N
 {
     public class Foo
     {

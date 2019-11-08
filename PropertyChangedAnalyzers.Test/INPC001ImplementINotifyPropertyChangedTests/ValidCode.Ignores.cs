@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
             public static void Struct()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     public struct Foo
     {
@@ -25,7 +25,7 @@ namespace RoslynSandBox
             public static void GetOnly()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     public class Foo
     {
@@ -40,7 +40,7 @@ namespace RoslynSandBox
             public static void GetPrivateSetNeverAssigned()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     public class Foo
     {
@@ -55,7 +55,7 @@ namespace RoslynSandBox
             public static void GetPrivateSetAssignedInConstructorOnly()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     public class Foo
     {
@@ -75,7 +75,7 @@ namespace RoslynSandBox
             public static void ExpressionBody()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     public class Foo
     {
@@ -90,7 +90,7 @@ namespace RoslynSandBox
             public static void CalculatedBody()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     public class Foo
     {
@@ -108,7 +108,7 @@ namespace RoslynSandBox
             public static void Abstract()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     public abstract class Foo
     {
@@ -124,7 +124,7 @@ namespace RoslynSandBox
             {
                 // maybe this should notify?
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     public class Foo
     {
@@ -157,7 +157,7 @@ namespace RoslynSandbox
             public static void DependencyProperty()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -184,7 +184,7 @@ namespace RoslynSandBox
             public static void Event()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System;
 
@@ -200,7 +200,7 @@ namespace RoslynSandBox
             public static void MarkupExtension()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System;
     using System.Globalization;
@@ -257,7 +257,7 @@ namespace RoslynSandBox
             public static void Attribute()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System;
 
@@ -274,7 +274,7 @@ namespace RoslynSandBox
             public static void DataTemplateSelector()
             {
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -328,7 +328,7 @@ namespace RoslynSandBox
             {
                 //// ReSharper disable once HeuristicUnreachableCode
                 var code = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.Windows.Input;
 

@@ -1780,7 +1780,7 @@ namespace RoslynSandbox
         public static void WhenUsingBackingFieldExpressionBodyStringToUpper(string path)
         {
             var before = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1820,7 +1820,7 @@ namespace RoslynSandBox
 }".AssertReplace("this.name", path);
 
             var after = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1868,7 +1868,7 @@ namespace RoslynSandBox
         public static void WhenUsingBackingFieldExpressionBodyStringElvisToUpper()
         {
             var before = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1908,7 +1908,7 @@ namespace RoslynSandBox
 }";
 
             var after = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -1955,7 +1955,7 @@ namespace RoslynSandBox
         public static void WhenUsingBackingFieldsExpressionBodyReturningCreatedObject()
         {
             var personCode = @"
-namespace RoslynSandBox
+namespace N
 {
     public class Person
     {
@@ -1972,7 +1972,7 @@ namespace RoslynSandBox
 }";
 
             var before = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2033,7 +2033,7 @@ namespace RoslynSandBox
 }";
 
             var after = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -2232,7 +2232,7 @@ namespace RoslynSandbox
         public static void WhenUsingBackingFieldsYieldReturning()
         {
             var before = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -2301,7 +2301,7 @@ namespace RoslynSandBox
 }";
 
             var after = @"
-namespace RoslynSandBox
+namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
