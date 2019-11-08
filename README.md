@@ -64,6 +64,35 @@ The ruleset editor does not handle changes IDs well, if things get out of sync y
 
 Above is not ideal, sorry about this. Not sure this is our bug.
 
+### When using old style packages.config
+Many times running the nuget update command breaks things. The script below can be used to manually update.
+```cs
+var package = "PropertyChangedAnalyzers";
+var oldVersion = "2.7.2.0";
+var newVersion = "2.7.3";
+foreach (var csproj in Directory.EnumerateFiles("C:\\Git\\Path\\To\Sln", "*.csproj", SearchOption.AllDirectories))
+{
+    string text = File.ReadAllText(csproj);
+    if (text.Contains($"{package}.{oldVersion}"))
+    {
+        // <Analyzer Include="..\packages\PropertyChangedAnalyzers.2.7.2.0\analyzers\dotnet\cs\PropertyChangedAnalyzers.dll" />
+        // <Analyzer Include="..\packages\PropertyChangedAnalyzers.2.7.2.0\analyzers\dotnet\cs\Gu.Roslyn.Extensions.dll" />
+        File.WriteAllText(csproj, text.Replace($"{package}.{oldVersion}", $"{package}.{newVersion}"));
+    }
+
+    // <package id="PropertyChangedAnalyzers" version="2.7.2.0" targetFramework="net46" developmentDependency="true" />
+}
+
+foreach (var csproj in Directory.EnumerateFiles("C:\\Tfs\\Coromatic\\BoxEr", "packages.config", SearchOption.AllDirectories))
+{
+    string text = File.ReadAllText(csproj);
+    if (text.Contains($"id=\"{package}\" version=\"{oldVersion}\""))
+    {
+        // <package id="PropertyChangedAnalyzers" version="2.7.2.0" targetFramework="net46" developmentDependency="true" />
+        File.WriteAllText(csproj, text.Replace($"id=\"{package}\" version=\"{oldVersion}\"", $"id=\"{package}\" version=\"{newVersion}\""));
+    }
+}
+```
 
 ## Current status
 
