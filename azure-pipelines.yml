@@ -12,9 +12,8 @@ steps:
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/restore'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
   displayName: Test
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    runTestsInIsolation: true
+    command: 'test'
+    arguments: '--no-build --configuration=$(buildConfiguration)'
