@@ -1,3 +1,4 @@
+#pragma warning disable GURA06 // Move test to correct class.
 namespace PropertyChangedAnalyzers.Test
 {
     using System;
@@ -9,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test
 
     using NUnit.Framework;
 
-    public static class HappyPathWithAll
+    public static class ValidWithAllAnalyzers
     {
         private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(Descriptors)
             .Assembly

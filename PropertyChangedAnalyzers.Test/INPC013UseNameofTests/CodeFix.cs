@@ -4,7 +4,7 @@ namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public static class Codefix
+    public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
         private static readonly UseNameofFix Fix = new UseNameofFix();
