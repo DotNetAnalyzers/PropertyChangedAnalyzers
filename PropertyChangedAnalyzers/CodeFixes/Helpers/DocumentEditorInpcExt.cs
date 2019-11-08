@@ -162,6 +162,7 @@ namespace PropertyChangedAnalyzers
                         for (var i = after; i < x.Statements.Count; i++)
                         {
                             var statement = x.Statements[i];
+
                             // We can't use the semantic model here as it may not track nodes added before in fixall
                             switch (statement)
                             {

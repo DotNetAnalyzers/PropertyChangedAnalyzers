@@ -34,7 +34,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
                 //new TestCaseData("bar.Equals(value)", "Equals(value, this.bar)"),
             };
 
-        private static readonly string FooCode = @"
+        private const string FooCode = @"
 namespace N
 {
     public class Foo

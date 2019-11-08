@@ -73,7 +73,6 @@ namespace PropertyChangedAnalyzers
 
         internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IParameterSymbol field, out IParameterSymbol value, out IParameterSymbol name)
         {
-
             var result = IsMatch(candidate, semanticModel, cancellationToken);
             if (result == AnalysisResult.No)
             {

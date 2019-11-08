@@ -32,7 +32,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
             new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
         };
 
-        private static readonly string Foo = @"
+        private const string Foo = @"
 namespace N
 {
     public class Foo
