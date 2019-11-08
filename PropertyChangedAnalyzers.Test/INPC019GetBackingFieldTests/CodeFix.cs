@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC019GetBackingFieldTests
         [Test]
         public static void SimpleExpressionBody()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     public sealed class C
@@ -43,13 +43,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void ExpressionBody()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -124,13 +124,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenFieldIsKeyword()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -205,13 +205,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void TrySetExpressionBody()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -318,13 +318,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void StatementBody()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -406,7 +406,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtectedTests
         [Test]
         public static void ProtectedPropertyName()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -47,13 +47,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after, fixTitle: "Change to: protected.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Change to: protected.");
         }
 
         [Test]
         public static void ProtectedPropertyChangedEventArgs()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -86,13 +86,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void MissingAccessModifier()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -125,7 +125,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after, fixTitle: "Make protected.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Make protected.");
         }
 
         [Test]

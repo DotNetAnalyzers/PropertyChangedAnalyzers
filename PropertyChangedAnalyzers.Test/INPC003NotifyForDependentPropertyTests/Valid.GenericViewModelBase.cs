@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
     {
         public static class GenericViewModelBase
         {
-            private const string ViewModelBaseCode = @"
+            private const string ViewModelBaseOfTFoo = @"
 namespace N.Core
 {
     using System;
@@ -61,7 +61,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseOfTFoo, code);
             }
 
             [Test]
@@ -131,7 +131,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseOfTFoo, code);
             }
 
             [Test]
@@ -159,7 +159,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseOfTFoo, code);
             }
 
             [Test]
@@ -187,7 +187,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseOfTFoo, code);
             }
 
             [Test]
@@ -209,7 +209,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseOfTFoo, code);
             }
 
             [Test]
@@ -237,7 +237,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseOfTFoo, code);
             }
 
             [Test]
@@ -270,7 +270,7 @@ namespace N.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, fooBaseCode, code);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseOfTFoo, fooBaseCode, code);
             }
         }
     }

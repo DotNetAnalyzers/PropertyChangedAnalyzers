@@ -73,7 +73,7 @@ namespace N
             [Test]
             public static void ReferenceType()
             {
-                var refTypeCode = @"
+                var referenceType = @"
 namespace N
 {
     public class ReferenceType
@@ -130,8 +130,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { refTypeCode, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { refTypeCode, before }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { referenceType, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { referenceType, before }, after);
             }
 
             [Test]
@@ -511,7 +511,7 @@ namespace N
             [Test]
             public static void NotEquatableStruct()
             {
-                var equatableStruct = @"
+                var notEquatableStruct = @"
 namespace N
 {
     public struct NotEquatableStruct
@@ -574,14 +574,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { notEquatableStruct, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { notEquatableStruct, before }, after);
             }
 
             [Test]
             public static void NullableNotEquatableStruct()
             {
-                var equatableStruct = @"
+                var notEquatableStruct = @"
 namespace N
 {
     public struct NotEquatableStruct
@@ -644,8 +644,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { equatableStruct, before }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { notEquatableStruct, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { notEquatableStruct, before }, after);
             }
         }
     }

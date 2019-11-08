@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
         [Test]
         public static void WhenThrowingArgumentException()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System;
@@ -46,13 +46,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenThrowingArgumentOutOfRangeException()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System;
@@ -87,13 +87,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenRaisingPropertyChanged()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -174,13 +174,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenRaisingStaticPropertyChanged()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System;
@@ -245,13 +245,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenRaisingStaticPropertyChanged2()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System;
@@ -342,13 +342,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenStaticContextNameofInstance()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     public class Foo
@@ -383,13 +383,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenStaticContextNameofInstance2()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     public class Foo
@@ -414,13 +414,13 @@ namespace N
         public static string Bar(string meh) => meh;
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
         public static void WhenStaticContextNameofInstance3()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     public class Foo
@@ -453,7 +453,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
@@ -546,7 +546,7 @@ namespace N
         [Test]
         public static void DependencyProperty()
         {
-            var code = @"
+            var before = @"
 namespace N
 {
     using System.Windows;
@@ -589,7 +589,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, code, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }
 }

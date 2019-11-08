@@ -745,7 +745,7 @@ namespace N
             [Test]
             public static void ViewModelBaseWithPropertyChangedEventArgsParameter()
             {
-                var viewModelBaseCode = @"
+                var fooBase = @"
 namespace N
 {
     using System.ComponentModel;
@@ -793,8 +793,8 @@ namespace N
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooBase, before }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { fooBase, before }, after, fixTitle: "Notify when value changes.");
             }
         }
     }
