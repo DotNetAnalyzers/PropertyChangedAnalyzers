@@ -3656,6 +3656,7 @@ namespace N
     }
 }";
 
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
     }

@@ -73,30 +73,6 @@ namespace N
         }
 
         [Test]
-        public static void AutoPropertyExplicitNameHandlesRecursionInInvoker()
-        {
-            var code = @"
-namespace N
-{
-    using System.ComponentModel;
-
-    public class Foo : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int ↓Bar { get; set; }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            this.OnPropertyChanged(propertyName);
-        }
-    }
-}";
-
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
-
-        [Test]
         public static void AutoPropertyPublic()
         {
             var before = @"

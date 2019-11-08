@@ -25,8 +25,26 @@ namespace N
     }
 }";
 
+            var after = @"
+namespace N
+{
+    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    {
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        public int Bar1 { get; set; }
+
+        public int Bar2 { get; set; }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
             var expectedDiagnostic = ExpectedDiagnostic.WithMessage("The class Foo should notify for:\r\nBar1\r\nBar2");
-            RoslynAssert.Diagnostics(Analyzer, expectedDiagnostic, before);
+            RoslynAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
@@ -314,24 +332,6 @@ namespace N
     }
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-        }
-
-        [Test]
-        [Ignore("Not sure how we want this.")]
-        public static void IgnoresWhenBaseIsMouseGesture()
-        {
-            var code = @"
-namespace N
-{
-    using System.Windows.Input;
-
-    public class CustomGesture : MouseGesture
-    {
-        ↓public int Foo { get; set; }
-    }
-}";
-
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
         }
 
         [TestCase("this.Value = 1;")]
