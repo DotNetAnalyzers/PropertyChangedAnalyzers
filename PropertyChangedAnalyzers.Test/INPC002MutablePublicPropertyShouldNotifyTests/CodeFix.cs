@@ -75,7 +75,7 @@ namespace RoslynSandbox
         [Test]
         public static void AutoPropertyExplicitNameHandlesRecursionInInvoker()
         {
-            var before = @"
+            var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -93,7 +93,7 @@ namespace RoslynSandbox
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
         }
 
         [Test]

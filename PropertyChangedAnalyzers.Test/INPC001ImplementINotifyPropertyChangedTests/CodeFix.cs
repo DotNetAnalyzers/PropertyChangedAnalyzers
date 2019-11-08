@@ -25,8 +25,8 @@ namespace RoslynSandbox
     }
 }";
 
-            var expectedMessage = ExpectedDiagnostic.WithMessage("The class Foo should notify for:\r\nBar1\r\nBar2");
-            RoslynAssert.Diagnostics(Analyzer, expectedMessage, before);
+            var expectedDiagnostic = ExpectedDiagnostic.WithMessage("The class Foo should notify for:\r\nBar1\r\nBar2");
+            RoslynAssert.Diagnostics(Analyzer, expectedDiagnostic, before);
         }
 
         [Test]
@@ -320,7 +320,7 @@ namespace RoslynSandbox
         [Ignore("Not sure how we want this.")]
         public static void IgnoresWhenBaseIsMouseGesture()
         {
-            var before = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Input;
@@ -331,7 +331,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
         }
 
         [TestCase("this.Value = 1;")]

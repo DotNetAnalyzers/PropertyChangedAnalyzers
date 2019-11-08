@@ -320,7 +320,7 @@ namespace RoslynSandbox.Client
             [Test]
             public static void InsideIfNegatedTrySet()
             {
-                var before = @"
+                var code = @"
 namespace RoslynSandbox.Client
 {
     public class ViewModel : RoslynSandbox.Core.ViewModelBase
@@ -343,7 +343,7 @@ namespace RoslynSandbox.Client
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before });
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
             }
 
             [Test]

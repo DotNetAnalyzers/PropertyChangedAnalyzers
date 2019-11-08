@@ -15,7 +15,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
         [Ignore("Not sure how we want this.")]
         public static void NoFixWhenBaseHasInternalOnPropertyChanged()
         {
-            var before = @"
+            var code = @"
 namespace N
 {
     using System.Windows.Input;
@@ -26,7 +26,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
         }
     }
 }

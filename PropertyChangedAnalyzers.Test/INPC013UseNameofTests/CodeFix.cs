@@ -459,7 +459,7 @@ namespace RoslynSandbox
         [Test]
         public static void WhenRaisingPropertyChangedUnderscoreNames()
         {
-            var code = @"
+            var before = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -540,7 +540,7 @@ namespace RoslynSandbox
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, code }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after);
         }
 
         [Test]

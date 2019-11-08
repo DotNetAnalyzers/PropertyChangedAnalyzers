@@ -152,7 +152,7 @@ namespace RoslynSandbox
             [Test]
             public static void IfOperatorNotEqualsReturn()
             {
-                var before = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -186,14 +186,14 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
             }
 
             [Ignore("#87")]
             [Test]
             public static void OperatorEqualsNoAssignReturn()
             {
-                var before = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -227,13 +227,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
             }
 
             [Test]
             public static void OperatorEqualsNoAssignButNotifyOutside()
             {
-                var before = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -266,13 +266,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
             }
 
             [Test]
             public static void IfOperatorEqualsAssignAndNotify()
             {
-                var before = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -304,13 +304,13 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
             }
 
             [Test]
             public static void OperatorEquals()
             {
-                var before = @"
+                var code = @"
 namespace RoslynSandbox
 {
     using System.ComponentModel;
@@ -342,7 +342,7 @@ namespace RoslynSandbox
     }
 }";
 
-                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, before);
+                RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
             }
         }
     }
