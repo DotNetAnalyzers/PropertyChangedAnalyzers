@@ -18,7 +18,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public sealed class Foo : ↓INotifyPropertyChanged
+    public sealed class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -29,7 +29,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -50,7 +50,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public sealed class Foo : ↓INotifyPropertyChanged
+    public sealed class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -60,7 +60,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -81,7 +81,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : ↓INotifyPropertyChanged
+    public class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -92,7 +92,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -113,7 +113,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : ↓INotifyPropertyChanged
+    public class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -123,7 +123,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -145,7 +145,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : ↓INotifyPropertyChanged
+    public class C : ↓INotifyPropertyChanged
     {
         private int _value;
     }
@@ -158,7 +158,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int _value;
 
@@ -182,7 +182,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : ↓INotifyPropertyChanged
+    public class C : ↓INotifyPropertyChanged
     {
         private int _value;
     }
@@ -194,7 +194,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int _value;
 
@@ -219,7 +219,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : ↓INotifyPropertyChanged
+    public class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -231,7 +231,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -254,7 +254,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : ↓INotifyPropertyChanged
+    public class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -266,7 +266,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

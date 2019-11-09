@@ -280,7 +280,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         private double h1;
 

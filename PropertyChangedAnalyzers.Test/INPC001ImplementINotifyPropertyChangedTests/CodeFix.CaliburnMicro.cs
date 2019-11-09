@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
         public int P { get; set; }
     }
@@ -29,7 +29,7 @@ namespace N
 {
     using Caliburn.Micro;
 
-    public class Foo : PropertyChangedBase
+    public class C : PropertyChangedBase
     {
         public int P { get; set; }
     }
@@ -43,7 +43,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
         public int P { get; set; }
     }
@@ -52,7 +52,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         public int P { get; set; }
     }
@@ -66,7 +66,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
         public int P { get; set; }
     }
@@ -78,7 +78,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -99,7 +99,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
         public int P { get; set; }
     }
@@ -108,7 +108,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 

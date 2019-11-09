@@ -18,30 +18,30 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var before = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.NotifyOfPropertyChange();
             }
         }
@@ -57,20 +57,20 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
+        public int P { get => this.p; set => this.Set(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
@@ -83,20 +83,20 @@ namespace N
                 var before = @"
 namespace N
 {
-    internal class Foo : Caliburn.Micro.PropertyChangedBase
+    internal class C : Caliburn.Micro.PropertyChangedBase
     {
-        internal int ↓Bar { get; set; }
+        internal int ↓P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    internal class Foo : Caliburn.Micro.PropertyChangedBase
+    internal class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        internal int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
+        internal int P { get => this.p; set => this.Set(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);

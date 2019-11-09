@@ -16,7 +16,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
                 var before = @"
 namespace N
 {
-    public class Foo : ↓INotifyPropertyChanged
+    public class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -27,7 +27,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -46,7 +46,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : ↓INotifyPropertyChanged
+    public class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -54,7 +54,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
@@ -73,7 +73,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public sealed class Foo : ↓INotifyPropertyChanged
+    public sealed class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -84,7 +84,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -103,7 +103,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public sealed class Foo : ↓INotifyPropertyChanged
+    public sealed class C : ↓INotifyPropertyChanged
     {
     }
 }";
@@ -111,7 +111,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public sealed class Foo : System.ComponentModel.INotifyPropertyChanged
+    public sealed class C : System.ComponentModel.INotifyPropertyChanged
     {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 

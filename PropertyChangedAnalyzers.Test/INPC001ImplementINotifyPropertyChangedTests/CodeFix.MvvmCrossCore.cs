@@ -18,9 +18,9 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -29,9 +29,9 @@ namespace N
 {
     using MvvmCross.ViewModels;
 
-    public class Foo : MvxNotifyPropertyChanged
+    public class C : MvxNotifyPropertyChanged
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged and add using.", metadataReferences: MetadataReferences);
@@ -43,18 +43,18 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged fully qualified.", metadataReferences: MetadataReferences);
@@ -66,9 +66,9 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -77,9 +77,9 @@ namespace N
 {
     using MvvmCross.ViewModels;
 
-    public class Foo : MvxViewModel
+    public class C : MvxViewModel
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel and add using.", metadataReferences: MetadataReferences);
@@ -91,18 +91,18 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxViewModel
+    public class C : MvvmCross.ViewModels.MvxViewModel
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel fully qualified.", metadataReferences: MetadataReferences);
@@ -114,9 +114,9 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -126,11 +126,11 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -147,20 +147,20 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {

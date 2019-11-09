@@ -13,7 +13,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
                 var code = @"
 namespace N
 {
-    public struct Foo
+    public struct S
     {
         public int Bar { get; set; }
     }
@@ -27,9 +27,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public int Bar { get; } = 1;
+        public int P { get; } = 1;
     }
 }";
 
@@ -44,7 +44,7 @@ namespace N
 {
     public class Foo
     {
-        public int Bar { get; private set; }
+        public int P { get; private set; }
     }
 }";
 
@@ -57,14 +57,14 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        Foo(int bar)
+        C(int p)
         {
-            this.Bar = bar;
+            this.P = p;
         }
 
-        public int Bar { get; private set; }
+        public int P { get; private set; }
     }
 }";
 
@@ -77,9 +77,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public int Bar => 1;
+        public int P => 1;
     }
 }";
 
@@ -92,9 +92,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public int Bar
+        public int P
         {
             get { return 1; }
         }
@@ -110,9 +110,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public abstract class Foo
+    public abstract class C
     {
-        public abstract int Bar { get; set; }
+        public abstract int P { get; set; }
     }
 }";
 
@@ -126,9 +126,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public static int Bar { get; set; }
+        public static int P { get; set; }
     }
 }";
 
@@ -188,9 +188,9 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public event EventHandler foo;
+        public event EventHandler E;
     }
 }";
                 RoslynAssert.Valid(Analyzer, code);

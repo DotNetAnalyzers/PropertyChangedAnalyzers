@@ -18,9 +18,9 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -29,9 +29,9 @@ namespace N
 {
     using Stylet;
 
-    public class Foo : PropertyChangedBase
+    public class C : PropertyChangedBase
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Stylet.PropertyChangedBase and add using.", metadataReferences: MetadataReferences);
@@ -43,18 +43,18 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Stylet.PropertyChangedBase fully qualified.", metadataReferences: MetadataReferences);
@@ -66,9 +66,9 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -78,11 +78,11 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -99,20 +99,20 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ↓Foo
+    public class ↓C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
