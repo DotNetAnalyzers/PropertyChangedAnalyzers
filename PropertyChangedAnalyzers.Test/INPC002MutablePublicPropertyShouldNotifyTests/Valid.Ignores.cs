@@ -13,9 +13,9 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var code = @"
 namespace N
 {
-    public struct Foo
+    public struct S
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -28,9 +28,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public int Bar { get; } = 1;
+        public int P { get; } = 1;
     }
 }";
 
@@ -76,9 +76,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public int Bar => 1;
+        public int P => 1;
     }
 }";
 
@@ -91,9 +91,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public int Bar
+        public int P
         {
             get { return 1; }
         }
@@ -109,9 +109,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public abstract class Foo
+    public abstract class C
     {
-        public abstract int Bar { get; set; }
+        public abstract int P { get; set; }
     }
 }";
 
@@ -125,9 +125,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public static int Bar { get; set; }
+        public static int P { get; set; }
     }
 }";
 
@@ -141,9 +141,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    internal class Foo
+    internal class C
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -157,9 +157,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        internal int Bar { get; set; }
+        internal int P { get; set; }
     }
 }";
 

@@ -474,7 +474,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Bar : INotifyPropertyChanged
+    public class C1 : INotifyPropertyChanged
     {
         private int value;
 
@@ -512,16 +512,16 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int ↓Value
         {
-            get { return this.bar.Value; }
-            private set { this.bar.Value = value; }
+            get { return this.c1.Value; }
+            private set { this.c1.Value = value; }
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -537,18 +537,18 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get { return this.bar.Value; }
+            get { return this.c1.Value; }
             private set
             {
-                this.bar.Value = value;
+                this.c1.Value = value;
                 this.OnPropertyChanged();
             }
         }
@@ -572,7 +572,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Bar : INotifyPropertyChanged
+    public class C1 : INotifyPropertyChanged
     {
         private int _value;
 
@@ -610,16 +610,16 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar _bar = new Bar();
+        private readonly C1 _c1 = new C1();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int ↓Value
         {
-            get { return _bar.Value; }
-            private set { _bar.Value = value; }
+            get { return _c1.Value; }
+            private set { _c1.Value = value; }
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -635,18 +635,18 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar _bar = new Bar();
+        private readonly C1 _c1 = new C1();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get { return _bar.Value; }
+            get { return _c1.Value; }
             private set
             {
-                _bar.Value = value;
+                _c1.Value = value;
                 OnPropertyChanged();
             }
         }

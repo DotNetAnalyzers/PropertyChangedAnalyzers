@@ -106,18 +106,18 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
-                this.OnPropertyChanged(nameof(Bar));
+                if (value == this.p) return;
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -231,18 +231,18 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(nameof(Bar));
-        private int bar;
+        private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(nameof(P));
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
+                if (value == this.p) return;
+                this.p = value;
                 this.OnPropertyChanged(CachedArgs);
             }
         }
@@ -268,17 +268,17 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
+                if (value == this.p) return;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -462,24 +462,24 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
 
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -545,24 +545,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private static readonly PropertyChangedEventArgs BarPropertyChangedArgs = new PropertyChangedEventArgs(nameof(Bar));
-        private int bar;
+        private static readonly PropertyChangedEventArgs PPropertyChangedArgs = new PropertyChangedEventArgs(nameof(P));
+        private int p;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.PropertyChanged?.Invoke(this, BarPropertyChangedArgs);
+                this.p = value;
+                this.PropertyChanged?.Invoke(this, PPropertyChangedArgs);
             }
         }
     }
@@ -576,9 +576,9 @@ namespace N
             var barCode = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int C1Value;
     }
 }";
             var code = @"
@@ -587,22 +587,22 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get => this.bar.BarValue;
+            get => this.c1.C1Value;
             set
             {
-                if (value == this.bar.BarValue)
+                if (value == this.c1.C1Value)
                 {
                     return;
                 }
 
-                this.bar.BarValue = value;
+                this.c1.C1Value = value;
                 this.OnPropertyChanged();
             }
         }
@@ -626,7 +626,7 @@ namespace N
     using System.Drawing;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private Point point;
 
@@ -682,7 +682,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private TimeSpan timeSpan;
 

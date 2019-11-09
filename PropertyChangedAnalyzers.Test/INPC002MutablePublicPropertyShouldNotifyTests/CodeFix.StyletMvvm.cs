@@ -83,20 +83,20 @@ namespace N
                 var before = @"
 namespace N
 {
-    internal class Foo : Stylet.PropertyChangedBase
+    internal class C : Stylet.PropertyChangedBase
     {
-        internal int ↓Bar { get; set; }
+        internal int ↓P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    internal class Foo : Stylet.PropertyChangedBase
+    internal class C : Stylet.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        internal int Bar { get => this.bar; set => this.SetAndNotify(ref this.bar, value); }
+        internal int P { get => this.p; set => this.SetAndNotify(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", metadataReferences: MetadataReferences);
@@ -111,7 +111,7 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        public int ↓Bar { get; set; } = 1;
+        public int ↓P { get; set; } = 1;
     }
 }";
 
@@ -120,9 +120,9 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        private int bar = 1;
+        private int p = 1;
 
-        public int Bar { get => this.bar; set => this.SetAndNotify(ref this.bar, value); }
+        public int P { get => this.p; set => this.SetAndNotify(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", metadataReferences: MetadataReferences);
@@ -137,7 +137,7 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        public virtual int ↓Bar { get; set; }
+        public virtual int ↓P { get; set; }
     }
 }";
 
@@ -146,9 +146,9 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        public virtual int Bar { get => this.bar; set => this.SetAndNotify(ref this.bar, value); }
+        public virtual int P { get => this.p; set => this.SetAndNotify(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", metadataReferences: MetadataReferences);
@@ -163,11 +163,11 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        public int ↓Bar { get; private set; }
+        public int ↓P { get; private set; }
 
         public void Mutate()
         {
-            this.Bar++;
+            this.P++;
         }
     }
 }";
@@ -177,13 +177,13 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar { get => this.bar; private set => this.SetAndNotify(ref this.bar, value); }
+        public int P { get => this.p; private set => this.SetAndNotify(ref this.p, value); }
 
         public void Mutate()
         {
-            this.Bar++;
+            this.P++;
         }
     }
 }";
@@ -199,12 +199,12 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        public Foo(int bar)
+        public Foo(int p)
         {
-            Bar = bar;
+            P = p;
         }
 
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -213,14 +213,14 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        private int _bar;
+        private int _p;
 
-        public Foo(int bar)
+        public Foo(int p)
         {
-            Bar = bar;
+            P = p;
         }
 
-        public int Bar { get => _bar; set => SetAndNotify(ref _bar, value); }
+        public int P { get => _p; set => SetAndNotify(ref _p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "SetAndNotify(ref field, value)", metadataReferences: MetadataReferences);

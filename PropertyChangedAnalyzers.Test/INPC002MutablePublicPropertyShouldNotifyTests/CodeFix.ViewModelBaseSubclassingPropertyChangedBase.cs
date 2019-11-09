@@ -48,30 +48,30 @@ namespace N
                 var before = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.NotifyOfPropertyChange();
             }
         }
@@ -89,7 +89,7 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -98,9 +98,9 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar { get => this.bar; set => this.TrySet(ref this.bar, value); }
+        public int P { get => this.p; set => this.TrySet(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
@@ -115,7 +115,7 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        public int ↓Bar { get; set; } = 1;
+        public int ↓P { get; set; } = 1;
     }
 }";
 
@@ -124,9 +124,9 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        private int bar = 1;
+        private int p = 1;
 
-        public int Bar { get => this.bar; set => this.TrySet(ref this.bar, value); }
+        public int P { get => this.p; set => this.TrySet(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
@@ -141,7 +141,7 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        public virtual int ↓Bar { get; set; }
+        public virtual int ↓P { get; set; }
     }
 }";
 
@@ -150,9 +150,9 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        private int bar;
+        private int p;
 
-        public virtual int Bar { get => this.bar; set => this.TrySet(ref this.bar, value); }
+        public virtual int P { get => this.p; set => this.TrySet(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
@@ -167,11 +167,11 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        public int ↓Bar { get; private set; }
+        public int ↓P { get; private set; }
 
         public void Mutate()
         {
-            this.Bar++;
+            this.P++;
         }
     }
 }";
@@ -181,13 +181,13 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar { get => this.bar; private set => this.TrySet(ref this.bar, value); }
+        public int P { get => this.p; private set => this.TrySet(ref this.p, value); }
 
         public void Mutate()
         {
-            this.Bar++;
+            this.P++;
         }
     }
 }";
@@ -203,12 +203,12 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        public Foo(int bar)
+        public Foo(int p)
         {
-            Bar = bar;
+            P = p;
         }
 
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -217,14 +217,14 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        private int _bar;
+        private int _p;
 
-        public Foo(int bar)
+        public Foo(int p)
         {
-            Bar = bar;
+            P = p;
         }
 
-        public int Bar { get => _bar; set => TrySet(ref _bar, value); }
+        public int P { get => _p; set => TrySet(ref _p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
@@ -406,7 +406,7 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -415,19 +415,19 @@ namespace N.Client
 {
     public class Foo : N.Core.ViewModelBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }

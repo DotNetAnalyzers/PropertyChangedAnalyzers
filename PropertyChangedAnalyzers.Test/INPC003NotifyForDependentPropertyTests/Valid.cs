@@ -713,11 +713,11 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 
-        public void Bar(int a)
+        public void M(int a)
         {
             var temp = 1;
             temp++;
@@ -750,9 +750,9 @@ namespace N
             var barCode = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int C1Value;
     }
 }";
             var code = @"
@@ -761,22 +761,22 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get => this.bar.BarValue;
+            get => this.c1.C1Value;
             set
             {
-                if (value == this.bar.BarValue)
+                if (value == this.c1.C1Value)
                 {
                     return;
                 }
 
-                this.bar.BarValue = value;
+                this.c1.C1Value = value;
                 this.OnPropertyChanged();
             }
         }
@@ -799,24 +799,24 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
 
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -856,7 +856,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -904,7 +904,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -951,17 +951,17 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar => this.bar;
+        public int P => this.p;
 
         public void Update(int value)
         {
-            UpdateCore(ref this.bar, value);
+            UpdateCore(ref this.p, value);
         }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -972,7 +972,7 @@ namespace N
         private void UpdateCore(ref int field, int value)
         {
             field = value;
-            this.OnPropertyChanged(nameof(this.Bar));
+            this.OnPropertyChanged(nameof(this.P));
         }
     }
 }";
@@ -989,7 +989,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
         private readonly Bar bar = new Bar();
@@ -1035,7 +1035,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private TimeSpan timeSpan;
 
