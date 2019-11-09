@@ -20,7 +20,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -40,7 +40,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -81,11 +81,11 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -100,23 +100,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -141,11 +141,11 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    internal class Foo : INotifyPropertyChanged
+    internal class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -161,23 +161,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    internal class Foo : INotifyPropertyChanged
+    internal class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -203,11 +203,11 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal int ↓Bar { get; set; }
+        internal int ↓P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -222,23 +222,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal int Bar
+        internal int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -337,7 +337,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -362,7 +362,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -399,7 +399,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -421,7 +421,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -453,7 +453,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -475,7 +475,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -512,7 +512,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -537,7 +537,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -569,7 +569,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -591,7 +591,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private int value;
 
@@ -623,9 +623,9 @@ namespace N
             var barCode = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int CValue;
     }
 }";
             var before = @"
@@ -634,15 +634,16 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int ↓Value
         {
-            get => this.bar.BarValue;
-            set => this.bar.BarValue = value;
+            get => this.c1.CValue;
+            set => this.c1.CValue = value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -657,22 +658,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get => this.bar.BarValue;
+            get => this.c1.CValue;
             set
             {
-                if (value == this.bar.BarValue)
+                if (value == this.c1.CValue)
                 {
                     return;
                 }
 
-                this.bar.BarValue = value;
+                this.c1.CValue = value;
                 this.OnPropertyChanged();
             }
         }
@@ -693,9 +695,9 @@ namespace N
             var barCode = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int C1Value;
     }
 }";
             var before = @"
@@ -704,15 +706,15 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int ↓Value
         {
-            get => this.bar.BarValue;
-            set => this.bar.BarValue = value;
+            get => this.c1.C1Value;
+            set => this.c1.C1Value = value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -727,17 +729,17 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get => this.bar.BarValue;
+            get => this.c1.C1Value;
             set
             {
-                this.bar.BarValue = value;
+                this.c1.C1Value = value;
                 this.OnPropertyChanged();
             }
         }

@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
         [Test]
         public static void Vanguard_MVVM_ViewModels_MainWindowViewModel()
         {
-            var childDataContext = @"
+            var iChildDataContext = @"
 namespace Vanguard_MVVM.ViewModels
 {
     public interface IChildDataContext
@@ -95,14 +95,14 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, childDataContext, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, childDataContext, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, iChildDataContext, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, iChildDataContext, before }, after);
         }
 
         [Test]
         public static void Vanguard_MVVM_ViewModels_MainWindowViewModelCommentedOut()
         {
-            var childDataContext = @"namespace Vanguard_MVVM.ViewModels
+            var iChildDataContext = @"namespace Vanguard_MVVM.ViewModels
 {
     public interface IChildDataContext
     {
@@ -190,8 +190,8 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, childDataContext, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, childDataContext, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, iChildDataContext, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, iChildDataContext, before }, after);
         }
     }
 }

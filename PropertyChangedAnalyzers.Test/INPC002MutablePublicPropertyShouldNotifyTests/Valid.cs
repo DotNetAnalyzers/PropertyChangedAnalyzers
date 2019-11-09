@@ -345,7 +345,7 @@ namespace N
         [Test]
         public static void CallsChainedOnPropertyChangedInBase()
         {
-            var baseCode = @"
+            var viewModelBase = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -394,13 +394,13 @@ namespace N.Client
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, baseCode, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, code);
         }
 
         [Test]
         public static void CallsChainedOnPropertyChangedInGenericBase()
         {
-            var baseCode = @"
+            var viewModelBaseOfT = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -450,7 +450,7 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, baseCode, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBaseOfT, code);
         }
 
         [Test]

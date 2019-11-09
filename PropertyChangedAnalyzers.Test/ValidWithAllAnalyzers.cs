@@ -456,7 +456,7 @@ namespace N
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void SomewhatRealisticSampleGeneric(DiagnosticAnalyzer analyzer)
         {
-            var viewModelBaseCode = @"
+            var viewModelBaseOf_ = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -485,7 +485,7 @@ namespace N.Core
         }
     }
 }";
-            var viewModelSubclassCode = @"
+            var viewModel1 = @"
 namespace N.Client
 {
     using N.Core;
@@ -532,7 +532,7 @@ namespace N.Client
     }
 }";
 
-            var viewModelCode = @"
+            var viewModelOfT = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -575,7 +575,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(analyzer, viewModelBaseCode, viewModelSubclassCode, viewModelCode);
+            RoslynAssert.Valid(analyzer, viewModelBaseOf_, viewModel1, viewModelOfT);
         }
     }
 }

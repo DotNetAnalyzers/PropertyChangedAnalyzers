@@ -249,7 +249,7 @@ namespace N
         [Test]
         public static void OnPropertyChangedInBaseClass()
         {
-            var vmCode = @"
+            var viewModelBase = @"
 namespace N
 {
     using System.ComponentModel;
@@ -289,7 +289,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, vmCode, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, code);
         }
 
         [Test]
@@ -325,7 +325,7 @@ namespace N
         [Test]
         public static void IgnoresWhenNotInvokingReproIssue122()
         {
-            var extCode = @"
+            var propertyChangedEventArgsExt = @"
 namespace N
 {
     using System.ComponentModel;
@@ -389,7 +389,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, extCode, code);
+            RoslynAssert.Valid(Analyzer, propertyChangedEventArgsExt, code);
         }
 
         [Test]
@@ -444,7 +444,7 @@ namespace N
         [Test]
         public static void RaiseForOtherInstanceOfOtherType()
         {
-            var vmCode = @"
+            var viewModel = @"
 namespace N
 {
     using System.ComponentModel;
@@ -491,13 +491,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, vmCode, code);
+            RoslynAssert.Valid(Analyzer, viewModel, code);
         }
 
         [Test]
         public static void RaiseForOtherInstanceOfOtherTypeWithBaseClass()
         {
-            var vmBaseCode = @"
+            var viewModelBase = @"
 namespace N
 {
     using System.ComponentModel;
@@ -510,7 +510,7 @@ namespace N
     }
 }";
 
-            var vmCode = @"
+            var viewModel = @"
 namespace N
 {
     public class ViewModel : ViewModelBase
@@ -550,7 +550,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, vmBaseCode, vmCode, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, viewModel, code);
         }
 
         [Test]

@@ -111,7 +111,7 @@ namespace N
 {
     public class Foo : Caliburn.Micro.Screen
     {
-        public virtual int ↓Bar { get; set; }
+        public virtual int ↓P { get; set; }
     }
 }";
 
@@ -120,9 +120,9 @@ namespace N
 {
     public class Foo : Caliburn.Micro.Screen
     {
-        private int bar;
+        private int p;
 
-        public virtual int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
+        public virtual int P { get => this.p; set => this.Set(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
@@ -137,11 +137,11 @@ namespace N
 {
     public class Foo : Caliburn.Micro.Screen
     {
-        public int ↓Bar { get; private set; }
+        public int ↓P { get; private set; }
 
         public void Mutate()
         {
-            this.Bar++;
+            this.P++;
         }
     }
 }";
@@ -151,13 +151,13 @@ namespace N
 {
     public class Foo : Caliburn.Micro.Screen
     {
-        private int bar;
+        private int p;
 
-        public int Bar { get => this.bar; private set => this.Set(ref this.bar, value); }
+        public int P { get => this.p; private set => this.Set(ref this.p, value); }
 
         public void Mutate()
         {
-            this.Bar++;
+            this.P++;
         }
     }
 }";
@@ -173,12 +173,12 @@ namespace N
 {
     public class Foo : Caliburn.Micro.Screen
     {
-        public Foo(int bar)
+        public Foo(int p)
         {
-            Bar = bar;
+            P = p;
         }
 
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -187,14 +187,14 @@ namespace N
 {
     public class Foo : Caliburn.Micro.Screen
     {
-        private int _bar;
+        private int _p;
 
-        public Foo(int bar)
+        public Foo(int p)
         {
-            Bar = bar;
+            P = p;
         }
 
-        public int Bar { get => _bar; set => Set(ref _bar, value); }
+        public int P { get => _p; set => Set(ref _p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);

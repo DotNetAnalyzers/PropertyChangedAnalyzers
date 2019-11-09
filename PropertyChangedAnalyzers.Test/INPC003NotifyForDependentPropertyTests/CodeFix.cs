@@ -3359,7 +3359,7 @@ namespace N
         [Test]
         public static void OverriddenProperty()
         {
-            var barCode = @"
+            var fooBase = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3408,8 +3408,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooBase, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { fooBase, before }, after);
         }
 
         [Test]

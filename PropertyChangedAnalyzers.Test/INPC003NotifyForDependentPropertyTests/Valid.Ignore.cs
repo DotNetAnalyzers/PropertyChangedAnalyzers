@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
             [Test]
             public static void Lazy1()
             {
-                var commandCode = @"
+                var delegateCommand = @"
 namespace N
 {
     using System;
@@ -84,13 +84,13 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
-                RoslynAssert.Valid(Analyzer, commandCode, code);
+                RoslynAssert.Valid(Analyzer, delegateCommand, code);
             }
 
             [Test]
             public static void Lazy2()
             {
-                var commandCode = @"
+                var delegateCommand = @"
 namespace N
 {
     using System;
@@ -164,13 +164,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, commandCode, code);
+                RoslynAssert.Valid(Analyzer, delegateCommand, code);
             }
 
             [Test]
             public static void LazyNullCoalesce()
             {
-                var commandCode = @"
+                var delegateCommand = @"
 namespace N
 {
     using System;
@@ -239,13 +239,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, commandCode, code);
+                RoslynAssert.Valid(Analyzer, delegateCommand, code);
             }
 
             [Test]
             public static void LazyNullCoalesceExpressionBody()
             {
-                var commandCode = @"
+                var delegateCommand = @"
 namespace N
 {
     using System;
@@ -308,7 +308,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, commandCode, code);
+                RoslynAssert.Valid(Analyzer, delegateCommand, code);
             }
 
             [Test]
