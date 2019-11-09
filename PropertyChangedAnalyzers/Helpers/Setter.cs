@@ -71,7 +71,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        internal static bool IsMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IdentifierNameSyntax? parameter, [NotNullWhen(true)] out ExpressionSyntax? backing)
+        internal static bool IsMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? parameter, [NotNullWhen(true)] out ExpressionSyntax? backing)
         {
             switch (candidate)
             {
@@ -85,7 +85,7 @@ namespace PropertyChangedAnalyzers
                          arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var refArgument) &&
                          IsMember(refArgument.Expression):
                     backing = refArgument.Expression;
-                    parameter = (IdentifierNameSyntax)parameterArg.Expression;
+                    parameter = parameterArg.Expression;
                     return TrySet.IsMatch(invocation, semanticModel, cancellationToken) == AnalysisResult.Yes;
                 default:
                     parameter = null;
@@ -93,7 +93,7 @@ namespace PropertyChangedAnalyzers
                     return false;
             }
 
-            static bool IsParameter(ExpressionSyntax expression, out IdentifierNameSyntax result)
+            static bool IsParameter(ExpressionSyntax expression, out ExpressionSyntax result)
             {
                 switch (expression)
                 {
@@ -115,7 +115,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static bool IsMutation(ExpressionStatementSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IdentifierNameSyntax? parameter, [NotNullWhen(true)] out ExpressionSyntax? backing)
+        internal static bool IsMutation(ExpressionStatementSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? parameter, [NotNullWhen(true)] out ExpressionSyntax? backing)
         {
             return IsMutation(candidate.Expression, semanticModel, cancellationToken, out parameter, out backing);
         }
