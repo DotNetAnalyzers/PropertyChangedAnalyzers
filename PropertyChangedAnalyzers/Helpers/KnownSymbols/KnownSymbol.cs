@@ -10,6 +10,7 @@ namespace PropertyChangedAnalyzers
         internal static readonly QualifiedType Boolean = Create("System.Boolean", "bool");
         internal static readonly QualifiedType Attribute = Create("System.Attribute");
         internal static readonly QualifiedType IEnumerator = Create("System.Collections.IEnumerator");
+        internal static readonly QualifiedType Stream = Create("System.IO.Stream");
         internal static readonly NullableType Nullable = new NullableType();
         internal static readonly NullableOfTType NullableOfT = new NullableOfTType();
         internal static readonly EqualityComparerOfTType EqualityComparerOfT = new EqualityComparerOfTType();
