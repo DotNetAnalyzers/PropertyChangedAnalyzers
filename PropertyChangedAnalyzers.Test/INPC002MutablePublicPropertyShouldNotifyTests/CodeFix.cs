@@ -620,7 +620,7 @@ namespace N
         [Test]
         public static void WhenSettingNestedField()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
     public class C1
@@ -685,14 +685,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after, fixTitle: "Notify when value changes.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify when value changes.");
         }
 
         [Test]
         public static void WhenSettingNestedFieldNotify()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
     public class C1
@@ -750,8 +750,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after, fixTitle: "Notify.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after, fixTitle: "Notify.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify.");
         }
     }
 }

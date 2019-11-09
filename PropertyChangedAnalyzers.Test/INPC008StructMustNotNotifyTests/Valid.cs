@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotifyTests
             var code = @"
 namespace N
 {
-    public struct Foo
+    public struct S
     {
     }
 }";

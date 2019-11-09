@@ -14,9 +14,9 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var barCode = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int C1Value;
     }
 }";
 
@@ -191,12 +191,12 @@ namespace N
 
     public class Foo : ViewModelBase
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
 
         public int ↓Value
         {
-            get => this.bar.BarValue;
-            set => this.bar.BarValue = value;
+            get => this.c1.C1Value;
+            set => this.c1.C1Value = value;
         }
     }
 }";
@@ -208,12 +208,12 @@ namespace N
 
     public class Foo : ViewModelBase
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
 
         public int Value
         {
-            get => this.bar.BarValue;
-            set => this.bar.BarValue = value;
+            get => this.c1.C1Value;
+            set => this.c1.C1Value = value;
         }
     }
 }";

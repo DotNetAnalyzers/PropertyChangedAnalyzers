@@ -20,7 +20,7 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -29,19 +29,19 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.NotifyOfPropertyChange();
             }
         }
@@ -59,7 +59,7 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -68,9 +68,9 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar { get => this.bar; set => this.SetAndNotify(ref this.bar, value); }
+        public int P { get => this.p; set => this.SetAndNotify(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", metadataReferences: MetadataReferences);

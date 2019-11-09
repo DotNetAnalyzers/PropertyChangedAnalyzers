@@ -20,7 +20,7 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -29,20 +29,20 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(nameof(this.Bar));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
     }
@@ -59,7 +59,7 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -68,9 +68,9 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar { get => this.bar; set => this.SetProperty(ref this.bar, value); }
+        public int P { get => this.p; set => this.SetProperty(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
@@ -85,7 +85,7 @@ namespace N
 {
     internal class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        internal int ↓Bar { get; set; }
+        internal int ↓P { get; set; }
     }
 }";
 
@@ -94,9 +94,9 @@ namespace N
 {
     internal class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private int bar;
+        private int p;
 
-        internal int Bar { get => this.bar; set => this.SetProperty(ref this.bar, value); }
+        internal int P { get => this.p; set => this.SetProperty(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
@@ -111,7 +111,7 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        public int ↓Bar { get; set; } = 1;
+        public int ↓P { get; set; } = 1;
     }
 }";
 
@@ -120,9 +120,9 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private int bar = 1;
+        private int p = 1;
 
-        public int Bar { get => this.bar; set => this.SetProperty(ref this.bar, value); }
+        public int P { get => this.p; set => this.SetProperty(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
@@ -137,7 +137,7 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        public virtual int ↓Bar { get; set; }
+        public virtual int ↓P { get; set; }
     }
 }";
 
@@ -146,9 +146,9 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private int bar;
+        private int p;
 
-        public virtual int Bar { get => this.bar; set => this.SetProperty(ref this.bar, value); }
+        public virtual int P { get => this.p; set => this.SetProperty(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
@@ -163,11 +163,11 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        public int ↓Bar { get; private set; }
+        public int ↓P { get; private set; }
 
         public void Mutate()
         {
-            this.Bar++;
+            this.P++;
         }
     }
 }";
@@ -177,13 +177,13 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar { get => this.bar; private set => this.SetProperty(ref this.bar, value); }
+        public int P { get => this.p; private set => this.SetProperty(ref this.p, value); }
 
         public void Mutate()
         {
-            this.Bar++;
+            this.P++;
         }
     }
 }";
@@ -199,12 +199,12 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        public Foo(int bar)
+        public Foo(int p)
         {
-            Bar = bar;
+            P = p;
         }
 
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -213,14 +213,14 @@ namespace N
 {
     public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private int _bar;
+        private int _p;
 
-        public Foo(int bar)
+        public Foo(int p)
         {
-            Bar = bar;
+            P = p;
         }
 
-        public int Bar { get => _bar; set => SetProperty(ref _bar, value); }
+        public int P { get => _p; set => SetProperty(ref _p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderScoreFieldsUnqualified, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);

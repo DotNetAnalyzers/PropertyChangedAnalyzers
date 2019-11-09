@@ -16,7 +16,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public struct Foo : ↓INotifyPropertyChanged
+    public struct S : ↓INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -30,7 +30,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public struct Foo : ↓System.ComponentModel.INotifyPropertyChanged
+    public struct S : ↓System.ComponentModel.INotifyPropertyChanged
     {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
     }

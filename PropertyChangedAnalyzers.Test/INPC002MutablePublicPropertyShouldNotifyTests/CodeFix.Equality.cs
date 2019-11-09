@@ -85,11 +85,11 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ReferenceType ↓Bar { get; set; }
+        public ReferenceType ↓P { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -103,24 +103,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private ReferenceType bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ReferenceType Bar
+        public ReferenceType P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (ReferenceEquals(value, this.bar))
+                if (ReferenceEquals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(nameof(this.Bar));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
@@ -173,11 +173,11 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EquatableStruct ↓Bar { get; set; }
+        public EquatableStruct ↓P { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -191,24 +191,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private EquatableStruct bar;
+        private EquatableStruct p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EquatableStruct Bar
+        public EquatableStruct P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value.Equals(this.bar))
+                if (value.Equals(this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(nameof(this.Bar));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
@@ -262,11 +262,11 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EquatableStruct? ↓Bar { get; set; }
+        public EquatableStruct? ↓P { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -280,24 +280,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private EquatableStruct? bar;
+        private EquatableStruct? p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EquatableStruct? Bar
+        public EquatableStruct? P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (System.Nullable.Equals(value, this.bar))
+                if (System.Nullable.Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(nameof(this.Bar));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
@@ -361,11 +361,11 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EquatableStruct ↓Bar { get; set; }
+        public EquatableStruct ↓P { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -379,24 +379,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private EquatableStruct bar;
+        private EquatableStruct p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EquatableStruct Bar
+        public EquatableStruct P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(nameof(this.Bar));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
@@ -459,11 +459,11 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EquatableStruct? ↓Bar { get; set; }
+        public EquatableStruct? ↓P { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -477,24 +477,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private EquatableStruct? bar;
+        private EquatableStruct? p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EquatableStruct? Bar
+        public EquatableStruct? P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(nameof(this.Bar));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
@@ -529,11 +529,11 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public NotEquatableStruct ↓Bar { get; set; }
+        public NotEquatableStruct ↓P { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -547,24 +547,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private NotEquatableStruct bar;
+        private NotEquatableStruct p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public NotEquatableStruct Bar
+        public NotEquatableStruct P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (System.Collections.Generic.EqualityComparer<NotEquatableStruct>.Default.Equals(value, this.bar))
+                if (System.Collections.Generic.EqualityComparer<NotEquatableStruct>.Default.Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(nameof(this.Bar));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
@@ -599,11 +599,11 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public NotEquatableStruct? ↓Bar { get; set; }
+        public NotEquatableStruct? ↓P { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -617,24 +617,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private NotEquatableStruct? bar;
+        private NotEquatableStruct? p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public NotEquatableStruct? Bar
+        public NotEquatableStruct? P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (System.Nullable.Equals(value, this.bar))
+                if (System.Nullable.Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(nameof(this.Bar));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
