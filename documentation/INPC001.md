@@ -12,6 +12,8 @@
 ## Description
 
 The class has mutable properties and should implement INotifyPropertyChanged.
+The default severity is warning meaning there will be a squiggle and a build warning.
+Setting severity to `Hidden`turns it into a refactoring. Then only the code fix shows up on the class but no warning.
 ![ImplementInpc](https://user-images.githubusercontent.com/1640096/63153711-44091880-c00f-11e9-9185-564c52575b4a.gif)
 
 ## Motivation
