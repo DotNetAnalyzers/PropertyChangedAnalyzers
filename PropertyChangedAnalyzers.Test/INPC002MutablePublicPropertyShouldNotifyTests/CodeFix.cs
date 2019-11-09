@@ -753,5 +753,175 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify.");
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify.");
         }
+
+        [Test]
+        public static void PrivateSetMutatedOutsideCtor()
+        {
+            var c1 = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null!)
+        {
+            if (!RuntimeHelpers.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var before = @"
+namespace N
+{
+    public sealed class MainViewModel : ViewModel
+    {
+        public string ↓P { get; private set; }
+
+        public void M(string p)
+        {
+            this.P = p;
+        }
+    }
+}";
+            var after = @"
+namespace N
+{
+    public sealed class MainViewModel : ViewModel
+    {
+        private string? p;
+
+        public string? P { get => this.p; private set => Set(ref this.p, value); }
+
+        public void M(string p)
+        {
+            this.P = p;
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
+        }
+
+        [Test]
+        public static void NullableUseSet()
+        {
+            var c1 = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null!)
+        {
+            if (!RuntimeHelpers.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var before = @"
+namespace N
+{
+    public sealed class MainViewModel : ViewModel
+    {
+        public string? ↓P { get; set; }
+    }
+}";
+            var after = @"
+namespace N
+{
+    public sealed class MainViewModel : ViewModel
+    {
+        private string? p;
+
+        public string? P { get => this.p; set => Set(ref this.p, value); }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
+        }
+
+        [Test]
+        public static void NullableUseOnPropertyChanged()
+        {
+            var c1 = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public abstract class ViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null!)
+        {
+            if (!RuntimeHelpers.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            var before = @"
+namespace N
+{
+    public sealed class MainViewModel : ViewModel
+    {
+        public string? ↓P { get; set; }
+    }
+}";
+            var after = @"
+namespace N
+{
+    public sealed class MainViewModel : ViewModel
+    {
+        private string? p;
+
+        public string? P
+        {
+            get => this.p;
+            set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify when value changes.");
+        }
     }
 }
