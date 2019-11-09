@@ -15,7 +15,7 @@ namespace N
 {
     public struct S
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.Valid(Analyzer, code);
@@ -42,7 +42,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         public int P { get; private set; }
     }
@@ -164,16 +164,16 @@ namespace N
 
     public class FooControl : Control
     {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            nameof(Bar),
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value),
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        public int Bar
+        public int Value
         {
-            get { return (int) this.GetValue(BarProperty); }
-            set { this.SetValue(BarProperty, value); }
+            get { return (int) this.GetValue(ValueProperty); }
+            set { this.SetValue(ValueProperty, value); }
         }
     }
 }";

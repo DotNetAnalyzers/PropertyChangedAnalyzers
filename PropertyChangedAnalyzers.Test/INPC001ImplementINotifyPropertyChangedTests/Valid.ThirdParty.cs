@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
                 var code = @"
 namespace N
 {
-    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         public int Bar { get; set; }
     }
@@ -29,9 +29,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -44,9 +44,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -59,9 +59,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -74,9 +74,9 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
                 RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.Prism);
