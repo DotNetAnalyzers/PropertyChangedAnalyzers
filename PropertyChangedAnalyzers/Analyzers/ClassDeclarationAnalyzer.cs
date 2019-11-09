@@ -55,8 +55,9 @@ namespace PropertyChangedAnalyzers
             bool IsExcludedType()
             {
                 return type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) ||
-                       type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) ||
                        type.IsAssignableTo(KnownSymbol.Attribute, context.Compilation) ||
+                       type.IsAssignableTo(KnownSymbol.IEnumerator, context.Compilation) ||
+                       type.IsAssignableTo(KnownSymbol.MarkupExtension, context.Compilation) ||
                        type.IsAssignableTo(KnownSymbol.IValueConverter, context.Compilation) ||
                        type.IsAssignableTo(KnownSymbol.IMultiValueConverter, context.Compilation) ||
                        type.IsAssignableTo(KnownSymbol.DataTemplateSelector, context.Compilation) ||

@@ -159,6 +159,87 @@ namespace N
             }
 
             [Test]
+            public static void Enumerator()
+            {
+                var code = @"
+namespace N
+{
+    using System.Collections;
+
+    public class Enumerator : IEnumerator
+    {
+        public bool MoveNext()
+        {
+            switch (Current)
+            {
+                case int i
+                    when i < 5:
+                    Current = i + 1;
+                    return true;
+                case null:
+                    Current = 0;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public void Reset()
+        {
+            Current = null;
+        }
+
+        public object Current { get; private set; }
+    }
+}";
+                RoslynAssert.Valid(Analyzer, code);
+            }
+
+            [Test]
+            public static void GenericEnumerator()
+            {
+                var code = @"
+namespace N
+{
+    using System.Collections;
+    using System.Collections.Generic;
+
+    public class IntEnumerator : IEnumerator<int>
+    {
+        object IEnumerator.Current => Current;
+
+        public int Current { get; private set; }
+
+        public bool MoveNext()
+        {
+            switch (this.Current)
+            {
+                case int i
+                    when i < 5:
+                    this.Current = i + 1;
+                    return true;
+                case -1:
+                    this.Current = 0;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public void Reset()
+        {
+            this.Current = -1;
+        }
+
+        public void Dispose()
+        {
+        }
+    }
+}";
+                RoslynAssert.Valid(Analyzer, code);
+            }
+
+            [Test]
             public static void DependencyProperty()
             {
                 var code = @"
