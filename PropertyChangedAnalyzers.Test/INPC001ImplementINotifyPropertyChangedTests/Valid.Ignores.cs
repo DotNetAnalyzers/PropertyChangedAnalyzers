@@ -334,7 +334,7 @@ namespace N
 
     public class CustomGesture : MouseGesture
     {
-        public int Foo { get; set; }
+        public int P { get; set; }
     }
 }";
 

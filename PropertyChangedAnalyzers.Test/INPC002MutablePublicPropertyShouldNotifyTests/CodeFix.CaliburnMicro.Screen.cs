@@ -18,30 +18,30 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var before = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.NotifyOfPropertyChange();
             }
         }
@@ -57,20 +57,20 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
-        private int bar;
+        private int p;
 
-        public int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
+        public int P { get => this.p; set => this.Set(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
@@ -83,20 +83,20 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
-        public int ↓Bar { get; set; } = 1;
+        public int ↓P { get; set; } = 1;
     }
 }";
 
                 var after = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
-        private int bar = 1;
+        private int p = 1;
 
-        public int Bar { get => this.bar; set => this.Set(ref this.bar, value); }
+        public int P { get => this.p; set => this.Set(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);

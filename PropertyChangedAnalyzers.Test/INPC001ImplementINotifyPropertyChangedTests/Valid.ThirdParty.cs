@@ -16,7 +16,7 @@ namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
