@@ -19,9 +19,9 @@ namespace N
 {
     public class ↓Foo
     {
-        public int Bar1 { get; set; }
+        public int P1 { get; set; }
 
-        public int Bar2 { get; set; }
+        public int P2 { get; set; }
     }
 }";
 
@@ -32,9 +32,9 @@ namespace N
     {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar1 { get; set; }
+        public int P1 { get; set; }
 
-        public int Bar2 { get; set; }
+        public int P2 { get; set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
@@ -43,7 +43,7 @@ namespace N
     }
 }";
 
-            var expectedDiagnostic = ExpectedDiagnostic.WithMessage("The class Foo should notify for:\r\nBar1\r\nBar2");
+            var expectedDiagnostic = ExpectedDiagnostic.WithMessage("The class Foo should notify for:\r\nP1\r\nBar2");
             RoslynAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
@@ -55,7 +55,7 @@ namespace N
 {
     public class ↓Foo
     {
-        public int Bar { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -66,7 +66,7 @@ namespace N
     {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
