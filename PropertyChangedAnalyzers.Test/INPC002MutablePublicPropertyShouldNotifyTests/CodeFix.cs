@@ -786,9 +786,9 @@ namespace N
 {
     public sealed class MainViewModel : ViewModel
     {
-        public string ↓P { get; private set; }
+        public string? ↓P { get; private set; }
 
-        public void M(string p)
+        public void M(string? p)
         {
             this.P = p;
         }
@@ -803,7 +803,7 @@ namespace N
 
         public string? P { get => this.p; private set => Set(ref this.p, value); }
 
-        public void M(string p)
+        public void M(string? p)
         {
             this.P = p;
         }
