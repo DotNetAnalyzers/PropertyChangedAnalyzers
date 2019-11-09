@@ -3156,16 +3156,16 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase("this.bar.BarValue")]
-        [TestCase("bar.BarValue")]
+        [TestCase("this.c1.C1Value")]
+        [TestCase("c1.C1Value")]
         public static void WhenAssigningNestedField(string path)
         {
             var barCode = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int C1Value;
     }
 }";
             var before = @"
@@ -3174,17 +3174,17 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.bar.BarValue;
+        public int Value => this.c1.C1Value;
 
         public void Update(int value)
         {
-            ↓this.bar.BarValue = value;
+            ↓this.c1.C1Value = value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -3192,24 +3192,24 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.bar.BarValue", path);
+}".AssertReplace("this.c1.C1Value", path);
             var after = @"
 namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.bar.BarValue;
+        public int Value => this.c1.C1Value;
 
         public void Update(int value)
         {
-            this.bar.BarValue = value;
+            this.c1.C1Value = value;
             this.OnPropertyChanged(nameof(this.Value));
         }
 
@@ -3218,7 +3218,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.bar.BarValue", path);
+}".AssertReplace("this.c1.C1Value", path);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
@@ -3421,7 +3421,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -3454,7 +3454,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         private int value;
 

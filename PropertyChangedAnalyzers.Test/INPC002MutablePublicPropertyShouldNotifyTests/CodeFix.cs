@@ -133,6 +133,66 @@ namespace N
         }
 
         [Test]
+        public static void AutoPropertyPublicPrivateNeverAssignedIssue158()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int ↓P { get; private set; }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
+        {
+            get => this.p;
+            private set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
         public static void AutoPropertyInternalClass()
         {
             var before = @"
@@ -754,8 +814,10 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify.");
         }
 
-        [Test]
-        public static void PrivateSetMutatedOutsideCtor()
+        [TestCase("this.P = p;")]
+        [TestCase("this.P--;")]
+        [TestCase("this.P+= p;")]
+        public static void PrivateSetMutatedOutsideCtor(string mutation)
         {
             var c1 = @"
 namespace N
@@ -786,29 +848,30 @@ namespace N
 {
     public sealed class MainViewModel : ViewModel
     {
-        public string? ↓P { get; private set; }
+        public int ↓P { get; private set; }
 
-        public void M(string? p)
+        public void M(int p)
         {
             this.P = p;
         }
     }
-}";
+}".AssertReplace("this.P = p;", mutation);
+
             var after = @"
 namespace N
 {
     public sealed class MainViewModel : ViewModel
     {
-        private string? p;
+        private int p;
 
-        public string? P { get => this.p; private set => Set(ref this.p, value); }
+        public int P { get => this.p; private set => Set(ref this.p, value); }
 
-        public void M(string? p)
+        public void M(int p)
         {
             this.P = p;
         }
     }
-}";
+}".AssertReplace("this.P = p;", mutation);
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
         }

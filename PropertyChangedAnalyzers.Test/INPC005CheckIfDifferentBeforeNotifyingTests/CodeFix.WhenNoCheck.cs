@@ -171,17 +171,17 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                this.bar = value;
-                ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.p = value;
+                ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)));
             }
         }
 
@@ -199,22 +199,22 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.p = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)));
             }
         }
 

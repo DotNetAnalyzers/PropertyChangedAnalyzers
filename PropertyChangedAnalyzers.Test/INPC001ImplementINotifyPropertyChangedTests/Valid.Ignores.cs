@@ -44,6 +44,11 @@ namespace N
 {
     public class C
     {
+        public C(int p)
+        {
+            this.P = p;
+        }
+
         public int P { get; private set; }
     }
 }";

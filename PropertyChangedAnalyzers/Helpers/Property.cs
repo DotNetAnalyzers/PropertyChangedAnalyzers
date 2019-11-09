@@ -117,7 +117,7 @@ namespace PropertyChangedAnalyzers
                 declaration.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
                 !declaration.TryGetSetter(out _) ||
                 declaration.ExpressionBody != null ||
-                IsAutoPropertyNeverAssignedOutsideConstructor(declaration))
+                IsAutoPropertyMutatedOnlyInConstructor(declaration))
             {
                 return false;
             }
@@ -139,7 +139,7 @@ namespace PropertyChangedAnalyzers
                 property.ContainingType.IsValueType ||
                 property.ContainingType.DeclaredAccessibility == Accessibility.Private ||
                 property.ContainingType.DeclaredAccessibility == Accessibility.Protected ||
-                IsAutoPropertyNeverAssignedOutsideConstructor(declaration))
+                IsAutoPropertyMutatedOnlyInConstructor(declaration))
             {
                 return false;
             }
@@ -205,7 +205,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static bool IsAutoPropertyNeverAssignedOutsideConstructor(this PropertyDeclarationSyntax property)
+        internal static bool IsAutoPropertyMutatedOnlyInConstructor(this PropertyDeclarationSyntax property)
         {
             if (property is { ExpressionBody: null, Parent: ClassDeclarationSyntax containingClass } &&
                 property.TryGetGetter(out var getter) &&
@@ -225,25 +225,32 @@ namespace PropertyChangedAnalyzers
                 }
 
                 var name = property.Identifier.ValueText;
+                var mutatedInConstructor = false;
                 using (var walker = IdentifierNameWalker.Borrow(containingClass))
                 {
                     foreach (var identifierName in walker.IdentifierNames)
                     {
                         if (identifierName.Identifier.ValueText == name &&
-                            IsAssigned(identifierName) &&
-                            !IsInConstructor(identifierName))
+                            IsMutation(identifierName))
                         {
-                            return false;
+                            if (IsInConstructor(identifierName))
+                            {
+                                mutatedInConstructor = true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                     }
 
-                    return true;
+                    return mutatedInConstructor;
                 }
             }
 
             return false;
 
-            static bool IsAssigned(IdentifierNameSyntax identifierName)
+            static bool IsMutation(IdentifierNameSyntax identifierName)
             {
                 var parent = identifierName.Parent;
                 if (parent is MemberAccessExpressionSyntax memberAccess)

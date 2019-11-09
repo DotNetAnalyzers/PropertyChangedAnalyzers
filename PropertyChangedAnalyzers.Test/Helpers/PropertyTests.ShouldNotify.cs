@@ -17,7 +17,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             [TestCase("Value6", true)]
             [TestCase("Value7", false)]
             [TestCase("Value8", true)]
-            [TestCase("Value9", false)]
+            [TestCase("Value9", true)]
             [TestCase("Value10", true)]
             public static void MiscProperties(string propertyName, bool expected)
             {
@@ -73,7 +73,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             [TestCase("Value6", true)]
             [TestCase("Value7", false)]
             [TestCase("Value8", true)]
-            [TestCase("Value9", false)]
+            [TestCase("Value9", true)]
             [TestCase("Value10", true)]
             public static void MiscPropertiesUnderscoreNames(string propertyName, bool expected)
             {
