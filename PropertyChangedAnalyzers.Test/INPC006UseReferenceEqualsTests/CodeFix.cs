@@ -29,13 +29,13 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
                 new TestCaseData("value.Equals(bar)", "ReferenceEquals(value, bar)"),
                 new TestCaseData("this.bar.Equals(value)", "ReferenceEquals(this.bar, value)"),
                 new TestCaseData("bar.Equals(value)", "ReferenceEquals(bar, value)"),
-                //new TestCaseData("System.Collections.Generic.EqualityComparer<C1>.Default.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
+                //new TestCaseData("System.Collections.Generic.EqualityComparer<ReferenceType>.Default.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
             };
 
-        private const string C1Code = @"
+        private const string ReferenceType = @"
 namespace N
 {
-    public class C1
+    public class ReferenceType
     {
     }
 }";
@@ -50,13 +50,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private C1 bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C1 Bar
+        public ReferenceType Bar
         {
             get { return this.bar; }
             set
@@ -85,13 +85,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private C1 bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C1 Bar
+        public ReferenceType Bar
         {
             get { return this.bar; }
             set
@@ -113,8 +113,8 @@ namespace N
     }
 }".AssertReplace("Equals(value, this.bar)", expressionAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -127,13 +127,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private C1 bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C1 Bar
+        public ReferenceType Bar
         {
             get { return this.bar; }
             set
@@ -160,13 +160,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private C1 bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C1 Bar
+        public ReferenceType Bar
         {
             get { return this.bar; }
             set
@@ -186,7 +186,7 @@ namespace N
     }
 }".AssertReplace("Equals(value, this.bar)", expressionAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
 
         [Test]
@@ -198,7 +198,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel<T> : INotifyPropertyChanged
+    public class C<T> : INotifyPropertyChanged
         where T : class
     {
         private T p;
@@ -232,7 +232,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel<T> : INotifyPropertyChanged
+    public class C<T> : INotifyPropertyChanged
         where T : class
     {
         private T p;
@@ -259,8 +259,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
 
         [Test]
@@ -272,13 +272,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private C1 p;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C1 P
+        public ReferenceType P
         {
             get { return this.p; }
             set
@@ -306,13 +306,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private C1 p;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C1 P
+        public ReferenceType P
         {
             get { return this.p; }
             set
@@ -333,8 +333,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
 
         [Test]
@@ -346,13 +346,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    internal class ViewModel : INotifyPropertyChanged
+    internal class C : INotifyPropertyChanged
     {
-        private C1 p;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal C1 P
+        internal ReferenceType P
         {
             get { return this.p; }
             set
@@ -380,13 +380,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    internal class ViewModel : INotifyPropertyChanged
+    internal class C : INotifyPropertyChanged
     {
-        private C1 p;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal C1 P
+        internal ReferenceType P
         {
             get { return this.p; }
             set
@@ -407,8 +407,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
 
         [Test]
@@ -420,13 +420,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private C1 p;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C1 P
+        public ReferenceType P
         {
             get { return this.p; }
             set
@@ -452,13 +452,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private C1 p;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C1 P
+        public ReferenceType P
         {
             get { return this.p; }
             set
@@ -477,7 +477,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
     }
 }
