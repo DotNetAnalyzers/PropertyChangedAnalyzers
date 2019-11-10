@@ -105,7 +105,7 @@ namespace N.Core
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class CBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public virtual event PropertyChangedEventHandler PropertyChanged;
 
@@ -121,7 +121,7 @@ namespace N.Client
 {
     using System.ComponentModel;
 
-    public class C : N.Core.CBase
+    public class C : N.Core.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }

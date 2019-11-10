@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var code = @"
 namespace N
 {
-    public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private int value;
 
@@ -39,7 +39,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private int value;
 
@@ -64,7 +64,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private int bar;
 

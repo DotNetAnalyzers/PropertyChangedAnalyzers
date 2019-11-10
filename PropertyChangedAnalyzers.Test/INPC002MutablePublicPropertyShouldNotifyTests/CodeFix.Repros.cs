@@ -189,7 +189,7 @@ namespace N
 {
     using MVVM;
 
-    public class Foo : ViewModelBase
+    public class C : ViewModelBase
     {
         private readonly C1 c1 = new C1();
 
@@ -206,7 +206,7 @@ namespace N
 {
     using MVVM;
 
-    public class Foo : ViewModelBase
+    public class C : ViewModelBase
     {
         private readonly C1 c1 = new C1();
 

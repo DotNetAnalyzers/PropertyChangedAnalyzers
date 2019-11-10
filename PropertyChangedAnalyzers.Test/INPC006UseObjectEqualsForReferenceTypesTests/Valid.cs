@@ -370,7 +370,7 @@ namespace N
         [Test]
         public static void IgnoreEqualityComparerEquals()
         {
-            var fooCode = @"
+            var referenceType = @"
 namespace N
 {
     public class ReferenceType
@@ -412,13 +412,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, fooCode, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, referenceType, code);
         }
 
         [Test]
         public static void IgnoreNegatedEqualityComparerEquals()
         {
-            var fooCode = @"
+            var referenceType = @"
 namespace N
 {
     public class ReferenceType
@@ -458,7 +458,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, fooCode, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, referenceType, code);
         }
 
         [TestCase("string")]

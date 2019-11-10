@@ -204,31 +204,31 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private bool foo;
-        private DelegateCommand fooCommand;
+        private bool p2;
+        private DelegateCommand p1;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public DelegateCommand FooCommand
+        public DelegateCommand P1
         {
             get
             {
-                return this.fooCommand ?? (this.fooCommand = new DelegateCommand(param => this.Foo = true));
+                return this.p1 ?? (this.p1= new DelegateCommand(param => this.P2 = true));
             }
         }
 
-        public bool Foo
+        public bool P2
         {
             get
             {
-                return this.foo;
+                return this.p2;
             }
 
             set
             {
-                if (this.foo != value)
+                if (this.p2 != value)
                 {
-                    this.foo = value;
+                    this.p2 = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -570,7 +570,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private double h1;
 

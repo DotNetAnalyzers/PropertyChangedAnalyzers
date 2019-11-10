@@ -254,7 +254,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class CBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -265,7 +265,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class C : CBase
+    public class C : ViewModelBase
     {
         private int value;
 
@@ -444,13 +444,13 @@ namespace N
         [Test]
         public static void RaiseForOtherInstanceOfOtherType()
         {
-            var viewModel = @"
+            var c1 = @"
 namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
+    public class C1 : INotifyPropertyChanged
     {
         private int value;
 
@@ -482,16 +482,16 @@ namespace N
             var code = @"
 namespace N
 {
-    internal class Foo
+    internal class C2
     {
-        public void Bar()
+        public void M()
         {
-            var vm = new C();
+            var vm = new C1();
             vm.OnPropertyChanged(""Value"");
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, viewModel, code);
+            RoslynAssert.Valid(Analyzer, c1, code);
         }
 
         [Test]
@@ -502,7 +502,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class CBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -510,10 +510,10 @@ namespace N
     }
 }";
 
-            var viewModel = @"
+            var c1 = @"
 namespace N
 {
-    public class C : CBase
+    public class C1 : ViewModelBase
     {
         private int value;
 
@@ -541,16 +541,16 @@ namespace N
             var code = @"
 namespace N
 {
-    internal class Foo
+    internal class C2
     {
-        public void Bar()
+        public void M()
         {
-            var vm = new C();
+            var vm = new C1();
             vm.OnPropertyChanged(""Value"");
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, viewModel, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, c1, code);
         }
 
         [Test]
@@ -602,7 +602,7 @@ namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private Dictionary<int, int> map;
 
@@ -629,7 +629,7 @@ namespace N
         }
 
         [Test]
-        public static void WithCBase()
+        public static void WithViewModelBase()
         {
             var viewModelBaseCode = @"
 namespace N.Core
@@ -638,7 +638,7 @@ namespace N.Core
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public abstract class CBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -665,7 +665,7 @@ namespace N.Client
 {
     using N.Core;
 
-    public class C : CBase
+    public class C : ViewModelBase
     {
         private int value;
         private int value2;

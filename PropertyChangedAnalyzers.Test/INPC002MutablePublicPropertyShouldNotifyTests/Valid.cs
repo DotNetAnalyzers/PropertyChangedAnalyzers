@@ -59,30 +59,30 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-    public int Value
-    {
-        get
+        public int Value
         {
-            return this.value;
-        }
-
-        set
-        {
-            if (value == this.value)
+            get
             {
-                return;
+                return this.value;
             }
 
-            this.value = value;
-            this.OnPropertyChanged();
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+            }
         }
-    }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -302,27 +302,27 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private string meh;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Meh
+        public string P
         {
             get
             {
-                return this.meh;
+                return this.p;
             }
 
             set
             {
-                if (value == this.meh)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.meh = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -370,25 +370,25 @@ namespace N.Core
             var code = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
-        private string meh;
+        private string p;
 
-        public string Meh
+        public string P
         {
             get
             {
-                return this.meh;
+                return this.p;
             }
 
             set
             {
-                if (value == this.meh)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.meh = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -425,25 +425,25 @@ namespace N.Core
             var code = @"
 namespace N.Client
 {
-    public class Foo<T> : N.Core.ViewModelBase<T>
+    public class C<T> : N.Core.ViewModelBase<T>
     {
-        private T meh;
+        private T p;
 
-        public T Meh
+        public T P
         {
             get
             {
-                return this.meh;
+                return this.p;
             }
 
             set
             {
-                if (Equals(value, this.meh))
+                if (Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.meh = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -512,7 +512,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int bar;
         public event PropertyChangedEventHandler PropertyChanged;
