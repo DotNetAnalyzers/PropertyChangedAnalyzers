@@ -429,7 +429,7 @@ namespace N.Core
                 var before = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         public int ↓P { get; set; }
     }
@@ -438,7 +438,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private int p;
 
@@ -498,7 +498,7 @@ namespace N.Core
                 var before = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         public int ↓P { get; set; }
     }
@@ -507,7 +507,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private int p;
 
@@ -700,7 +700,7 @@ namespace N
 {
     using MVVM;
 
-    public class Foo : ViewModelBase
+    public class C : ViewModelBase
     {
         private readonly C1 c1 = new C1();
 
@@ -717,7 +717,7 @@ namespace N
 {
     using MVVM;
 
-    public class Foo : ViewModelBase
+    public class C : ViewModelBase
     {
         private readonly C1 c1 = new C1();
 
@@ -750,7 +750,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class FooBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -763,7 +763,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : FooBase
+    public class C : ViewModelBase
     {
         public int ↓Value { get; set; }
     }
@@ -772,7 +772,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : FooBase
+    public class C : ViewModelBase
     {
         private int value;
 

@@ -150,6 +150,7 @@ namespace N
     public class C2 : INotifyPropertyChanged
     {
         private readonly C1 c1 = new C1();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
