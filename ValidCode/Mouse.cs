@@ -18,9 +18,7 @@ namespace ValidCode
                     return p;
                 }
 
-#pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
                 throw new Win32Exception();
-#pragma warning restore CA1065 // Do not raise exceptions in unexpected locations
             }
 
             set

@@ -49,5 +49,12 @@ namespace ValidCode.Wrapping
             this.OnPropertyChanged(propertyName);
             return true;
         }
+
+        private class WithProperties
+        {
+            public int P1 { get; set; }
+
+            public int P2 { get; set; }
+        }
     }
 }
