@@ -85,9 +85,9 @@ namespace N.Core
             var barCode = @"
 namespace N
 {
-    public class Bar
+    public class WithMutableField
     {
-        public int BarValue;
+        public int F;
     }
 }";
 
@@ -147,7 +147,7 @@ namespace N
     public class ViewModel2 : INotifyPropertyChanged
     {
         private int value;
-        private readonly Bar bar = new Bar();
+        private readonly WithMutableField p = new WithMutableField();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -174,17 +174,17 @@ namespace N
             }
         }
 
-        public int BarValue
+        public int P2
         {
-            get => this.bar.BarValue;
+            get => this.p.F;
             set
             {
-                if (value == this.bar.BarValue)
+                if (value == this.p.F)
                 {
                     return;
                 }
 
-                this.bar.BarValue = value;
+                this.p.F = value;
                 this.OnPropertyChanged();
             }
         }
@@ -204,22 +204,22 @@ namespace N
 
     public class C1 : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
 
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
