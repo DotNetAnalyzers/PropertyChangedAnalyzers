@@ -37,12 +37,7 @@ namespace PropertyChangedAnalyzers.Benchmarks
             }
         }
 
-        private static IEnumerable<Summary> RunAll()
-        {
-            var switcher = new BenchmarkSwitcher(typeof(Program).Assembly);
-            var summaries = switcher.Run(new[] { "*" });
-            return summaries;
-        }
+        private static IEnumerable<Summary> RunAll() => new BenchmarkSwitcher(typeof(Program).Assembly).RunAll();
 
         private static IEnumerable<Summary> RunSingle<T>()
         {
@@ -60,7 +55,7 @@ namespace PropertyChangedAnalyzers.Benchmarks
                 return;
             }
 
-            var pattern = $"*{name}-report-github.md";
+            var pattern = $"{summary.Title.Split('-').First()}-report-github.md";
             var sourceFileName = Directory.EnumerateFiles(summary.ResultsDirectoryPath, pattern)
                                           .SingleOrDefault();
             if (sourceFileName == null)
