@@ -730,12 +730,12 @@ namespace N.Core
         }
     }
 }";
-            var foo = @"
+            var c = @"
 namespace N.Client
 {
     using N.Core;
 
-    public class Foo : ViewModelBase
+    public class C : ViewModelBase
     {
         private int value;
 
@@ -749,7 +749,7 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, viewModelBase, foo);
+            RoslynAssert.Valid(Analyzer, viewModelBase, c);
         }
     }
 }

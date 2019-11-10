@@ -258,7 +258,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class Foo : ViewModelBase
+    public class C : ViewModelBase
     {
         private int value;
 

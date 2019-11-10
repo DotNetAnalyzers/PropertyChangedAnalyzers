@@ -126,7 +126,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : ViewModelBase
+    public class C : ViewModelBase
     {
         private int value;
 

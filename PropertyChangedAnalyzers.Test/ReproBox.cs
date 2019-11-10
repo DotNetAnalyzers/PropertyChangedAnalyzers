@@ -40,7 +40,7 @@ namespace PropertyChangedAnalyzers.Test
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
     }
 }";

@@ -309,7 +309,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private string text;
 

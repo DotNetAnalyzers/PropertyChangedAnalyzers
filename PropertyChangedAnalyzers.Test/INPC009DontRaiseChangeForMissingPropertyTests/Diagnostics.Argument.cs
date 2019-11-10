@@ -211,11 +211,11 @@ namespace N
                 }
 
                 this.value = value;
-                this.OnPropertyChanged(↓() => this.Foo());
+                this.OnPropertyChanged(↓() => this.M());
             }
         }
 
-        private int Foo() => 1;
+        private int M() => 1;
 
         protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
         {

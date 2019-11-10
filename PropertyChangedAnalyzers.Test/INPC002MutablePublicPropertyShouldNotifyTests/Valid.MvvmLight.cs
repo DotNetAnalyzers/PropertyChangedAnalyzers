@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var code = @"
 namespace N
 {
-    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private int value;
 
@@ -39,7 +39,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private int value;
 
@@ -64,7 +64,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private int bar;
 

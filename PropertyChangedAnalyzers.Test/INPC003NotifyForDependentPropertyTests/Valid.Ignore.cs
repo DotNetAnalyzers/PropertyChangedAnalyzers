@@ -44,7 +44,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private bool foo;
+        private bool p;
         private DelegateCommand command;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -58,23 +58,23 @@ namespace N
                     return this.command;
                 }
 
-                this.command = new DelegateCommand(param => this.Foo = true);
+                this.command = new DelegateCommand(param => this.P = true);
                 return this.command;
             }
         }
 
-        public bool Foo
+        public bool P
         {
             get
             {
-                return this.foo;
+                return this.p;
             }
 
             set
             {
-                if (this.foo != value)
+                if (this.p != value)
                 {
-                    this.foo = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -124,7 +124,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private bool foo;
+        private bool p;
         private DelegateCommand command;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -135,25 +135,25 @@ namespace N
             {
                 if (this.command == null)
                 {
-                    this.command = new DelegateCommand(param => this.Foo = true);
+                    this.command = new DelegateCommand(param => this.P = true);
                 }
 
                 return this.command;
             }
         }
 
-        public bool Foo
+        public bool P
         {
             get
             {
-                return this.foo;
+                return this.p;
             }
 
             set
             {
-                if (this.foo != value)
+                if (this.p != value)
                 {
-                    this.foo = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }
