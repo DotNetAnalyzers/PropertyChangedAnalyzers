@@ -819,7 +819,7 @@ namespace N
         [TestCase("this.P+= p;")]
         public static void PrivateSetMutatedOutsideCtor(string mutation)
         {
-            var c1 = @"
+            var viewModel = @"
 namespace N
 {
     using System.ComponentModel;
@@ -872,14 +872,14 @@ namespace N
         }
     }
 }".AssertReplace("this.P = p;", mutation);
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModel, before }, after, fixTitle: "Set(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModel, before }, after, fixTitle: "Set(ref field, value)");
         }
 
         [Test]
         public static void NullableUseSet()
         {
-            var c1 = @"
+            var viewModel = @"
 namespace N
 {
     using System.ComponentModel;
@@ -921,14 +921,14 @@ namespace N
         public string? P { get => this.p; set => Set(ref this.p, value); }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Set(ref field, value)");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModel, before }, after, fixTitle: "Set(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModel, before }, after, fixTitle: "Set(ref field, value)");
         }
 
         [Test]
         public static void NullableUseOnPropertyChanged()
         {
-            var c1 = @"
+            var viewModel = @"
 namespace N
 {
     using System.ComponentModel;
@@ -983,8 +983,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify when value changes.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModel, before }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModel, before }, after, fixTitle: "Notify when value changes.");
         }
     }
 }

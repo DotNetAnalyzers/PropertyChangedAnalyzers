@@ -60,7 +60,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int value;
 
@@ -77,7 +77,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int @default;
 
@@ -94,7 +94,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int value;
 
@@ -115,9 +115,9 @@ namespace N
             var barCode = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int C1Value;
     }
 }";
             var code = @"
@@ -126,22 +126,22 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get => this.bar.BarValue;
+            get => this.c1.C1Value;
             set
             {
-                if (value == this.bar.BarValue)
+                if (value == this.c1.C1Value)
                 {
                     return;
                 }
 
-                this.bar.BarValue = value;
+                this.c1.C1Value = value;
                 this.OnPropertyChanged();
             }
         }
@@ -165,7 +165,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private TimeSpan timeSpan;
 
@@ -206,7 +206,7 @@ namespace N
     using System.Drawing;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private Point point;
 
@@ -258,7 +258,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo<T> : IFoo
+    public class C<T> : IC
     {
         private T value;
 
@@ -268,14 +268,14 @@ namespace N
             set => this.value = value;
         }
 
-        object IFoo.Value
+        object IC.Value
         {
             get => this.value;
             set => this.Value = (T)value;
         }
     }
 
-    interface IFoo
+    interface IC
     {
         object Value { get; set; }
     }
@@ -292,7 +292,7 @@ namespace N
 {
     using System.Linq;
 
-    public class Foo
+    public class C
     {
         private int[] ints;
 

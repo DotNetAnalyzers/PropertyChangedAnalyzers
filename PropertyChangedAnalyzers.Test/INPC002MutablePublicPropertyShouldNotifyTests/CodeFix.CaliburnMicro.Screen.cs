@@ -109,7 +109,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         public virtual int ↓P { get; set; }
     }
@@ -118,7 +118,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private int p;
 
@@ -135,7 +135,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         public int ↓P { get; private set; }
 
@@ -149,7 +149,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private int p;
 
@@ -171,9 +171,9 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
-        public Foo(int p)
+        public C(int p)
         {
             P = p;
         }
@@ -185,11 +185,11 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private int _p;
 
-        public Foo(int p)
+        public C(int p)
         {
             P = p;
         }

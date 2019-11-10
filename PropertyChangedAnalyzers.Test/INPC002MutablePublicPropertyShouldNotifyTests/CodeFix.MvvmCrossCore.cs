@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var before = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         public int ↓P { get; set; }
     }
@@ -27,7 +27,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int p;
 
@@ -57,7 +57,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         public int ↓P { get; set; }
     }
@@ -66,7 +66,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int p;
 
@@ -83,7 +83,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    internal class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    internal class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         internal int ↓P { get; set; }
     }
@@ -92,7 +92,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    internal class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    internal class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int p;
 
@@ -109,7 +109,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         public int ↓P { get; set; } = 1;
     }
@@ -118,7 +118,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int p = 1;
 
@@ -135,7 +135,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         public virtual int ↓P { get; set; }
     }
@@ -144,7 +144,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int p;
 
@@ -161,7 +161,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         public int ↓P { get; private set; }
 
@@ -175,7 +175,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int p;
 
@@ -197,9 +197,9 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
-        public Foo(int p)
+        public C(int p)
         {
             P = p;
         }
@@ -211,11 +211,11 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int _p;
 
-        public Foo(int p)
+        public C(int p)
         {
             P = p;
         }
