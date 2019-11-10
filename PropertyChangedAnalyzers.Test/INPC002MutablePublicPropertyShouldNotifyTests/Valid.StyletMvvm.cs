@@ -64,7 +64,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int bar;
 

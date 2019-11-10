@@ -42,7 +42,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private bool foo;
         private DelegateCommand fooCommand;
@@ -122,7 +122,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private bool foo;
         private DelegateCommand fooCommand;
@@ -202,7 +202,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private bool p2;
         private DelegateCommand p1;
@@ -277,7 +277,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private bool foo;
         private DelegateCommand fooCommand;
@@ -320,11 +320,11 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 
-        public ViewModel(string name)
+        public C(string name)
         {
             this.name = name;
         }
@@ -352,7 +352,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 
@@ -360,9 +360,9 @@ namespace N
 
         public string Name => this.name;
 
-        public ViewModel Create(string name)
+        public C Create(string name)
         {
-            return new ViewModel { name = name };
+            return new C { name = name };
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -384,7 +384,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -415,7 +415,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
         private int getCount;
@@ -450,7 +450,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 
@@ -488,7 +488,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 
@@ -516,7 +516,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class ViewModel : INotifyPropertyChanged, IDisposable
+    public sealed class C : INotifyPropertyChanged, IDisposable
     {
         private string name;
         private bool disposed;
