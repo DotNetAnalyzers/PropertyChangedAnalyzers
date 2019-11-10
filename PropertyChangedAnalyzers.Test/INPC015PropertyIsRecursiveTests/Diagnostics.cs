@@ -15,9 +15,9 @@ namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public int Bar => ↓this.Bar;
+        public int P => ↓this.P;
     }
 }";
 
@@ -30,11 +30,11 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public int Bar
+        public int P
         {
-            get { return ↓this.Bar; }
+            get { return ↓this.P; }
         }
     }
 }";
@@ -48,11 +48,11 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public int Bar
+        public int P
         {
-            get => ↓this.Bar;
+            get => ↓this.P;
         }
     }
 }";
@@ -66,14 +66,14 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
-            set { ↓this.Bar = value; }
+            get { return this.p; }
+            set { ↓this.P = value; }
         }
     }
 }";
@@ -87,14 +87,14 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
-            set => ↓this.Bar = value;
+            get => this.p;
+            set => ↓this.P = value;
         }
     }
 }";

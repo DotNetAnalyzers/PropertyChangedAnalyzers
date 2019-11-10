@@ -111,7 +111,7 @@ namespace N
     using System.Reflection;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 

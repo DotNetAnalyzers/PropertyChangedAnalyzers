@@ -19,7 +19,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -63,7 +63,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo
+    public class C
     {
         private int value;
 
@@ -104,12 +104,12 @@ namespace N
             var code = @"
 namespace N
 {
-    public class A
+    public class C1
     {
         public virtual int Value { get; set; }
     }
 
-    public class B : A
+    public class C2 : C1
     {
         public int Value
         {
@@ -131,7 +131,7 @@ namespace N
     using System.Collections;
     using System.Collections.Generic;
 
-    public class Foo : IReadOnlyList<int>
+    public class C : IReadOnlyList<int>
     {
         private readonly List<int> ints;
         
@@ -162,9 +162,7 @@ namespace N
             var withProperties = @"
 namespace ValidCode.Wrapping
 {
-#pragma warning disable INPC001 // The class has mutable properties and should implement INotifyPropertyChanged.
     public class WithProperties
-#pragma warning restore INPC001 // The class has mutable properties and should implement INotifyPropertyChanged.
     {
         public int P1 { get; set; }
         public int P2 { get; set; }

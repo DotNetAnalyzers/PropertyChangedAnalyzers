@@ -18,7 +18,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int f1;
         private int f2;
@@ -64,7 +64,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int f1;
         private int f2;
@@ -108,7 +108,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    internal class ViewModel : INotifyPropertyChanged
+    internal class C : INotifyPropertyChanged
     {
         private int otherValue;
         private int value;
@@ -147,12 +147,12 @@ namespace N
         [Test]
         public static void DifferentNestedFields()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int C1Value;
         public int OtherValue;
     }
 }";
@@ -162,22 +162,22 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int ↓Value
         {
-            get => this.bar.OtherValue;
+            get => this.c1.OtherValue;
             set
             {
-                if (value == this.bar.BarValue)
+                if (value == this.c1.C1Value)
                 {
                     return;
                 }
 
-                this.bar.BarValue = value;
+                this.c1.C1Value = value;
                 this.OnPropertyChanged();
             }
         }
@@ -188,16 +188,16 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
         }
 
         [Test]
         public static void DifferentNestedProperties()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
         public int P1 { get; set; }
         public int P2 { get; set; }
@@ -209,22 +209,22 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int ↓Value
         {
-            get => this.bar.P1;
+            get => this.c1.P1;
             set
             {
-                if (value == this.bar.P2)
+                if (value == this.c1.P2)
                 {
                     return;
                 }
 
-                this.bar.P2 = value;
+                this.c1.P2 = value;
                 this.OnPropertyChanged();
             }
         }
@@ -235,18 +235,18 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
         }
 
         [Test]
         public static void WhenSettingNestedFieldRootLevel()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int C1Value;
     }
 }";
             var code = @"
@@ -255,23 +255,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar1 = new Bar();
-        private readonly Bar bar2 = new Bar();
+        private readonly C1 c11 = new C1();
+        private readonly C1 c12 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int ↓Value
         {
-            get => this.bar1.BarValue;
+            get => this.c11.C1Value;
             set
             {
-                if (value == this.bar2.BarValue)
+                if (value == this.c12.C1Value)
                 {
                     return;
                 }
 
-                this.bar2.BarValue = value;
+                this.c12.C1Value = value;
                 this.OnPropertyChanged();
             }
         }
@@ -282,7 +282,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, barCode, code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
         }
     }
 }

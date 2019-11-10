@@ -18,9 +18,9 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public void Meh(object value)
+        public void M(object value)
         {
             if (value == null)
             {
@@ -35,9 +35,9 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public void Meh(object value)
+        public void M(object value)
         {
             if (value == null)
             {
@@ -57,9 +57,9 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public void Meh(StringComparison value)
+        public void M(StringComparison value)
         {
             switch (value)
             {
@@ -75,9 +75,9 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public void Meh(StringComparison value)
+        public void M(StringComparison value)
         {
             switch (value)
             {
@@ -99,7 +99,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -140,7 +140,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -186,7 +186,7 @@ namespace N
     using System;
     using System.ComponentModel;
 
-    public static class Foo
+    public static class C
     {
         private static string name;
 
@@ -219,7 +219,7 @@ namespace N
     using System;
     using System.ComponentModel;
 
-    public static class Foo
+    public static class C
     {
         private static string name;
 
@@ -257,7 +257,7 @@ namespace N
     using System;
     using System.ComponentModel;
 
-    public class Foo
+    public class C
     {
         private static string name;
         private int value;
@@ -303,7 +303,7 @@ namespace N
     using System;
     using System.ComponentModel;
 
-    public class Foo
+    public class C
     {
         private static string name;
         private int value;
@@ -351,16 +351,16 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         public int Value { get; set; }
 
-        public static void Bar()
+        public static void M1()
         {
-            Bar(↓""Value"");
+            M1(↓""Value"");
         }
 
-        public static void Bar(string meh)
+        public static void M1(string s)
         {
         }
     }
@@ -369,16 +369,16 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         public int Value { get; set; }
 
-        public static void Bar()
+        public static void M1()
         {
-            Bar(nameof(Value));
+            M1(nameof(Value));
         }
 
-        public static void Bar(string meh)
+        public static void M1(string s)
         {
         }
     }
@@ -392,26 +392,26 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public static readonly string Name = Bar(↓""Value"");
+        public static readonly string Name = M(↓""Value"");
 
         public int Value { get; set; }
 
-        public static string Bar(string meh) => meh;
+        public static string M(string s) => s;
     }
 }";
 
             var after = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
-        public static readonly string Name = Bar(nameof(Value));
+        public static readonly string Name = M(nameof(Value));
 
         public int Value { get; set; }
 
-        public static string Bar(string meh) => meh;
+        public static string M(string s) => s;
     }
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
@@ -423,7 +423,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         public readonly string Name = string.Format(↓""Value"");
 
@@ -440,7 +440,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         public readonly string Name = string.Format(nameof(Value));
 
@@ -465,7 +465,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int _value;
 
@@ -506,7 +506,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int _value;
 
@@ -554,16 +554,16 @@ namespace N
 
     public class FooControl : Control
     {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            ↓""Bar"",
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+            ↓""Number"",
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        public int Bar
+        public int Number
         {
-            get { return (int)GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
+            get { return (int)GetValue(NumberProperty); }
+            set { SetValue(NumberProperty, value); }
         }
     }
 }";
@@ -576,16 +576,16 @@ namespace N
 
     public class FooControl : Control
     {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            nameof(Bar),
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+            nameof(Number),
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        public int Bar
+        public int Number
         {
-            get { return (int)GetValue(BarProperty); }
-            set { SetValue(BarProperty, value); }
+            get { return (int)GetValue(NumberProperty); }
+            set { SetValue(NumberProperty, value); }
         }
     }
 }";
