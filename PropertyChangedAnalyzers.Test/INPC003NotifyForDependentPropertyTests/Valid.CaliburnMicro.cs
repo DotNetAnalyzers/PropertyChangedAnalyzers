@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
                 var code = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -38,7 +38,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -58,7 +58,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -86,7 +86,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private int name;
 

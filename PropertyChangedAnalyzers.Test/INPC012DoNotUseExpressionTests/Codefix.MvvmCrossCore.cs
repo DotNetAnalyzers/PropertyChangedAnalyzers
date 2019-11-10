@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
                 var before = @"
 namespace N
 {
-    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -41,7 +41,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -69,7 +69,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    internal class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    internal class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -92,7 +92,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    internal class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    internal class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 

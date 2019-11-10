@@ -161,7 +161,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : N.ViewModelBase
+    public class C : N.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }
@@ -200,7 +200,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : N.ViewModelBase
+    public class C : N.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }

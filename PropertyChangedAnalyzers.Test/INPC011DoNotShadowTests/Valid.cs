@@ -17,7 +17,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -77,7 +77,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }

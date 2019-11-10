@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
                 var code = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -38,7 +38,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -58,7 +58,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -86,7 +86,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private int name;
 

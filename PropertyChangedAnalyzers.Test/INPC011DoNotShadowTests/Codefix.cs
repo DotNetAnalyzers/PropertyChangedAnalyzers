@@ -36,7 +36,7 @@ namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -47,7 +47,7 @@ namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
     }
 }";

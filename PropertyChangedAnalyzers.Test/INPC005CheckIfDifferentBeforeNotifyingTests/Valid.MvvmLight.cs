@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
                 var code = @"
 namespace N
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private string name;
 
@@ -46,7 +46,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private string name;
 
@@ -74,7 +74,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private string name;
 
@@ -105,7 +105,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private string name;
 
@@ -136,7 +136,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private string firstName;
         private string lastName;
@@ -193,7 +193,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private string name;
 

@@ -18,13 +18,13 @@ namespace N
     using System.Runtime.Serialization;
 
     [DataContract]
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             this.value = value;
         }
@@ -64,11 +64,11 @@ namespace N
     using System.Runtime.Serialization;
 
     [DataContract]
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             this.Value = value;
         }
@@ -94,13 +94,13 @@ namespace N
     using System;
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             this.Value = value;
         }
@@ -145,13 +145,13 @@ namespace N
     using System.ComponentModel;
     using System.Diagnostics;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             this.Value = value;
         }
@@ -200,14 +200,14 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
         private int count;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             this.Value = value;
         }
@@ -246,13 +246,13 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(string value)
+        public C(string value)
         {
             this.PropertyChanged += (_, __) => this.Value = value;
         }
@@ -290,13 +290,13 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(string value)
+        public C(string value)
         {
             void OnChanged(object _, PropertyChangedEventArgs __) => this.Value = value;
 

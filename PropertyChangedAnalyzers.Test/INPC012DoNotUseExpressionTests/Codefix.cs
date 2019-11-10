@@ -22,7 +22,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -67,7 +67,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -118,7 +118,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -166,7 +166,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -220,7 +220,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int _value;
 
@@ -268,7 +268,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int _value;
 
@@ -322,7 +322,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    internal class ViewModel : INotifyPropertyChanged
+    internal class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -367,7 +367,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    internal class ViewModel : INotifyPropertyChanged
+    internal class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -418,7 +418,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 
@@ -466,7 +466,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 
@@ -519,7 +519,7 @@ namespace N
     using System.ComponentModel;
     using System.Linq.Expressions;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -563,7 +563,7 @@ namespace N
     using System.ComponentModel;
     using System.Linq.Expressions;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 

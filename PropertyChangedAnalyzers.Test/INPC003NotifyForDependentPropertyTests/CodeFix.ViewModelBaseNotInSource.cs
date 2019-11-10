@@ -53,7 +53,7 @@ namespace N.Core
                 var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string firstName;
         private string lastName;
@@ -104,7 +104,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string firstName;
         private string lastName;
@@ -162,7 +162,7 @@ namespace N.Client
                 var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -189,7 +189,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -223,7 +223,7 @@ namespace N.Client
                 var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -248,7 +248,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -280,7 +280,7 @@ namespace N.Client
                 var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -297,7 +297,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -326,7 +326,7 @@ namespace N.Client
                 var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -346,7 +346,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -378,7 +378,7 @@ namespace N.Client
                 var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -395,7 +395,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -424,7 +424,7 @@ namespace N.Client
                 var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -446,7 +446,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -475,7 +475,7 @@ namespace N.Client
                 var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -500,7 +500,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -532,7 +532,7 @@ namespace N.Client
                 var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -555,7 +555,7 @@ namespace N.Client
                 var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 

@@ -608,9 +608,9 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value1 => map?[1] ?? 0;
+        public int P1 => map?[1] ?? 0;
 
-        public int Value2 => map?[2] ?? 0;
+        public int P2 => map?[2] ?? 0;
 
         public void Update(Dictionary<int, int> newMap)
         {
@@ -631,7 +631,7 @@ namespace N
         [Test]
         public static void WithViewModelBase()
         {
-            var viewModelBaseCode = @"
+            var viewModelBase = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -706,7 +706,7 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, viewModelBaseCode, viewModelCode);
+            RoslynAssert.Valid(Analyzer, viewModelBase, viewModelCode);
         }
 
         [Test]

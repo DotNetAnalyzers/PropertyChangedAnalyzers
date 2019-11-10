@@ -50,7 +50,7 @@ namespace N.Core
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -100,7 +100,7 @@ namespace N.Core
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -120,7 +120,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -140,7 +140,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -168,7 +168,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -196,7 +196,7 @@ namespace N.Client
                 var code = @"
 namespace N
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -218,7 +218,7 @@ namespace N
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private int name;
 

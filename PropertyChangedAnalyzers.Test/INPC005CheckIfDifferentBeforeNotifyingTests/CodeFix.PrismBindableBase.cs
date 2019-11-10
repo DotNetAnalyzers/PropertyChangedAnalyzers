@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
                 var before = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -37,7 +37,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -67,7 +67,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -86,7 +86,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -107,7 +107,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -126,7 +126,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -147,7 +147,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -168,7 +168,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -197,7 +197,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    internal class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    internal class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -218,7 +218,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    internal class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    internal class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -247,7 +247,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -271,7 +271,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -300,7 +300,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -327,7 +327,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -359,7 +359,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 
@@ -383,7 +383,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Microsoft.Practices.Prism.Mvvm.BindableBase
+    public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
         private string name;
 

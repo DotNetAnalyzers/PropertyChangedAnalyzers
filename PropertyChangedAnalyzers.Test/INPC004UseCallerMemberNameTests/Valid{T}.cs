@@ -63,7 +63,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
@@ -103,7 +103,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
@@ -139,7 +139,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private static readonly PropertyChangedEventArgs PPropertyChangedArgs = new PropertyChangedEventArgs(nameof(P));
         private int p;
@@ -173,7 +173,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string text;
 
@@ -222,7 +222,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -254,7 +254,7 @@ namespace N
 
         public void RaiseForChild(string propertyName)
         {
-            var vm = new ViewModel();
+            var vm = new C();
             vm.OnPropertyChanged(propertyName);
         }
     }
@@ -271,7 +271,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C1 : INotifyPropertyChanged
     {
         private int value;
 
@@ -310,7 +310,7 @@ namespace N
     {
         public void RaiseForChild(string propertyName)
         {
-            var vm = new ViewModel();
+            var vm = new C1();
             vm.OnPropertyChanged(propertyName);
         }
     }

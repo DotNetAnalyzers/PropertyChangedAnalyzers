@@ -47,11 +47,11 @@ namespace N.Core
             var before = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int value;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             ↓this.Value = value;
         }
@@ -70,11 +70,11 @@ namespace N
             var after = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int value;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             this.value = value;
         }
@@ -98,11 +98,11 @@ namespace N
             var before = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int value;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             ↓this.Value = value;
         }
@@ -118,11 +118,11 @@ namespace N
             var after = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int value;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             this.value = value;
         }
@@ -143,11 +143,11 @@ namespace N
             var before = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int @default;
 
-        public ViewModel(int @default)
+        public C(int @default)
         {
             ↓this.Value = @default;
         }
@@ -163,11 +163,11 @@ namespace N
             var after = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int @default;
 
-        public ViewModel(int @default)
+        public C(int @default)
         {
             this.@default = @default;
         }
@@ -188,11 +188,11 @@ namespace N
             var before = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int f;
 
-        public ViewModel(int f)
+        public C(int f)
         {
             ↓this.Value = f;
         }
@@ -208,11 +208,11 @@ namespace N
             var after = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int f;
 
-        public ViewModel(int f)
+        public C(int f)
         {
             this.f = f;
         }
@@ -233,11 +233,11 @@ namespace N
             var before = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int f;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             var f = 1;
             ↓this.Value = value;
@@ -254,11 +254,11 @@ namespace N
             var after = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int f;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             var f = 1;
             this.f = value;
@@ -280,11 +280,11 @@ namespace N
             var before = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int _value;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             ↓Value = value;
         }
@@ -303,11 +303,11 @@ namespace N
             var after = @"
 namespace N
 {
-    public class ViewModel
+    public class C
     {
         private int _value;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             _value = value;
         }
@@ -342,13 +342,13 @@ namespace N
     using System.Runtime.Serialization;
 
     [DataContract]
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(string value)
+        public C(string value)
         {
             ↓this.Value = value;
         }
@@ -383,13 +383,13 @@ namespace N
     using System.Runtime.Serialization;
 
     [DataContract]
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(string value)
+        public C(string value)
         {
             this.value = value;
         }

@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
                 var before = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int name;
 
@@ -41,7 +41,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int name;
 
@@ -69,7 +69,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    internal class ViewModel : Stylet.PropertyChangedBase
+    internal class C : Stylet.PropertyChangedBase
     {
         private int name;
 
@@ -92,7 +92,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    internal class ViewModel : Stylet.PropertyChangedBase
+    internal class C : Stylet.PropertyChangedBase
     {
         private int name;
 

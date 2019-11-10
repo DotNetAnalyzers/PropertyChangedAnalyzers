@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-public class ViewModel : INotifyPropertyChanged
+public class C : INotifyPropertyChanged
 {
     private string firstName;
     private string lastName;
@@ -67,7 +67,7 @@ public class ViewModel : INotifyPropertyChanged
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-public class ViewModel : INotifyPropertyChanged
+public class C : INotifyPropertyChanged
 {
     private string firstName;
     private string lastName;

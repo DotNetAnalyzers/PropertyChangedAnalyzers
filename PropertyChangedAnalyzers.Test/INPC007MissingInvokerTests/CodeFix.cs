@@ -19,7 +19,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -30,7 +30,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -51,7 +51,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -62,7 +62,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public sealed class ViewModel : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -79,7 +79,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -91,7 +91,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -112,7 +112,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public sealed class ViewModel : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
 
@@ -125,7 +125,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public sealed class ViewModel : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -197,7 +197,7 @@ namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         ↓public override event PropertyChangedEventHandler PropertyChanged;
     }
@@ -208,7 +208,7 @@ namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
 
@@ -405,7 +405,7 @@ namespace N.Client
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 
@@ -438,7 +438,7 @@ namespace N.Client
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 

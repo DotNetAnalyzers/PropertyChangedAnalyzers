@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
                 var before = @"
 namespace N
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private int name;
 
@@ -41,7 +41,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private int name;
 
@@ -69,7 +69,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    internal class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    internal class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private int name;
 
@@ -92,7 +92,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    internal class ViewModel : GalaSoft.MvvmLight.ViewModelBase
+    internal class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private int name;
 

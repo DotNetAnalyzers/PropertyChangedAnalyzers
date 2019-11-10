@@ -18,7 +18,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value1;
         private int value2;
@@ -79,7 +79,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value1;
         private int value2;
@@ -180,7 +180,7 @@ namespace N.Core
             var before = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -203,7 +203,7 @@ namespace N.Client
             var after = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
