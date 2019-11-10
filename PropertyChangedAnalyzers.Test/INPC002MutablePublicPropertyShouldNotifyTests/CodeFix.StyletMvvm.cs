@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var before = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         public int ↓P { get; set; }
     }
@@ -27,7 +27,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int p;
 
@@ -57,7 +57,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         public int ↓P { get; set; }
     }
@@ -66,7 +66,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int p;
 
@@ -109,7 +109,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         public int ↓P { get; set; } = 1;
     }
@@ -118,7 +118,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int p = 1;
 
@@ -135,7 +135,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         public virtual int ↓P { get; set; }
     }
@@ -144,7 +144,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int p;
 
@@ -161,7 +161,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         public int ↓P { get; private set; }
 
@@ -175,7 +175,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int p;
 
@@ -197,9 +197,9 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
-        public Foo(int p)
+        public C(int p)
         {
             P = p;
         }
@@ -211,11 +211,11 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int _p;
 
-        public Foo(int p)
+        public C(int p)
         {
             P = p;
         }
