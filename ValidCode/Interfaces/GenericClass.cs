@@ -3,18 +3,18 @@ namespace ValidCode.Interfaces
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class WithStringAutoProperty : IValue, INotifyPropertyChanged
+    public class GenericClass<T> : IValue, INotifyPropertyChanged
     {
-        private string value;
+        private T value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Value
+        public T Value
         {
             get => this.value;
             set
             {
-                if (value == this.value)
+                if (System.Collections.Generic.EqualityComparer<T>.Default.Equals(value, this.value))
                 {
                     return;
                 }
@@ -26,8 +26,8 @@ namespace ValidCode.Interfaces
 
         object IValue.Value
         {
-            get => this.Value;
-            set => this.Value = (string)value;
+            get => this.value;
+            set => this.Value = (T)value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
