@@ -51,9 +51,9 @@ namespace N
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""""")]
-        [TestCase(@"""Bar""")]
-        [TestCase(@"nameof(Bar)")]
-        [TestCase(@"nameof(this.Bar)")]
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
         public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
         {
             var code = @"
@@ -62,20 +62,20 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                if (value == this.p) return;
+                this.p = value;
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)));
             }
         }
 
@@ -84,7 +84,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}".AssertReplace(@"nameof(Bar)", propertyName);
+}".AssertReplace(@"nameof(P)", propertyName);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -128,9 +128,9 @@ namespace N
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""""")]
-        [TestCase(@"""Bar""")]
-        [TestCase(@"nameof(Bar)")]
-        [TestCase(@"nameof(this.Bar)")]
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
         public static void Invokes(string propertyName)
         {
             var code = @"
@@ -138,27 +138,27 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar))));
+                this.p = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.P))));
             }
         }
     }
-}".AssertReplace(@"nameof(this.Bar))", propertyName);
+}".AssertReplace(@"nameof(this.P))", propertyName);
 
             RoslynAssert.Valid(Analyzer, code);
         }

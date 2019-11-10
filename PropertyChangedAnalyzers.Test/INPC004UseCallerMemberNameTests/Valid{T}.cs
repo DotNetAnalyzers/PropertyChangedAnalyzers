@@ -14,9 +14,9 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""""")]
-        [TestCase(@"""Bar""")]
-        [TestCase(@"nameof(Bar)")]
-        [TestCase(@"nameof(this.Bar)")]
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
         public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
         {
             var code = @"
@@ -25,21 +25,21 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
+                if (value == this.p) return;
+                this.p = value;
 #pragma warning disable INPC013
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)));
 #pragma warning restore INPC013
             }
         }
@@ -49,7 +49,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}".AssertReplace(@"nameof(Bar)", propertyName);
+}".AssertReplace(@"nameof(P)", propertyName);
 
             RoslynAssert.Valid(Analyzer, code);
         }

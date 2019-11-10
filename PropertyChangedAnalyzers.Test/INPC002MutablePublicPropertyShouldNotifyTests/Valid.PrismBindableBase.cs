@@ -56,9 +56,9 @@ namespace N
 
             [TestCase("null")]
             [TestCase("string.Empty")]
-            [TestCase(@"""Bar""")]
-            [TestCase(@"nameof(Bar)")]
-            [TestCase(@"nameof(this.Bar)")]
+            [TestCase(@"""P""")]
+            [TestCase(@"nameof(P)")]
+            [TestCase(@"nameof(this.P)")]
             public static void OnPropertyChanged(string propertyName)
             {
                 var code = @"
@@ -66,20 +66,20 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
-                this.OnPropertyChanged(nameof(this.Bar));
+                if (value == this.p) return;
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
     }
-}".AssertReplace(@"nameof(this.Bar)", propertyName);
+}".AssertReplace(@"nameof(this.P)", propertyName);
 
                 RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, metadataReferences: MetadataReferences);
             }
