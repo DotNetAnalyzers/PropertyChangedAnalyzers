@@ -230,9 +230,9 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public Foo(int value )
+        public C(int value )
         {
             this.Value = value;
         }
@@ -249,9 +249,9 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public Foo(int value )
+        public C(int value )
         {
             this.Value = value;
         }
@@ -280,9 +280,9 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public Foo(int value )
+        public C(int value )
         {
             this.Value = value;
         }
@@ -299,9 +299,9 @@ namespace N
 {
     using System.ComponentModel;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
-        public Foo(int value )
+        public C(int value )
         {
             this.Value = value;
         }
@@ -320,13 +320,13 @@ namespace N
         [Test]
         public static void UsesCorrectStyleIssue107()
         {
-            var fooCode = @"
+            var c1 = @"
 namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C1 : INotifyPropertyChanged
     {
         private int value;
 
@@ -360,13 +360,13 @@ namespace N
     using System.Collections.ObjectModel;
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<Foo> Items { get; } = new ObservableCollection<Foo>
+        public ObservableCollection<C1> Items { get; } = new ObservableCollection<C1>
         {
-            new Foo { Value = 2 },
+            new C1 { Value = 2 },
         };
     }
 }";
@@ -376,13 +376,13 @@ namespace N
     using System.Collections.ObjectModel;
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<Foo> Items { get; } = new ObservableCollection<Foo>
+        public ObservableCollection<C1> Items { get; } = new ObservableCollection<C1>
         {
-            new Foo { Value = 2 },
+            new C1 { Value = 2 },
         };
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -392,7 +392,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooCode, before }, after, fixTitle: "Add OnPropertyChanged()");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Add OnPropertyChanged()");
         }
 
         [Test]

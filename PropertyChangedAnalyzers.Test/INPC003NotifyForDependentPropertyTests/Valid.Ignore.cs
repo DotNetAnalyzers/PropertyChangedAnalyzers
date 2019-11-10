@@ -45,21 +45,21 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private bool foo;
-        private DelegateCommand fooCommand;
+        private DelegateCommand command;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public DelegateCommand FooCommand
+        public DelegateCommand Command
         {
             get
             {
-                if (this.fooCommand != null)
+                if (this.command != null)
                 {
-                    return this.fooCommand;
+                    return this.command;
                 }
 
-                this.fooCommand = new DelegateCommand(param => this.Foo = true);
-                return this.fooCommand;
+                this.command = new DelegateCommand(param => this.Foo = true);
+                return this.command;
             }
         }
 
@@ -125,20 +125,20 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private bool foo;
-        private DelegateCommand fooCommand;
+        private DelegateCommand command;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public DelegateCommand FooCommand
+        public DelegateCommand Command
         {
             get
             {
-                if (this.fooCommand == null)
+                if (this.command == null)
                 {
-                    this.fooCommand = new DelegateCommand(param => this.Foo = true);
+                    this.command = new DelegateCommand(param => this.Foo = true);
                 }
 
-                return this.fooCommand;
+                return this.command;
             }
         }
 
@@ -279,25 +279,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private bool foo;
-        private DelegateCommand fooCommand;
+        private bool p;
+        private DelegateCommand pCommand;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public DelegateCommand FooCommand => this.fooCommand ?? (this.fooCommand = new DelegateCommand(param => this.Foo = true));
+        public DelegateCommand PCommand => this.pCommand ?? (this.pCommand = new DelegateCommand(param => this.P = true));
 
-        public bool Foo
+        public bool P
         {
             get
             {
-                return this.foo;
+                return this.p;
             }
 
             set
             {
-                if (this.foo != value)
+                if (this.p != value)
                 {
-                    this.foo = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }

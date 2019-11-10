@@ -43,7 +43,7 @@ namespace N.Core
                 var code = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private int value;
 
@@ -64,7 +64,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private int value;
 
@@ -85,7 +85,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private int value;
 

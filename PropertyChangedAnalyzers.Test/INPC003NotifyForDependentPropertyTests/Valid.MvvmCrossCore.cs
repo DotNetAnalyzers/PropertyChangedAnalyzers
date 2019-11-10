@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
                 var code = @"
 namespace N
 {
-    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
@@ -38,7 +38,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
@@ -58,7 +58,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private string name;
 
@@ -86,7 +86,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         private int name;
 
@@ -114,7 +114,7 @@ namespace N
                 var fooBaseCode = @"
 namespace N
 {
-    public abstract class FooBase : MvvmCross.ViewModels.MvxNotifyPropertyChanged
+    public abstract class ViewModelBase : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
         protected override bool SetProperty<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
@@ -126,7 +126,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : FooBase
+    public class C : ViewModelBase
     {
         private int value;
 

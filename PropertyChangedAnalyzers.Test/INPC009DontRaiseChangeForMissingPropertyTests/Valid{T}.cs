@@ -302,7 +302,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : Collection<int>, INotifyPropertyChanged
+    public class C : Collection<int>, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

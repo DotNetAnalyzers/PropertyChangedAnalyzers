@@ -50,7 +50,7 @@ namespace N.Core
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase<int>
+    public class C : N.Core.ViewModelBase<int>
     {
         private string name;
 
@@ -67,7 +67,7 @@ namespace N.Client
             [Test]
             public static void SetPropertyWhenNullCoalescingInTrySet()
             {
-                var viewModelBaseCode = @"
+                var viewModelBase = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -100,7 +100,7 @@ namespace N.Core
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
@@ -111,7 +111,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, viewModelBaseCode, code);
+                RoslynAssert.Valid(Analyzer, viewModelBase, code);
             }
 
             [Test]
@@ -120,7 +120,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase<int>
+    public class C : N.Core.ViewModelBase<int>
     {
         private string name;
 
@@ -140,7 +140,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase<int>
+    public class C : N.Core.ViewModelBase<int>
     {
         private string name;
 
@@ -168,7 +168,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase<int>
+    public class C : N.Core.ViewModelBase<int>
     {
         private string name;
 
@@ -196,7 +196,7 @@ namespace N.Client
                 var code = @"
 namespace N
 {
-    public class ViewModel : N.Core.ViewModelBase<int>
+    public class C : N.Core.ViewModelBase<int>
     {
         private string name;
 
@@ -218,7 +218,7 @@ namespace N
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase<int>
+    public class C : N.Core.ViewModelBase<int>
     {
         private int name;
 
@@ -243,10 +243,10 @@ namespace N.Client
             [Test]
             public static void WhenOverriddenSet()
             {
-                var fooBaseCode = @"
+                var viewModelBase = @"
 namespace N.Client
 {
-    public abstract class FooBase : N.Core.ViewModelBase<int>
+    public abstract class ViewModelBase : N.Core.ViewModelBase<int>
     {
         protected override bool TrySet<T>(ref T oldValue, T newValue, string propertyName = null)
         {
@@ -258,7 +258,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class Foo : FooBase
+    public class C : ViewModelBase
     {
         private int value;
 
@@ -270,7 +270,7 @@ namespace N.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, ViewModelBaseOfTFoo, fooBaseCode, code);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseOfTFoo, viewModelBase, code);
             }
         }
     }
