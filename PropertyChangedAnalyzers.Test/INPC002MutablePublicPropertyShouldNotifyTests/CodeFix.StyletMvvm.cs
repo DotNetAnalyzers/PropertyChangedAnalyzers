@@ -233,7 +233,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private string name;
 
@@ -248,7 +248,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private string name;
 
@@ -269,7 +269,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private string name;
 
@@ -284,7 +284,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private string name;
 
@@ -305,7 +305,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private string _name;
 
@@ -320,7 +320,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private string _name;
 
@@ -341,7 +341,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private string _name;
 
@@ -356,7 +356,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private string _name;
 

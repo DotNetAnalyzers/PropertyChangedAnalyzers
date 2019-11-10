@@ -344,9 +344,9 @@ namespace N
 {
     using System;
 
-    public class ↓Foo
+    public class ↓C
     {
-        public Foo()
+        public C()
         {
             Bar += (_, __) => this.Value = 1;
         }
@@ -362,9 +362,9 @@ namespace N
 {
     using System;
 
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        public Foo()
+        public C()
         {
             Bar += (_, __) => this.Value = 1;
         }

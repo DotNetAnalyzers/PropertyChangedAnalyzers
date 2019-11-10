@@ -326,9 +326,9 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public Foo()
+        public C()
         {
             Bar += (_, __) => this.Value = 1;
         }
@@ -353,11 +353,11 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
-        public Foo()
+        public C()
         {
             Bar += (_, __) => this.Value = 1;
         }
@@ -825,7 +825,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public abstract class ViewModel : INotifyPropertyChanged
+    public abstract class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -846,7 +846,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public sealed class MainViewModel : ViewModel
+    public sealed class MainC : C
     {
         public int ↓P { get; private set; }
 
@@ -860,7 +860,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public sealed class MainViewModel : ViewModel
+    public sealed class MainC : C
     {
         private int p;
 
@@ -885,7 +885,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public abstract class ViewModel : INotifyPropertyChanged
+    public abstract class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -906,7 +906,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public sealed class MainViewModel : ViewModel
+    public sealed class MainC : C
     {
         public string? ↓P { get; set; }
     }
@@ -914,7 +914,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public sealed class MainViewModel : ViewModel
+    public sealed class MainC : C
     {
         private string? p;
 
@@ -934,7 +934,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public abstract class ViewModel : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -955,7 +955,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public sealed class MainViewModel : ViewModel
+    public sealed class MainViewModel : ViewModelBase
     {
         public string? ↓P { get; set; }
     }
@@ -963,7 +963,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public sealed class MainViewModel : ViewModel
+    public sealed class MainViewModel : ViewModelBase
     {
         private string? p;
 

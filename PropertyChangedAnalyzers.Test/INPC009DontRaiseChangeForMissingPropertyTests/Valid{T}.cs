@@ -17,9 +17,9 @@ namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingProperty
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""""")]
-        [TestCase(@"""Bar""")]
-        [TestCase(@"nameof(Bar)")]
-        [TestCase(@"nameof(this.Bar)")]
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
         public static void OnPropertyChangedWithEventArgs(string propertyName)
         {
             var code = @"
@@ -30,19 +30,19 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
+                if (value == this.p) return;
+                this.p = value;
 #pragma warning disable INPC013
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)));
 #pragma warning restore INPC013
             }
         }
@@ -52,7 +52,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}".AssertReplace(@"nameof(Bar)", propertyName);
+}".AssertReplace(@"nameof(P)", propertyName);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -176,9 +176,9 @@ namespace N
         [TestCase("null")]
         [TestCase("string.Empty")]
         [TestCase(@"""""")]
-        [TestCase(@"""Bar""")]
-        [TestCase(@"nameof(Bar)")]
-        [TestCase(@"nameof(this.Bar)")]
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
         public static void Invokes(string propertyName)
         {
             var code = @"
@@ -188,27 +188,27 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
 #pragma warning disable INPC013
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar))));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.P))));
 #pragma warning restore INPC013
             }
         }
     }
-}".AssertReplace(@"nameof(this.Bar))", propertyName);
+}".AssertReplace(@"nameof(this.P))", propertyName);
 
             RoslynAssert.Valid(Analyzer, code);
         }

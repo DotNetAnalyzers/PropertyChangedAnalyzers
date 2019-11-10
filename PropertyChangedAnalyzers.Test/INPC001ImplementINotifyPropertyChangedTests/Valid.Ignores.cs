@@ -439,11 +439,11 @@ namespace N
     using System.Runtime.Serialization;
 
     [DataContract]
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModel(int value)
+        public C(int value)
         {
             Value = value;
         }
