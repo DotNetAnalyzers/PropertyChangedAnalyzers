@@ -28,7 +28,7 @@ namespace PropertyChangedAnalyzers.Test
         [TestCaseSource(nameof(AllAnalyzers))]
         public static async Task InTrySet(DiagnosticAnalyzer analyzer)
         {
-            var viewModelBaseCode = @"
+            var viewModelBase = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -66,7 +66,7 @@ namespace N.Client
         }
     }
 }";
-            await Analyze.GetDiagnosticsAsync(analyzer, new[] { viewModelBaseCode, code }, MetadataReferences.FromAttributes()).ConfigureAwait(false);
+            await Analyze.GetDiagnosticsAsync(analyzer, new[] { viewModelBase, code }, MetadataReferences.FromAttributes()).ConfigureAwait(false);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]

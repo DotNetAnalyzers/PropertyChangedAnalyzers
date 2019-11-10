@@ -111,7 +111,7 @@ namespace N
             [Test]
             public static void WhenOverriddenSetProperty()
             {
-                var fooBaseCode = @"
+                var viewModelBase = @"
 namespace N
 {
     public abstract class ViewModelBase : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -138,7 +138,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, new[] { fooBaseCode, code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, metadataReferences: MetadataReferences);
             }
         }
     }

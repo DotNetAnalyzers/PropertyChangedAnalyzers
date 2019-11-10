@@ -120,7 +120,7 @@ namespace N
                     @"
 namespace N
 {
-    public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
+    public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
         public override bool Set<T>(ref T oldValue, T value, string propertyName = null)
         {
@@ -133,7 +133,7 @@ namespace N
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var typeDeclaration = syntaxTree.FindClassDeclaration("FooBase");
+                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
                 Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
                 Assert.AreEqual("Set", method.Name);
@@ -146,7 +146,7 @@ namespace N
                     @"
 namespace N
 {
-    public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
+    public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
         public bool TrySet<T>(ref T oldValue, T value, string propertyName = null)
         {
@@ -159,7 +159,7 @@ namespace N
                     new[] { syntaxTree },
                     MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var typeDeclaration = syntaxTree.FindClassDeclaration("FooBase");
+                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
                 Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
                 Assert.AreEqual("TrySet", method.Name);

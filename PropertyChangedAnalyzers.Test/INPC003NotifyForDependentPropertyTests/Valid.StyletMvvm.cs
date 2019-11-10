@@ -133,10 +133,10 @@ namespace N
             [Test]
             public static void WhenOverriddenSetAndNotify()
             {
-                var fooBaseCode = @"
+                var viewModelBase = @"
 namespace N
 {
-    public abstract class FooBase : Stylet.PropertyChangedBase
+    public abstract class ViewModelBase : Stylet.PropertyChangedBase
     {
         protected override bool SetAndNotify<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
@@ -148,7 +148,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : FooBase
+    public class Foo : ViewModelBase
     {
         private int value;
 
@@ -160,7 +160,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, new[] { fooBaseCode, code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, metadataReferences: MetadataReferences);
             }
         }
     }

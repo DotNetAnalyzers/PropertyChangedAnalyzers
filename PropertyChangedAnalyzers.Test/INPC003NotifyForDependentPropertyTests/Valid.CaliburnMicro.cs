@@ -111,10 +111,10 @@ namespace N
             [Test]
             public static void WhenOverriddenSet()
             {
-                var fooBaseCode = @"
+                var viewModelBase = @"
 namespace N
 {
-    public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
+    public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
         public override bool Set<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
@@ -126,7 +126,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : FooBase
+    public class Foo : ViewModelBase
     {
         private int value;
 
@@ -138,7 +138,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, new[] { fooBaseCode, code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, metadataReferences: MetadataReferences);
             }
         }
     }

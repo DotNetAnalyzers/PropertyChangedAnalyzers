@@ -200,7 +200,7 @@ namespace N
                     @"
 namespace N
 {
-    public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
+    public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
         public override bool Set<T>(ref T oldValue, T value, string propertyName = null)
         {
@@ -225,7 +225,7 @@ namespace N
                     @"
 namespace N
 {
-    public abstract class FooBase : Caliburn.Micro.PropertyChangedBase
+    public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
         public bool TrySet<T>(ref T oldValue, T value, string propertyName = null)
         {

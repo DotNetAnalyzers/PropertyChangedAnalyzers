@@ -716,12 +716,12 @@ namespace N
             [Test]
             public static void WhenSettingNestedField()
             {
-                var barCode = @"
+                var c1 = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int C1Value;
     }
 }";
                 var before = @"
@@ -730,17 +730,17 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get => this.bar.BarValue;
+            get => this.c1.C1Value;
             set
             {
-                this.bar.BarValue = value;
+                this.c1.C1Value = value;
                 ↓this.OnPropertyChanged();
             }
         }
@@ -757,22 +757,22 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get => this.bar.BarValue;
+            get => this.c1.C1Value;
             set
             {
-                if (value == this.bar.BarValue)
+                if (value == this.c1.C1Value)
                 {
                     return;
                 }
 
-                this.bar.BarValue = value;
+                this.c1.C1Value = value;
                 this.OnPropertyChanged();
             }
         }
@@ -783,8 +783,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
             }
 
             [Test]

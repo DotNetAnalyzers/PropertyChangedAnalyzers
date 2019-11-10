@@ -243,10 +243,10 @@ namespace N.Client
             [Test]
             public static void WhenOverriddenSet()
             {
-                var fooBaseCode = @"
+                var viewModelBase = @"
 namespace N.Client
 {
-    public abstract class FooBase : N.Core.ViewModelBase
+    public abstract class ViewModelBase : N.Core.ViewModelBase
     {
         protected override bool TrySet<T>(ref T oldValue, T newValue, string propertyName = null)
         {
@@ -258,7 +258,7 @@ namespace N.Client
                 var code = @"
 namespace N.Client
 {
-    public class Foo : FooBase
+    public class Foo : ViewModelBase
     {
         private int value;
 
@@ -270,7 +270,7 @@ namespace N.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, fooBaseCode, code);
+                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, viewModelBase, code);
             }
         }
     }

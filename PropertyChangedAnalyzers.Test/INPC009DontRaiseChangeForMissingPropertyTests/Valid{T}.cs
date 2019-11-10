@@ -712,13 +712,13 @@ namespace N.Client
         [Test]
         public static void OverriddenProperty()
         {
-            var fooBase = @"
+            var viewModelBase = @"
 namespace N.Core
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public abstract class FooBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -735,7 +735,7 @@ namespace N.Client
 {
     using N.Core;
 
-    public class Foo : FooBase
+    public class Foo : ViewModelBase
     {
         private int value;
 
@@ -749,7 +749,7 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, fooBase, foo);
+            RoslynAssert.Valid(Analyzer, viewModelBase, foo);
         }
     }
 }
