@@ -112,7 +112,7 @@ namespace N
         [Test]
         public static void WhenSettingNestedField()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
     public class C1
@@ -152,7 +152,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, barCode, code);
+            RoslynAssert.Valid(Analyzer, c1, code);
         }
 
         [Test]

@@ -3160,7 +3160,7 @@ namespace N
         [TestCase("c1.C1Value")]
         public static void WhenAssigningNestedField(string path)
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
     public class C1
@@ -3220,14 +3220,14 @@ namespace N
     }
 }".AssertReplace("this.c1.C1Value", path);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
         }
 
         [Test]
         public static void WhenAssigningNestedFieldRoot()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
     public class C1
@@ -3286,14 +3286,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
         }
 
         [Test]
         public static void WhenAssigningRootForNestedField()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
     public class C1
@@ -3352,8 +3352,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { barCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
         }
 
         [Test]

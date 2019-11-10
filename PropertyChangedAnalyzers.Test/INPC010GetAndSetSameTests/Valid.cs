@@ -19,7 +19,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -63,7 +63,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo
+    public class C
     {
         private int value;
 
@@ -87,7 +87,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo
+    public class C
     {
         private int value;
 
@@ -115,7 +115,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo
+    public class C
     {
         private int value;
 
@@ -133,12 +133,12 @@ namespace N
         [Test]
         public static void NestedField()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
-        public int BarValue;
+        public int p;
     }
 }";
             var code = @"
@@ -147,22 +147,22 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get => this.bar.BarValue;
+            get => this.c1.p;
             set
             {
-                if (value == this.bar.BarValue)
+                if (value == this.c1.p)
                 {
                     return;
                 }
 
-                this.bar.BarValue = value;
+                this.c1.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -173,16 +173,16 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, barCode, code);
+            RoslynAssert.Valid(Analyzer, c1, code);
         }
 
         [Test]
         public static void NestedProperties()
         {
-            var barCode = @"
+            var c1 = @"
 namespace N
 {
-    public class Bar
+    public class C1
     {
         public int P1 { get; set; }
         public int P2 { get; set; }
@@ -194,23 +194,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
-        private readonly Bar bar = new Bar();
+        private readonly C1 c1 = new C1();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Value
         {
-            get => this.bar.P2;
+            get => this.c1.P2;
             set
             {
-                if (value == this.bar.P2)
+                if (value == this.c1.P2)
                 {
                     return;
                 }
 
-                this.bar.P2 = value;
+                this.c1.P2 = value;
                 this.OnPropertyChanged();
             }
         }
@@ -221,7 +221,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, barCode, code);
+            RoslynAssert.Valid(Analyzer, c1, code);
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private TimeSpan timeSpan;
 
@@ -275,7 +275,7 @@ namespace N
     using System.Drawing;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private Point point;
 
@@ -332,7 +332,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private double speed;
 
@@ -377,7 +377,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo<T> : IFoo
+    public class C<T> : IC
     {
         private T value;
 
@@ -387,14 +387,14 @@ namespace N
             set => this.value = value;
         }
 
-        object IFoo.Value
+        object IC.Value
         {
             get => this.value;
             set => this.Value = (T)value;
         }
     }
 
-    interface IFoo
+    interface IC
     {
         object Value { get; set; }
     }
