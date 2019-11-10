@@ -24,7 +24,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void Foo()
+        public void M()
         {
             ↓this.OnPropertyChanged();
         }

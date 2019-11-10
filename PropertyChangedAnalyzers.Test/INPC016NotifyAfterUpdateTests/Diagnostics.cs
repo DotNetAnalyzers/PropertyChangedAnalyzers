@@ -55,24 +55,24 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                ↓this.OnPropertyChanged(nameof(this.Bar));
-                this.bar = value;
+                ↓this.OnPropertyChanged(nameof(this.P));
+                this.p = value;
             }
         }
 
@@ -95,24 +95,24 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-                this.bar = value;
+                ↓this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)));
+                this.p = value;
             }
         }
 
@@ -134,24 +134,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                ↓this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Bar)));
-                this.bar = value;
+                ↓this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(P)));
+                this.p = value;
             }
         }
 
@@ -172,7 +172,7 @@ namespace N
             var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
