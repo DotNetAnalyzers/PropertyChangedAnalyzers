@@ -450,13 +450,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int _value;
+        private readonly int _p1;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => _value;
+        public int P1 => _p1;
 
-        public int ↓P { get; set; }
+        public int ↓P2 { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -473,24 +473,24 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int _value;
-        private int _p;
+        private readonly int _p1;
+        private int _p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => _value;
+        public int P1 => _p1;
 
-        public int P
+        public int P2
         {
-            get => _p;
+            get => _p2;
             set
             {
-                if (value == _p)
+                if (value == _p2)
                 {
                     return;
                 }
 
-                _p = value;
+                _p2 = value;
                 OnPropertyChanged();
             }
         }
@@ -642,7 +642,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
             get;
             set;
@@ -663,22 +663,22 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -886,7 +886,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel<T> : INotifyPropertyChanged
+    public class C<T> : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -901,7 +901,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel<T> : INotifyPropertyChanged
+    public class C<T> : INotifyPropertyChanged
     {
         private T p;
 
@@ -937,7 +937,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel<T> : INotifyPropertyChanged
+    public class C<T> : INotifyPropertyChanged
         where T : class
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -953,7 +953,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel<T> : INotifyPropertyChanged
+    public class C<T> : INotifyPropertyChanged
         where T : class
     {
         private T p;
@@ -990,7 +990,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel<T> : INotifyPropertyChanged
+    public class C<T> : INotifyPropertyChanged
         where T : struct
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -1006,7 +1006,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel<T> : INotifyPropertyChanged
+    public class C<T> : INotifyPropertyChanged
         where T : struct
     {
         private T p;
