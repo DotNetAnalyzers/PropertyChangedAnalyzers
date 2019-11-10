@@ -330,25 +330,25 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value1;
         private int value2;
-        private Baz baz;
+        private P p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Baz Baz
+        public P P
         {
-            get => this.baz;
+            get => this.p;
             set
             {
-                if (value == this.baz)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.baz = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.CurrentValue));
             }
@@ -358,11 +358,11 @@ namespace N
         {
             get
             {
-                switch (Baz)
+                switch (P)
                 {
-                    case Baz.Value1:
+                    case P.Value1:
                         return this.value1;
-                    case Baz.Value2:
+                    case P.Value2:
                         return this.value2;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -376,7 +376,7 @@ namespace N
         }
     }
 
-    public enum Baz
+    public enum P
     {
         Value1,
         Value2,
@@ -392,7 +392,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private static readonly int StaticValue = 2;
 
@@ -409,7 +409,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private const int StaticValue = 2;
 
@@ -426,7 +426,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private const int ConstValue = 2;
 
@@ -443,7 +443,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private string inpcEnabled;
 
@@ -464,7 +464,7 @@ namespace N
             var code = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private string _inpcEnabled;
 

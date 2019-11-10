@@ -21,7 +21,7 @@ namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
             var before = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int wrong;
 
@@ -32,7 +32,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int value;
 
@@ -52,7 +52,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int _wrong;
 
@@ -63,7 +63,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int _value;
 
@@ -120,7 +120,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int wrong;
 
@@ -134,7 +134,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int value;
 
@@ -158,7 +158,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int _wrong;
 
@@ -171,7 +171,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int _value;
 

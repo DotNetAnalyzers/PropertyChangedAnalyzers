@@ -16,9 +16,9 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public void Meh(object value)
+        public void M(object value)
         {
             if (value == null)
             {
@@ -38,9 +38,9 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public void Meh(StringComparison value)
+        public void M(StringComparison value)
         {
             switch (value)
             {
@@ -60,7 +60,7 @@ namespace N
 namespace N
 {
     [System.Diagnostics.DebuggerDisplay(""{Name}"")]
-    public class Foo
+    public class C
     {
         public string Name { get; }
     }
@@ -76,14 +76,14 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public void Bar()
+        public void M1()
         {
-            this.Meh(""Exception"");
+            this.M2(""Exception"");
         }
 
-        public void Meh(string value)
+        public void M2(string value)
         {
             throw new ArgumentException(nameof(value), value);
         }
@@ -100,14 +100,14 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public void Bar()
+        public void M1()
         {
-            var text = this.Meh(""text"");
+            var text = this.M2(""text"");
         }
 
-        public string Meh(string value)
+        public string M2(string value)
         {
             throw new ArgumentException(nameof(value), value);
         }
@@ -124,14 +124,14 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public void Bar()
+        public void M1()
         {
-            this.Meh(""Test"");
+            this.M2(""Test"");
         }
 
-        public void Meh(string value)
+        public void M2(string value)
         {
             throw new ArgumentException(nameof(value), value);
         }

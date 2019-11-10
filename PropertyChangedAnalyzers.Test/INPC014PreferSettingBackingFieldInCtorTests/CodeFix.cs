@@ -425,38 +425,38 @@ namespace N
             var before = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
-        private int bar;
+        private int p;
 
-        public Foo(int bar)
+        public C(int p)
         {
-            ↓this.Bar = bar;
+            ↓this.P = p;
         }
         
-        public int Bar
+        public int P
         {
-            get => this.bar;
-            set => this.TrySet(ref this.bar, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
     }
 }";
             var after = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
-        private int bar;
+        private int p;
 
-        public Foo(int bar)
+        public C(int p)
         {
-            this.bar = bar;
+            this.p = p;
         }
         
-        public int Bar
+        public int P
         {
-            get => this.bar;
-            set => this.TrySet(ref this.bar, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
     }
 }";
@@ -469,11 +469,11 @@ namespace N.Client
             var before = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
-        public Foo(string name)
+        public C(string name)
         {
             ↓this.Name = name;
         }
@@ -496,11 +496,11 @@ namespace N.Client
             var after = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
         private string name;
 
-        public Foo(string name)
+        public C(string name)
         {
             this.name = name;
         }
@@ -532,9 +532,9 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class A : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public A(bool x)
+        public C(bool x)
         {
             ↓X = x;
         }
@@ -570,9 +570,9 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class A : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public A(bool x)
+        public C(bool x)
         {
             this.x = x;
         }
@@ -614,9 +614,9 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class A : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public A(bool a)
+        public C(bool a)
         {
             var x = a;
             ↓X = a;
@@ -653,9 +653,9 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class A : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public A(bool a)
+        public C(bool a)
         {
             var x = a;
             this.x = a;
@@ -698,9 +698,9 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class A : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public A(bool a)
+        public C(bool a)
         {
             var @default = a;
             ↓X = a;
@@ -737,9 +737,9 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class A : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        public A(bool a)
+        public C(bool a)
         {
             var @default = a;
             this.@default = a;
