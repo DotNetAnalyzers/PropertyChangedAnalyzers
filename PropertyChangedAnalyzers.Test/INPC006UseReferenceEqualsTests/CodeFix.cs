@@ -29,13 +29,13 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
                 new TestCaseData("value.Equals(bar)", "ReferenceEquals(value, bar)"),
                 new TestCaseData("this.bar.Equals(value)", "ReferenceEquals(this.bar, value)"),
                 new TestCaseData("bar.Equals(value)", "ReferenceEquals(bar, value)"),
-                //new TestCaseData("System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
+                //new TestCaseData("System.Collections.Generic.EqualityComparer<C1>.Default.Equals(value, this.bar)", "ReferenceEquals(value, this.bar)"),
             };
 
-        private static readonly string FooCode = @"
+        private const string C1Code = @"
 namespace N
 {
-    public class Foo
+    public class C1
     {
     }
 }";
@@ -52,11 +52,11 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public C1 Bar
         {
             get { return this.bar; }
             set
@@ -87,11 +87,11 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public C1 Bar
         {
             get { return this.bar; }
             set
@@ -113,8 +113,8 @@ namespace N
     }
 }".AssertReplace("Equals(value, this.bar)", expressionAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -129,11 +129,11 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public C1 Bar
         {
             get { return this.bar; }
             set
@@ -162,11 +162,11 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public C1 Bar
         {
             get { return this.bar; }
             set
@@ -186,7 +186,7 @@ namespace N
     }
 }".AssertReplace("Equals(value, this.bar)", expressionAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
         }
 
         [Test]
@@ -201,20 +201,20 @@ namespace N
     public class ViewModel<T> : INotifyPropertyChanged
         where T : class
     {
-        private T bar;
+        private T p;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public T Bar
+        public T P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (↓Equals(value, this.bar))
+                if (↓Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -235,20 +235,20 @@ namespace N
     public class ViewModel<T> : INotifyPropertyChanged
         where T : class
     {
-        private T bar;
+        private T p;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public T Bar
+        public T P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (ReferenceEquals(value, this.bar))
+                if (ReferenceEquals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -259,8 +259,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
         }
 
         [Test]
@@ -274,21 +274,21 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public C1 P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (↓value == this.bar)
+                if (↓value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -308,21 +308,21 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public C1 P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (ReferenceEquals(value, this.bar))
+                if (ReferenceEquals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -333,8 +333,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
         }
 
         [Test]
@@ -348,21 +348,21 @@ namespace N
 
     internal class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal Foo Bar
+        internal C1 P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (↓value == this.bar)
+                if (↓value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -382,21 +382,21 @@ namespace N
 
     internal class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal Foo Bar
+        internal C1 P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (ReferenceEquals(value, this.bar))
+                if (ReferenceEquals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -407,8 +407,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
         }
 
         [Test]
@@ -422,18 +422,18 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public C1 P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (↓value != this.bar)
+                if (↓value != this.p)
                 {
-                    this.bar = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -454,18 +454,18 @@ namespace N
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private Foo bar;
+        private C1 p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public C1 P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (!ReferenceEquals(value, this.bar))
+                if (!ReferenceEquals(value, this.p))
                 {
-                    this.bar = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -477,7 +477,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { C1Code, before }, after);
         }
     }
 }
