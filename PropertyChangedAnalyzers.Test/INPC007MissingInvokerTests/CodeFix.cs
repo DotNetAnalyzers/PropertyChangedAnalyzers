@@ -148,7 +148,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public static class ViewModel
+    public static class C
     {
         ↓public static event PropertyChangedEventHandler PropertyChanged;
     }
@@ -159,7 +159,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public static class ViewModel
+    public static class C
     {
         public static event PropertyChangedEventHandler PropertyChanged;
 

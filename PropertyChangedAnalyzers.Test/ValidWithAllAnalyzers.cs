@@ -99,9 +99,9 @@ namespace N.Client
     public class ViewModel1 : ViewModelBase
     {
         private int value;
-        private int value2;
+        private int p2;
 
-        public int Sum => this.Value + this.Value2;
+        public int Sum => this.Value + this.P2;
 
         public int Value
         {
@@ -124,12 +124,12 @@ namespace N.Client
             }
         }
 
-        public int Value2
+        public int P2
         {
-            get => this.value2;
+            get => this.p2;
             set
             {
-                if (this.TrySet(ref this.value2, value))
+                if (this.TrySet(ref this.p2, value))
                 {
                     this.OnPropertyChanged(nameof(this.Sum));
                 }
@@ -493,9 +493,9 @@ namespace N.Client
     public class ViewModel1 : ViewModelBase<int>
     {
         private int value;
-        private int value2;
+        private int p2;
 
-        public int Sum => this.Value + this.Value2;
+        public int Sum => this.Value + this.P2;
 
         public int Value
         {
@@ -518,12 +518,12 @@ namespace N.Client
             }
         }
 
-        public int Value2
+        public int P2
         {
-            get => this.value2;
+            get => this.p2;
             set
             {
-                if (this.TrySet(ref this.value2, value))
+                if (this.TrySet(ref this.p2, value))
                 {
                     this.OnPropertyChanged(nameof(this.Sum));
                 }
@@ -532,14 +532,14 @@ namespace N.Client
     }
 }";
 
-            var viewModelOfT = @"
+            var genericViewModelOfT = @"
 namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel<T> : INotifyPropertyChanged
+    public class GenericViewModel<T> : INotifyPropertyChanged
     {
         private T value;
 
@@ -575,7 +575,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(analyzer, viewModelBaseOf_, viewModel1, viewModelOfT);
+            RoslynAssert.Valid(analyzer, viewModelBaseOf_, viewModel1, genericViewModelOfT);
         }
     }
 }

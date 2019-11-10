@@ -668,9 +668,9 @@ namespace N.Client
     public class C : ViewModelBase
     {
         private int value;
-        private int value2;
+        private int p2;
 
-        public int Sum => this.Value + this.Value2;
+        public int Sum => this.Value + this.P2;
 
         public int Value
         {
@@ -692,12 +692,12 @@ namespace N.Client
             }
         }
 
-        public int Value2
+        public int P2
         {
-            get => this.value2;
+            get => this.p2;
             set
             {
-                if (this.TrySet(ref this.value2, value))
+                if (this.TrySet(ref this.p2, value))
                 {
                     this.OnPropertyChanged(nameof(this.Sum));
                 }

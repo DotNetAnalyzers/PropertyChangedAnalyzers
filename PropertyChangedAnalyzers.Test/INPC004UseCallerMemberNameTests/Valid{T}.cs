@@ -265,7 +265,7 @@ namespace N
         [Test]
         public static void IgnoreWhenRaiseForOtherInstanceOfOtherType()
         {
-            var viewModelCode = @"
+            var c1 = @"
 namespace N
 {
     using System.ComponentModel;
@@ -315,7 +315,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, viewModelCode, code);
+            RoslynAssert.Valid(Analyzer, c1, code);
         }
 
         [Test]
