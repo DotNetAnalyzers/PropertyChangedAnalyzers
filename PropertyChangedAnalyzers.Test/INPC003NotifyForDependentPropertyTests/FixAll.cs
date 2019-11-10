@@ -208,7 +208,7 @@ namespace N
 
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
-
+        
         [Test]
         public static void SimpleLambda()
         {

@@ -96,7 +96,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
         [Test]
@@ -884,6 +884,7 @@ namespace N
     }
 }";
 
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             RoslynAssert.FixAllInDocument(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
