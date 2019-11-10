@@ -34,10 +34,10 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
                 //new TestCaseData("bar.Equals(value)", "Equals(value, this.bar)"),
             };
 
-        private const string FooCode = @"
+        private const string ReferenceType = @"
 namespace N
 {
-    public class Foo
+    public class ReferenceType
     {
     }
 }";
@@ -52,13 +52,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType Bar
         {
             get { return this.bar; }
             set
@@ -87,13 +87,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType Bar
         {
             get { return this.bar; }
             set
@@ -114,8 +114,8 @@ namespace N
         }
     }
 }".AssertReplace("Equals(value, this.bar)", expressionAfter);
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -128,13 +128,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType Bar
         {
             get { return this.bar; }
             set
@@ -161,13 +161,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType Bar
         {
             get { return this.bar; }
             set
@@ -187,7 +187,7 @@ namespace N
     }
 }".AssertReplace("Equals(value, this.bar)", expressionAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
 
         [Test]
@@ -199,23 +199,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (↓value == this.bar)
+                if (↓value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -233,23 +233,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (Equals(value, this.bar))
+                if (Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -260,8 +260,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
 
         [Test]
@@ -273,23 +273,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    internal class ViewModel : INotifyPropertyChanged
+    internal class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal Foo Bar
+        internal ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (↓value == this.bar)
+                if (↓value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -307,23 +307,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    internal class ViewModel : INotifyPropertyChanged
+    internal class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal Foo Bar
+        internal ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (Equals(value, this.bar))
+                if (Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -334,8 +334,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
 
         [Test]
@@ -347,20 +347,20 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (↓value != this.bar)
+                if (↓value != this.p)
                 {
-                    this.bar = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -379,20 +379,20 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C: INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (!Equals(value, this.bar))
+                if (!Equals(value, this.p))
                 {
-                    this.bar = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -404,7 +404,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { FooCode, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
     }
 }

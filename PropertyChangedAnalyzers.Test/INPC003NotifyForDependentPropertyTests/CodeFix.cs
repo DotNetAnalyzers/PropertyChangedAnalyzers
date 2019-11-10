@@ -3298,7 +3298,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int F;
     }
 }";
             var before = @"
@@ -3313,7 +3313,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.c1.C1Value;
+        public int Value => this.c1.F;
 
         public void Update()
         {
@@ -3338,7 +3338,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.c1.C1Value;
+        public int Value => this.c1.F;
 
         public void Update()
         {
@@ -3359,13 +3359,13 @@ namespace N
         [Test]
         public static void OverriddenProperty()
         {
-            var fooBase = @"
+            var viewModelBase = @"
 namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public abstract class FooBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -3380,7 +3380,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo : FooBase
+    public class C : ViewModelBase
     {
         private int value;
 
@@ -3395,7 +3395,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo : FooBase
+    public class C : ViewModelBase
     {
         private int value;
 
@@ -3408,8 +3408,8 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { fooBase, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { fooBase, before }, after);
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after);
         }
 
         [Test]

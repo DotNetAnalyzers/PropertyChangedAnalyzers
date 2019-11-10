@@ -520,27 +520,27 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private string meh;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Meh
+        public string P
         {
             get
             {
-                return this.meh;
+                return this.p;
             }
 
             set
             {
-                if (value == this.meh)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.meh = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
