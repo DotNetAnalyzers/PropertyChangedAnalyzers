@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
                 var code = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private int value;
 
@@ -39,7 +39,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private int value;
 
@@ -64,7 +64,7 @@ namespace N
                 var code = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private int bar;
 

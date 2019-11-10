@@ -1043,42 +1043,42 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int a;
-        private int c;
+        private int p1;
+        private int p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int A
+        public int P1
         {
-            get => this.a;
+            get => this.p1;
             set
             {
-                if (value == this.a)
+                if (value == this.p1)
                 {
                     return;
                 }
 
-                this.a = value;
-                this.OnPropertyChanged(nameof(this.A));
+                this.p1 = value;
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
-        public int ↓B { get; set; }
+        public int ↓P2 { get; set; }
 
-        public int C
+        public int P3
         {
-            get => this.c;
+            get => this.p3;
             set
             {
-                if (value == this.c)
+                if (value == this.p3)
                 {
                     return;
                 }
 
-                this.c = value;
-                this.OnPropertyChanged(nameof(this.C));
+                this.p3 = value;
+                this.OnPropertyChanged(nameof(this.P3));
             }
         }
 
@@ -1094,56 +1094,56 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int a;
-        private int b;
-        private int c;
+        private int p1;
+        private int p2;
+        private int p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int A
+        public int P1
         {
-            get => this.a;
+            get => this.p1;
             set
             {
-                if (value == this.a)
+                if (value == this.p1)
                 {
                     return;
                 }
 
-                this.a = value;
-                this.OnPropertyChanged(nameof(this.A));
+                this.p1 = value;
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
-        public int B
+        public int P2
         {
-            get => this.b;
+            get => this.p2;
             set
             {
-                if (value == this.b)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.b = value;
-                this.OnPropertyChanged(nameof(this.B));
+                this.p2 = value;
+                this.OnPropertyChanged(nameof(this.P2));
             }
         }
 
-        public int C
+        public int P3
         {
-            get => this.c;
+            get => this.p3;
             set
             {
-                if (value == this.c)
+                if (value == this.p3)
                 {
                     return;
                 }
 
-                this.c = value;
-                this.OnPropertyChanged(nameof(this.C));
+                this.p3 = value;
+                this.OnPropertyChanged(nameof(this.P3));
             }
         }
 

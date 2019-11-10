@@ -162,16 +162,16 @@ namespace N
 
     public class FooControl : Control
     {
-        public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
-            nameof(Bar),
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+            nameof(Number),
             typeof(int),
             typeof(FooControl),
             new PropertyMetadata(default(int)));
 
-        public int Bar
+        public int Number
         {
-            get { return (int) this.GetValue(BarProperty); }
-            set { this.SetValue(BarProperty, value); }
+            get { return (int) this.GetValue(NumberProperty); }
+            set { this.SetValue(NumberProperty, value); }
         }
     }
 }";

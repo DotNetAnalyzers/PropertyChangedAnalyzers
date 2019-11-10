@@ -83,7 +83,7 @@ namespace N
             var before = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int wrong;
 
@@ -96,7 +96,7 @@ namespace N
             var after = @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int value;
 

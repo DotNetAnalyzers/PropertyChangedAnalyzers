@@ -992,21 +992,21 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private int value;
-        private readonly Bar bar = new Bar();
+        private readonly Nested nested = new Nested();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int BarValue
+        public int P
         {
-            get => this.bar.BarValue;
+            get => this.nested.P;
             set
             {
-                if (value == this.bar.BarValue)
+                if (value == this.nested.P)
                 {
                     return;
                 }
 
-                this.bar.BarValue = value;
+                this.nested.P = value;
                 this.OnPropertyChanged();
             }
         }
@@ -1016,9 +1016,9 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private class Bar
+        private class Nested
         {
-            public int BarValue { get; set; }
+            public int P { get; set; }
         }
     }
 }";
