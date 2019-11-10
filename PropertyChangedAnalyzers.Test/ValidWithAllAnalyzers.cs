@@ -196,13 +196,13 @@ namespace N
     }
 }";
 
-            var fooCode = @"
+            var c1 = @"
 namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C1 : INotifyPropertyChanged
     {
         private int bar;
 
@@ -236,14 +236,14 @@ namespace N
     }
 }";
 
-            var foo1Code = @"
+            var c2 = @"
 namespace N
 {
     using System.ComponentModel;
     using System.Drawing;
     using System.Runtime.CompilerServices;
 
-    public class Foo1 : INotifyPropertyChanged
+    public class C2 : INotifyPropertyChanged
     {
         private Point point;
 
@@ -290,14 +290,14 @@ namespace N
     }
 }";
 
-            var foo2Code = @"
+            var c3 = @"
 namespace N
 {
     using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo2 : INotifyPropertyChanged
+    public class C3 : INotifyPropertyChanged
     {
         private TimeSpan timeSpan;
 
@@ -444,9 +444,9 @@ namespace N
                 barCode,
                 viewModel1Code,
                 viewModel2Code,
-                fooCode,
-                foo1Code,
-                foo2Code,
+                c1,
+                c2,
+                c3,
                 foo3Code,
                 foo4Code,
                 foo5Code,

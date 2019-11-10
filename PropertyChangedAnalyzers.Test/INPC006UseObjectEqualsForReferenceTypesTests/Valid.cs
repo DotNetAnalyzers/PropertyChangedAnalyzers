@@ -13,16 +13,16 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
         {
-            new TestCaseData("Foo", "Equals(value, this.bar)"),
-            new TestCaseData("Foo", "Equals(this.bar, value)"),
-            new TestCaseData("Foo", "Equals(value, bar)"),
-            new TestCaseData("Foo", "Equals(value, Bar)"),
-            new TestCaseData("Foo", "Equals(Bar, value)"),
-            new TestCaseData("Foo", "Nullable.Equals(value, this.bar)"),
-            new TestCaseData("Foo", "value.Equals(this.bar)"),
-            new TestCaseData("Foo", "value.Equals(bar)"),
-            new TestCaseData("Foo", "this.bar.Equals(value)"),
-            new TestCaseData("Foo", "bar.Equals(value)"),
+            new TestCaseData("ReferenceType", "Equals(value, this.bar)"),
+            new TestCaseData("ReferenceType", "Equals(this.bar, value)"),
+            new TestCaseData("ReferenceType", "Equals(value, bar)"),
+            new TestCaseData("ReferenceType", "Equals(value, Bar)"),
+            new TestCaseData("ReferenceType", "Equals(Bar, value)"),
+            new TestCaseData("ReferenceType", "Nullable.Equals(value, this.bar)"),
+            new TestCaseData("ReferenceType", "value.Equals(this.bar)"),
+            new TestCaseData("ReferenceType", "value.Equals(bar)"),
+            new TestCaseData("ReferenceType", "this.bar.Equals(value)"),
+            new TestCaseData("ReferenceType", "bar.Equals(value)"),
             new TestCaseData("int?",   "Nullable.Equals(value, this.bar)"),
             new TestCaseData("string", "value.Equals(this.bar)"),
             new TestCaseData("string", "value.Equals(bar)"),
@@ -32,10 +32,10 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
             new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
         };
 
-        private const string Foo = @"
+        private const string ReferenceType = @"
 namespace N
 {
-    public class Foo
+    public class ReferenceType
     {
     }
 }";
@@ -50,13 +50,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType Bar
         {
             get => this.bar;
             set
@@ -77,9 +77,9 @@ namespace N
         }
     }
 }".AssertReplace("Equals(value, this.bar)", expression)
-  .AssertReplace("Foo", type);
+  .AssertReplace("ReferenceType", type);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, Foo, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, ReferenceType, code);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -92,13 +92,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType Bar
         {
             get => this.bar;
             set
@@ -117,9 +117,9 @@ namespace N
         }
     }
 }".AssertReplace("Equals(value, this.bar)", expression)
-  .AssertReplace("Foo", type);
+  .AssertReplace("ReferenceType", type);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, Foo, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, ReferenceType, code);
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int bar;
 
@@ -162,13 +162,13 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private Foo bar;
+        private ReferenceType bar;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Bar
+        public ReferenceType Bar
         {
             get { return this.bar; }
             set
@@ -186,7 +186,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, Foo, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, ReferenceType, code);
         }
 
         [Test]
@@ -198,7 +198,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int bar;
 
@@ -234,21 +234,21 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value != this.bar)
+                if (value != this.p)
                 {
-                    this.bar = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
+                    this.p = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)));
                 }
             }
         }
@@ -272,19 +272,19 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
+                if (value == this.p) return;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -307,23 +307,24 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Bar)));
+                this.p = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.P)));
             }
         }
     }
@@ -339,24 +340,26 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private static readonly PropertyChangedEventArgs BarPropertyChangedArgs = new PropertyChangedEventArgs(nameof(Bar));
-        private int bar;
+        private static readonly PropertyChangedEventArgs PPropertyChangedArgs = new PropertyChangedEventArgs(nameof(P));
+
+        private int p;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
-                this.PropertyChanged?.Invoke(this, BarPropertyChangedArgs);
+                this.p = value;
+                this.PropertyChanged?.Invoke(this, PPropertyChangedArgs);
             }
         }
     }
@@ -370,7 +373,7 @@ namespace N
             var fooCode = @"
 namespace N
 {
-    public class Foo
+    public class ReferenceType
     {
     }
 }";
@@ -381,18 +384,18 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private Foo foo;
+        private ReferenceType foo;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Foo
+        public ReferenceType ReferenceType
         {
             get { return this.foo; }
             set
             {
-                if (System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.foo))
+                if (System.Collections.Generic.EqualityComparer<ReferenceType>.Default.Equals(value, this.foo))
                 {
                     return;
                 }
@@ -418,7 +421,7 @@ namespace N
             var fooCode = @"
 namespace N
 {
-    public class Foo
+    public class ReferenceType
     {
     }
 }";
@@ -430,18 +433,18 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private Foo foo;
+        private ReferenceType foo;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Foo Foo
+        public ReferenceType ReferenceType
         {
             get { return this.foo; }
             set
             {
-                if (!System.Collections.Generic.EqualityComparer<Foo>.Default.Equals(value, this.foo))
+                if (!System.Collections.Generic.EqualityComparer<ReferenceType>.Default.Equals(value, this.foo))
                 {
                     this.foo = value;
                     this.OnPropertyChanged();
