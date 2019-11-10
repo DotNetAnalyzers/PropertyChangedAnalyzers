@@ -233,7 +233,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -248,7 +248,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -269,7 +269,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -284,7 +284,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -305,7 +305,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -316,7 +316,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string name;
 
@@ -333,7 +333,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string _name;
 
@@ -348,7 +348,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string _name;
 
@@ -369,7 +369,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string _name;
 
@@ -384,7 +384,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private string _name;
 

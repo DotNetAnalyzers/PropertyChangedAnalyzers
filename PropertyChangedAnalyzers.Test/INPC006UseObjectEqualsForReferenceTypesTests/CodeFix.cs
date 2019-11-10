@@ -14,24 +14,24 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
             {
-                new TestCaseData("object.ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
-                new TestCaseData("Object.ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
-                new TestCaseData("System.Object.ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
-                new TestCaseData("ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
-                new TestCaseData("ReferenceEquals(this.bar, value)", "Equals(this.bar, value)"),
-                new TestCaseData("ReferenceEquals(value, bar)", "Equals(value, bar)"),
-                new TestCaseData("ReferenceEquals(value, Bar)", "Equals(value, Bar)"),
-                new TestCaseData("ReferenceEquals(value, this.Bar)", "Equals(value, this.Bar)"),
-                new TestCaseData("ReferenceEquals(value, this.bar)", "Equals(value, this.bar)"),
-                //new TestCaseData("Nullable.Equals(value, this.bar)", "Equals(value, this.bar)"),
-                //new TestCaseData("Nullable.Equals(value, this.bar)", "Equals(value, this.bar)"),
-                //new TestCaseData("string.Equals(value, this.bar)", "Equals(value, this.bar)"),
-                //new TestCaseData("String.Equals(value, this.bar)", "Equals(value, this.bar)"),
-                //new TestCaseData("System.String.Equals(value, this.bar)", "Equals(value, this.bar)"),
-                //new TestCaseData("value.Equals(this.bar)", "Equals(value, this.bar)"),
-                //new TestCaseData("value.Equals(bar)", "Equals(value, this.bar)"),
-                //new TestCaseData("this.bar.Equals(value)", "Equals(value, this.bar)"),
-                //new TestCaseData("bar.Equals(value)", "Equals(value, this.bar)"),
+                new TestCaseData("object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+                new TestCaseData("Object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+                new TestCaseData("System.Object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+                new TestCaseData("ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+                new TestCaseData("ReferenceEquals(this.p, value)", "Equals(this.p, value)"),
+                new TestCaseData("ReferenceEquals(value, p)", "Equals(value, p)"),
+                new TestCaseData("ReferenceEquals(value, P)", "Equals(value, P)"),
+                new TestCaseData("ReferenceEquals(value, this.P)", "Equals(value, this.P)"),
+                new TestCaseData("ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+                //new TestCaseData("Nullable.Equals(value, this.p)", "Equals(value, this.p)"),
+                //new TestCaseData("Nullable.Equals(value, this.p)", "Equals(value, this.p)"),
+                //new TestCaseData("string.Equals(value, this.p)", "Equals(value, this.p)"),
+                //new TestCaseData("String.Equals(value, this.p)", "Equals(value, this.p)"),
+                //new TestCaseData("System.String.Equals(value, this.p)", "Equals(value, this.p)"),
+                //new TestCaseData("value.Equals(this.p)", "Equals(value, this.p)"),
+                //new TestCaseData("value.Equals(p)", "Equals(value, this.p)"),
+                //new TestCaseData("this.p.Equals(value)", "Equals(value, this.p)"),
+                //new TestCaseData("p.Equals(value)", "Equals(value, this.p)"),
             };
 
         private const string ReferenceType = @"
@@ -54,21 +54,21 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ReferenceType Bar
+        public ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (↓ReferenceEquals(value, this.bar))
+                if (↓ReferenceEquals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -78,7 +78,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("ReferenceEquals(value, this.bar)", expressionBefore);
+}".AssertReplace("ReferenceEquals(value, this.p)", expressionBefore);
 
             var after = @"
 namespace N
@@ -89,21 +89,21 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ReferenceType Bar
+        public ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (Equals(value, this.bar))
+                if (Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -113,7 +113,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("Equals(value, this.bar)", expressionAfter);
+}".AssertReplace("Equals(value, this.p)", expressionAfter);
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }
@@ -130,18 +130,18 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ReferenceType Bar
+        public ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (!↓ReferenceEquals(value, this.bar))
+                if (!↓ReferenceEquals(value, this.p))
                 {
-                    this.bar = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -152,7 +152,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("ReferenceEquals(value, this.bar)", expressionBefore);
+}".AssertReplace("ReferenceEquals(value, this.p)", expressionBefore);
 
             var after = @"
 namespace N
@@ -163,18 +163,18 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType bar;
+        private ReferenceType p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ReferenceType Bar
+        public ReferenceType P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (!Equals(value, this.bar))
+                if (!Equals(value, this.p))
                 {
-                    this.bar = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -185,7 +185,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("Equals(value, this.bar)", expressionAfter);
+}".AssertReplace("Equals(value, this.p)", expressionAfter);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
         }

@@ -439,20 +439,20 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(""Missing"");
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
+                if (value == this.p) return;
+                this.p = value;
                 this.OnPropertyChanged(↓CachedArgs);
             }
         }

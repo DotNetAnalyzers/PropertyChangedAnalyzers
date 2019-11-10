@@ -207,7 +207,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private string name;
 
@@ -222,7 +222,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private string name;
 
@@ -243,7 +243,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private string name;
 
@@ -258,7 +258,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private string name;
 
@@ -279,7 +279,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private string _name;
 
@@ -294,7 +294,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private string _name;
 
@@ -315,7 +315,7 @@ namespace N
                 var before = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private string _name;
 
@@ -330,7 +330,7 @@ namespace N
                 var after = @"
 namespace N
 {
-    public class ViewModel : Caliburn.Micro.Screen
+    public class C : Caliburn.Micro.Screen
     {
         private string _name;
 

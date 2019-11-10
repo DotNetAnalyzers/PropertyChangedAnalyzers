@@ -10,9 +10,9 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 
         [TestCase("null")]
         [TestCase("string.Empty")]
-        [TestCase(@"""Bar""")]
-        [TestCase(@"nameof(Bar)")]
-        [TestCase(@"nameof(this.Bar)")]
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
         public static void NoCalculated(string propertyName)
         {
             var code = @"
@@ -23,18 +23,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
-                this.OnPropertyChanged(nameof(Bar));
+                if (value == this.p) return;
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -43,7 +43,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace(@"nameof(Bar)", propertyName);
+}".AssertReplace(@"nameof(P)", propertyName);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -677,15 +677,15 @@ namespace N
 {
     using System.Collections.Generic;
     using System.ComponentModel;
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private Dictionary<int, int> map;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value1 => map?[1] ?? 0;
+        public int P1 => map?[1] ?? 0;
 
-        public int Value2 => map?[2] ?? 0;
+        public int P2 => map?[2] ?? 0;
 
         public void Update(Dictionary<int, int> newMap)
         {

@@ -10,9 +10,9 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTe
 
         [TestCase("null")]
         [TestCase("string.Empty")]
-        [TestCase(@"""Bar""")]
-        [TestCase(@"nameof(Bar)")]
-        [TestCase(@"nameof(this.Bar)")]
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
         public static void CallsOnPropertyChanged(string propertyName)
         {
             var code = @"
@@ -21,20 +21,20 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
-                this.OnPropertyChanged(nameof(Bar));
+                if (value == this.p) return;
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -43,7 +43,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace(@"nameof(Bar)", propertyName);
+}".AssertReplace(@"nameof(P)", propertyName);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -98,7 +98,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
@@ -171,7 +171,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private static readonly PropertyChangedEventArgs PPropertyChangedArgs = new PropertyChangedEventArgs(nameof(P));
         private int p;

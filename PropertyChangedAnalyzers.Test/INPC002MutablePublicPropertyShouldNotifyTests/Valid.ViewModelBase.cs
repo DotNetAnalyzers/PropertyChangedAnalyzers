@@ -102,30 +102,30 @@ namespace N.Client
 
             [TestCase("null")]
             [TestCase("string.Empty")]
-            [TestCase(@"""Bar""")]
-            [TestCase(@"nameof(Bar)")]
-            [TestCase(@"nameof(this.Bar)")]
+            [TestCase(@"""P""")]
+            [TestCase(@"nameof(P)")]
+            [TestCase(@"nameof(this.P)")]
             public static void RaisePropertyChanged(string propertyName)
             {
                 var code = @"
 namespace N.Client
 {
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (value == this.bar) return;
-                this.bar = value;
-                this.OnPropertyChanged(nameof(Bar));
+                if (value == this.p) return;
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
     }
-}".AssertReplace(@"nameof(Bar)", propertyName);
+}".AssertReplace(@"nameof(P)", propertyName);
 
                 RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
             }
