@@ -52,7 +52,7 @@ namespace PropertyChangedAnalyzers.Test
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void SomewhatRealisticSample(DiagnosticAnalyzer analyzer)
         {
-            var viewModelBaseCode = @"
+            var viewModelBase = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -82,7 +82,7 @@ namespace N.Core
     }
 }";
 
-            var barCode = @"
+            var withMutableField = @"
 namespace N
 {
     public class WithMutableField
@@ -196,13 +196,13 @@ namespace N
     }
 }";
 
-            var c1 = @"
+            var oldStyleOnPropertyChanged = @"
 namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C1 : INotifyPropertyChanged
+    public class OldStyleOnPropertyChanged : INotifyPropertyChanged
     {
         private int p;
 
@@ -236,14 +236,14 @@ namespace N
     }
 }";
 
-            var c2 = @"
+            var wrappingPoint = @"
 namespace N
 {
     using System.ComponentModel;
     using System.Drawing;
     using System.Runtime.CompilerServices;
 
-    public class C2 : INotifyPropertyChanged
+    public class WrappingPoint : INotifyPropertyChanged
     {
         private Point point;
 
@@ -290,14 +290,14 @@ namespace N
     }
 }";
 
-            var c3 = @"
+            var wrappingTimeSpan = @"
 namespace N
 {
     using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C3 : INotifyPropertyChanged
+    public class WrappingTimeSpan : INotifyPropertyChanged
     {
         private TimeSpan timeSpan;
 
@@ -325,14 +325,14 @@ namespace N
     }
 }";
 
-            var foo3Code = @"
+            var radioButtonViewModel = @"
 namespace N
 {
     using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo3 : INotifyPropertyChanged
+    public class RadioButtonViewModel : INotifyPropertyChanged
     {
         private double speed;
 
@@ -368,13 +368,13 @@ namespace N
     }
 }";
 
-            var foo4Code = @"
+            var abstractWithAbstractProperty = @"
 namespace N
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public abstract class Foo4 : INotifyPropertyChanged
+    public abstract class AbstractWithAbstractProperty : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -386,10 +386,10 @@ namespace N
         }
     }
 }";
-            var foo5Code = @"
+            var subClassingAbstractWithAbstractProperty = @"
 namespace N
 {
-    public class Foo5 : Foo4
+    public class SubClassingAbstractWithAbstractProperty : AbstractWithAbstractProperty
     {
         private int value;
 
@@ -440,16 +440,16 @@ namespace N
 }";
             RoslynAssert.Valid(
                 analyzer,
-                viewModelBaseCode,
-                barCode,
+                viewModelBase,
+                withMutableField,
                 viewModel1Code,
                 viewModel2Code,
-                c1,
-                c2,
-                c3,
-                foo3Code,
-                foo4Code,
-                foo5Code,
+                oldStyleOnPropertyChanged,
+                wrappingPoint,
+                wrappingTimeSpan,
+                radioButtonViewModel,
+                abstractWithAbstractProperty,
+                subClassingAbstractWithAbstractProperty,
                 exceptionHandlingRelayCommand);
         }
 
