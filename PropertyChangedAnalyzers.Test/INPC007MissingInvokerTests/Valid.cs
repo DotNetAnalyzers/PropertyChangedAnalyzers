@@ -17,7 +17,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModel : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private string name;
 
@@ -61,7 +61,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class ViewModel : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
         private string name;
 
@@ -105,7 +105,7 @@ namespace N.Core
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class ViewModelBase : INotifyPropertyChanged
+    public class CBase : INotifyPropertyChanged
     {
         public virtual event PropertyChangedEventHandler PropertyChanged;
 
@@ -121,7 +121,7 @@ namespace N.Client
 {
     using System.ComponentModel;
 
-    public class ViewModel : N.Core.ViewModelBase
+    public class C : N.Core.CBase
     {
         public override event PropertyChangedEventHandler PropertyChanged;
     }
@@ -194,9 +194,9 @@ namespace N
 {
     using System.ComponentModel;
 
-    public sealed class Foo : INotifyPropertyChanged
+    public sealed class C : INotifyPropertyChanged
     {
-        public Foo(int value )
+        public C(int value )
         {
             this.Value = value;
         }
@@ -221,24 +221,24 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
 
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -267,7 +267,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public static class Foo
+    public static class C
     {
         public static event PropertyChangedEventHandler PropertyChanged;
 
@@ -291,7 +291,7 @@ namespace N
     using System.Drawing;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private Point point;
 
