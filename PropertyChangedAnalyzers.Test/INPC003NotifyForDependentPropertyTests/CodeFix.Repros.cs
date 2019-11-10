@@ -6,7 +6,9 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
     public static partial class CodeFix
     {
         [Test]
+#pragma warning disable CA1707 // Identifiers should not contain underscores
         public static void Vanguard_MVVM_ViewModels_MainWindowViewModel()
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         {
             var iChildDataContext = @"
 namespace Vanguard_MVVM.ViewModels
@@ -100,7 +102,9 @@ namespace Vanguard_MVVM.ViewModels
         }
 
         [Test]
+#pragma warning disable CA1707 // Identifiers should not contain underscores
         public static void Vanguard_MVVM_ViewModels_MainWindowViewModelCommentedOut()
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         {
             var iChildDataContext = @"namespace Vanguard_MVVM.ViewModels
 {

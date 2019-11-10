@@ -71,19 +71,13 @@ namespace PropertyChangedAnalyzers
 
                 void Walk(BlockSyntax body)
                 {
-                    bool? equals = null;
-                    ExpressionSyntax backing = null;
+                    ExpressionSyntax? backing = null;
                     foreach (var statement in body.Statements)
                     {
                         switch (statement)
                         {
-                            case IfStatementSyntax { Condition: { } condition } ifStatement
-                                when Gu.Roslyn.AnalyzerExtensions.Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out var left, out var right):
-                                equals = true;
-                                //foreach (var VARIABLE in ifStatement.Statement)
-                                //{
-
-                                //}
+                            case IfStatementSyntax { Condition: { } condition }
+                                when Gu.Roslyn.AnalyzerExtensions.Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out _, out _):
                                 break;
                             case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: { } left, Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } } }:
                                 backing = left;

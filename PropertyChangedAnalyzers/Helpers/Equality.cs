@@ -10,26 +10,26 @@ namespace PropertyChangedAnalyzers
     [Obsolete("Use Gu.Roslyn.Extensions")]
     internal static class Equality
     {
-        internal static bool IsOperatorEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        internal static bool IsOperatorEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
             return condition is BinaryExpressionSyntax binary &&
                    binary.IsKind(SyntaxKind.EqualsExpression) &&
-                   IsLeftAndRight(binary, semanticModel, cancellationToken, first, other);
+                   IsLeftAndRight(binary, semanticModel, first, other, cancellationToken);
         }
 
-        internal static bool IsOperatorNotEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        internal static bool IsOperatorNotEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
             return condition is BinaryExpressionSyntax binary &&
                    binary.IsKind(SyntaxKind.NotEqualsExpression) &&
-                   IsLeftAndRight(binary, semanticModel, cancellationToken, first, other);
+                   IsLeftAndRight(binary, semanticModel, first, other, cancellationToken);
         }
 
-        internal static bool IsObjectEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        internal static bool IsObjectEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
                    semanticModel.TryGetSymbol(invocation, KnownSymbol.Object.Equals, cancellationToken, out _) &&
-                   IsArguments(invocation, semanticModel, cancellationToken, first, other);
+                   IsArguments(invocation, semanticModel, first, other, cancellationToken);
         }
 
         internal static bool IsEqualityComparerEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
@@ -43,10 +43,10 @@ namespace PropertyChangedAnalyzers
                    instance != GetSymbolName(first) &&
                    instance != GetSymbolName(other) &&
                    semanticModel.TryGetSymbol(invocation, KnownSymbol.EqualityComparerOfT.EqualsMethod, cancellationToken, out _) &&
-                   IsArguments(invocation, semanticModel, cancellationToken, first, other);
+                   IsArguments(invocation, semanticModel, first, other, cancellationToken);
         }
 
-        internal static bool IsStringEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        internal static bool IsStringEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
@@ -55,10 +55,10 @@ namespace PropertyChangedAnalyzers
                    GetSymbolType(first) == KnownSymbol.String &&
                    GetSymbolType(other) == KnownSymbol.String &&
                    semanticModel.TryGetSymbol(invocation, KnownSymbol.String.Equals, cancellationToken, out _) &&
-                   IsArguments(invocation, semanticModel, cancellationToken, first, other);
+                   IsArguments(invocation, semanticModel, first, other, cancellationToken);
         }
 
-        internal static bool IsInstanceEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol instance, ISymbol arg)
+        internal static bool IsInstanceEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol instance, ISymbol arg, CancellationToken cancellationToken)
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList != null &&
@@ -74,7 +74,7 @@ namespace PropertyChangedAnalyzers
                    SymbolComparer.Equals(semanticModel.GetSymbolSafe(argument.Expression, cancellationToken), arg);
         }
 
-        internal static bool IsNullableEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        internal static bool IsNullableEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.TryGetMethodName(out var methodName) &&
@@ -84,7 +84,7 @@ namespace PropertyChangedAnalyzers
                    className == "Nullable" &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
                    IsMatchingNullable(GetSymbolType(first) as INamedTypeSymbol, GetSymbolType(other) as INamedTypeSymbol) &&
-                   IsArguments(invocation, semanticModel, cancellationToken, first, other) &&
+                   IsArguments(invocation, semanticModel, first, other, cancellationToken) &&
                    semanticModel.GetSymbolSafe(invocation, cancellationToken) == KnownSymbol.Nullable.Equals;
 
             bool IsMatchingNullable(INamedTypeSymbol type1, INamedTypeSymbol type2)
@@ -115,15 +115,15 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static bool IsReferenceEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        internal static bool IsReferenceEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
                    semanticModel.TryGetSymbol(invocation, KnownSymbol.Object.ReferenceEquals, cancellationToken, out _) &&
-                   IsArguments(invocation, semanticModel, cancellationToken, first, other);
+                   IsArguments(invocation, semanticModel, first, other, cancellationToken);
         }
 
-        private static bool IsArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        private static bool IsArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
             if (invocation.ArgumentList == null ||
                 invocation.ArgumentList.Arguments.Count < 2)
@@ -156,16 +156,16 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        private static bool IsLeftAndRight(BinaryExpressionSyntax equals, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        private static bool IsLeftAndRight(BinaryExpressionSyntax equals, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
-            if (IsIdentifier(equals.Left, semanticModel, cancellationToken, first) &&
-                IsIdentifier(equals.Right, semanticModel, cancellationToken, other))
+            if (IsIdentifier(equals.Left, semanticModel, first, cancellationToken) &&
+                IsIdentifier(equals.Right, semanticModel, other, cancellationToken))
             {
                 return true;
             }
 
-            if (IsIdentifier(equals.Left, semanticModel, cancellationToken, other) &&
-                IsIdentifier(equals.Right, semanticModel, cancellationToken, first))
+            if (IsIdentifier(equals.Left, semanticModel, other, cancellationToken) &&
+                IsIdentifier(equals.Right, semanticModel, first, cancellationToken))
             {
                 return true;
             }
@@ -173,7 +173,7 @@ namespace PropertyChangedAnalyzers
             return false;
         }
 
-        private static bool IsIdentifier(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol expected)
+        private static bool IsIdentifier(ExpressionSyntax expression, SemanticModel semanticModel, ISymbol expected, CancellationToken cancellationToken)
         {
             if (expression == null ||
                 expected == null)

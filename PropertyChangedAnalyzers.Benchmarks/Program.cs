@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Benchmarks
     using BenchmarkDotNet.Running;
     using PropertyChangedAnalyzers.Benchmarks.Benchmarks;
 
-    public class Program
+    public static class Program
     {
         public static void Main()
         {

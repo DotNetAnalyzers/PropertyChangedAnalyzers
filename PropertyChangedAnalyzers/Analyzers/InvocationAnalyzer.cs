@@ -146,8 +146,8 @@ namespace PropertyChangedAnalyzers
                             return false;
                         }
 
-                        if (UsesValueAndMember(ifStatement, context.SemanticModel, context.CancellationToken, value, backingField) ||
-                            UsesValueAndMember(ifStatement, context.SemanticModel, context.CancellationToken, value, property))
+                        if (UsesValueAndMember(ifStatement, context.SemanticModel, value, backingField, context.CancellationToken) ||
+                            UsesValueAndMember(ifStatement, context.SemanticModel, value, property, context.CancellationToken))
                         {
                             if (ifStatement.Statement.Span.Contains(invocation.Span) ||
                                 ifStatement.IsReturnIfTrue())
@@ -194,20 +194,20 @@ namespace PropertyChangedAnalyzers
                 return IsEqualsCheck(unary.Operand, semanticModel, cancellationToken, value, member);
             }
 
-            return Equality.IsOperatorNotEquals(expression, semanticModel, cancellationToken, value, member);
+            return Equality.IsOperatorNotEquals(expression, semanticModel, value, member, cancellationToken);
         }
 
         private static bool IsEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
         {
             if (expression is InvocationExpressionSyntax equals)
             {
-                if (Equality.IsObjectEquals(equals, semanticModel, cancellationToken, value, member) ||
-                    Equality.IsInstanceEquals(equals, semanticModel, cancellationToken, value, member) ||
-                    Equality.IsInstanceEquals(equals, semanticModel, cancellationToken, member, value) ||
-                    Equality.IsReferenceEquals(equals, semanticModel, cancellationToken, value, member) ||
+                if (Equality.IsObjectEquals(equals, semanticModel, value, member, cancellationToken) ||
+                    Equality.IsInstanceEquals(equals, semanticModel, value, member, cancellationToken) ||
+                    Equality.IsInstanceEquals(equals, semanticModel, member, value, cancellationToken) ||
+                    Equality.IsReferenceEquals(equals, semanticModel, value, member, cancellationToken) ||
                     Equality.IsEqualityComparerEquals(equals, semanticModel, cancellationToken, value, member) ||
-                    Equality.IsStringEquals(equals, semanticModel, cancellationToken, value, member) ||
-                    Equality.IsNullableEquals(equals, semanticModel, cancellationToken, value, member))
+                    Equality.IsStringEquals(equals, semanticModel, value, member, cancellationToken) ||
+                    Equality.IsNullableEquals(equals, semanticModel, value, member, cancellationToken))
                 {
                     return true;
                 }
@@ -215,10 +215,10 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            return Equality.IsOperatorEquals(expression, semanticModel, cancellationToken, value, member);
+            return Equality.IsOperatorEquals(expression, semanticModel, value, member, cancellationToken);
         }
 
-        private static bool UsesValueAndMember(IfStatementSyntax ifStatement, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
+        private static bool UsesValueAndMember(IfStatementSyntax ifStatement, SemanticModel semanticModel, IParameterSymbol value, ISymbol member, CancellationToken cancellationToken)
         {
             var usesValue = false;
             var usesMember = false;
