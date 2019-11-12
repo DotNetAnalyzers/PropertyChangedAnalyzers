@@ -29,9 +29,7 @@ namespace PropertyChangedAnalyzers
             {
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax? argument) &&
                     TryGetNameExpression(argument, out var nameExpression) &&
-                    argument.Parent is ArgumentListSyntax argumentList &&
-                    argumentList.Arguments.Count == 1 &&
-                    argumentList.Parent is InvocationExpressionSyntax invocation &&
+                    argument.Parent is ArgumentListSyntax { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
                     argument.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
                     semanticModel.TryGetSymbol(classDeclaration, context.CancellationToken, out var type) &&
                     OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var invoker) &&
