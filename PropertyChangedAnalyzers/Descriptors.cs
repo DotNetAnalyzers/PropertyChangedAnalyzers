@@ -214,7 +214,7 @@ namespace PropertyChangedAnalyzers
         /// <param name="isEnabledByDefault">True if the diagnostic is enabled by default.</param>
         /// <param name="description">An optional longer description of the diagnostic.</param>
         /// <param name="customTags">Optional custom tags for the diagnostic. See <see cref="WellKnownDiagnosticTags" /> for some well known tags.</param>
-        internal static DiagnosticDescriptor Create(
+        private static DiagnosticDescriptor Create(
             string id,
             string title,
             string messageFormat,
