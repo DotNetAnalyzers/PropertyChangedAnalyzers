@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -34,10 +34,8 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            using (var walker = Borrow(scope))
-            {
-                return walker.throws.Count > 0;
-            }
+            using var walker = Borrow(scope);
+            return walker.throws.Count > 0;
         }
 
         protected override void Clear()

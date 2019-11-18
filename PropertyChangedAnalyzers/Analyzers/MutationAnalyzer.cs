@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -95,36 +95,34 @@ namespace PropertyChangedAnalyzers
                 containingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) &&
                 mutation.TryFirstAncestorOrSelf<TypeDeclarationSyntax>(out var typeDeclaration))
             {
-                using (var pathWalker = MemberPath.PathWalker.Borrow(backing))
+                using var pathWalker = MemberPath.PathWalker.Borrow(backing);
+                if (pathWalker.Tokens.Count == 0)
                 {
-                    if (pathWalker.Tokens.Count == 0)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    foreach (var member in typeDeclaration.Members)
+                foreach (var member in typeDeclaration.Members)
+                {
+                    if (member is PropertyDeclarationSyntax propertyDeclaration &&
+                        propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) &&
+                        TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter) &&
+                        !getter.Contains(backing) &&
+                        PropertyPath.Uses(getter, pathWalker, context) &&
+                        !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
+                        context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is { } property &&
+                        PropertyChanged.InvokesPropertyChangedFor(mutation, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
                     {
-                        if (member is PropertyDeclarationSyntax propertyDeclaration &&
-                            propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) &&
-                            TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter) &&
-                            !getter.Contains(backing) &&
-                            PropertyPath.Uses(getter, pathWalker, context) &&
-                            !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
-                            context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken) is { } property &&
-                            PropertyChanged.InvokesPropertyChangedFor(mutation, property, context.SemanticModel, context.CancellationToken) == AnalysisResult.No)
+                        if (context.Node.TryFirstAncestor(out PropertyDeclarationSyntax? inProperty) &&
+                            ReferenceEquals(inProperty, propertyDeclaration) &&
+                            Property.TrySingleReturned(inProperty, out var returned) &&
+                            PropertyPath.Uses(backing, returned, context))
                         {
-                            if (context.Node.TryFirstAncestor(out PropertyDeclarationSyntax? inProperty) &&
-                                ReferenceEquals(inProperty, propertyDeclaration) &&
-                                Property.TrySingleReturned(inProperty, out var returned) &&
-                                PropertyPath.Uses(backing, returned, context))
-                            {
-                                // We let INPC002 handle this
-                                continue;
-                            }
-
-                            var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC003NotifyForDependentProperty, context.Node.GetLocation(), properties, property.Name));
+                            // We let INPC002 handle this
+                            continue;
                         }
+
+                        var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC003NotifyForDependentProperty, context.Node.GetLocation(), properties, property.Name));
                     }
                 }
             }

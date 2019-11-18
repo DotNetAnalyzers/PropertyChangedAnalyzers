@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Globalization;
@@ -58,12 +58,10 @@ namespace PropertyChangedAnalyzers
 
                             if (propertyDeclaration.TryGetSetter(out var setAccessor))
                             {
-                                using (var mutationWalker = MutationWalker.Borrow(setAccessor, SearchScope.Member, context.SemanticModel, context.CancellationToken))
+                                using var mutationWalker = MutationWalker.Borrow(setAccessor, SearchScope.Member, context.SemanticModel, context.CancellationToken);
+                                if (mutationWalker.IsEmpty)
                                 {
-                                    if (mutationWalker.IsEmpty)
-                                    {
-                                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, setAccessor.GetLocation()));
-                                    }
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, setAccessor.GetLocation()));
                                 }
                             }
                         }

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -154,49 +154,45 @@ namespace PropertyChangedAnalyzers
             if (method.Parameters.TrySingle(out var parameter) &&
                 method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax? declaration))
             {
-                using (var walker = InvocationWalker.Borrow(declaration))
+                using var walker = InvocationWalker.Borrow(declaration);
+                foreach (var invocation in walker.Invocations)
                 {
-                    foreach (var invocation in walker.Invocations)
+                    if (invocation is { ArgumentList: { Arguments: { Count: 2 } oneArg } } &&
+                        oneArg.TryElementAt(1, out var argument) &&
+                        PropertyChangedEvent.IsInvoke(invocation, semanticModel, cancellationToken))
                     {
-                        if (invocation is { ArgumentList: { Arguments: { Count: 2 } oneArg } } &&
-                            oneArg.TryElementAt(1, out var argument) &&
-                            PropertyChangedEvent.IsInvoke(invocation, semanticModel, cancellationToken))
+                        if (argument.Expression is IdentifierNameSyntax identifierName &&
+                            identifierName.Identifier.ValueText == parameter.Name)
                         {
-                            if (argument.Expression is IdentifierNameSyntax identifierName &&
-                                identifierName.Identifier.ValueText == parameter.Name)
-                            {
-                                return AnalysisResult.Yes;
-                            }
-
-                            if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, semanticModel, cancellationToken))
-                            {
-                                return AnalysisResult.Yes;
-                            }
+                            return AnalysisResult.Yes;
                         }
-                        else if (invocation is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
-                                 arguments[0] is { Expression: { } expression } &&
-                                 invocation.IsPotentialThisOrBase())
+
+                        if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, semanticModel, cancellationToken))
                         {
-                            if (PropertyChangedEventArgs.IsCreatedWith(expression, parameter, semanticModel, cancellationToken) ||
-                                IdentifierNameWalker.Contains(expression, parameter, semanticModel, cancellationToken))
+                            return AnalysisResult.Yes;
+                        }
+                    }
+                    else if (invocation is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
+                             arguments[0] is { Expression: { } expression } &&
+                             invocation.IsPotentialThisOrBase())
+                    {
+                        if (PropertyChangedEventArgs.IsCreatedWith(expression, parameter, semanticModel, cancellationToken) ||
+                            IdentifierNameWalker.Contains(expression, parameter, semanticModel, cancellationToken))
+                        {
+                            if (semanticModel.TryGetSymbol(invocation, cancellationToken, out var invokedMethod))
                             {
-                                if (semanticModel.TryGetSymbol(invocation, cancellationToken, out var invokedMethod))
+                                using var set = visited.IncrementUsage();
+                                switch (IsMatch(invokedMethod, semanticModel, cancellationToken, set))
                                 {
-                                    using (var set = visited.IncrementUsage())
-                                    {
-                                        switch (IsMatch(invokedMethod, semanticModel, cancellationToken, set))
-                                        {
-                                            case AnalysisResult.No:
-                                                break;
-                                            case AnalysisResult.Yes:
-                                                return AnalysisResult.Yes;
-                                            case AnalysisResult.Maybe:
-                                                result = AnalysisResult.Maybe;
-                                                break;
-                                            default:
-                                                throw new InvalidOperationException("Unknown AnalysisResult");
-                                        }
-                                    }
+                                    case AnalysisResult.No:
+                                        break;
+                                    case AnalysisResult.Yes:
+                                        return AnalysisResult.Yes;
+                                    case AnalysisResult.Maybe:
+                                        result = AnalysisResult.Maybe;
+                                        break;
+                                    default:
+                                        throw new InvalidOperationException("Unknown AnalysisResult");
                                 }
                             }
                         }

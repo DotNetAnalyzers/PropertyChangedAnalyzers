@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Collections.Generic;
@@ -163,12 +163,10 @@ namespace PropertyChangedAnalyzers
                 {
                     foreach (var used in walker.usedMembers)
                     {
-                        using (var usedPath = MemberPath.PathWalker.Borrow(used))
+                        using var usedPath = MemberPath.PathWalker.Borrow(used);
+                        if (PropertyPath.Equals(usedPath, backing))
                         {
-                            if (PropertyPath.Equals(usedPath, backing))
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 }
@@ -240,11 +238,9 @@ namespace PropertyChangedAnalyzers
                         return;
                     }
 
-                    using (var walker = Borrow(body, Search.Recursive, this.containingType, this.semanticModel, this.cancellationToken, this))
-                    {
-                        this.usedMembers.AddRange(walker.usedMembers);
-                        this.visited.UnionWith(walker.visited);
-                    }
+                    using var walker = Borrow(body, Search.Recursive, this.containingType, this.semanticModel, this.cancellationToken, this);
+                    this.usedMembers.AddRange(walker.usedMembers);
+                    this.visited.UnionWith(walker.visited);
                 }
             }
         }

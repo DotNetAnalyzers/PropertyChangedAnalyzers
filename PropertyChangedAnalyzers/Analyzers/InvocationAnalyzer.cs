@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Threading;
@@ -72,25 +72,23 @@ namespace PropertyChangedAnalyzers
             if (invocation.FirstAncestorOrSelf<BlockSyntax>() is { } block &&
                 invocation.TryGetMethodName(out var name))
             {
-                using (var walker = InvocationWalker.Borrow(block))
+                using var walker = InvocationWalker.Borrow(block);
+                foreach (var other in walker.Invocations)
                 {
-                    foreach (var other in walker.Invocations)
+                    if (block != other.Parent?.Parent)
                     {
-                        if (block != other.Parent?.Parent)
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if (other.SpanStart >= invocation.SpanStart)
-                        {
-                            return true;
-                        }
+                    if (other.SpanStart >= invocation.SpanStart)
+                    {
+                        return true;
+                    }
 
-                        if (other.TryGetMethodName(out var otherName) &&
-                            name == otherName)
-                        {
-                            return false;
-                        }
+                    if (other.TryGetMethodName(out var otherName) &&
+                        name == otherName)
+                    {
+                        return false;
                     }
                 }
             }
@@ -103,62 +101,60 @@ namespace PropertyChangedAnalyzers
             if (context.ContainingSymbol is IMethodSymbol { Parameters: { Length: 1 } parameters, AssociatedSymbol: IPropertySymbol property } &&
                 parameters.TrySingle(out var value))
             {
-                using (var walker = IfStatementWalker.Borrow(setter))
+                using var walker = IfStatementWalker.Borrow(setter);
+                if (walker.IfStatements.Count == 0)
                 {
-                    if (walker.IfStatements.Count == 0)
+                    return true;
+                }
+
+                var backingField = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken);
+                foreach (var ifStatement in walker.IfStatements)
+                {
+                    if (ifStatement.SpanStart >= invocation.SpanStart)
                     {
-                        return true;
+                        continue;
                     }
 
-                    var backingField = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken);
-                    foreach (var ifStatement in walker.IfStatements)
+                    if (IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
+                        IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
                     {
-                        if (ifStatement.SpanStart >= invocation.SpanStart)
+                        if (ifStatement.Statement.Span.Contains(invocation.Span))
                         {
-                            continue;
+                            return true;
                         }
 
-                        if (IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
-                            IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
+                        if (ifStatement.IsReturnIfTrue())
                         {
-                            if (ifStatement.Statement.Span.Contains(invocation.Span))
-                            {
-                                return true;
-                            }
-
-                            if (ifStatement.IsReturnIfTrue())
-                            {
-                                return false;
-                            }
-
-                            continue;
-                        }
-
-                        if (IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
-                            IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
-                        {
-                            if (!ifStatement.Statement.Span.Contains(invocation.Span) ||
-                                ifStatement.IsReturnIfTrue())
-                            {
-                                return true;
-                            }
-
                             return false;
                         }
 
-                        if (UsesValueAndMember(ifStatement, context.SemanticModel, value, backingField, context.CancellationToken) ||
-                            UsesValueAndMember(ifStatement, context.SemanticModel, value, property, context.CancellationToken))
-                        {
-                            if (ifStatement.Statement.Span.Contains(invocation.Span) ||
-                                ifStatement.IsReturnIfTrue())
-                            {
-                                return false;
-                            }
-                        }
+                        continue;
                     }
 
-                    return true;
+                    if (IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
+                        IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
+                    {
+                        if (!ifStatement.Statement.Span.Contains(invocation.Span) ||
+                            ifStatement.IsReturnIfTrue())
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    }
+
+                    if (UsesValueAndMember(ifStatement, context.SemanticModel, value, backingField, context.CancellationToken) ||
+                        UsesValueAndMember(ifStatement, context.SemanticModel, value, property, context.CancellationToken))
+                    {
+                        if (ifStatement.Statement.Span.Contains(invocation.Span) ||
+                            ifStatement.IsReturnIfTrue())
+                        {
+                            return false;
+                        }
+                    }
                 }
+
+                return true;
             }
 
             return false;

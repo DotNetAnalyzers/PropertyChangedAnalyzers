@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -115,27 +115,25 @@ namespace PropertyChangedAnalyzers
                                  PropertyChangedEvent.IsInvoke(x, semanticModel, cancellationToken),
                             out _))
                         {
-                            using (var set = visited.IncrementUsage())
+                            using var set = visited.IncrementUsage();
+                            var result = AnalysisResult.No;
+                            foreach (var invocation in walker.Invocations)
                             {
-                                var result = AnalysisResult.No;
-                                foreach (var invocation in walker.Invocations)
+                                switch (IsMatch(invocation, semanticModel, cancellationToken, set))
                                 {
-                                    switch (IsMatch(invocation, semanticModel, cancellationToken, set))
-                                    {
-                                        case AnalysisResult.No:
-                                            break;
-                                        case AnalysisResult.Yes:
-                                            return AnalysisResult.Yes;
-                                        case AnalysisResult.Maybe:
-                                            result = AnalysisResult.Maybe;
-                                            break;
-                                        default:
-                                            throw new InvalidOperationException("Unknown AnalysisResult");
-                                    }
+                                    case AnalysisResult.No:
+                                        break;
+                                    case AnalysisResult.Yes:
+                                        return AnalysisResult.Yes;
+                                    case AnalysisResult.Maybe:
+                                        result = AnalysisResult.Maybe;
+                                        break;
+                                    default:
+                                        throw new InvalidOperationException("Unknown AnalysisResult");
                                 }
-
-                                return result;
                             }
+
+                            return result;
                         }
                     }
 

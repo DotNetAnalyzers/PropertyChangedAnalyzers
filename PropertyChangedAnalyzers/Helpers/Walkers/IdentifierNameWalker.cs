@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -26,19 +26,17 @@ namespace PropertyChangedAnalyzers
 
         internal static bool Contains(SyntaxNode node, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            using (var walker = Borrow(node))
+            using var walker = Borrow(node);
+            foreach (var identifierName in walker.identifierNames)
             {
-                foreach (var identifierName in walker.identifierNames)
+                if (parameter.MetadataName == identifierName.Identifier.ValueText &&
+                    semanticModel.TryGetSymbol(identifierName, cancellationToken, out IParameterSymbol _))
                 {
-                    if (parameter.MetadataName == identifierName.Identifier.ValueText &&
-                        semanticModel.TryGetSymbol(identifierName, cancellationToken, out IParameterSymbol _))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-
-                return false;
             }
+
+            return false;
         }
 
         protected override void Clear()

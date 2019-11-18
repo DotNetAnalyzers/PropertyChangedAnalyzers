@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
@@ -17,10 +17,8 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            using (var walker = InvocationWalker.Borrow(setter))
-            {
-                return walker.Invocations.TrySingle<InvocationExpressionSyntax>(x => TrySet.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
-            }
+            using var walker = InvocationWalker.Borrow(setter);
+            return walker.Invocations.TrySingle<InvocationExpressionSyntax>(x => TrySet.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
         }
 
         internal static bool TryFindSingleAssignment(AccessorDeclarationSyntax setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)

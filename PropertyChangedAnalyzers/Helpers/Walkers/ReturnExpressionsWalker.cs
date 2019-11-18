@@ -1,6 +1,7 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -34,12 +35,10 @@ namespace PropertyChangedAnalyzers
 
         internal static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
 
-        internal static bool TryGetSingle(SyntaxNode node, out ExpressionSyntax returnValue)
+        internal static bool TryGetSingle(SyntaxNode node, [NotNullWhen(true)] out ExpressionSyntax? returnValue)
         {
-            using (var walker = Borrow(node))
-            {
-                return walker.returnValues.TrySingle(out returnValue);
-            }
+            using var walker = Borrow(node);
+            return walker.returnValues.TrySingle(out returnValue);
         }
 
         protected override void Clear()

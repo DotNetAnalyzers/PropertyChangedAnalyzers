@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
@@ -226,26 +226,24 @@ namespace PropertyChangedAnalyzers
 
                 var name = property.Identifier.ValueText;
                 var mutatedInConstructor = false;
-                using (var walker = IdentifierNameWalker.Borrow(containingClass))
+                using var walker = IdentifierNameWalker.Borrow(containingClass);
+                foreach (var identifierName in walker.IdentifierNames)
                 {
-                    foreach (var identifierName in walker.IdentifierNames)
+                    if (identifierName.Identifier.ValueText == name &&
+                        IsMutation(identifierName))
                     {
-                        if (identifierName.Identifier.ValueText == name &&
-                            IsMutation(identifierName))
+                        if (IsInConstructor(identifierName))
                         {
-                            if (IsInConstructor(identifierName))
-                            {
-                                mutatedInConstructor = true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
+                            mutatedInConstructor = true;
+                        }
+                        else
+                        {
+                            return false;
                         }
                     }
-
-                    return mutatedInConstructor;
                 }
+
+                return mutatedInConstructor;
             }
 
             return false;
