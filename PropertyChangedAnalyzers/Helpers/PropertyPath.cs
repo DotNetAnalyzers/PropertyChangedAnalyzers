@@ -37,12 +37,10 @@
                     declaration.TryGetSetter(out var setter) &&
                     Setter.TryFindSingleAssignment(setter, out var assignment))
                 {
-                    using (var set = visited.IncrementUsage())
+                    using var set = visited.IncrementUsage();
+                    if (set.Add(candidate.Parent))
                     {
-                        if (set.Add(candidate.Parent))
-                        {
-                            return Uses(assignment.Left, returned, context, set);
-                        }
+                        return Uses(assignment.Left, returned, context, set);
                     }
                 }
             }
