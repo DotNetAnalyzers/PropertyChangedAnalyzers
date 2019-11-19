@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Threading;
@@ -37,7 +37,7 @@ namespace PropertyChangedAnalyzers
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                   TryGetName(memberAccess.Expression, out var instance) &&
+                   TryGetName(memberAccess.Expression) is { } instance &&
                    !string.Equals(instance, "object", StringComparison.OrdinalIgnoreCase) &&
                    !string.Equals(instance, "Nullable", StringComparison.OrdinalIgnoreCase) &&
                    instance != GetSymbolName(first) &&
@@ -50,8 +50,7 @@ namespace PropertyChangedAnalyzers
         {
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                   TryGetName(memberAccess.Expression, out var className) &&
-                   string.Equals(className, "string", StringComparison.OrdinalIgnoreCase) &&
+                   string.Equals(TryGetName(memberAccess.Expression), "string", StringComparison.OrdinalIgnoreCase) &&
                    GetSymbolType(first) == KnownSymbol.String &&
                    GetSymbolType(other) == KnownSymbol.String &&
                    semanticModel.TryGetSymbol(invocation, KnownSymbol.String.Equals, cancellationToken, out _) &&
@@ -63,13 +62,11 @@ namespace PropertyChangedAnalyzers
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.ArgumentList != null &&
                    invocation.ArgumentList.Arguments.TrySingle(out var argument) &&
-                   TryGetName(argument.Expression, out var argName) &&
-                   argName == GetSymbolName(arg) &&
+                   TryGetName(argument.Expression) == GetSymbolName(arg) &&
                    invocation.TryGetMethodName(out var name) &&
                    name == "Equals" &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                   TryGetName(memberAccess.Expression, out var instanceName) &&
-                   instanceName == GetSymbolName(instance) &&
+                   TryGetName(memberAccess.Expression) == GetSymbolName(instance) &&
                    SymbolComparer.Equals(instance, semanticModel.GetSymbolSafe(memberAccess.Expression, cancellationToken)) &&
                    SymbolComparer.Equals(semanticModel.GetSymbolSafe(argument.Expression, cancellationToken), arg);
         }
@@ -80,8 +77,7 @@ namespace PropertyChangedAnalyzers
                    invocation.TryGetMethodName(out var methodName) &&
                    methodName == "Equals" &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
-                   TryGetName(memberAccess.Expression, out var className) &&
-                   className == "Nullable" &&
+                   TryGetName(memberAccess.Expression) == "Nullable" &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
                    IsMatchingNullable(GetSymbolType(first) as INamedTypeSymbol, GetSymbolType(other) as INamedTypeSymbol) &&
                    IsArguments(invocation, semanticModel, first, other, cancellationToken) &&
@@ -133,8 +129,8 @@ namespace PropertyChangedAnalyzers
 
             var e0 = invocation.ArgumentList.Arguments[0].Expression;
             var e1 = invocation.ArgumentList.Arguments[1].Expression;
-            if (TryGetName(e0, out var name0) &&
-                TryGetName(e1, out var name1))
+            if (TryGetName(e0) is { } name0 &&
+                TryGetName(e1) is { } name1)
             {
                 var firstName = GetSymbolName(first);
                 var otherName = GetSymbolName(other);
@@ -181,7 +177,7 @@ namespace PropertyChangedAnalyzers
                 return false;
             }
 
-            if (TryGetName(expression, out var name) &&
+            if (TryGetName(expression) is { } name &&
                 name != GetSymbolName(expected))
             {
                 return false;
@@ -219,23 +215,15 @@ namespace PropertyChangedAnalyzers
             };
         }
 
-        private static bool TryGetName(ExpressionSyntax expression, out string name)
+        private static string? TryGetName(ExpressionSyntax expression)
         {
-            name = null;
-            if (expression is IdentifierNameSyntax identifierName)
+            return expression switch
             {
-                name = identifierName.Identifier.ValueText;
-            }
-            else if (expression is PredefinedTypeSyntax predefinedType)
-            {
-                name = predefinedType.Keyword.ValueText;
-            }
-            else if (expression is MemberAccessExpressionSyntax memberAccess)
-            {
-                name = memberAccess.Name.Identifier.ValueText;
-            }
-
-            return name != null;
+                IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText,
+                PredefinedTypeSyntax predefinedType => predefinedType.Keyword.ValueText,
+                MemberAccessExpressionSyntax memberAccess => memberAccess.Name.Identifier.ValueText,
+                _ => null,
+            };
         }
     }
 }
