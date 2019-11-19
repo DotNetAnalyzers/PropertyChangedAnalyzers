@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -36,7 +36,7 @@ namespace PropertyChangedAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax!.GetLocation()));
                     }
 
-                    if (ShouldBeProtected(out var location))
+                    if (ShouldBeProtected() is { } location)
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -51,7 +51,7 @@ namespace PropertyChangedAnalyzers
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax!.GetLocation()));
                     }
 
-                    if (ShouldBeProtected(out var location))
+                    if (ShouldBeProtected() is { } location)
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -70,18 +70,16 @@ namespace PropertyChangedAnalyzers
                        CallerMemberNameAttribute.IsAvailable(context.SemanticModel);
             }
 
-            bool ShouldBeProtected(out Location? result)
+            Location? ShouldBeProtected()
             {
                 if (method is { DeclaredAccessibility: Accessibility.Private, ContainingType: { IsSealed: false, IsStatic: false } })
                 {
-                    result = methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier)
+                    return methodDeclaration.Modifiers.TryFirst(x => x.IsKind(SyntaxKind.PrivateKeyword), out var modifier)
                         ? modifier.GetLocation()
                         : methodDeclaration.Identifier.GetLocation();
-                    return true;
                 }
 
-                result = null;
-                return false;
+                return null;
             }
         }
     }
