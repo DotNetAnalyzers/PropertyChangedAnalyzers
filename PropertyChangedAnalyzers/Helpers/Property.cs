@@ -70,8 +70,7 @@
 
             if (propertyDeclaration.TryGetGetter(out var getter))
             {
-                if (getter.Body == null &&
-                    getter.ExpressionBody == null)
+                if (getter is { Body: null, ExpressionBody: null })
                 {
                     return false;
                 }

@@ -1,4 +1,4 @@
-#pragma warning disable GURA06, GURA04 // Move test to correct class.
+﻿#pragma warning disable GURA06, GURA04 // Move test to correct class.
 namespace PropertyChangedAnalyzers.Test
 {
     using System;
@@ -26,6 +26,7 @@ namespace PropertyChangedAnalyzers.Test
             AllAnalyzers,
             MetadataReferences.FromAttributes());
 
+        [Explicit("For harvesting test cases only.")]
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void SolutionRepro(DiagnosticAnalyzer analyzer)
         {
@@ -33,6 +34,7 @@ namespace PropertyChangedAnalyzers.Test
             RoslynAssert.Valid(analyzer, Solution);
         }
 
+        [Explicit("For harvesting test cases only.")]
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void Repro(DiagnosticAnalyzer analyzer)
         {
