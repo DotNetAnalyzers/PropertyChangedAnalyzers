@@ -49,7 +49,7 @@
             if (!context.IsExcludedFromAnalysis() &&
                 !IsInIgnoredScope(context) &&
                 context.Node is PostfixUnaryExpressionSyntax { Operand: { } operand } postfix &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, operand, out var backing))
+                AssignedExpression(context.ContainingSymbol.ContainingType, operand) is { } backing)
             {
                 Handle(postfix, backing, context);
             }
@@ -59,8 +59,8 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 !IsInIgnoredScope(context) &&
-                context.Node is PrefixUnaryExpressionSyntax prefix &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, prefix.Operand, out var backing))
+                context.Node is PrefixUnaryExpressionSyntax { Operand: { } operand } prefix &&
+                AssignedExpression(context.ContainingSymbol.ContainingType, operand) is { } backing)
             {
                 Handle(prefix, backing, context);
             }
@@ -71,7 +71,7 @@
             if (!context.IsExcludedFromAnalysis() &&
                 !IsInIgnoredScope(context) &&
                 context.Node is AssignmentExpressionSyntax { Left: { } left } assignment &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, left, out var backing))
+                AssignedExpression(context.ContainingSymbol.ContainingType, left) is { } backing)
             {
                 Handle(assignment, backing, context);
             }
@@ -83,7 +83,7 @@
                 !IsInIgnoredScope(context) &&
                 context.Node is ArgumentSyntax { Expression: { } expression } argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
-                TryGetAssignedExpression(context.ContainingSymbol.ContainingType, expression, out var backing))
+                AssignedExpression(context.ContainingSymbol.ContainingType, expression) is { } backing)
             {
                 Handle(argument.Expression, backing, context);
             }
@@ -139,25 +139,21 @@
             };
         }
 
-        private static bool TryGetAssignedExpression(ITypeSymbol containingType, SyntaxNode node, [NotNullWhen(true)] out ExpressionSyntax? backing)
+        private static ExpressionSyntax? AssignedExpression(ITypeSymbol containingType, SyntaxNode node)
         {
             switch (node)
             {
                 case IdentifierNameSyntax identifierName
                     when !IdentifierTypeWalker.IsLocalOrParameter(identifierName) &&
                          !containingType.TryFindProperty(identifierName.Identifier.ValueText, out _):
-                    backing = identifierName;
-                    return true;
+                    return identifierName;
                 case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name } memberAccess
                     when !containingType.TryFindProperty(name.Identifier.ValueText, out _):
-                    backing = memberAccess;
-                    return true;
+                    return memberAccess;
                 case MemberAccessExpressionSyntax memberAccess:
-                    backing = memberAccess;
-                    return true;
+                    return memberAccess;
                 default:
-                    backing = null;
-                    return false;
+                    return null;
             }
         }
 
