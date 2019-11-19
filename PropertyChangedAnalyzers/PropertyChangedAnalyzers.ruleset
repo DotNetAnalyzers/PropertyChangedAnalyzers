@@ -7,6 +7,7 @@
   <Rules AnalyzerId="Gu.Analyzers" RuleNamespace="Gu.Analyzers">
     <Rule Id="GU0016" Action="Warning" />
     <Rule Id="GU0074" Action="Info" />
+    <Rule Id="GU0075" Action="Info" />
   </Rules>
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1001" Action="Warning" />
