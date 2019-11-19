@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Collections.Generic;
@@ -46,42 +46,34 @@ namespace PropertyChangedAnalyzers
 
         internal static ExpressionSyntax Equals(ExpressionSyntax x, ExpressionSyntax y, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (TryGetType(out var type))
+            if (Type() is { } type)
             {
                 return Equals(type!, x.WithoutTrivia(), y.WithoutTrivia(), semanticModel);
             }
 
             throw new InvalidOperationException("Failed creating equality check.");
-
-            bool TryGetType(out ITypeSymbol? result)
+            ITypeSymbol? Type()
             {
-                if (semanticModel.TryGetType(x, cancellationToken, out result) ||
+                if (semanticModel.TryGetType(x, cancellationToken, out var result) ||
                     semanticModel.TryGetType(y, cancellationToken, out result))
                 {
-                    return true;
+                    return result;
                 }
 
                 if (semanticModel.TryGetSymbol(x, cancellationToken, out var symbol) ||
                     semanticModel.TryGetSymbol(y, cancellationToken, out symbol))
                 {
-                    switch (symbol)
+                    return symbol switch
                     {
-                        case IParameterSymbol parameter:
-                            result = parameter.Type;
-                            return true;
-                        case ILocalSymbol local:
-                            result = local.Type;
-                            return true;
-                        case IFieldSymbol field:
-                            result = field.Type;
-                            return true;
-                        case IPropertySymbol property:
-                            result = property.Type;
-                            return true;
-                    }
+                        IParameterSymbol parameter => parameter.Type,
+                        ILocalSymbol local => local.Type,
+                        IFieldSymbol field => field.Type,
+                        IPropertySymbol property => property.Type,
+                        _ => null,
+                    };
                 }
 
-                return false;
+                return null;
             }
         }
 

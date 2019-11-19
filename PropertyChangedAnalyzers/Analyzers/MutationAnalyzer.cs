@@ -105,7 +105,7 @@
                 {
                     if (member is PropertyDeclarationSyntax propertyDeclaration &&
                         propertyDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword, SyntaxKind.InternalKeyword) &&
-                        TryGeExpressionBodyOrGetter(propertyDeclaration, out var getter) &&
+                        ExpressionBodyOrGetter(propertyDeclaration) is { } getter &&
                         !getter.Contains(backing) &&
                         PropertyPath.Uses(getter, pathWalker, context) &&
                         !Property.IsLazy(propertyDeclaration, context.SemanticModel, context.CancellationToken) &&
@@ -157,20 +157,17 @@
             }
         }
 
-        private static bool TryGeExpressionBodyOrGetter(PropertyDeclarationSyntax property, [NotNullWhen(true)] out SyntaxNode? node)
+        private static SyntaxNode? ExpressionBodyOrGetter(PropertyDeclarationSyntax property)
         {
             switch (property)
             {
                 case { ExpressionBody: { Expression: { } expression } }:
-                    node = expression;
-                    return true;
+                    return expression;
                 case { AccessorList: { } }
                     when property.TryGetGetter(out var getter):
-                    node = (SyntaxNode)getter.Body ?? getter.ExpressionBody;
-                    return node != null;
+                    return (SyntaxNode)getter.Body ?? getter.ExpressionBody;
                 default:
-                    node = null;
-                    return false;
+                    return null;
             }
         }
     }
