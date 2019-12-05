@@ -3,6 +3,7 @@
 [![Join the chat at https://gitter.im/DotNetAnalyzers/PropertyChangedAnalyzers](https://badges.gitter.im/DotNetAnalyzers/PropertyChangedAnalyzers.svg)](https://gitter.im/DotNetAnalyzers/PropertyChangedAnalyzers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Build status](https://ci.appveyor.com/api/projects/status/0d5ipb8hm82eiqmi/branch/master?svg=true)](https://ci.appveyor.com/project/JohanLarsson/propertychangedanalyzers/branch/master)
+[![Build Status](https://dev.azure.com/DotNetAnalyzers/PropertyChangedAnalyzers/_apis/build/status/DotNetAnalyzers.PropertyChangedAnalyzers?branchName=master)](https://dev.azure.com/DotNetAnalyzers/PropertyChangedAnalyzers/_build/latest?definitionId=3&branchName=master)
 [![NuGet](https://img.shields.io/nuget/v/PropertyChangedAnalyzers.svg)](https://www.nuget.org/packages/PropertyChangedAnalyzers/)
 
 Roslyn analyzers for `INotifyPropertyChanged`.
