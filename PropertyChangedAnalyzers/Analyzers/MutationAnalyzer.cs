@@ -96,7 +96,13 @@
                 mutation.TryFirstAncestorOrSelf<TypeDeclarationSyntax>(out var typeDeclaration))
             {
                 using var pathWalker = MemberPath.PathWalker.Borrow(backing);
-                if (pathWalker.Tokens.Count == 0)
+                if (!pathWalker.TryFirst(out var firstTokenInPath))
+                {
+                    return;
+                }
+
+                var firstIdentifierNameSymbol = context.SemanticModel.GetSymbolInfo(firstTokenInPath.Parent, context.CancellationToken).Symbol;
+                if (firstIdentifierNameSymbol?.ContainingType != containingType)
                 {
                     return;
                 }
