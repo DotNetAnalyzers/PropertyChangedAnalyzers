@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Collections.Immutable;
@@ -170,16 +170,24 @@ namespace PropertyChangedAnalyzers
                             }
                         }
 
+                        var nullabilityAnnotationsEnabled = editor.SemanticModel.NullableAnnotationsEnabled(classDeclaration.SpanStart);
+
                         if (!type.TryFindEventRecursive("PropertyChanged", out _))
                         {
-                            _ = editor.AddEvent(
-                                classDeclaration,
-                                (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration("PropertyChanged", PropertyChangedEventHandlerType, Accessibility.Public));
+                            var eventDeclaration = (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration(
+                                "PropertyChanged",
+                                InpcFactory.WithNullability(PropertyChangedEventHandlerType, nullabilityAnnotationsEnabled),
+                                Accessibility.Public);
+
+                            _ = editor.AddEvent(classDeclaration, eventDeclaration);
                         }
 
                         if (!type.TryFindFirstMethodRecursive("OnPropertyChanged", m => m.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.String, out _))
                         {
-                            await editor.AddOnPropertyChangedMethodAsync(classDeclaration, cancellationToken).ConfigureAwait(false);
+                            await editor.AddOnPropertyChangedMethodAsync(
+                                classDeclaration,
+                                nullabilityAnnotationsEnabled,
+                                cancellationToken).ConfigureAwait(false);
                         }
 
                         if (addUsings)

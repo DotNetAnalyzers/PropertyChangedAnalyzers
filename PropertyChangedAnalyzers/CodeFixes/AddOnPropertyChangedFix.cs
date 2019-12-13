@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -31,7 +31,10 @@ namespace PropertyChangedAnalyzers
                 {
                     context.RegisterCodeFix(
                         "Add OnPropertyChanged()",
-                        (editor, cancellationToken) => editor.AddOnPropertyChangedMethodAsync(classDeclaration, cancellationToken),
+                        (editor, cancellationToken) => editor.AddOnPropertyChangedMethodAsync(
+                            classDeclaration,
+                            editor.SemanticModel.NullableAnnotationsEnabled(classDeclaration.SpanStart),
+                            cancellationToken),
                         "Add OnPropertyChanged()",
                         diagnostic);
 

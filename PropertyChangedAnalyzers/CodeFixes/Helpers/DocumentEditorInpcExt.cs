@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Threading;
@@ -90,7 +90,7 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static async Task AddOnPropertyChangedMethodAsync(this DocumentEditor editor, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
+        internal static async Task AddOnPropertyChangedMethodAsync(this DocumentEditor editor, ClassDeclarationSyntax classDeclaration, bool nullabilityAnnotationsEnabled, CancellationToken cancellationToken)
         {
             var qualifyAccess = classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword)
                 ? CodeStyleResult.No
@@ -103,7 +103,8 @@ namespace PropertyChangedAnalyzers
                     qualifyAccess,
                     classDeclaration.Modifiers.Any(SyntaxKind.SealedKeyword),
                     classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword),
-                    CallerMemberNameAttribute.IsAvailable(editor.SemanticModel)));
+                    CallerMemberNameAttribute.IsAvailable(editor.SemanticModel),
+                    nullabilityAnnotationsEnabled));
         }
 
         internal static void AddOnPropertyChanged(this DocumentEditor editor, IfStatementSyntax ifTrySet, ExpressionStatementSyntax onPropertyChanged)

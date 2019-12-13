@@ -231,7 +231,7 @@
             }
         }
 
-        internal static MethodDeclarationSyntax OnPropertyChangedDeclaration(CodeStyleResult qualifyAccess, bool isSealed, bool isStatic, bool callerMemberName)
+        internal static MethodDeclarationSyntax OnPropertyChangedDeclaration(CodeStyleResult qualifyAccess, bool isSealed, bool isStatic, bool callerMemberName, bool nullabilityAnnotationsEnabled)
         {
             return SyntaxFactory.MethodDeclaration(
                 attributeLists: default,
@@ -321,22 +321,26 @@
             ParameterSyntax Parameter(string name)
             {
                 return callerMemberName
-                    ? InpcFactory.CallerMemberName(name)
+                    ? InpcFactory.CallerMemberName(name, nullabilityAnnotationsEnabled)
                     : SyntaxFactory.Parameter(
                             attributeLists: default,
                             modifiers: default,
-                            type: SyntaxFactory.PredefinedType(keyword: SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                            type: WithNullability(
+                                SyntaxFactory.PredefinedType(keyword: SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                nullabilityAnnotationsEnabled),
                             identifier: SyntaxFactory.Identifier(name),
                             @default: default);
             }
         }
 
-        internal static ParameterSyntax CallerMemberName(string name)
+        internal static ParameterSyntax CallerMemberName(string name, bool nullabilityAnnotationsEnabled)
         {
             return SyntaxFactory.Parameter(
                 attributeLists: SyntaxFactory.SingletonList(CallerMemberNameAttributeList),
                 modifiers: default,
-                type: SyntaxFactory.PredefinedType(SyntaxFactory.Token(kind: SyntaxKind.StringKeyword)),
+                type: WithNullability(
+                    SyntaxFactory.PredefinedType(keyword: SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                    nullabilityAnnotationsEnabled),
                 identifier: SyntaxFactory.Identifier(name),
                 @default: SyntaxFactory.EqualsValueClause(
                     value: SyntaxFactory.LiteralExpression(
@@ -383,6 +387,16 @@
                 SyntaxFactory.ThisExpression(),
                 SyntaxFactory.Token(SyntaxKind.DotToken),
                 SyntaxFactory.IdentifierName(identifier));
+        }
+
+        internal static TypeSyntax WithNullability(TypeSyntax type, bool nullable)
+        {
+            if (type is NullableTypeSyntax nullableType)
+            {
+                return nullable ? type : nullableType.ElementType;
+            }
+
+            return nullable ? SyntaxFactory.NullableType(type) : type;
         }
     }
 }
