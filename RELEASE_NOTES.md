@@ -1,3 +1,6 @@
+#### 3.0.0
+* BREAKING: VS2019+
+
 #### 2.7.2
 * BUGFIX: Figure out caching in ConcurrentDictionary
 
