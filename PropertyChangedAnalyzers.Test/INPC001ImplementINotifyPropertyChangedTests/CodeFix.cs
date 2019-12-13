@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -382,6 +382,42 @@ namespace N
 }".AssertReplace("this.Value = 1", assignCode);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+        }
+
+        [Test]
+        public static void WhenInNullableContext()
+        {
+            var before = @"
+#nullable enable
+
+namespace N
+{
+    public class ↓C
+    {
+        public int P { get; set; }
+    }
+}";
+
+            var after = @"
+#nullable enable
+
+namespace N
+{
+    public class C : System.ComponentModel.INotifyPropertyChanged
+    {
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        public int P { get; set; }
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
     }
 }
