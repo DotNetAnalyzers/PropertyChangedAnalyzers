@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -14,12 +14,10 @@ namespace PropertyChangedAnalyzers
     [Shared]
     internal class EqualityFix : DocumentEditorCodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.INPC006UseReferenceEqualsForReferenceTypes.Id,
             Descriptors.INPC006UseObjectEqualsForReferenceTypes.Id);
 
-        /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
@@ -34,7 +32,7 @@ namespace PropertyChangedAnalyzers
                     {
                         context.RegisterCodeFix(
                             $"Use {name}",
-                            (editor, cancellationToken) => editor.ReplaceNode(
+                            editor => editor.ReplaceNode(
                                 invocation.Expression,
                                 x => SyntaxFactory.IdentifierName(name).WithTriviaFrom(x)),
                             nameof(EqualityFix),
@@ -45,7 +43,7 @@ namespace PropertyChangedAnalyzers
                     {
                         context.RegisterCodeFix(
                             $"Use {name}",
-                            (editor, cancellationToken) => editor.ReplaceNode(
+                            editor => editor.ReplaceNode(
                                 invocation,
                                 x => InpcFactory.Equals(null, name, expression, argument.Expression).WithTriviaFrom(x)),
                             nameof(EqualityFix),
@@ -61,7 +59,7 @@ namespace PropertyChangedAnalyzers
                         case SyntaxKind.EqualsExpression:
                             context.RegisterCodeFix(
                                 $"Use {name}",
-                                (editor, cancellationToken) => editor.ReplaceNode(
+                                editor => editor.ReplaceNode(
                                     binary,
                                     x => InpcFactory.Equals(null, name, x.Left.WithoutTrivia(), x.Right.WithoutTrivia()).WithTriviaFrom(x)),
                                 nameof(EqualityFix),
@@ -70,7 +68,7 @@ namespace PropertyChangedAnalyzers
                         case SyntaxKind.NotEqualsExpression:
                             context.RegisterCodeFix(
                                 $"Use !{name}",
-                                (editor, cancellationToken) => editor.ReplaceNode(
+                                editor => editor.ReplaceNode(
                                     binary,
                                     x => SyntaxFactory.PrefixUnaryExpression(
                                                           SyntaxKind.LogicalNotExpression,

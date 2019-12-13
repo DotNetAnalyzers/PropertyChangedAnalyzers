@@ -34,9 +34,8 @@
 
         internal static bool IsEqualityComparerEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
         {
-            return condition is InvocationExpressionSyntax invocation &&
+            return condition is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax memberAccess } invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
-                   invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                    TryGetName(memberAccess.Expression) is { } instance &&
                    !string.Equals(instance, "object", StringComparison.OrdinalIgnoreCase) &&
                    !string.Equals(instance, "Nullable", StringComparison.OrdinalIgnoreCase) &&
@@ -59,9 +58,8 @@
 
         internal static bool IsInstanceEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol instance, ISymbol arg, CancellationToken cancellationToken)
         {
-            return condition is InvocationExpressionSyntax invocation &&
-                   invocation.ArgumentList != null &&
-                   invocation.ArgumentList.Arguments.TrySingle(out var argument) &&
+            return condition is InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 1 } arguments } } invocation &&
+                   arguments.TrySingle(out var argument) &&
                    TryGetName(argument.Expression) == GetSymbolName(arg) &&
                    invocation.TryGetMethodName(out var name) &&
                    name == "Equals" &&
@@ -73,10 +71,9 @@
 
         internal static bool IsNullableEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
-            return condition is InvocationExpressionSyntax invocation &&
+            return condition is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax memberAccess } invocation &&
                    invocation.TryGetMethodName(out var methodName) &&
                    methodName == "Equals" &&
-                   invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                    TryGetName(memberAccess.Expression) == "Nullable" &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&
                    IsMatchingNullable(GetSymbolType(first) as INamedTypeSymbol, GetSymbolType(other) as INamedTypeSymbol) &&

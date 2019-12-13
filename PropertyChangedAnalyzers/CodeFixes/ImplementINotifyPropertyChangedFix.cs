@@ -32,7 +32,6 @@
         private static readonly QualifiedNameSyntax MvvmCrossCoreMvxViewModel = InpcFactory.ParseQualifiedName("MvvmCross.Core.ViewModels.MvxViewModel");
         private static readonly QualifiedNameSyntax PrismMvvmBindableBase = InpcFactory.ParseQualifiedName("Microsoft.Practices.Prism.Mvvm.BindableBase");
 
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.INPC001ImplementINotifyPropertyChanged.Id,
             "CS0535",
@@ -40,7 +39,6 @@
 
         protected override DocumentEditorFixAllProvider? FixAllProvider() => null;
 
-        /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)

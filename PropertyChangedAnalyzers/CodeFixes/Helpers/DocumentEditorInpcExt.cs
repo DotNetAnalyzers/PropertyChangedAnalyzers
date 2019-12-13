@@ -79,7 +79,7 @@
             ExpressionStatementSyntax OnPropertyChanged()
             {
                 if (onPropertyChanged.HasLeadingTrivia &&
-                    onPropertyChanged.GetLeadingTrivia() is SyntaxTriviaList leadingTrivia &&
+                    onPropertyChanged.GetLeadingTrivia() is { } leadingTrivia &&
                     leadingTrivia.TryFirst(out var first) &&
                     first.IsKind(SyntaxKind.EndOfLineTrivia))
                 {

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
@@ -49,36 +49,34 @@ namespace PropertyChangedAnalyzers
 
             bool IsSimple(out ExpressionSyntax? backing)
             {
-                if (setter.ExpressionBody != null)
+                switch (setter)
                 {
-                    return IsAssigningField(out backing);
-                }
-
-                if (setter.Body is { Statements: { } statements })
-                {
-                    foreach (var statement in statements)
-                    {
-                        if (IsWhiteListedStatement(statement))
+                    case { ExpressionBody: { } }:
+                        return IsAssigningField(out backing);
+                    case { Body: { Statements: { } statements } }:
+                        foreach (var statement in statements)
                         {
-                            continue;
+                            if (IsWhiteListedStatement(statement))
+                            {
+                                continue;
+                            }
+
+                            if (statement is IfStatementSyntax ifStatement &&
+                                IsWhiteListedIfStatement(ifStatement))
+                            {
+                                continue;
+                            }
+
+                            // If there is for example validation or side effects we don't suggest setting the field.
+                            backing = null;
+                            return false;
                         }
 
-                        if (statement is IfStatementSyntax ifStatement &&
-                            IsWhiteListedIfStatement(ifStatement))
-                        {
-                            continue;
-                        }
-
-                        // If there is for example validation or side effects we don't suggest setting the field.
+                        return IsAssigningField(out backing);
+                    default:
                         backing = null;
                         return false;
-                    }
-
-                    return IsAssigningField(out backing);
                 }
-
-                backing = null;
-                return false;
             }
 
             bool IsAssigningField(out ExpressionSyntax? backingField)

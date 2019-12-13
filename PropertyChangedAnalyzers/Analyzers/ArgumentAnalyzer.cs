@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -10,14 +10,12 @@ namespace PropertyChangedAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class ArgumentAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.INPC004UseCallerMemberName,
             Descriptors.INPC009DoNotRaiseChangeForMissingProperty,
             Descriptors.INPC012DoNotUseExpression,
             Descriptors.INPC013UseNameof);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
@@ -56,8 +54,7 @@ namespace PropertyChangedAnalyzers
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
                         }
 
-                        if (argumentList.Parent is ObjectCreationExpressionSyntax objectCreation &&
-                            objectCreation.Parent is ArgumentSyntax parentArg &&
+                        if (argumentList.Parent is ObjectCreationExpressionSyntax { Parent: ArgumentSyntax parentArg } objectCreation &&
                             parentArg.FirstAncestor<InvocationExpressionSyntax>() is { } parentInvocation &&
                             context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbol.PropertyChangedEventArgs, context.CancellationToken, out _))
                         {

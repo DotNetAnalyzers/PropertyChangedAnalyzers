@@ -39,8 +39,7 @@
                         diagnostic);
                 }
                 else if (syntaxRoot.TryFindNode(diagnostic, out ArgumentSyntax? argument) &&
-                         argument.Parent is ArgumentListSyntax argumentList &&
-                         argumentList.Parent is InvocationExpressionSyntax invocation &&
+                         argument.Parent is ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } argumentList &&
                          semanticModel.TryGetSymbol(invocation, context.CancellationToken, out var method) &&
                          method.TryFindParameter(argument, out var parameterSymbol))
                 {

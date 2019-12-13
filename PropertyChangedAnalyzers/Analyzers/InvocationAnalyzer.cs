@@ -162,24 +162,15 @@
 
         private static bool IncorrectOrMissingCheckIfDifferent(InvocationExpressionSyntax setAndRaise, InvocationExpressionSyntax invocation)
         {
-            if (setAndRaise.Parent is IfStatementSyntax ifStatement)
+            return setAndRaise.Parent switch
             {
-                return !ifStatement.Statement.Contains(invocation);
-            }
-
-            if (setAndRaise.Parent is PrefixUnaryExpressionSyntax unary &&
-                     unary.IsKind(SyntaxKind.LogicalNotExpression) &&
-                     unary.Parent is IfStatementSyntax ifNegated)
-            {
-                return ifNegated.Span.Contains(invocation.Span);
-            }
-
-            if (setAndRaise.Parent is StatementSyntax)
-            {
-                return true;
-            }
-
-            return false;
+                IfStatementSyntax ifStatement => !ifStatement.Statement.Contains(invocation),
+                PrefixUnaryExpressionSyntax { Parent: IfStatementSyntax ifNegated } unary
+                when unary.IsKind(SyntaxKind.LogicalNotExpression)
+                => ifNegated.Span.Contains(invocation.Span),
+                StatementSyntax _ => true,
+                _ => false
+            };
         }
 
         private static bool IsNegatedEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
