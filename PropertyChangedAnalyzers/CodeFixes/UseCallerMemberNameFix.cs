@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -34,7 +34,7 @@ namespace PropertyChangedAnalyzers
                         "Use [CallerMemberName]",
                         (editor, x) => editor.ReplaceNode(
                             parameter,
-                            AsCallerMemberName(parameter)),
+                            AsCallerMemberName(parameter, editor.SemanticModel.GetNullableContext(parameter.SpanStart).AnnotationsEnabled())),
                         nameof(UseCallerMemberNameFix),
                         diagnostic);
                 }
@@ -60,7 +60,7 @@ namespace PropertyChangedAnalyzers
                             {
                                 editor.ReplaceNode(
                                     parameter,
-                                    AsCallerMemberName(parameter));
+                                    AsCallerMemberName(parameter, editor.SemanticModel.GetNullableContext(parameter.SpanStart).AnnotationsEnabled()));
                                 editor.RemoveNode(argument);
                             },
                             nameof(UseCallerMemberNameFix),
@@ -70,10 +70,17 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        private static ParameterSyntax AsCallerMemberName(ParameterSyntax parameter)
+        private static ParameterSyntax AsCallerMemberName(ParameterSyntax parameter, bool nullabilityAnnotationsEnabled)
         {
-            return parameter.AddAttributeLists(InpcFactory.CallerMemberNameAttributeList)
-                            .WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)));
+            parameter = parameter.AddAttributeLists(InpcFactory.CallerMemberNameAttributeList)
+                                 .WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)));
+
+            if (nullabilityAnnotationsEnabled)
+            {
+                parameter = parameter.WithType(InpcFactory.WithNullability(parameter.Type, nullable: true));
+            }
+
+            return parameter;
         }
     }
 }

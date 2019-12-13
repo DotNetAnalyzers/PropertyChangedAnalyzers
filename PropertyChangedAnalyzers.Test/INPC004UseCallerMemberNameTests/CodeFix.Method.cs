@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -230,6 +230,50 @@ namespace N
         }
     }
 }";
+
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            }
+
+            [TestCase("this.PropertyChanged")]
+            [TestCase("PropertyChanged")]
+            public static void InNullableContext(string member)
+            {
+                var before = @"
+#nullable enable
+
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(↓string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("this.PropertyChanged", member);
+
+                var after = @"
+#nullable enable
+
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("this.PropertyChanged", member);
 
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
