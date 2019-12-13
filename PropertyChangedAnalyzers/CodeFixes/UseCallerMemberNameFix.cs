@@ -34,7 +34,7 @@
                         "Use [CallerMemberName]",
                         (editor, x) => editor.ReplaceNode(
                             parameter,
-                            AsCallerMemberName(parameter, editor.SemanticModel.NullableAnnotationsEnabled(parameter.SpanStart))),
+                            AsCallerMemberName(parameter, editor.SemanticModel.GetNullableContext(parameter.SpanStart).AnnotationsEnabled())),
                         nameof(UseCallerMemberNameFix),
                         diagnostic);
                 }
@@ -60,7 +60,7 @@
                             {
                                 editor.ReplaceNode(
                                     parameter,
-                                    AsCallerMemberName(parameter, editor.SemanticModel.NullableAnnotationsEnabled(parameter.SpanStart)));
+                                    AsCallerMemberName(parameter, editor.SemanticModel.GetNullableContext(parameter.SpanStart).AnnotationsEnabled()));
                                 editor.RemoveNode(argument);
                             },
                             nameof(UseCallerMemberNameFix),

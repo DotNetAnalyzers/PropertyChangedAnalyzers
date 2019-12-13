@@ -33,7 +33,7 @@
                         "Add OnPropertyChanged()",
                         (editor, cancellationToken) => editor.AddOnPropertyChangedMethodAsync(
                             classDeclaration,
-                            editor.SemanticModel.NullableAnnotationsEnabled(classDeclaration.SpanStart),
+                            editor.SemanticModel.GetNullableContext(classDeclaration.SpanStart).AnnotationsEnabled(),
                             cancellationToken),
                         "Add OnPropertyChanged()",
                         diagnostic);

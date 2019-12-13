@@ -170,7 +170,7 @@
                             }
                         }
 
-                        var nullabilityAnnotationsEnabled = editor.SemanticModel.NullableAnnotationsEnabled(classDeclaration.SpanStart);
+                        var nullabilityAnnotationsEnabled = editor.SemanticModel.GetNullableContext(classDeclaration.SpanStart).AnnotationsEnabled();
 
                         if (!type.TryFindEventRecursive("PropertyChanged", out _))
                         {
