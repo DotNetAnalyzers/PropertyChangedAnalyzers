@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
@@ -224,7 +224,6 @@ namespace N
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -332,7 +331,6 @@ namespace N
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -368,7 +366,6 @@ namespace N
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
             }
         }
     }

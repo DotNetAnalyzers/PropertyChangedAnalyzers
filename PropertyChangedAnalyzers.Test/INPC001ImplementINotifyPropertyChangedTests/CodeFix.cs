@@ -260,7 +260,6 @@ namespace N
     }
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]

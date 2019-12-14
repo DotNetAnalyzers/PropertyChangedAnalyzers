@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -148,7 +148,6 @@ namespace N
 }".AssertReplace("_value = value;", update);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
         }
 
         [TestCase("this.value |= value;")]
@@ -1514,7 +1513,6 @@ namespace N
     }
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
         }
 
         [Test]
@@ -2764,7 +2762,6 @@ namespace N
     }
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
         }
 
         [Test]

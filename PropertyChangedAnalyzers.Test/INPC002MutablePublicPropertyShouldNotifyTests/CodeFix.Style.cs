@@ -146,7 +146,6 @@ namespace N
     }
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "TrySet(ref field, newValue)");
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "TrySet(ref field, newValue)");
         }
 
         [Test]

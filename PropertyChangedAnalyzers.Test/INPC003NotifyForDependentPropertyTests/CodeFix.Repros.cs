@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -98,7 +98,6 @@ namespace Vanguard_MVVM.ViewModels
 }";
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
         }
 
         [Test]
@@ -195,7 +194,6 @@ namespace Vanguard_MVVM.ViewModels
 }";
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
         }
     }
 }

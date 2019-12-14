@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
@@ -228,7 +228,6 @@ namespace N.Client
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]

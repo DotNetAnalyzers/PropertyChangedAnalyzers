@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -131,7 +131,6 @@ namespace N
 }";
 
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify when value changes.");
             }
 
             [Test]
@@ -195,7 +194,6 @@ namespace N
 }";
 
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify.");
             }
         }
     }
