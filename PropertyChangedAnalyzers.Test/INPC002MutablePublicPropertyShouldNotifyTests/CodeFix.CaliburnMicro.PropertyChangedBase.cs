@@ -191,19 +191,14 @@ namespace N
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
             }
 
-            [Test]
-            public static void AutoPropertyToTrySetUnderscoreNames()
+            [TestCaseSource(typeof(Code), nameof(Code.AutoDetectedStyles))]
+            public static void AutoPropertyToTrySetStyleDetection(AutoDetectedStyle style)
             {
                 var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        public C(int p)
-        {
-            P = p;
-        }
-
         public int ↓P { get; set; }
     }
 }";
@@ -213,17 +208,19 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int _p;
+        private int p;
 
-        public C(int p)
-        {
-            P = p;
-        }
-
-        public int P { get => _p; set => Set(ref _p, value); }
+        public int P { get => this.p; set => Set(ref this.p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(
+                    Analyzer,
+                    Fix,
+                    ExpectedDiagnostic,
+                    new[] { style.AdditionalSample, before },
+                    style.Apply(after, "p"),
+                    fixTitle: "Set(ref oldValue, newValue)",
+                    metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -326,20 +323,20 @@ namespace N
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
             }
 
-            [Test]
-            public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
+            [TestCaseSource(typeof(Code), nameof(Code.AutoDetectedStyles))]
+            public static void WithBackingFieldToSetStatementBodyStyleDetection(AutoDetectedStyle style)
             {
                 var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _name;
+        private string name;
 
         public string ↓Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return this.name; }
+            set { this.name = value; }
         }
     }
 }";
@@ -349,32 +346,40 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _name;
+        private string name;
 
         public string Name
         {
-            get { return _name; }
-            set { Set(ref _name, value); }
+            get { return this.name; }
+            set { Set(ref this.name, value); }
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
+
+                RoslynAssert.CodeFix(
+                    Analyzer,
+                    Fix,
+                    ExpectedDiagnostic,
+                    new[] { style.AdditionalSample, style.Apply(before, "name") },
+                    style.Apply(after, "name"),
+                    fixTitle: "Set(ref oldValue, newValue)",
+                    metadataReferences: MetadataReferences);
             }
 
-            [Test]
-            public static void WithBackingFieldToSetUnderscoreNamesExpressionBody()
+            [TestCaseSource(typeof(Code), nameof(Code.AutoDetectedStyles))]
+            public static void WithBackingFieldToSetExpressionBodyStyleDetection(AutoDetectedStyle style)
             {
                 var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _name;
+        private string name;
 
         public string ↓Name
         {
-            get => _name;
-            set => _name = value;
+            get => this.name;
+            set => this.name = value;
         }
     }
 }";
@@ -384,16 +389,23 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _name;
+        private string name;
 
         public string Name
         {
-            get => _name;
-            set => Set(ref _name, value);
+            get => this.name;
+            set => Set(ref this.name, value);
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(
+                    Analyzer,
+                    Fix,
+                    ExpectedDiagnostic,
+                    new[] { style.AdditionalSample, style.Apply(before, "name") },
+                    style.Apply(after, "name"),
+                    fixTitle: "Set(ref oldValue, newValue)",
+                    metadataReferences: MetadataReferences);
             }
         }
     }

@@ -1,5 +1,7 @@
 ﻿namespace PropertyChangedAnalyzers.Test
 {
+    using System.Collections.Generic;
+
     public static class Code
     {
         /// <summary>
@@ -105,5 +107,32 @@ namespace N
         private int M() => this.f;
     }
 }";
+
+        public static IEnumerable<AutoDetectedStyle> AutoDetectedStyles { get; } = new[]
+        {
+            new AutoDetectedStyle(
+                nameof(Code.UnqualifiedUnderscoreFields),
+                Code.UnqualifiedUnderscoreFields,
+                applyFieldNamingStyle: name => name.EnsurePrefix("_"),
+                applyFieldQualificationPreference: syntax => syntax.RemovePrefix("this.")),
+
+            new AutoDetectedStyle(
+                nameof(Code.QualifiedUnderscoreFields),
+                Code.QualifiedUnderscoreFields,
+                applyFieldNamingStyle: name => name.EnsurePrefix("_"),
+                applyFieldQualificationPreference: syntax => syntax.EnsurePrefix("this.")),
+
+            new AutoDetectedStyle(
+                nameof(Code.UnqualifiedUnprefixedFields),
+                Code.UnqualifiedUnprefixedFields,
+                applyFieldNamingStyle: name => name.RemovePrefix("_"),
+                applyFieldQualificationPreference: syntax => syntax.RemovePrefix("this.")),
+
+            new AutoDetectedStyle(
+                nameof(Code.QualifiedUnprefixedFields),
+                Code.QualifiedUnprefixedFields,
+                applyFieldNamingStyle: name => name.RemovePrefix("_"),
+                applyFieldQualificationPreference: syntax => syntax.EnsurePrefix("this.")),
+        };
     }
 }

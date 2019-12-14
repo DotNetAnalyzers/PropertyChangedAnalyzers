@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -136,8 +136,8 @@ namespace N
                 RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
             }
 
-            [Test]
-            public static void WhenInterfaceOnlyWithUsingUnderscoreAddUsings()
+            [TestCaseSource(typeof(Code), nameof(Code.AutoDetectedStyles))]
+            public static void WhenInterfaceOnlyWithUsingAddUsingsStyleDetection(AutoDetectedStyle style)
             {
                 var before = @"
 #pragma warning disable 169
@@ -147,7 +147,7 @@ namespace N
 
     public class C : ↓INotifyPropertyChanged
     {
-        private int _value;
+        private int p;
     }
 }";
 
@@ -160,7 +160,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int _value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -170,7 +170,12 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+                RoslynAssert.CodeFix(
+                    Fix,
+                    ExpectedDiagnostic,
+                    new[] { style.AdditionalSample, style.Apply(before, "p") },
+                    style.Apply(after, "p"),
+                    fixTitle: "Implement INotifyPropertyChanged and add usings.");
             }
 
             [Test]

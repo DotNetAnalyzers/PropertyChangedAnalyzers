@@ -208,25 +208,25 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
-        [Test]
-        public static void WhenNotNotifyingWithBackingFieldUnderscoreNames()
+        [TestCaseSource(typeof(Code), nameof(Code.AutoDetectedStyles))]
+        public static void WhenNotNotifyingWithBackingFieldStyleDetection(AutoDetectedStyle style)
         {
             var before = @"
 namespace N
 {
     public class ↓C
     {
-        private int _value;
+        private int p;
 
-        public int Value
+        public int P
         {
             get
             {
-                return _value;
+                return this.p;
             }
             private set
             {
-                _value = value;
+                this.p = value;
             }
         }
     }
@@ -237,19 +237,19 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int _value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return _value;
+                return this.p;
             }
             private set
             {
-                _value = value;
+                this.p = value;
             }
         }
 
@@ -259,7 +259,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+            RoslynAssert.CodeFix(
+                Analyzer,
+                Fix,
+                ExpectedDiagnostic,
+                new[] { style.AdditionalSample, style.Apply(before, "p") },
+                style.Apply(after, "p"),
+                fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]

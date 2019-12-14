@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -439,8 +439,8 @@ namespace N
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
-            [Test]
-            public static void CallerMemberNameUnderscoreNames()
+            [TestCaseSource(typeof(Code), nameof(Code.AutoDetectedStyles))]
+            public static void CallerMemberNameStyleDetection(AutoDetectedStyle style)
             {
                 var before = @"
 namespace N
@@ -450,11 +450,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int _p1;
+        private readonly int p1;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int P1 => _p1;
+        public int P1 => this.p1;
 
         public int ↓P2 { get; set; }
 
@@ -473,24 +473,24 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int _p1;
-        private int _p2;
+        private readonly int p1;
+        private int p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int P1 => _p1;
+        public int P1 => this.p1;
 
         public int P2
         {
-            get => _p2;
+            get => this.p2;
             set
             {
-                if (value == _p2)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                _p2 = value;
+                this.p2 = value;
                 OnPropertyChanged();
             }
         }
@@ -501,7 +501,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
+
+                RoslynAssert.CodeFix(
+                    Analyzer,
+                    Fix,
+                    ExpectedDiagnostic,
+                    new[] { style.AdditionalSample, style.Apply(before, "p1") },
+                    style.Apply(after, "p1", "p2"));
             }
 
             [Test]
