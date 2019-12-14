@@ -115,8 +115,8 @@
                         continue;
                     }
 
-                    if (IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
-                        IsEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
+                    if (IsEqualsCheck(ifStatement.Condition, value, backingField, context.SemanticModel, context.CancellationToken) ||
+                        IsEqualsCheck(ifStatement.Condition, value, property, context.SemanticModel, context.CancellationToken))
                     {
                         if (ifStatement.Statement.Span.Contains(invocation.Span))
                         {
@@ -131,8 +131,8 @@
                         continue;
                     }
 
-                    if (IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, backingField) ||
-                        IsNegatedEqualsCheck(ifStatement.Condition, context.SemanticModel, context.CancellationToken, value, property))
+                    if (IsNegatedEqualsCheck(ifStatement.Condition, value, backingField, context.SemanticModel, context.CancellationToken) ||
+                        IsNegatedEqualsCheck(ifStatement.Condition, value, property, context.SemanticModel, context.CancellationToken))
                     {
                         if (!ifStatement.Statement.Span.Contains(invocation.Span) ||
                             ifStatement.IsReturnIfTrue())
@@ -173,18 +173,18 @@
             };
         }
 
-        private static bool IsNegatedEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
+        private static bool IsNegatedEqualsCheck(ExpressionSyntax expression, IParameterSymbol value, ISymbol member, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (expression is PrefixUnaryExpressionSyntax unary &&
                 unary.IsKind(SyntaxKind.LogicalNotExpression))
             {
-                return IsEqualsCheck(unary.Operand, semanticModel, cancellationToken, value, member);
+                return IsEqualsCheck(unary.Operand, value, member, semanticModel, cancellationToken);
             }
 
             return Equality.IsOperatorNotEquals(expression, semanticModel, value, member, cancellationToken);
         }
 
-        private static bool IsEqualsCheck(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, IParameterSymbol value, ISymbol member)
+        private static bool IsEqualsCheck(ExpressionSyntax expression, IParameterSymbol value, ISymbol member, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (expression is InvocationExpressionSyntax equals)
             {
@@ -192,7 +192,7 @@
                     Equality.IsInstanceEquals(equals, semanticModel, value, member, cancellationToken) ||
                     Equality.IsInstanceEquals(equals, semanticModel, member, value, cancellationToken) ||
                     Equality.IsReferenceEquals(equals, semanticModel, value, member, cancellationToken) ||
-                    Equality.IsEqualityComparerEquals(equals, semanticModel, cancellationToken, value, member) ||
+                    Equality.IsEqualityComparerEquals(equals, value, member, semanticModel, cancellationToken) ||
                     Equality.IsStringEquals(equals, semanticModel, value, member, cancellationToken) ||
                     Equality.IsNullableEquals(equals, semanticModel, value, member, cancellationToken))
                 {

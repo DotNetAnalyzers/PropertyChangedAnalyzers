@@ -32,7 +32,7 @@
                    IsArguments(invocation, semanticModel, first, other, cancellationToken);
         }
 
-        internal static bool IsEqualityComparerEquals(ExpressionSyntax condition, SemanticModel semanticModel, CancellationToken cancellationToken, ISymbol first, ISymbol other)
+        internal static bool IsEqualityComparerEquals(ExpressionSyntax condition, ISymbol first, ISymbol other, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             return condition is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax memberAccess } invocation &&
                    invocation.ArgumentList?.Arguments.Count == 2 &&

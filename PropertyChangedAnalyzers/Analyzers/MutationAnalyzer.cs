@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -12,13 +11,11 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class MutationAnalyzer : DiagnosticAnalyzer
     {
-        internal static readonly string PropertyNameKey = "PropertyName";
+        internal const string PropertyNameKey = "PropertyName";
 
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.INPC003NotifyForDependentProperty);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
