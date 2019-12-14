@@ -1,18 +1,18 @@
-namespace PropertyChangedAnalyzers.Test
+﻿namespace PropertyChangedAnalyzers.Test
 {
     public static class Code
     {
         /// <summary>
         /// A class that uses underscore field conventions.
         /// </summary>
-        public const string UnderScoreFieldsUnqualified = @"
+        public const string UnderscoreFieldsUnqualified = @"
 namespace N
 {
     using System;
-    class UnderScoreFieldsUnqualified
+    class UnderscoreFieldsUnqualified
     {
         private readonly int _f;
-        UnderScoreFieldsUnqualified()
+        UnderscoreFieldsUnqualified()
         {
             _f = 1;
             P = 2;

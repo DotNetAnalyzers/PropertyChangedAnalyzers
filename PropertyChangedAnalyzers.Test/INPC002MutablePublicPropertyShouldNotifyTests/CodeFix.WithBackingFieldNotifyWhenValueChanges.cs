@@ -608,7 +608,7 @@ namespace N
             }
 
             [Test]
-            public static void WithNestedBackingFieldUnderScore()
+            public static void WithNestedBackingFieldUnderscore()
             {
                 var c1 = @"
 namespace N
