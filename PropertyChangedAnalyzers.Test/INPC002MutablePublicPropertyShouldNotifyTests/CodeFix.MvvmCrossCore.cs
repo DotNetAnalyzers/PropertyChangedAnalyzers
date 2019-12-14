@@ -223,8 +223,8 @@ namespace N
         public int P { get => _p; set => SetProperty(ref _p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderscoreFieldsUnqualified, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderscoreFieldsUnqualified, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -331,8 +331,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderscoreFieldsUnqualified, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderscoreFieldsUnqualified, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
@@ -367,8 +367,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderscoreFieldsUnqualified, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderscoreFieldsUnqualified, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetProperty(ref storage, value)", metadataReferences: MetadataReferences);
             }
         }
     }

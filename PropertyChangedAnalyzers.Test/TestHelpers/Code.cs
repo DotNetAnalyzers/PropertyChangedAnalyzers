@@ -5,14 +5,14 @@
         /// <summary>
         /// A class that uses underscore field conventions.
         /// </summary>
-        public const string UnderscoreFieldsUnqualified = @"
+        public const string UnqualifiedUnderscoreFields = @"
 namespace N
 {
     using System;
-    class UnderscoreFieldsUnqualified
+    class UnqualifiedUnderscoreFields
     {
         private readonly int _f;
-        UnderscoreFieldsUnqualified()
+        UnqualifiedUnderscoreFields()
         {
             _f = 1;
             P = 2;

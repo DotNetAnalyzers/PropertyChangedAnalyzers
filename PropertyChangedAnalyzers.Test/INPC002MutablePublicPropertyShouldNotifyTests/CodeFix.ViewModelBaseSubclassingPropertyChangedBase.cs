@@ -227,8 +227,8 @@ namespace N.Client
         public int P { get => _p; set => TrySet(ref _p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderscoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnderscoreFieldsUnqualified, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)", metadataReferences: MetadataReferences);
             }
 
             [Test]
