@@ -10,12 +10,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class MethodDeclarationAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.INPC004UseCallerMemberName,
             Descriptors.INPC018InvokerShouldBeProtected);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

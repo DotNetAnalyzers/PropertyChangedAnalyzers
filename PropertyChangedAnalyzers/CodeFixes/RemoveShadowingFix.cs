@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -12,10 +12,8 @@ namespace PropertyChangedAnalyzers
     [Shared]
     internal class RemoveShadowingFix : DocumentEditorCodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC011DoNotShadow.Id);
 
-        /// <inheritdoc/>
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)

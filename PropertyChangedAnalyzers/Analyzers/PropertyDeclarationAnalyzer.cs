@@ -12,7 +12,6 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class PropertyDeclarationAnalyzer : DiagnosticAnalyzer
     {
-        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.INPC010GetAndSetSame,
             Descriptors.INPC015PropertyIsRecursive,
@@ -21,7 +20,6 @@
             Descriptors.INPC020PreferExpressionBodyAccessor,
             Descriptors.INPC021SetBackingField);
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

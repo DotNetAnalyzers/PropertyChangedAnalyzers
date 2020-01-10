@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -17,7 +17,6 @@ namespace PropertyChangedAnalyzers
     [Shared]
     internal class RenameFix : CodeFixProvider
     {
-        /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(Descriptors.INPC017BackingFieldNameMisMatch.Id);
 
