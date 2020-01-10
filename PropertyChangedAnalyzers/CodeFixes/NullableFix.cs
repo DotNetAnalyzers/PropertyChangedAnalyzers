@@ -27,10 +27,12 @@
                 if (diagnostic.Id == "CS8618" &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax? member))
                 {
-                    if (FindEventType(member) is { } type)
+                    if (Regex.Match(diagnostic.GetMessage(CultureInfo.InvariantCulture), "Non-nullable event '(?<name>[^']+)' is uninitialized") is { Success: true } match &&
+                        match.Groups["name"].Value is { } name &&
+                        FindEventType(member) is { } type)
                     {
                         context.RegisterCodeFix(
-                            "Declare as nullable.",
+                            $"Declare {name} as nullable.",
                             (editor, _) => editor.ReplaceNode(
                                 type,
                                 x => SyntaxFactory.NullableType(x)),
@@ -45,8 +47,7 @@
                             EventDeclarationSyntax { Type: { } t } => t,
                             EventFieldDeclarationSyntax { Declaration: { Type: { } t } } => t,
                             ConstructorDeclarationSyntax { Parent: TypeDeclarationSyntax typeDeclaration }
-                            when Regex.Match(diagnostic.GetMessage(CultureInfo.InvariantCulture), "Non-nullable event '(?<name>[^']+)' is uninitialized") is { Success: true } match &&
-                                 typeDeclaration.TryFindEvent(match.Groups["name"].Value, out member)
+                            when typeDeclaration.TryFindEvent(name, out member)
                             => FindEventType(member),
                             _ => null,
                         };
@@ -56,7 +57,7 @@
                          syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ParameterSyntax? parameter))
                 {
                     context.RegisterCodeFix(
-                        "Declare as nullable.",
+                        $"Declare {parameter.Identifier} as nullable.",
                         (editor, _) => editor.ReplaceNode(
                             parameter.Type,
                             x => SyntaxFactory.NullableType(x)),

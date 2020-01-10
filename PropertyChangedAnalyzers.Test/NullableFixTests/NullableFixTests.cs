@@ -81,7 +81,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions);
+            RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions, fixTitle: "Declare PropertyChanged as nullable.");
         }
 
         [Test]
@@ -235,7 +235,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8625, before, after, compilationOptions: CompilationOptions);
+            RoslynAssert.CodeFix(Fix, CS8625, before, after, compilationOptions: CompilationOptions, fixTitle: "Declare propertyName as nullable.");
         }
     }
 }
