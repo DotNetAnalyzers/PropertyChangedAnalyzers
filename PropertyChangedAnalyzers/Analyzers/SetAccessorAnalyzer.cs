@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SetAccessorAnalyzer : DiagnosticAnalyzer
@@ -60,7 +61,7 @@
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.INPC002MutablePublicPropertyShouldNotify,
-                                    containingProperty.Identifier.GetLocation(),
+                                    setter.SyntaxTree.GetLocation(new TextSpan(containingProperty.Identifier.SpanStart, containingProperty.Span.End)),
                                     property.Name));
                         }
 
