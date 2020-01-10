@@ -9,12 +9,12 @@
     public static class NullableFixTests
     {
         private static readonly CodeFixProvider Fix = new NullableFix();
-        private static readonly ExpectedDiagnostic CS8618 = ExpectedDiagnostic.Create("CS8618", "Non-nullable event 'PropertyChanged' is uninitialized. Consider declaring the event as nullable.");
+        private static readonly ExpectedDiagnostic CS8618 = ExpectedDiagnostic.Create("CS8618");
         private static readonly ExpectedDiagnostic CS8625 = ExpectedDiagnostic.Create("CS8625", "Cannot convert null literal to non-nullable reference type.");
         private static readonly CSharpCompilationOptions CompilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable);
 
         [Test]
-        public static void MakeEventNullable()
+        public static void DeclareEventNullable()
         {
             var before = @"
 namespace N
@@ -85,7 +85,7 @@ namespace N
         }
 
         [Test]
-        public static void MakeEventNullableWhenConstructor()
+        public static void DeclareEventNullableWhenConstructor()
         {
             var before = @"
 namespace N
@@ -166,7 +166,7 @@ namespace N
         }
 
         [Test]
-        public static void MakeDefaultParameterNullable()
+        public static void DeclareDefaultParameterNullable()
         {
             var before = @"
 namespace N
@@ -236,6 +236,79 @@ namespace N
     }
 }";
             RoslynAssert.CodeFix(Fix, CS8625, before, after, compilationOptions: CompilationOptions, fixTitle: "Declare propertyName as nullable.");
+        }
+
+        [Test]
+        public static void DeclareFieldAndPropertyNullable()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private string ↓p;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public string P
+        {
+            get => this.p;
+            set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private string? p;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public string? P
+        {
+            get => this.p;
+            set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions, fixTitle: "Declare p and P as nullable.");
         }
     }
 }

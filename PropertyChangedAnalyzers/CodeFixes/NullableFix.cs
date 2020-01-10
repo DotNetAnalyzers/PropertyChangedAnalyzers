@@ -25,19 +25,49 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Id == "CS8618" &&
-                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax? member))
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax? member) &&
+                    diagnostic.GetMessage(CultureInfo.InvariantCulture) is { } message)
                 {
-                    if (Regex.Match(diagnostic.GetMessage(CultureInfo.InvariantCulture), "Non-nullable event '(?<name>[^']+)' is uninitialized") is { Success: true } match &&
-                        match.Groups["name"].Value is { } name &&
+                    if (Regex.Match(message, "Non-nullable event '(?<name>[^']+)' is uninitialized") is { Success: true } eventMatch &&
+                        eventMatch.Groups["name"].Value is { } eventName &&
                         FindEventType(member) is { } type)
                     {
                         context.RegisterCodeFix(
-                            $"Declare {name} as nullable.",
+                            $"Declare {eventName} as nullable.",
                             (editor, _) => editor.ReplaceNode(
                                 type,
                                 x => SyntaxFactory.NullableType(x)),
                             "Declare event as nullable.",
                             diagnostic);
+                    }
+
+                    if (Regex.Match(message, "Non-nullable field '(?<name>[^']+)' is uninitialized") is { Success: true } fieldMatch &&
+                        fieldMatch.Groups["name"].Value is { } fieldName &&
+                        FindFieldType(member) is { } fieldType &&
+                        FindProperty() is { } property)
+                    {
+                        context.RegisterCodeFix(
+                            $"Declare {fieldName} and {property.Identifier.ValueText} as nullable.",
+                            (editor, _) => editor.ReplaceNode(
+                                                     fieldType,
+                                                     x => SyntaxFactory.NullableType(x))
+                                                 .ReplaceNode(
+                                                     property.Type,
+                                                     x => SyntaxFactory.NullableType(x)),
+                            "Declare field and property as nullable.",
+                            diagnostic);
+                    }
+
+                    TypeSyntax? FindFieldType(MemberDeclarationSyntax candidate)
+                    {
+                        return candidate switch
+                        {
+                            FieldDeclarationSyntax { Declaration: { Variables: { Count: 1 }, Type: { } t } } => t,
+                            ConstructorDeclarationSyntax { Parent: TypeDeclarationSyntax typeDeclaration }
+                            when typeDeclaration.TryFindField(fieldName, out var field)
+                            => FindFieldType(field),
+                            _ => null,
+                        };
                     }
 
                     TypeSyntax? FindEventType(MemberDeclarationSyntax candidate)
@@ -47,10 +77,35 @@
                             EventDeclarationSyntax { Type: { } t } => t,
                             EventFieldDeclarationSyntax { Declaration: { Type: { } t } } => t,
                             ConstructorDeclarationSyntax { Parent: TypeDeclarationSyntax typeDeclaration }
-                            when typeDeclaration.TryFindEvent(name, out member)
+                            when typeDeclaration.TryFindEvent(eventName, out member)
                             => FindEventType(member),
                             _ => null,
                         };
+                    }
+
+                    PropertyDeclarationSyntax? FindProperty()
+                    {
+                        if (member is { Parent: TypeDeclarationSyntax containingType })
+                        {
+                            foreach (var candidate in containingType.Members)
+                            {
+                                if (candidate is PropertyDeclarationSyntax property &&
+                                    property.TrySingleReturned(out var returned))
+                                {
+                                    switch (returned)
+                                    {
+                                        case IdentifierNameSyntax identifierName
+                                            when identifierName.Identifier.ValueText == fieldName:
+                                            return property;
+                                        case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: IdentifierNameSyntax identifierName }
+                                            when identifierName.Identifier.ValueText == fieldName:
+                                            return property;
+                                    }
+                                }
+                            }
+                        }
+
+                        return null;
                     }
                 }
                 else if (diagnostic.Id == "CS8625" &&
