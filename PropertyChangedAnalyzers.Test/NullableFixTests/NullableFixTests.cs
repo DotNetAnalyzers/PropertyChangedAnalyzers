@@ -10,6 +10,7 @@
     {
         private static readonly CodeFixProvider Fix = new NullableFix();
         private static readonly ExpectedDiagnostic CS8618 = ExpectedDiagnostic.Create("CS8618", "Non-nullable event 'PropertyChanged' is uninitialized. Consider declaring the event as nullable.");
+        private static readonly ExpectedDiagnostic CS8625 = ExpectedDiagnostic.Create("CS8625", "Cannot convert null literal to non-nullable reference type.");
         private static readonly CSharpCompilationOptions CompilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable);
 
         [Test]
@@ -162,6 +163,79 @@ namespace N
     }
 }";
             RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions);
+        }
+
+        [Test]
+        public static void MakeDefaultParameterNullable()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int P
+        {
+            get => this.p;
+            set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = ↓null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int P
+        {
+            get => this.p;
+            set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Fix, CS8625, before, after, compilationOptions: CompilationOptions);
         }
     }
 }

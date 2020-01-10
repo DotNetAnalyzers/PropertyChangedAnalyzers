@@ -16,7 +16,7 @@
     [Shared]
     internal class NullableFix : DocumentEditorCodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("CS8618");
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("CS8618", "CS8625");
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
@@ -51,6 +51,17 @@
                             _ => null,
                         };
                     }
+                }
+                else if (diagnostic.Id == "CS8625" &&
+                         syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ParameterSyntax? parameter))
+                {
+                    context.RegisterCodeFix(
+                        "Declare as nullable.",
+                        (editor, _) => editor.ReplaceNode(
+                            parameter.Type,
+                            x => SyntaxFactory.NullableType(x)),
+                        "Declare parameter as nullable.",
+                        diagnostic);
                 }
             }
         }
