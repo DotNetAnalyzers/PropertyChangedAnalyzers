@@ -31,9 +31,13 @@ namespace N
             get => this.p;
             set
             {
-                if (value == this.p) return;
+                if (value == this.p)
+                {
+                    return;
+                }
+
                 this.p = value;
-                this.OnPropertyChanged(nameof(P));
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
@@ -60,9 +64,94 @@ namespace N
             get => this.p;
             set
             {
-                if (value == this.p) return;
+                if (value == this.p)
+                {
+                    return;
+                }
+
                 this.p = value;
-                this.OnPropertyChanged(nameof(P));
+                this.OnPropertyChanged(nameof(this.P));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions);
+        }
+
+        [Test]
+        public static void MakeEventNullableWhenConstructor()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public ↓C(int p)
+        {
+            this.p = p;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
+        {
+            get => this.p;
+            set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public C(int p)
+        {
+            this.p = p;
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int P
+        {
+            get => this.p;
+            set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
