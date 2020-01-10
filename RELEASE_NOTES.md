@@ -1,3 +1,7 @@
+#### 3.1.1
+* Solution wide nullable fixes.
+* INPC002 ignores when [Bindable(false)]
+
 #### 3.1.0
 * FEATURE: Handle nullable.
 * FEATURE: Fixes for nullable warnings.
