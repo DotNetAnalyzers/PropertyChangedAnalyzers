@@ -18,6 +18,8 @@
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("CS8618", "CS8625");
 
+        protected override DocumentEditorFixAllProvider? FixAllProvider() => DocumentEditorFixAllProvider.Solution;
+
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
