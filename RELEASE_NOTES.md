@@ -1,3 +1,7 @@
+#### 3.1.0
+* FEATURE: Handle nullable.
+* FEATURE: Fixes for nullable warnings.
+
 #### 3.0.0
 * BREAKING: VS2019+
 
