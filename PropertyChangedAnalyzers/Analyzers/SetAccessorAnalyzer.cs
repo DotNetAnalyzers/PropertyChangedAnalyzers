@@ -61,7 +61,7 @@
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.INPC002MutablePublicPropertyShouldNotify,
-                                    setter.SyntaxTree.GetLocation(new TextSpan(containingProperty.Identifier.SpanStart, containingProperty.Span.End)),
+                                    setter.SyntaxTree.GetLocation(TextSpan.FromBounds(containingProperty.Identifier.SpanStart, containingProperty.Span.End)),
                                     property.Name));
                         }
 
