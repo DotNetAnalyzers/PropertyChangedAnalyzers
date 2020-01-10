@@ -26,6 +26,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is AccessorDeclarationSyntax { Parent: AccessorListSyntax { Parent: PropertyDeclarationSyntax containingProperty } } setter &&
+                !IsBindableFalse() &&
                 context.ContainingSymbol is IMethodSymbol { AssociatedSymbol: IPropertySymbol property } &&
                 property.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation))
             {
@@ -108,6 +109,17 @@
                         }
                     }
                 }
+            }
+
+            bool IsBindableFalse()
+            {
+                if (Attribute.TryFind(containingProperty, KnownSymbol.BindableAttribute, context.SemanticModel, context.CancellationToken, out var bindable))
+                {
+                    return bindable is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
+                           arguments[0] is { Expression: LiteralExpressionSyntax { Token: { ValueText: "false" } } };
+                }
+
+                return false;
             }
         }
     }

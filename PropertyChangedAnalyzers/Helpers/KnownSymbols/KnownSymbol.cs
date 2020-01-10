@@ -1,4 +1,4 @@
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 namespace PropertyChangedAnalyzers
 {
     using Gu.Roslyn.AnalyzerExtensions;
@@ -20,6 +20,7 @@ namespace PropertyChangedAnalyzers
         internal static readonly QualifiedType CallerMemberNameAttribute = new QualifiedType("System.Runtime.CompilerServices.CallerMemberNameAttribute");
         internal static readonly INotifyPropertyChangedType INotifyPropertyChanged = new INotifyPropertyChangedType();
         internal static readonly QualifiedType PropertyChangedEventArgs = new QualifiedType("System.ComponentModel.PropertyChangedEventArgs");
+        internal static readonly QualifiedType BindableAttribute = new QualifiedType("System.ComponentModel.BindableAttribute");
         internal static readonly PropertyChangedEventHandlerType PropertyChangedEventHandler = new PropertyChangedEventHandlerType();
 
         internal static readonly DependencyObjectType DependencyObject = new DependencyObjectType();
