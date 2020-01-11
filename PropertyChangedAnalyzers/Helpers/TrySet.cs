@@ -50,8 +50,8 @@
             value = null;
             return candidate is { ArgumentList: { Arguments: { } arguments } } &&
                    IsMatch(candidate, semanticModel, cancellationToken) != AnalysisResult.No &&
-                   arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefExpression), out field) &&
-                   arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.None) && x.Expression is IdentifierNameSyntax { Identifier: { ValueText: "value" } }, out value);
+                   arguments.TrySingle<ArgumentSyntax>(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefExpression), out field) &&
+                   arguments.TrySingle<ArgumentSyntax>(x => x.RefOrOutKeyword.IsKind(SyntaxKind.None) && x.Expression is IdentifierNameSyntax { Identifier: { ValueText: "value" } }, out value);
         }
 
         internal static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol>? visited = null)
