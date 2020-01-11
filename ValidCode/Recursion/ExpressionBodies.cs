@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 #pragma warning disable INPC007, INPC015, CS0067
 namespace ValidCode.Recursion
 {
@@ -7,14 +7,14 @@ namespace ValidCode.Recursion
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string? name;
         private int value;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Greeting => this.Greeting;
 
-        public string Name
+        public string? Name
         {
             get => this.Name;
 

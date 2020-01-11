@@ -1,4 +1,4 @@
-namespace ValidCode
+﻿namespace ValidCode
 {
     using System;
     using System.ComponentModel;
@@ -7,11 +7,11 @@ namespace ValidCode
     public sealed class DisposableFoo : INotifyPropertyChanged, IDisposable
     {
         private bool disposed;
-        private string name;
+        private string? name;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string Name
+        public string? Name
         {
             get
             {

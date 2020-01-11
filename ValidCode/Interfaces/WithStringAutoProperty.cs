@@ -1,15 +1,15 @@
-namespace ValidCode.Interfaces
+﻿namespace ValidCode.Interfaces
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
     public class WithStringAutoProperty : IValue, INotifyPropertyChanged
     {
-        private string value;
+        private string? value;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string Value
+        public string? Value
         {
             get => this.value;
             set
@@ -24,10 +24,10 @@ namespace ValidCode.Interfaces
             }
         }
 
-        object IValue.Value
+        object? IValue.Value
         {
             get => this.Value;
-            set => this.Value = (string)value;
+            set => this.Value = (string?)value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)

@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.TrySet
 {
     using System.Collections.Generic;
@@ -7,14 +7,14 @@ namespace ValidCode.TrySet
 
     public sealed class UnderscoreNames : INotifyPropertyChanged
     {
-        private string _name;
+        private string? _name;
         private int _value;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Greeting => $"Hello {_name}";
 
-        public string Name
+        public string? Name
         {
             get => _name;
 

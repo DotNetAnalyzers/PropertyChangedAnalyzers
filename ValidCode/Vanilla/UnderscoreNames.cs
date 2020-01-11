@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.Vanilla
 {
     using System.ComponentModel;
@@ -6,13 +6,13 @@ namespace ValidCode.Vanilla
 
     public sealed class UnderscoreNames : INotifyPropertyChanged
     {
-        private string _name;
+        private string? _name;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Greeting => $"Hello {_name}";
 
-        public string Name
+        public string? Name
         {
             get => _name;
 

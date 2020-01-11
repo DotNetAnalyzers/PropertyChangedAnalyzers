@@ -1,4 +1,4 @@
-namespace ValidCode.Interfaces
+﻿namespace ValidCode.Interfaces
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

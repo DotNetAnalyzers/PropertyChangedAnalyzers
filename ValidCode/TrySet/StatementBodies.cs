@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 #pragma warning disable INPC020 // Prefer expression body accessor.
 namespace ValidCode.TrySet
 {
@@ -8,7 +8,7 @@ namespace ValidCode.TrySet
 
     public sealed class StatementnBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string? name;
         private int value;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -21,7 +21,7 @@ namespace ValidCode.TrySet
             }
         }
 
-        public string Name
+        public string? Name
         {
             get
             {

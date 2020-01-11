@@ -1,13 +1,13 @@
-namespace ValidCode.InheritanceTrySet
+﻿namespace ValidCode.InheritanceTrySet
 {
     public sealed class ExpressionBodies : ExpressionBodiesViewModelBase
     {
-        private string name;
+        private string? name;
         private int value;
 
         public string Greeting => $"Hello {this.name}";
 
-        public string Name
+        public string? Name
         {
             get => this.name;
 

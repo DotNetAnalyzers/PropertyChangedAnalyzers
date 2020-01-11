@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 #pragma warning disable IDE1006 // Naming Styles
 namespace ValidCode
 {
@@ -7,7 +7,7 @@ namespace ValidCode
 
     public sealed class WithEventDeclaration : INotifyPropertyChanged
     {
-        private string name;
+        private string? name;
 
         public event PropertyChangedEventHandler PropertyChanged
         {
@@ -17,7 +17,7 @@ namespace ValidCode
 
         private event PropertyChangedEventHandler? propertyChanged;
 
-        public string Name
+        public string? Name
         {
             get => this.name;
 

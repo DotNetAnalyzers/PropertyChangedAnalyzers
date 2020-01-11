@@ -1,10 +1,10 @@
-namespace ValidCode.Ignores
+﻿namespace ValidCode.Ignores
 {
     using System.Collections;
 
     public class Enumerator : IEnumerator
     {
-        public object Current { get; private set; }
+        public object? Current { get; private set; }
 
         public bool MoveNext()
         {

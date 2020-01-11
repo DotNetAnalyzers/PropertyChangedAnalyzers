@@ -1,4 +1,4 @@
-namespace ValidCode
+﻿namespace ValidCode
 {
     using System.Collections.Concurrent;
     using System.ComponentModel;
@@ -12,7 +12,7 @@ namespace ValidCode
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, Cache.GetOrAdd(propertyName, name => new PropertyChangedEventArgs(name)));
+            this.PropertyChanged?.Invoke(this, Cache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
         }
     }
 }

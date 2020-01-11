@@ -2,6 +2,6 @@
 {
     interface IValue
     {
-        object Value { get; set; }
+        object? Value { get; set; }
     }
 }

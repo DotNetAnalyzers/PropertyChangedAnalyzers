@@ -1,4 +1,4 @@
-namespace ValidCode.Interfaces
+﻿namespace ValidCode.Interfaces
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -24,7 +24,7 @@ namespace ValidCode.Interfaces
             }
         }
 
-        object IValue.Value
+        object? IValue.Value
         {
             get => this.value;
             set => this.Value = (T)value;

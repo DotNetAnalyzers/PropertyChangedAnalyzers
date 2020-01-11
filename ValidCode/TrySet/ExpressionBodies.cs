@@ -1,4 +1,4 @@
-namespace ValidCode.TrySet
+﻿namespace ValidCode.TrySet
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -6,14 +6,14 @@ namespace ValidCode.TrySet
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string? name;
         private int value;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Greeting => $"Hello {this.name}";
 
-        public string Name
+        public string? Name
         {
             get => this.name;
 

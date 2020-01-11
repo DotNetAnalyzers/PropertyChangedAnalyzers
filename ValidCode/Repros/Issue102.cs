@@ -1,15 +1,15 @@
-namespace ValidCode.Repros
+﻿namespace ValidCode.Repros
 {
     using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public interface IC
+    public interface IIssue102
     {
         INotifyPropertyChanged Source { get; set; }
     }
 
-    public sealed class C<T> : INotifyPropertyChanged, IDisposable, IC
+    public sealed class Issue102<T> : INotifyPropertyChanged, IDisposable, IIssue102
          where T : class, INotifyPropertyChanged
     {
         private readonly PropertyChangedEventHandler? onTrackedPropertyChanged = null;
@@ -57,7 +57,7 @@ namespace ValidCode.Repros
             }
         }
 
-        INotifyPropertyChanged IC.Source
+        INotifyPropertyChanged IIssue102.Source
         {
             get => this.source;
             set => this.Source = (T)value;

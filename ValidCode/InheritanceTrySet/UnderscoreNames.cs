@@ -1,14 +1,14 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.InheritanceTrySet
 {
     public sealed class UnderscoreNames : UnderscoreNamesViewModelBase
     {
-        private string _name;
+        private string? _name;
         private int _value;
 
         public string Greeting => $"Hello {_name}";
 
-        public string Name
+        public string? Name
         {
             get => _name;
 
