@@ -42,7 +42,7 @@
                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                    !assignment.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _) &&
                    !assignment.TryFirstAncestor<LocalFunctionStatementSyntax>(out _) &&
-                   propertyDeclaration.TryGetSetter(out var setter) &&
+                   propertyDeclaration.Setter() is { } setter &&
                    IsSimple(out fieldAccess);
 
             bool IsSimple(out ExpressionSyntax? backing)
@@ -89,9 +89,11 @@
             {
                 return candidate.Expression switch
                 {
-                    InvocationExpressionSyntax invocation => OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
-                                                             TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No,
-                    AssignmentExpressionSyntax candidateAssignment => Setter.IsMutation(candidateAssignment, context.SemanticModel, context.CancellationToken, out _, out _),
+                    InvocationExpressionSyntax invocation
+                    => OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
+                       TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No,
+                    AssignmentExpressionSyntax candidateAssignment
+                    => Setter.IsMutation(candidateAssignment, context.SemanticModel, context.CancellationToken, out _, out _),
                     _ => false,
                 };
             }
