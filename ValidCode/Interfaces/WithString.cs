@@ -5,11 +5,11 @@ namespace ValidCode.Interfaces
 
     public class WithString : IValue, INotifyPropertyChanged
     {
-        private string value;
+        private string? value;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string Value
+        public string? Value
         {
             get => this.value;
             set

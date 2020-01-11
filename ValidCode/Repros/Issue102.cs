@@ -12,7 +12,7 @@ namespace ValidCode.Repros
     public sealed class C<T> : INotifyPropertyChanged, IDisposable, IC
          where T : class, INotifyPropertyChanged
     {
-        private readonly PropertyChangedEventHandler onTrackedPropertyChanged = null;
+        private readonly PropertyChangedEventHandler? onTrackedPropertyChanged = null;
         private readonly object gate = new object();
 
         private T source;

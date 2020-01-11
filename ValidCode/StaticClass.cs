@@ -4,12 +4,12 @@ namespace ValidCode
 
     public static class StaticClass
     {
-        private static string name;
+        private static string? name;
         private static int number;
 
         public static event PropertyChangedEventHandler? PropertyChanged;
 
-        public static string Name
+        public static string? Name
         {
             get => name;
             set

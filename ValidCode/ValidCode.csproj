@@ -4,7 +4,6 @@
     <TargetFramework>net472</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>Enable</Nullable>
-    <NoWarn>IDE0025,IDE0052</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

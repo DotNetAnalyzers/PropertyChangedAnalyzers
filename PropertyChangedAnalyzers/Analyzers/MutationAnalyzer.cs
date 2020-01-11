@@ -99,7 +99,7 @@
                 }
 
                 var firstIdentifierNameSymbol = context.SemanticModel.GetSymbolInfo(firstTokenInPath.Parent, context.CancellationToken).Symbol;
-                if (firstIdentifierNameSymbol?.ContainingType != containingType)
+                if (!Equals(firstIdentifierNameSymbol?.ContainingType, containingType))
                 {
                     return;
                 }
