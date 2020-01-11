@@ -11,7 +11,7 @@ Roslyn analyzers for `INotifyPropertyChanged`.
 * 2.x versions are for Visual Studio 2017.
 * 3.x versions are for Visual Studio 2019.
 
-![inpc](https://user-images.githubusercontent.com/1640096/33793418-2345625c-dcb8-11e7-9170-a5c0e778abc9.gif)
+![Animation](https://user-images.githubusercontent.com/1640096/72191376-3e6aff80-3402-11ea-8be4-881f8c6a531b.gif)
 
 | Id       | Title
 | :--      | :--
