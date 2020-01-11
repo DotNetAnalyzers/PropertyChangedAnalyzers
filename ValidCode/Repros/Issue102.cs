@@ -15,7 +15,9 @@
         private readonly PropertyChangedEventHandler? onTrackedPropertyChanged = null;
         private readonly object gate = new object();
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         private T source;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         private bool disposed;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -51,7 +53,9 @@
                         value.PropertyChanged += this.onTrackedPropertyChanged;
                     }
 
+#pragma warning disable CS8601 // Possible null reference assignment.
                     this.source = value;
+#pragma warning restore CS8601 // Possible null reference assignment.
                     this.OnPropertyChanged();
                 }
             }
@@ -85,7 +89,9 @@
 
                 this.disposed = true;
                 oldSource = this.source;
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 this.source = null;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             }
 
             if (oldSource != null)
