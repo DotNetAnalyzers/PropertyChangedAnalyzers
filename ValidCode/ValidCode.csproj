@@ -2,6 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>Enable</Nullable>
     <NoWarn>IDE0025,IDE0052</NoWarn>
   </PropertyGroup>
 
@@ -11,7 +13,7 @@
     <PackageReference Include="MvvmCross" Version="6.4.1" />
     <PackageReference Include="MvvmLight" Version="5.4.1.1" />
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1367" />
-    <PackageReference Include="PropertyChangedAnalyzers" Version="2.7.6" PrivateAssets="all" />
+    <PackageReference Include="PropertyChangedAnalyzers" Version="3.1.1" PrivateAssets="all" />
     <PackageReference Include="Stylet" Version="1.3.0" />
   </ItemGroup>
 

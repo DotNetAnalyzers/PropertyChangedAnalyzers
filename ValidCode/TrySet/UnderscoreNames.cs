@@ -10,7 +10,7 @@ namespace ValidCode.TrySet
         private string _name;
         private int _value;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Greeting => $"Hello {_name}";
 
@@ -33,9 +33,9 @@ namespace ValidCode.TrySet
             set => TrySet(ref _value, value);
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {

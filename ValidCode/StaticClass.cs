@@ -7,7 +7,7 @@ namespace ValidCode
         private static string name;
         private static int number;
 
-        public static event PropertyChangedEventHandler PropertyChanged;
+        public static event PropertyChangedEventHandler? PropertyChanged;
 
         public static string Name
         {
@@ -39,7 +39,7 @@ namespace ValidCode
             }
         }
 
-        private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
         }

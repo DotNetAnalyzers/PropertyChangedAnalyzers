@@ -7,7 +7,7 @@ namespace ValidCode.Interfaces
     {
         private T value;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public T Value
         {
@@ -30,7 +30,7 @@ namespace ValidCode.Interfaces
             set => this.Value = (T)value;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

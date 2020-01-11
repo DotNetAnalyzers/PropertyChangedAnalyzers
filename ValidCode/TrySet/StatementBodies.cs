@@ -11,7 +11,7 @@ namespace ValidCode.TrySet
         private string name;
         private int value;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Greeting
         {
@@ -50,12 +50,12 @@ namespace ValidCode.TrySet
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {

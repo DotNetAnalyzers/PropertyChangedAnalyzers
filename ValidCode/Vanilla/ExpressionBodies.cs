@@ -7,7 +7,7 @@ namespace ValidCode.Vanilla
     {
         private string name;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Greeting => $"Hello {this.name}";
 
@@ -28,6 +28,6 @@ namespace ValidCode.Vanilla
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

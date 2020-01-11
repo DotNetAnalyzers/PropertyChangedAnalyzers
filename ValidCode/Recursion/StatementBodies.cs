@@ -11,7 +11,7 @@ namespace ValidCode.Recursion
         private string name;
         private int value;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Greeting1
         {
@@ -59,12 +59,12 @@ namespace ValidCode.Recursion
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.OnPropertyChanged(propertyName);
         }
 
-        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             return this.TrySet(ref field, newValue, propertyName);
         }

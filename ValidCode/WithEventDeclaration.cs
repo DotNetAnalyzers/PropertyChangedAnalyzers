@@ -15,7 +15,7 @@ namespace ValidCode
             remove => this.propertyChanged -= value;
         }
 
-        private event PropertyChangedEventHandler propertyChanged;
+        private event PropertyChangedEventHandler? propertyChanged;
 
         public string Name
         {
@@ -33,7 +33,7 @@ namespace ValidCode
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.propertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -10,7 +10,7 @@ namespace ValidCode.Recursion
         private string name;
         private int value;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Greeting => this.Greeting;
 
@@ -33,8 +33,8 @@ namespace ValidCode.Recursion
             set => this.TrySet(ref this.value, value);
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.OnPropertyChanged(propertyName);
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.OnPropertyChanged(propertyName);
 
-        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null) => this.TrySet(ref field, newValue, propertyName);
+        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null) => this.TrySet(ref field, newValue, propertyName);
     }
 }

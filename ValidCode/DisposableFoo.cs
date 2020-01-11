@@ -9,7 +9,7 @@ namespace ValidCode
         private bool disposed;
         private string name;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Name
         {
@@ -42,7 +42,7 @@ namespace ValidCode
             this.disposed = true;
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

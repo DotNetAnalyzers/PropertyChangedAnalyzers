@@ -18,7 +18,7 @@ namespace ValidCode.Repros
         private T source;
         private bool disposed;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public T Source
         {
@@ -63,7 +63,7 @@ namespace ValidCode.Repros
             set => this.Source = (T)value;
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
