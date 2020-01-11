@@ -308,7 +308,47 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions, fixTitle: "Declare p and P as nullable.");
+            RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions, fixTitle: "Declare field p and property P as nullable.");
+        }
+
+        [Test]
+        public static void OpenGenericFieldAndPropertyNullableNoFix()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C<T> : INotifyPropertyChanged
+    {
+        private T ↓p;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public T P
+        {
+            get => this.p;
+            set
+            {
+                if (System.Collections.Generic.EqualityComparer<T>.Default.Equals(value, this.p))
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.NoFix(Fix, CS8618, new[] { before }, compilationOptions: CompilationOptions);
         }
     }
 }

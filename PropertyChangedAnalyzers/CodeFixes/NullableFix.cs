@@ -23,7 +23,9 @@
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
+                                                           .ConfigureAwait(false);
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                             .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Id == "CS8618" &&
@@ -49,7 +51,7 @@
                         FindProperty() is { } property)
                     {
                         context.RegisterCodeFix(
-                            $"Declare {fieldName} and {property.Identifier.ValueText} as nullable.",
+                            $"Declare field {fieldName} and property {property.Identifier.ValueText} as nullable.",
                             (editor, _) => editor.ReplaceNode(
                                                      fieldType,
                                                      x => SyntaxFactory.NullableType(x))
@@ -64,7 +66,9 @@
                     {
                         return candidate switch
                         {
-                            FieldDeclarationSyntax { Declaration: { Variables: { Count: 1 }, Type: { } t } } => t,
+                            FieldDeclarationSyntax { Declaration: { Variables: { Count: 1 }, Type: { } t } }
+                            when semanticModel.GetTypeInfo(t) is { Type: { IsReferenceType: true } }
+                            => t,
                             ConstructorDeclarationSyntax { Parent: TypeDeclarationSyntax typeDeclaration }
                             when typeDeclaration.TryFindField(fieldName, out var field)
                             => FindFieldType(field),
