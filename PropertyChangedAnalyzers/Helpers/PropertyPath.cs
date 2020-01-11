@@ -230,7 +230,7 @@
 
                 void VisitRecursive(SyntaxNode body)
                 {
-                    if (body == null)
+                    if (body is null)
                     {
                         return;
                     }

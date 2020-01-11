@@ -109,7 +109,7 @@
 
         internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (declaration == null ||
+            if (declaration is null ||
                 declaration.Modifiers.Any(SyntaxKind.PrivateKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.ProtectedKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
@@ -132,9 +132,9 @@
                 property.DeclaredAccessibility == Accessibility.Protected ||
                 property.IsStatic ||
                 property.IsReadOnly ||
-                property.GetMethod == null ||
+                property.GetMethod is null ||
                 property.IsAbstract ||
-                property.ContainingType == null ||
+                property.ContainingType is null ||
                 property.ContainingType.IsValueType ||
                 property.ContainingType.DeclaredAccessibility == Accessibility.Private ||
                 property.ContainingType.DeclaredAccessibility == Accessibility.Protected ||
@@ -174,11 +174,11 @@
         internal static bool IsMutableAutoProperty(PropertyDeclarationSyntax property, [NotNullWhen(true)] out AccessorDeclarationSyntax? getter, [NotNullWhen(true)] out AccessorDeclarationSyntax? setter)
         {
             if (property.TryGetGetter(out getter) &&
-                getter.Body == null &&
-                getter.ExpressionBody == null &&
+                getter.Body is null &&
+                getter.ExpressionBody is null &&
                 property.TryGetSetter(out setter) &&
-                setter.Body == null &&
-                setter.ExpressionBody == null)
+                setter.Body is null &&
+                setter.ExpressionBody is null)
             {
                 return true;
             }

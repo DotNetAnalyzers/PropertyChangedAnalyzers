@@ -56,7 +56,7 @@
 
         internal static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol>? visited = null)
         {
-            if (candidate?.ArgumentList == null ||
+            if (candidate?.ArgumentList is null ||
                 candidate.ArgumentList.Arguments.Count < 2 ||
                 !candidate.ArgumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out _) ||
                 !candidate.IsPotentialThisOrBase())

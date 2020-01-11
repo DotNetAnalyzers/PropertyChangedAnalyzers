@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -25,7 +25,7 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsLocalOrParameter(IdentifierNameSyntax identifier)
         {
-            if (identifier == null)
+            if (identifier is null)
             {
                 return false;
             }
@@ -37,13 +37,13 @@ namespace PropertyChangedAnalyzers
             }
 
             if (identifier.Identifier.ValueText == "value" &&
-                SyntaxNodeExt.FirstAncestor<AccessorDeclarationSyntax>(identifier) is AccessorDeclarationSyntax accessor &&
+                identifier.FirstAncestor<AccessorDeclarationSyntax>() is { } accessor &&
                 accessor.IsKind(SyntaxKind.SetAccessorDeclaration))
             {
                 return true;
             }
 
-            using (var walker = BorrowAndVisit(SyntaxNodeExt.FirstAncestor<MemberDeclarationSyntax>(identifier), () => new IdentifierTypeWalker()))
+            using (var walker = BorrowAndVisit(identifier.FirstAncestor<MemberDeclarationSyntax>(), () => new IdentifierTypeWalker()))
             {
                 foreach (var parameter in walker.parameters)
                 {

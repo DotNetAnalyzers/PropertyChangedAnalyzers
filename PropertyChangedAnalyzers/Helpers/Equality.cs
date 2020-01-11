@@ -82,8 +82,8 @@
 
             bool IsMatchingNullable(INamedTypeSymbol type1, INamedTypeSymbol type2)
             {
-                if (type1 == null ||
-                    type2 == null)
+                if (type1 is null ||
+                    type2 is null)
                 {
                     return false;
                 }
@@ -118,7 +118,7 @@
 
         private static bool IsArguments(InvocationExpressionSyntax invocation, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {
-            if (invocation.ArgumentList == null ||
+            if (invocation.ArgumentList is null ||
                 invocation.ArgumentList.Arguments.Count < 2)
             {
                 return false;
@@ -168,8 +168,8 @@
 
         private static bool IsIdentifier(ExpressionSyntax expression, SemanticModel semanticModel, ISymbol expected, CancellationToken cancellationToken)
         {
-            if (expression == null ||
-                expected == null)
+            if (expression is null ||
+                expected is null)
             {
                 return false;
             }

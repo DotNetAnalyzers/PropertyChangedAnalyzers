@@ -212,7 +212,7 @@
                 foreach (var identifierName in walker.IdentifierNames)
                 {
                     var symbol = semanticModel.GetSymbolSafe(identifierName, cancellationToken);
-                    if (symbol == null)
+                    if (symbol is null)
                     {
                         continue;
                     }

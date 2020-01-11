@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers
     {
         internal static PropertyDeclarationSyntax WithoutInitializer(this PropertyDeclarationSyntax property)
         {
-            if (property.Initializer == null)
+            if (property.Initializer is null)
             {
                 return property;
             }

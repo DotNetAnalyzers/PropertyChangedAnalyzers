@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers
     {
         internal static bool IsReturnOnly(this IfStatementSyntax ifStatement)
         {
-            if (ifStatement == null)
+            if (ifStatement is null)
             {
                 return false;
             }
@@ -29,7 +29,7 @@ namespace PropertyChangedAnalyzers
 
         internal static bool IsReturnIfTrue(this IfStatementSyntax ifStatement)
         {
-            if (ifStatement == null)
+            if (ifStatement is null)
             {
                 return false;
             }

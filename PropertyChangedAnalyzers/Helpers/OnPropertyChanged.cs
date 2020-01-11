@@ -89,7 +89,7 @@
         internal static AnalysisResult IsMatch(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol? method)
         {
             method = null;
-            if (invocation == null ||
+            if (invocation is null ||
                 invocation.ArgumentList?.Arguments.Count > 1 ||
                 !invocation.IsPotentialReturnVoid() ||
                 !invocation.IsPotentialThisOrBase())
@@ -99,7 +99,7 @@
 
             if (invocation.TryFirstAncestor(out ClassDeclarationSyntax? containingClass))
             {
-                if (containingClass.BaseList?.Types == null ||
+                if (containingClass.BaseList?.Types is null ||
                     containingClass.BaseList.Types.Count == 0)
                 {
                     return AnalysisResult.No;

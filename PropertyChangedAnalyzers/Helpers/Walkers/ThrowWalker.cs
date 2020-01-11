@@ -29,7 +29,7 @@
 
         internal static bool Throws(SyntaxNode scope)
         {
-            if (scope == null)
+            if (scope is null)
             {
                 return false;
             }

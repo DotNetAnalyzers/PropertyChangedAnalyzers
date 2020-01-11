@@ -70,7 +70,7 @@ namespace PropertyChangedAnalyzers
 
             AnalysisResult Notifies(SyntaxNode scope)
             {
-                if (scope == null)
+                if (scope is null)
                 {
                     return AnalysisResult.No;
                 }

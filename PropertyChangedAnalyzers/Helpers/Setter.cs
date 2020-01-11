@@ -12,7 +12,7 @@
         internal static bool TryFindSingleTrySet(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? invocation)
         {
             invocation = null;
-            if (setter == null)
+            if (setter is null)
             {
                 return false;
             }
@@ -24,7 +24,7 @@
         internal static bool TryFindSingleAssignment(AccessorDeclarationSyntax setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)
         {
             assignment = null;
-            if (setter == null)
+            if (setter is null)
             {
                 return false;
             }

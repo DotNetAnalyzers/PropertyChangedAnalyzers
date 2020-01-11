@@ -88,7 +88,7 @@
                                 {
                                     backing = temp.Expression;
                                 }
-                                else if (backing == null &&
+                                else if (backing is null &&
                                     (OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
                                      PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken)))
                                 {
@@ -97,7 +97,7 @@
 
                                 break;
                             case ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax invocation } }:
-                                if (backing == null &&
+                                if (backing is null &&
                                     PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken))
                                 {
                                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
