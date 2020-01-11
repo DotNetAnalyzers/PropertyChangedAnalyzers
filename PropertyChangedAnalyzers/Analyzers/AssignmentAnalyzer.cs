@@ -42,7 +42,7 @@
                    Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                    !assignment.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _) &&
                    !assignment.TryFirstAncestor<LocalFunctionStatementSyntax>(out _) &&
-                   propertyDeclaration.Setter() is { } setter &&
+                   propertyDeclaration.TryGetSetter(out var setter) &&
                    IsSimple(out fieldAccess);
 
             bool IsSimple(out ExpressionSyntax? backing)
