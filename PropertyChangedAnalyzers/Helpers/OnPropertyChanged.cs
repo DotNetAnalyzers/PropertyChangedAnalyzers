@@ -11,7 +11,7 @@
         internal static IMethodSymbol? Find(IEventSymbol propertyChanged, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             IMethodSymbol? match = null;
-            var containingType = propertyChanged.ContainingType;
+            using var recursion = Recursion.Borrow(propertyChanged.ContainingType, semanticModel, cancellationToken);
             while (propertyChanged != null)
             {
                 foreach (var member in propertyChanged.ContainingType.GetMembers())
@@ -19,13 +19,13 @@
                     if (member is IMethodSymbol { MethodKind: MethodKind.Ordinary } candidate &&
                         candidate.IsStatic == propertyChanged.IsStatic)
                     {
-                        if (!Equals(candidate.ContainingType, containingType) &&
+                        if (!Equals(candidate.ContainingType, recursion.ContainingType) &&
                             candidate.DeclaredAccessibility == Accessibility.Private)
                         {
                             continue;
                         }
 
-                        switch (IsMatch(candidate, semanticModel, cancellationToken))
+                        switch (IsMatch(candidate, recursion))
                         {
                             case AnalysisResult.No:
                                 continue;
@@ -54,11 +54,11 @@
             return match;
         }
 
-        internal static IMethodSymbol? Find(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static IMethodSymbol? Find(INamedTypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (PropertyChangedEvent.TryFind(type, out var propertyChangedEvent))
+            if (PropertyChangedEvent.TryFind(type, out var propertyChanged))
             {
-                return Find(propertyChangedEvent, semanticModel, cancellationToken);
+                return Find(propertyChanged, semanticModel, cancellationToken);
             }
 
             return null;
@@ -93,7 +93,8 @@
 
         internal static OnPropertyChangedMatch? Match(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var result = IsMatch(method, semanticModel, cancellationToken);
+            using var recursion = Recursion.Borrow(method.ContainingType, semanticModel, cancellationToken);
+            var result = IsMatch(method, recursion);
             if (result != AnalysisResult.No &&
                 method.Parameters.TrySingle(out var parameter))
             {
@@ -103,14 +104,9 @@
             return null;
         }
 
-        private static AnalysisResult IsMatch(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol>? visited = null)
+        private static AnalysisResult IsMatch(IMethodSymbol method, Recursion recursion)
         {
-            if (visited?.Add(method) == false)
-            {
-                return AnalysisResult.No;
-            }
-
-            if (!IsPotentialMatch(method, semanticModel.Compilation))
+            if (!IsPotentialMatch(method, recursion.SemanticModel.Compilation))
             {
                 return AnalysisResult.No;
             }
@@ -123,14 +119,14 @@
 
             var result = AnalysisResult.No;
             if (method.Parameters.TrySingle(out var parameter) &&
-                method.TrySingleDeclaration(cancellationToken, out MethodDeclarationSyntax? declaration))
+                method.TrySingleDeclaration(recursion.CancellationToken, out MethodDeclarationSyntax? declaration))
             {
                 using var walker = InvocationWalker.Borrow(declaration);
                 foreach (var invocation in walker.Invocations)
                 {
                     if (invocation is { ArgumentList: { Arguments: { Count: 2 } oneArg } } &&
                         oneArg.TryElementAt(1, out var argument) &&
-                        PropertyChangedEvent.IsInvoke(invocation, semanticModel, cancellationToken))
+                        PropertyChangedEvent.IsInvoke(invocation, recursion.SemanticModel, recursion.CancellationToken))
                     {
                         if (argument.Expression is IdentifierNameSyntax identifierName &&
                             identifierName.Identifier.ValueText == parameter.Name)
@@ -138,7 +134,7 @@
                             return AnalysisResult.Yes;
                         }
 
-                        if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, semanticModel, cancellationToken))
+                        if (PropertyChangedEventArgs.IsCreatedWith(argument.Expression, parameter, recursion.SemanticModel, recursion.CancellationToken))
                         {
                             return AnalysisResult.Yes;
                         }
@@ -147,13 +143,12 @@
                              arguments[0] is { Expression: { } expression } &&
                              invocation.IsPotentialThisOrBase())
                     {
-                        if (PropertyChangedEventArgs.IsCreatedWith(expression, parameter, semanticModel, cancellationToken) ||
-                            IdentifierNameWalker.Contains(expression, parameter, semanticModel, cancellationToken))
+                        if (PropertyChangedEventArgs.IsCreatedWith(expression, parameter, recursion.SemanticModel, recursion.CancellationToken) ||
+                            IdentifierNameWalker.Contains(expression, parameter, recursion.SemanticModel, recursion.CancellationToken))
                         {
-                            if (semanticModel.TryGetSymbol(invocation, cancellationToken, out var invokedMethod))
+                            if (recursion.Target(invocation) is { Symbol: IMethodSymbol invokedMethod })
                             {
-                                using var set = visited.IncrementUsage();
-                                switch (IsMatch(invokedMethod, semanticModel, cancellationToken, set))
+                                switch (IsMatch(invokedMethod, recursion))
                                 {
                                     case AnalysisResult.No:
                                         break;

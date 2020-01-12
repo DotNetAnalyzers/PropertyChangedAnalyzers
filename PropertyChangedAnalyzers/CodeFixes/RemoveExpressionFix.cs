@@ -29,7 +29,7 @@
                     TryGetNameExpression(argument, out var nameExpression) &&
                     argument.Parent is ArgumentListSyntax { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
                     argument.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
-                    semanticModel.TryGetSymbol(classDeclaration, context.CancellationToken, out var type) &&
+                    semanticModel.TryGetNamedType(classDeclaration, context.CancellationToken, out var type) &&
                     OnPropertyChanged.Find(type, semanticModel, context.CancellationToken) is { } invoker &&
                     invoker.Parameters.TrySingle(out var parameter) &&
                     parameter.Type == KnownSymbol.String &&

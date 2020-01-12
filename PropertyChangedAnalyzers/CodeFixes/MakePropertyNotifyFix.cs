@@ -32,7 +32,7 @@
             {
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax? propertyDeclaration) &&
                     propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
-                    semanticModel.TryGetSymbol(classDeclarationSyntax, context.CancellationToken, out var type))
+                    semanticModel.TryGetNamedType(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
                     if (TrySet.TryFind(type, semanticModel, context.CancellationToken, out var trySetMethod) &&
                         TrySet.CanCreateInvocation(trySetMethod, out _))

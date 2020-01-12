@@ -434,7 +434,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.No, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
+                Assert.AreEqual(null, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
