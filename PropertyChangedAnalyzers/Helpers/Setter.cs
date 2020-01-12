@@ -107,17 +107,16 @@
             }
         }
 
-        internal static bool TryGetBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IFieldSymbol? field)
+        internal static IFieldSymbol? FindBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             switch (FindSingleMutated(setter, semanticModel, cancellationToken))
             {
                 case IdentifierNameSyntax identifierName:
-                    return semanticModel.TryGetSymbol(identifierName, cancellationToken, out field);
+                    return semanticModel.TryGetSymbol(identifierName, cancellationToken, out IFieldSymbol? field) ? field : null;
                 case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name }:
-                    return semanticModel.TryGetSymbol(name, cancellationToken, out field);
+                    return semanticModel.TryGetSymbol(name, cancellationToken, out field) ? field : null;
                 default:
-                    field = null;
-                    return false;
+                    return null;
             }
         }
 
