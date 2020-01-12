@@ -8,7 +8,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [Obsolete("Use Gu.Roslyn.Extensions")]
-    internal static class Equality
+    internal static class EqualityOld
     {
         internal static bool IsOperatorEquals(ExpressionSyntax condition, SemanticModel semanticModel, ISymbol first, ISymbol other, CancellationToken cancellationToken)
         {

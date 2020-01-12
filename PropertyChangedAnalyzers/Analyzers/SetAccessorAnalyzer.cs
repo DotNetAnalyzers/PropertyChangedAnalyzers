@@ -77,7 +77,7 @@
                         switch (statement)
                         {
                             case IfStatementSyntax { Condition: { } condition }
-                                when Gu.Roslyn.AnalyzerExtensions.Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out _, out _):
+                                when Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out _, out _):
                                 break;
                             case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: { } left, Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } } }:
                                 backing = left;

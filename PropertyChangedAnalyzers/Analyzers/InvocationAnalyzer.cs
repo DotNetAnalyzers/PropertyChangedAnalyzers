@@ -179,20 +179,20 @@
                 return IsEqualsCheck(unary.Operand, value, member, semanticModel, cancellationToken);
             }
 
-            return Equality.IsOperatorNotEquals(expression, semanticModel, value, member, cancellationToken);
+            return EqualityOld.IsOperatorNotEquals(expression, semanticModel, value, member, cancellationToken);
         }
 
         private static bool IsEqualsCheck(ExpressionSyntax expression, IParameterSymbol value, ISymbol member, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (expression is InvocationExpressionSyntax equals)
             {
-                if (Equality.IsObjectEquals(equals, semanticModel, value, member, cancellationToken) ||
-                    Equality.IsInstanceEquals(equals, semanticModel, value, member, cancellationToken) ||
-                    Equality.IsInstanceEquals(equals, semanticModel, member, value, cancellationToken) ||
-                    Equality.IsReferenceEquals(equals, semanticModel, value, member, cancellationToken) ||
-                    Equality.IsEqualityComparerEquals(equals, value, member, semanticModel, cancellationToken) ||
-                    Equality.IsStringEquals(equals, semanticModel, value, member, cancellationToken) ||
-                    Equality.IsNullableEquals(equals, semanticModel, value, member, cancellationToken))
+                if (EqualityOld.IsObjectEquals(equals, semanticModel, value, member, cancellationToken) ||
+                    EqualityOld.IsInstanceEquals(equals, semanticModel, value, member, cancellationToken) ||
+                    EqualityOld.IsInstanceEquals(equals, semanticModel, member, value, cancellationToken) ||
+                    EqualityOld.IsReferenceEquals(equals, semanticModel, value, member, cancellationToken) ||
+                    EqualityOld.IsEqualityComparerEquals(equals, value, member, semanticModel, cancellationToken) ||
+                    EqualityOld.IsStringEquals(equals, semanticModel, value, member, cancellationToken) ||
+                    EqualityOld.IsNullableEquals(equals, semanticModel, value, member, cancellationToken))
                 {
                     return true;
                 }
@@ -200,7 +200,7 @@
                 return false;
             }
 
-            return Equality.IsOperatorEquals(expression, semanticModel, value, member, cancellationToken);
+            return EqualityOld.IsOperatorEquals(expression, semanticModel, value, member, cancellationToken);
         }
 
         private static bool UsesValueAndMember(IfStatementSyntax ifStatement, SemanticModel semanticModel, IParameterSymbol value, ISymbol member, CancellationToken cancellationToken)
