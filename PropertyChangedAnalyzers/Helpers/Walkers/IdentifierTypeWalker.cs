@@ -7,7 +7,7 @@
     internal sealed class IdentifierTypeWalker : PooledWalker<IdentifierTypeWalker>
     {
         private readonly List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-        private readonly List<VariableDeclaratorSyntax> variableDeclarators = new List<VariableDeclaratorSyntax>();
+        private readonly List<VariableDeclaratorSyntax> locals = new List<VariableDeclaratorSyntax>();
 
         public override void VisitParameter(ParameterSyntax node)
         {
@@ -17,7 +17,7 @@
 
         public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
         {
-            this.variableDeclarators.Add(node);
+            this.locals.Add(node);
             base.VisitVariableDeclarator(node);
         }
 
@@ -45,7 +45,7 @@
                         }
                     }
 
-                    foreach (var declarator in walker.variableDeclarators)
+                    foreach (var declarator in walker.locals)
                     {
                         if (candidate.Identifier.ValueText == declarator.Identifier.ValueText)
                         {
@@ -61,7 +61,7 @@
         protected override void Clear()
         {
             this.parameters.Clear();
-            this.variableDeclarators.Clear();
+            this.locals.Clear();
         }
     }
 }
