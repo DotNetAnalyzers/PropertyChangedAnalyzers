@@ -44,31 +44,27 @@
             return type.TryFindFirstMethodRecursive(x => TrySet.CanCreateInvocation(x, out _) && IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
         }
 
-        internal static bool IsMatchWhenInSetter(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? field, [NotNullWhen(true)] out ArgumentSyntax? value)
+        internal static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            field = null;
-            value = null;
-            return candidate is { ArgumentList: { Arguments: { } arguments } } &&
-                   IsMatch(candidate, semanticModel, cancellationToken) != AnalysisResult.No &&
-                   arguments.TrySingle<ArgumentSyntax>(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefExpression), out field) &&
-                   arguments.TrySingle<ArgumentSyntax>(x => x.RefOrOutKeyword.IsKind(SyntaxKind.None) && x.Expression is IdentifierNameSyntax { Identifier: { ValueText: "value" } }, out value);
-        }
-
-        internal static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol>? visited = null)
-        {
-            if (candidate?.ArgumentList is null ||
-                candidate.ArgumentList.Arguments.Count < 2 ||
-                !candidate.ArgumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out _) ||
-                !candidate.IsPotentialThisOrBase())
+            if (candidate.FirstAncestor<TypeDeclarationSyntax>() is { } containingTypeDeclaration &&
+                semanticModel.TryGetNamedType(containingTypeDeclaration, cancellationToken, out var containingType))
             {
-                return AnalysisResult.No;
+                using var recursion = Recursion.Borrow(containingType, semanticModel, cancellationToken);
+                return IsMatch(candidate, recursion);
             }
 
-            return IsMatch(
-                semanticModel.GetSymbolSafe(candidate, cancellationToken),
-                semanticModel,
-                cancellationToken,
-                visited);
+            return AnalysisResult.No;
+        }
+
+        internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (candidate.ContainingType is { } containingType)
+            {
+                using var recursion = Recursion.Borrow(containingType, semanticModel, cancellationToken);
+                return IsMatch(candidate, recursion);
+            }
+
+            return AnalysisResult.No;
         }
 
         internal static TrySetMatch? Match(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -90,33 +86,42 @@
             throw new InvalidOperationException("Bug in PropertyChangedAnalyzers. Could not get parameters.");
         }
 
-        internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol>? visited = null)
+        private static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, Recursion recursion)
         {
-            if (visited?.Add(candidate) == false)
+            if (candidate?.ArgumentList is null ||
+                candidate.ArgumentList.Arguments.Count < 2 ||
+                !candidate.ArgumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out _) ||
+                !candidate.IsPotentialThisOrBase())
             {
                 return AnalysisResult.No;
             }
 
+            if (recursion.Target(candidate) is { Symbol: IMethodSymbol target })
+            {
+                return IsMatch(target, recursion);
+            }
+
+            return AnalysisResult.No;
+        }
+
+        private static AnalysisResult IsMatch(IMethodSymbol candidate, Recursion recursion)
+        {
             if (candidate is { MethodKind: MethodKind.Ordinary, ReturnType: { SpecialType: SpecialType.System_Boolean }, IsGenericMethod: true, TypeParameters: { Length: 1 }, Parameters: { } parameters } &&
                 parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out _) &&
                 parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out _) &&
                 parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { SpecialType: SpecialType.System_String } } }, out _) &&
                 ShouldCheck())
             {
-                if (candidate.TrySingleMethodDeclaration(cancellationToken, out var methodDeclaration))
+                if (candidate.TrySingleMethodDeclaration(recursion.CancellationToken, out var methodDeclaration))
                 {
                     using (var walker = InvocationWalker.Borrow(methodDeclaration))
                     {
-                        if (!walker.Invocations.TrySingle(
-                            x => OnPropertyChanged.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No ||
-                                 PropertyChangedEvent.IsInvoke(x, semanticModel, cancellationToken),
-                            out _))
+                        if (!walker.Invocations.TrySingle(x => Notifies(x), out _))
                         {
-                            using var set = visited.IncrementUsage();
                             var result = AnalysisResult.No;
                             foreach (var invocation in walker.Invocations)
                             {
-                                switch (IsMatch(invocation, semanticModel, cancellationToken, set))
+                                switch (IsMatch(invocation, recursion))
                                 {
                                     case AnalysisResult.No:
                                         break;
@@ -132,16 +137,25 @@
 
                             return result;
                         }
+
+                        bool Notifies(InvocationExpressionSyntax x)
+                        {
+                            return OnPropertyChanged.IsMatch(x, recursion.SemanticModel, recursion.CancellationToken) != AnalysisResult.No ||
+                                   PropertyChangedEvent.IsInvoke(x, recursion.SemanticModel, recursion.CancellationToken);
+                        }
                     }
 
                     using (var walker = AssignmentWalker.Borrow(methodDeclaration))
                     {
-                        if (!walker.Assignments.TrySingle(
-                            x => semanticModel.GetSymbolSafe(x.Left, cancellationToken)?.Name == candidate.Parameters[0].Name &&
-                                 semanticModel.GetSymbolSafe(x.Right, cancellationToken)?.Name == candidate.Parameters[1].Name,
-                            out _))
+                        if (!walker.Assignments.TrySingle(x => Assigns(x), out _))
                         {
                             return AnalysisResult.No;
+                        }
+
+                        bool Assigns(AssignmentExpressionSyntax x)
+                        {
+                            return recursion.SemanticModel.GetSymbolSafe(x.Left, recursion.CancellationToken)?.Name == candidate.Parameters[0].Name &&
+                                   recursion.SemanticModel.GetSymbolSafe(x.Right, recursion.CancellationToken)?.Name == candidate.Parameters[1].Name;
                         }
                     }
 
@@ -169,7 +183,7 @@
                 return candidate switch
                 {
                     { IsStatic: true } => PropertyChangedEvent.TryFind(candidate.ContainingType, out _),
-                    { IsStatic: false } => candidate.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, semanticModel.Compilation),
+                    { IsStatic: false } => candidate.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, recursion.SemanticModel.Compilation),
                 };
             }
         }
