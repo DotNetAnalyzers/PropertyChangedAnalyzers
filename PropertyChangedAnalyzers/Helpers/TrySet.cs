@@ -107,8 +107,8 @@
         private static AnalysisResult IsMatch(IMethodSymbol candidate, Recursion recursion)
         {
             if (candidate is { MethodKind: MethodKind.Ordinary, ReturnType: { SpecialType: SpecialType.System_Boolean }, IsGenericMethod: true, TypeParameters: { Length: 1 }, Parameters: { } parameters } &&
-                parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out _) &&
-                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out _) &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var field) &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var value) &&
                 parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { SpecialType: SpecialType.System_String } } }, out _) &&
                 ShouldCheck())
             {
@@ -154,8 +154,10 @@
 
                         bool Assigns(AssignmentExpressionSyntax x)
                         {
-                            return recursion.SemanticModel.GetSymbolSafe(x.Left, recursion.CancellationToken)?.Name == candidate.Parameters[0].Name &&
-                                   recursion.SemanticModel.GetSymbolSafe(x.Right, recursion.CancellationToken)?.Name == candidate.Parameters[1].Name;
+                            return x.Left is IdentifierNameSyntax left &&
+                                   left.Identifier.ValueText == field!.Name &&
+                                   x.Right is IdentifierNameSyntax right &&
+                                   right.Identifier.ValueText == value!.Name;
                         }
                     }
 
@@ -184,6 +186,7 @@
                 {
                     { IsStatic: true } => PropertyChangedEvent.TryFind(candidate.ContainingType, out _),
                     { IsStatic: false } => candidate.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, recursion.SemanticModel.Compilation),
+                    _ => false, // never getting here, candidate never null.
                 };
             }
         }
