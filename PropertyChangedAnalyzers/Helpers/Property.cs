@@ -16,24 +16,23 @@
                   : null;
         }
 
-        internal static bool TrySingleReturned(PropertyDeclarationSyntax property, [NotNullWhen(true)] out ExpressionSyntax? result)
+        internal static ExpressionSyntax? FindSingleReturned(PropertyDeclarationSyntax property)
         {
             if (property.ExpressionBody is { Expression: { } expression })
             {
-                result = expression;
-                return true;
+                return expression;
             }
 
-            result = null;
-            return property.TryGetGetter(out var getter) &&
-                   Getter.TrySingleReturned(getter, out result);
+            return property.TryGetGetter(out var getter)
+                   ? Getter.FindSingleReturned(getter)
+                   : null;
         }
 
         internal static GetAndSetResult? GetsAndSetsSame(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertyDeclaration.TryGetGetter(out var getter) &&
                 propertyDeclaration.TryGetSetter(out var setter) &&
-                Getter.TrySingleReturned(getter, out var get) &&
+                Getter.FindSingleReturned(getter) is { } get &&
                 Setter.FindSingleMutated(setter, semanticModel, cancellationToken) is { } set)
             {
                 if (MemberPath.Equals(get, set))
@@ -45,7 +44,7 @@
                 {
                     if (MemberPath.TrySingle(get, out var getMember) &&
                         containing.TryFindProperty(getMember.Text, out var getProperty) &&
-                        TrySingleReturned(getProperty, out var rootGet) &&
+                        FindSingleReturned(getProperty) is { } rootGet &&
                         MemberPath.Equals(rootGet, set))
                     {
                         return new GetAndSetResult(same: true, get: rootGet, set: set);

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
@@ -42,8 +42,7 @@ namespace N
     }
 }");
             var declaration = syntaxTree.FindPropertyDeclaration(propertyName);
-            Assert.AreEqual(true, Property.TrySingleReturned(declaration, out var expression));
-            Assert.AreEqual(expected, expression.ToString());
+            Assert.AreEqual(expected, Property.FindSingleReturned(declaration).ToString());
         }
     }
 }

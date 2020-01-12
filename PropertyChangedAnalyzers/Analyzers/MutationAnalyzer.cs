@@ -117,7 +117,7 @@
                     {
                         if (context.Node.TryFirstAncestor(out PropertyDeclarationSyntax? inProperty) &&
                             ReferenceEquals(inProperty, propertyDeclaration) &&
-                            Property.TrySingleReturned(inProperty, out var returned) &&
+                            Property.FindSingleReturned(inProperty) is { } returned &&
                             PropertyPath.Uses(backing, returned, context))
                         {
                             // We let INPC002 handle this

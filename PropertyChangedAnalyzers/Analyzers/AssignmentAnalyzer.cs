@@ -24,7 +24,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is AssignmentExpressionSyntax assignment &&
-                ShouldSetBackingField(assignment, context) is {} fieldAccess)
+                ShouldSetBackingField(assignment, context) is { } fieldAccess)
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(
@@ -36,8 +36,7 @@
 
         private static ExpressionSyntax? ShouldSetBackingField(AssignmentExpressionSyntax assignment, SyntaxNodeAnalysisContext context)
         {
-            if (context.ContainingSymbol is IMethodSymbol { IsStatic: false, MethodKind: MethodKind
-                    .Constructor } ctor &&
+            if (context.ContainingSymbol is IMethodSymbol { IsStatic: false, MethodKind: MethodKind.Constructor } ctor &&
                 Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
                 !assignment.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _) &&
                 !assignment.TryFirstAncestor<LocalFunctionStatementSyntax>(out _) &&
@@ -75,7 +74,7 @@
 
             ExpressionSyntax? FindAssignedField()
             {
-                return Setter.FindSingleMutated(setter, context.SemanticModel, context.CancellationToken) is {} backingField &&
+                return Setter.FindSingleMutated(setter!, context.SemanticModel, context.CancellationToken) is { } backingField &&
                        MemberPath.TrySingle(backingField, out var single) &&
                        context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol? field) &&
                        Equals(ctor.ContainingType, field.ContainingType)

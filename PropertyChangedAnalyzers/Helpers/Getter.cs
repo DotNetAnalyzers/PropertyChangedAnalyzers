@@ -1,26 +1,22 @@
 ﻿namespace PropertyChangedAnalyzers
 {
-    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     public static class Getter
     {
-        internal static bool TrySingleReturned(AccessorDeclarationSyntax getter, [NotNullWhen(true)] out ExpressionSyntax? result)
+        internal static ExpressionSyntax? FindSingleReturned(AccessorDeclarationSyntax getter)
         {
             switch (getter)
             {
                 case { ExpressionBody: { Expression: { } expression } }:
-                    result = expression;
-                    return true;
+                    return expression;
                 case { Body: { Statements: { Count: 1 } statements } }
                     when statements[0] is ReturnStatementSyntax returnStatement:
-                    result = returnStatement.Expression;
-                    return result != null;
+                    return returnStatement.Expression;
                 case { Body: { } body }:
-                    return ReturnExpressionsWalker.TryGetSingle(body, out result);
+                    return ReturnExpressionsWalker.TryGetSingle(body, out var result) ? result : null;
                 default:
-                    result = null;
-                    return false;
+                    return null;
             }
         }
     }
