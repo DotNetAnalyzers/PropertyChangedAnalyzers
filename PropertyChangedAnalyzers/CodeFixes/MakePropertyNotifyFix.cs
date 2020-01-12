@@ -112,7 +112,7 @@
                                     setter,
                                     x => x.AsBlockBody(
                                         InpcFactory.IfReturn(
-                                            InpcFactory.Equals(property.Type, InpcFactory.Value, backingField, editor.SemanticModel)),
+                                            InpcFactory.Equals(property!.Type, InpcFactory.Value, backingField, editor.SemanticModel)),
                                         SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, backingField, InpcFactory.Value)),
                                         onPropertyChanged));
                                 if (propertyDeclaration.Initializer != null)

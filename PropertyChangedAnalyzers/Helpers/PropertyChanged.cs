@@ -63,12 +63,12 @@
             }
 
             var block = mutation.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Body ??
-                        mutation.FirstAncestorOrSelf<AccessorDeclarationSyntax>()?.Body ??
-                        mutation.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>()?.Body;
+                                    mutation.FirstAncestorOrSelf<AccessorDeclarationSyntax>()?.Body ??
+                                    mutation.FirstAncestorOrSelf<AnonymousFunctionExpressionSyntax>()?.Body;
 
             return Notifies(block);
 
-            AnalysisResult Notifies(SyntaxNode scope)
+            AnalysisResult Notifies(SyntaxNode? scope)
             {
                 if (scope is null)
                 {

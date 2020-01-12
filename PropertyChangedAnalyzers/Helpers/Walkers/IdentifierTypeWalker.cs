@@ -2,8 +2,6 @@
 {
     using System.Collections.Generic;
     using Gu.Roslyn.AnalyzerExtensions;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal sealed class IdentifierTypeWalker : PooledWalker<IdentifierTypeWalker>
@@ -23,46 +21,41 @@
             base.VisitVariableDeclarator(node);
         }
 
-        internal static bool IsLocalOrParameter(IdentifierNameSyntax identifier)
+        internal static bool IsLocalOrParameter(IdentifierNameSyntax candidate)
         {
-            if (identifier is null)
+            return candidate switch
             {
-                return false;
-            }
+                { Parent: MemberAccessExpressionSyntax _ } => false,
+                { Identifier: { ValueText: "value" } }
+                when candidate.FirstAncestor<AccessorDeclarationSyntax>() is { Keyword: { ValueText: "set" } }
+                => true,
+                _ => Walk(),
+            };
 
-            if (identifier.Parent is MemberAccessExpressionSyntax memberAccess &&
-                memberAccess.Expression is InstanceExpressionSyntax)
+            bool Walk()
             {
-                return false;
-            }
-
-            if (identifier.Identifier.ValueText == "value" &&
-                identifier.FirstAncestor<AccessorDeclarationSyntax>() is { } accessor &&
-                accessor.IsKind(SyntaxKind.SetAccessorDeclaration))
-            {
-                return true;
-            }
-
-            using (var walker = BorrowAndVisit(identifier.FirstAncestor<MemberDeclarationSyntax>(), () => new IdentifierTypeWalker()))
-            {
-                foreach (var parameter in walker.parameters)
+                if (candidate.FirstAncestor<MemberDeclarationSyntax>() is { } member)
                 {
-                    if (identifier.Identifier.ValueText == parameter.Identifier.ValueText)
+                    using var walker = BorrowAndVisit(member, () => new IdentifierTypeWalker());
+                    foreach (var parameter in walker.parameters)
                     {
-                        return true;
+                        if (candidate.Identifier.ValueText == parameter.Identifier.ValueText)
+                        {
+                            return true;
+                        }
+                    }
+
+                    foreach (var declarator in walker.variableDeclarators)
+                    {
+                        if (candidate.Identifier.ValueText == declarator.Identifier.ValueText)
+                        {
+                            return true;
+                        }
                     }
                 }
 
-                foreach (var declarator in walker.variableDeclarators)
-                {
-                    if (identifier.Identifier.ValueText == declarator.Identifier.ValueText)
-                    {
-                        return true;
-                    }
-                }
+                return false;
             }
-
-            return false;
         }
 
         protected override void Clear()
