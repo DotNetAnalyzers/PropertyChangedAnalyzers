@@ -104,7 +104,9 @@
 
                             void Subclass(DocumentEditor editor, bool addUsings)
                             {
+#pragma warning disable CS8602 // Dereference of a possibly null reference. CompilerBug
                                 if (classDeclaration.BaseList is { Types: { } types } &&
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                                     types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out var baseType))
                                 {
                                     _ = editor.ReplaceNode(
@@ -153,7 +155,9 @@
 
                     async Task ImplementINotifyPropertyChangedAsync(DocumentEditor editor, bool addUsings, CancellationToken cancellationToken)
                     {
+#pragma warning disable CS8604 // Possible null reference argument. CompilerBug
                         if (!type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, editor.SemanticModel.Compilation) &&
+#pragma warning restore CS8604 // Possible null reference argument.
                             !HasINotifyPropertyChangedInterface(out var baseType))
                         {
                             if (baseType is null)
@@ -168,9 +172,13 @@
                             }
                         }
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference. CompilerBug
                         var nullabilityAnnotationsEnabled = editor.SemanticModel.GetNullableContext(classDeclaration.SpanStart).AnnotationsEnabled();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
+#pragma warning disable CS8604 // Possible null reference argument. CompilerBug
                         if (!type.TryFindEventRecursive("PropertyChanged", out _))
+#pragma warning restore CS8604 // Possible null reference argument.
                         {
                             var eventDeclaration = (EventFieldDeclarationSyntax)editor.Generator.EventDeclaration(
                                 "PropertyChanged",
@@ -180,7 +188,9 @@
                             _ = editor.AddEvent(classDeclaration, eventDeclaration);
                         }
 
+#pragma warning disable CS8604 // Possible null reference argument. CompilerBug
                         if (!type.TryFindFirstMethodRecursive("OnPropertyChanged", m => m.Parameters.TrySingle(out var parameter) && parameter.Type == KnownSymbol.String, out _))
+#pragma warning restore CS8604 // Possible null reference argument.
                         {
                             await editor.AddOnPropertyChangedMethodAsync(
                                 classDeclaration,
@@ -196,7 +206,9 @@
 
                         bool HasINotifyPropertyChangedInterface(out BaseTypeSyntax? result)
                         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference. CompilerBug
                             if (classDeclaration.BaseList is { Types: { } types })
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                             {
                                 if (types.TryFirst<BaseTypeSyntax>(x => x.Type == KnownSymbol.INotifyPropertyChanged, out result))
                                 {
