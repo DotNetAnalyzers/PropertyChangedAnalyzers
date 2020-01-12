@@ -97,7 +97,8 @@
         private static bool IncorrectOrMissingCheckIfDifferent(SyntaxNodeAnalysisContext context, AccessorDeclarationSyntax setter, InvocationExpressionSyntax invocation, AssignmentExpressionSyntax assignment)
         {
             if (context.ContainingSymbol is IMethodSymbol { Parameters: { Length: 1 } parameters, AssociatedSymbol: IPropertySymbol property } &&
-                parameters.TrySingle(out var value))
+                parameters.TrySingle(out var value) &&
+                context.SemanticModel.TryGetSymbol(assignment.Left, context.CancellationToken, out var backingField))
             {
                 using var walker = IfStatementWalker.Borrow(setter);
                 if (walker.IfStatements.Count == 0)
@@ -105,7 +106,6 @@
                     return true;
                 }
 
-                var backingField = context.SemanticModel.GetSymbolSafe(assignment.Left, context.CancellationToken);
                 foreach (var ifStatement in walker.IfStatements)
                 {
                     if (ifStatement.SpanStart >= invocation.SpanStart)

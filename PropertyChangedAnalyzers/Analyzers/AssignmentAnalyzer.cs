@@ -79,7 +79,9 @@
 
             bool IsAssigningField(out ExpressionSyntax? backingField)
             {
+#pragma warning disable CS8604 // Possible null reference argument. CompilerBug
                 return Setter.TryFindSingleMutation(setter, context.SemanticModel, context.CancellationToken, out backingField) &&
+#pragma warning restore CS8604 // Possible null reference argument.
                        MemberPath.TrySingle(backingField, out var single) &&
                        context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol? field) &&
                        Equals(ctor.ContainingType, field.ContainingType);
