@@ -71,23 +71,20 @@
                 visited);
         }
 
-        internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken, out IParameterSymbol field, out IParameterSymbol value, out IParameterSymbol name)
+        internal static TrySetMatch? Match(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var result = IsMatch(candidate, semanticModel, cancellationToken);
             if (result == AnalysisResult.No)
             {
-                field = null;
-                value = null;
-                name = null;
-                return AnalysisResult.No;
+                return null;
             }
 
             if (candidate is { Parameters: { } parameters } &&
-                parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out field) &&
-                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out value) &&
-                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { SpecialType: SpecialType.System_String } } }, out name))
+                parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var field) &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var value) &&
+                parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { SpecialType: SpecialType.System_String } } }, out var name))
             {
-                return result;
+                return new TrySetMatch(result, field, value, name);
             }
 
             throw new InvalidOperationException("Bug in PropertyChangedAnalyzers. Could not get parameters.");

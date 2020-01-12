@@ -42,9 +42,9 @@
                                 location));
                     }
                 }
-                else if (TrySet.IsMatch(method, context.SemanticModel, context.CancellationToken, out _, out _, out parameter) == AnalysisResult.Yes)
+                else if (TrySet.Match(method, context.SemanticModel, context.CancellationToken) is { AnalysisResult: AnalysisResult.Yes, Name: { } nameParameter })
                 {
-                    if (ShouldBeCallerMemberName(parameter, out var parameterSyntax))
+                    if (ShouldBeCallerMemberName(nameParameter, out var parameterSyntax))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax!.GetLocation()));
                     }
@@ -63,7 +63,7 @@
             {
                 parameterSyntax = null;
                 return !candidate.IsCallerMemberName() &&
-                       candidate.Type == KnownSymbol.String &&
+                       candidate.Type is { SpecialType: SpecialType.System_String } &&
                        methodDeclaration.TryFindParameter(candidate.Name, out parameterSyntax) &&
                        CallerMemberNameAttribute.IsAvailable(context.SemanticModel);
             }
