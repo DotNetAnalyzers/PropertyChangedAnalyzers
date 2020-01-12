@@ -394,7 +394,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.IsMatch(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
 
             [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
@@ -434,7 +434,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.No, OnPropertyChanged.IsMatch(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.No, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
 
             [Test]
