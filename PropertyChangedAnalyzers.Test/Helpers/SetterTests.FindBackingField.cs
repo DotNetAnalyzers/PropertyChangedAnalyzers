@@ -8,11 +8,11 @@
 
     public static class SetterTests
     {
-        public static class TryGetBackingField
+        public static class FindBackingField
         {
             [TestCase("P1", "p1")]
             [TestCase("P2", "p2")]
-            public static void FindBackingField(string propertyName, string fieldName)
+            public static void FindBackingFieldWhenTwo(string propertyName, string fieldName)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N

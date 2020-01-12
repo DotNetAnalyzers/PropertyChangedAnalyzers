@@ -15,7 +15,8 @@
     [Shared]
     internal class CheckIfDifferentBeforeNotifyFix : DocumentEditorCodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+            Descriptors.INPC005CheckIfDifferentBeforeNotifying.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {

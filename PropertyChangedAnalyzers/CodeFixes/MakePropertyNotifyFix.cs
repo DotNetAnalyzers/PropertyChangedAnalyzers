@@ -2,7 +2,6 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -30,14 +29,13 @@
                                                       .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax? propertyDeclaration) &&
-                    propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
-                    semanticModel.TryGetNamedType(classDeclarationSyntax, context.CancellationToken, out var type))
+                if (Find() is { Property: { Parent: ClassDeclarationSyntax containingClass } propertyDeclaration, Getter: { } getter, Setter: { } setter } &&
+                    semanticModel.TryGetNamedType(containingClass, context.CancellationToken, out var type))
                 {
                     if (TrySet.Find(type, semanticModel, context.CancellationToken) is { } trySetMethod &&
                         TrySet.CanCreateInvocation(trySetMethod, out _))
                     {
-                        if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))
+                        if (Property.IsMutableAutoProperty(propertyDeclaration))
                         {
                             context.RegisterCodeFix(
                                 trySetMethod.DisplaySignature(),
@@ -47,7 +45,6 @@
 
                             async Task TrySet(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-#pragma warning disable CS8602, CS8604, CS8631 // CompilerBug
                                 var fieldAccess = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
                                                               .ConfigureAwait(false);
                                 var trySet = await editor.TrySetInvocationAsync(trySetMethod, fieldAccess, InpcFactory.Value, propertyDeclaration, cancellationToken)
@@ -66,12 +63,11 @@
                                         propertyDeclaration,
                                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                                 }
-#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
 
                                 _ = editor.FormatNode(propertyDeclaration);
                             }
                         }
-                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out _, out var assignment))
+                        else if (FindSimpleAssignment(propertyDeclaration) is { } assignment)
                         {
                             context.RegisterCodeFix(
                                 trySetMethod.DisplaySignature(),
@@ -92,7 +88,7 @@
                         invoker.Parameters.TrySingle(out var parameter) &&
                         parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {
-                        if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter) &&
+                        if (Property.IsMutableAutoProperty(propertyDeclaration) &&
                             semanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property))
                         {
                             context.RegisterCodeFix(
@@ -104,7 +100,6 @@
 
                             async Task NotifyWhenValueChangesAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-#pragma warning disable CS8602, CS8604, CS8631 // CompilerBug
                                 var backingField = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
                                                                .ConfigureAwait(false);
                                 var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
@@ -127,11 +122,10 @@
                                         x => x.WithoutInitializer());
                                 }
 
-#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
                                 _ = editor.FormatNode(propertyDeclaration);
                             }
                         }
-                        else if (IsSimpleAssignmentOnly(propertyDeclaration, out setter, out var assignment))
+                        else if (FindSimpleAssignment(propertyDeclaration) is { } assignment)
                         {
                             context.RegisterCodeFix(
                                 NotifyWhenValueChanges,
@@ -147,7 +141,6 @@
 
                             async Task NotifyWhenValueChangesAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-#pragma warning disable CS8602, CS8604, CS8631 // CompilerBug
                                 if (setter.ExpressionBody != null)
                                 {
                                     var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
@@ -172,13 +165,11 @@
                                                          .ConfigureAwait(false);
                                     editor.InsertAfter(statement, onPropertyChanged);
                                     _ = editor.FormatNode(propertyDeclaration);
-#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
                                 }
                             }
 
                             async Task NotifyAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-#pragma warning disable CS8602, CS8604, CS8631 // CompilerBug
                                 if (setter.ExpressionBody != null)
                                 {
                                     var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
@@ -197,21 +188,32 @@
                                                                         .ConfigureAwait(false);
                                     editor.InsertAfter(statement, onPropertyChanged);
                                     _ = editor.FormatNode(propertyDeclaration);
-#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
                                 }
                             }
                         }
                     }
                 }
+
+                (PropertyDeclarationSyntax Property, AccessorDeclarationSyntax Getter, AccessorDeclarationSyntax Setter)? Find()
+                {
+                    if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax? p) &&
+                        p.TryGetGetter(out var g) &&
+                        p.TryGetSetter(out var s))
+                    {
+                        return (p, g, s);
+                    }
+
+                    return null;
+                }
             }
         }
 
-        private static bool IsSimpleAssignmentOnly(PropertyDeclarationSyntax property, [NotNullWhen(true)] out AccessorDeclarationSyntax? setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)
+        private static AssignmentExpressionSyntax? FindSimpleAssignment(PropertyDeclarationSyntax property)
         {
-            assignment = null;
-            return property.TryGetSetter(out setter) &&
-                   IsSimple(setter) &&
-                   Setter.AssignsValueToBackingField(setter, out assignment);
+            return property.TryGetSetter(out var setter) &&
+                   IsSimple(setter)
+                   ? Setter.AssignsValueToBackingField(setter)
+                   : null;
 
             static bool IsSimple(AccessorDeclarationSyntax localSetter)
             {

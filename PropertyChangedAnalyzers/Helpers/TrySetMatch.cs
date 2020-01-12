@@ -1,18 +1,19 @@
 ﻿namespace PropertyChangedAnalyzers
 {
-    using Microsoft.CodeAnalysis;
+    using System.Diagnostics.CodeAnalysis;
 
-    internal struct TrySetMatch
+    internal struct TrySetMatch<T>
     {
         internal readonly AnalysisResult AnalysisResult;
 
-        internal readonly IParameterSymbol Field;
+        internal readonly T Field;
 
-        internal readonly IParameterSymbol Value;
+        internal readonly T Value;
 
-        internal readonly IParameterSymbol Name;
+        [AllowNull]
+        internal readonly T Name;
 
-        internal TrySetMatch(AnalysisResult analysisResult, IParameterSymbol field, IParameterSymbol value, IParameterSymbol name)
+        internal TrySetMatch(AnalysisResult analysisResult, T field, T value, [AllowNull]T name)
         {
             this.AnalysisResult = analysisResult;
             this.Field = field;

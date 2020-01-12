@@ -86,7 +86,20 @@
             return AnalysisResult.No;
         }
 
-        internal static TrySetMatch? Match(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static TrySetMatch<ArgumentSyntax>? Match(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (semanticModel.TryGetSymbol(candidate, cancellationToken, out var method) &&
+                Match(method, semanticModel, cancellationToken) is { AnalysisResult: { } result, Field: { } field, Value: { } value, Name: { } name } &&
+                candidate.TryFindArgument(field, out var fieldArg) &&
+                candidate.TryFindArgument(value, out var valueArg))
+            {
+                return new TrySetMatch<ArgumentSyntax>(result, fieldArg, valueArg, candidate.FindArgument(name));
+            }
+
+            return null;
+        }
+
+        internal static TrySetMatch<IParameterSymbol>? Match(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var result = IsMatch(candidate, semanticModel, cancellationToken);
             if (result == AnalysisResult.No)
@@ -99,7 +112,7 @@
                 parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var value) &&
                 parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { SpecialType: SpecialType.System_String } } }, out var name))
             {
-                return new TrySetMatch(result, field, value, name);
+                return new TrySetMatch<IParameterSymbol>(result, field, value, name);
             }
 
             throw new InvalidOperationException("Bug in PropertyChangedAnalyzers. Could not get parameters.");

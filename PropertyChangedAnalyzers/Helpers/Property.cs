@@ -154,17 +154,12 @@
 
             if (declaration.TryGetSetter(out var setter))
             {
-                if (!Setter.AssignsValueToBackingField(setter, out var assignment))
+                if (Setter.AssignsValueToBackingField(setter) is { } assignment)
                 {
-                    return false;
+                    return PropertyChanged.InvokesPropertyChangedFor(assignment, property, semanticModel, cancellationToken) == AnalysisResult.No;
                 }
 
-                if (PropertyChanged.InvokesPropertyChangedFor(assignment, property, semanticModel, cancellationToken) != AnalysisResult.No)
-                {
-                    return false;
-                }
-
-                return true;
+                return false;
             }
 
             return false;
