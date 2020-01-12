@@ -36,17 +36,20 @@
                         classDeclaration.Members.OfType<PropertyDeclarationSyntax>()
                                    .Where(x => Property.ShouldNotify(x, context.SemanticModel, context.CancellationToken))
                                    .Select(x => x.Identifier.ValueText));
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged, classDeclaration.Identifier.GetLocation(), $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.INPC001ImplementINotifyPropertyChanged,
+                            classDeclaration.Identifier.GetLocation(),
+                            $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
                 }
 
-                if (PropertyChangedEvent.TryFind(type, out var eventSymbol))
+                if (PropertyChangedEvent.Find(type) is { IsStatic: false })
                 {
-                    if (eventSymbol.IsStatic)
-                    {
-                        return;
-                    }
-
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged, classDeclaration.Identifier.GetLocation(), $"The class {type.Name} has event PropertyChanged but does not implement INotifyPropertyChanged."));
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.INPC001ImplementINotifyPropertyChanged,
+                            classDeclaration.Identifier.GetLocation(),
+                            $"The class {type.Name} has event PropertyChanged but does not implement INotifyPropertyChanged."));
                 }
             }
 

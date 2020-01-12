@@ -1,6 +1,5 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -9,9 +8,11 @@ namespace PropertyChangedAnalyzers
 
     internal static class PropertyChangedEvent
     {
-        internal static bool TryFind(ITypeSymbol type, [NotNullWhen(true)] out IEventSymbol? propertyChangedEvent)
+        internal static IEventSymbol? Find(ITypeSymbol type)
         {
-            return type.TryFindEventRecursive("PropertyChanged", out propertyChangedEvent);
+            return type.TryFindEventRecursive("PropertyChanged", out var propertyChangedEvent)
+                ? propertyChangedEvent
+                : null;
         }
 
         internal static bool IsInvoke(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -22,10 +23,12 @@ namespace PropertyChangedAnalyzers
             {
                 return invocation.Parent switch
                 {
-                    ConditionalAccessExpressionSyntax conditionalAccess => IsPotential(conditionalAccess) &&
-                                                                           semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _),
-                    ExpressionStatementSyntax _ => semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol) &&
-                                                   symbol == KnownSymbol.PropertyChangedEventHandler.Invoke,
+                    ConditionalAccessExpressionSyntax conditionalAccess
+                    => IsPotential(conditionalAccess) &&
+                       semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _),
+                    ExpressionStatementSyntax _
+                    => semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol) &&
+                       symbol == KnownSymbol.PropertyChangedEventHandler.Invoke,
                     _ => false,
                 };
             }
@@ -35,8 +38,7 @@ namespace PropertyChangedAnalyzers
             bool IsPotential(ConditionalAccessExpressionSyntax candidate)
             {
                 return candidate.Expression is IdentifierNameSyntax ||
-                       (candidate.Expression is MemberAccessExpressionSyntax memberAccess &&
-                        memberAccess.Expression is ThisExpressionSyntax);
+                       candidate.Expression is MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: IdentifierNameSyntax _ };
             }
         }
     }

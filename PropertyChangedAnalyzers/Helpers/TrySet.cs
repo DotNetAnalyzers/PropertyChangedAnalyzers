@@ -184,7 +184,7 @@
             {
                 return candidate switch
                 {
-                    { IsStatic: true } => PropertyChangedEvent.TryFind(candidate.ContainingType, out _),
+                    { IsStatic: true } => PropertyChangedEvent.Find(candidate.ContainingType) is { IsStatic: true },
                     { IsStatic: false } => candidate.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, recursion.SemanticModel.Compilation),
                     _ => false, // never getting here, candidate never null.
                 };

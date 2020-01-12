@@ -56,12 +56,9 @@
 
         internal static IMethodSymbol? Find(INamedTypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (PropertyChangedEvent.TryFind(type, out var propertyChanged))
-            {
-                return Find(propertyChanged, semanticModel, cancellationToken);
-            }
-
-            return null;
+            return PropertyChangedEvent.Find(type) is { } propertyChanged
+                ? Find(propertyChanged, semanticModel, cancellationToken)
+                : null;
         }
 
         internal static OnPropertyChangedMatch? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -219,8 +216,7 @@
             {
                 if (method.IsStatic)
                 {
-                    return PropertyChangedEvent.TryFind(method.ContainingType, out var @event) &&
-                           @event.IsStatic;
+                    return PropertyChangedEvent.Find(method.ContainingType) is { IsStatic: true };
                 }
 
                 return method.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, compilation);
