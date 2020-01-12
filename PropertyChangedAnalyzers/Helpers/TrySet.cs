@@ -20,7 +20,7 @@
                    candidate.Parameters[0].Type.Equals(typeParameter) &&
                    candidate.Parameters[1].RefKind == RefKind.None &&
                    candidate.Parameters[1].Type.Equals(typeParameter) &&
-                   candidate.Parameters.TrySingle<IParameterSymbol>(x => x.Type == KnownSymbol.String, out nameParameter) &&
+                   candidate.Parameters.TrySingle(x => x is { Type: { SpecialType: SpecialType.System_String } }, out nameParameter) &&
                    RestAreOptional();
 
             bool RestAreOptional()
@@ -175,7 +175,9 @@
                     return AnalysisResult.Yes;
                 }
 
-                return candidate.Parameters.Length == 3 ? AnalysisResult.Maybe : AnalysisResult.No;
+                return candidate.Parameters.Length == 3
+                    ? AnalysisResult.Maybe
+                    : AnalysisResult.No;
             }
 
             return AnalysisResult.No;
