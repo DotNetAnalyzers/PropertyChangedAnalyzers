@@ -10,7 +10,7 @@
 
         internal readonly ExpressionSyntax Set;
 
-        public GetAndSetResult(bool same, ExpressionSyntax get, ExpressionSyntax set)
+        internal GetAndSetResult(bool same, ExpressionSyntax get, ExpressionSyntax set)
         {
             this.Same = same;
             this.Get = get;
