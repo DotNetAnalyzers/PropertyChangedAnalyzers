@@ -196,8 +196,8 @@
                                     var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
                                                                         .ConfigureAwait(false);
                                     editor.InsertAfter(statement, onPropertyChanged);
-#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
                                     _ = editor.FormatNode(propertyDeclaration);
+#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
                                 }
                             }
                         }

@@ -16,7 +16,7 @@
                     when statements[0] is ReturnStatementSyntax returnStatement:
                     result = returnStatement.Expression;
                     return result != null;
-                case { Body: { } body}:
+                case { Body: { } body }:
                     return ReturnExpressionsWalker.TryGetSingle(body, out result);
                 default:
                     result = null;

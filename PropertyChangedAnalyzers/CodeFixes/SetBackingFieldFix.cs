@@ -37,8 +37,10 @@
                     ExpressionSyntax Qualify(ExpressionSyntax expression)
                     {
                         if (expression is IdentifierNameSyntax identifierName &&
+#pragma warning disable CS8604 // CompilerBug
                             (Scope.HasParameter(assignment, identifierName.Identifier.ValueText) ||
                              Scope.HasLocal(assignment, identifierName.Identifier.ValueText)))
+#pragma warning restore CS8604 // CompilerBug
                         {
                             return InpcFactory.SymbolAccess(identifierName.Identifier.ValueText, CodeStyleResult.Yes);
                         }

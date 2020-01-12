@@ -50,8 +50,8 @@
             return condition is InvocationExpressionSyntax invocation &&
                    invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                    string.Equals(TryGetName(memberAccess.Expression), "string", StringComparison.OrdinalIgnoreCase) &&
-                   GetSymbolType(first) == KnownSymbol.String &&
-                   GetSymbolType(other) == KnownSymbol.String &&
+                   GetSymbolType(first) is { SpecialType: SpecialType.System_String } &&
+                   GetSymbolType(other) is { SpecialType: SpecialType.System_String } &&
                    semanticModel.TryGetSymbol(invocation, KnownSymbol.String.Equals, cancellationToken, out _) &&
                    IsArguments(invocation, semanticModel, first, other, cancellationToken);
         }
