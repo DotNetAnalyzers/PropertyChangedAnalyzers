@@ -47,6 +47,7 @@
 
                             async Task TrySet(DocumentEditor editor, CancellationToken cancellationToken)
                             {
+#pragma warning disable CS8602, CS8604, CS8631 // CompilerBug
                                 var fieldAccess = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
                                                               .ConfigureAwait(false);
                                 var trySet = await editor.TrySetInvocationAsync(trySetMethod, fieldAccess, InpcFactory.Value, propertyDeclaration, cancellationToken)
@@ -65,6 +66,7 @@
                                         propertyDeclaration,
                                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                                 }
+#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
 
                                 _ = editor.FormatNode(propertyDeclaration);
                             }
@@ -102,6 +104,7 @@
 
                             async Task NotifyWhenValueChangesAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
+#pragma warning disable CS8602, CS8604, CS8631 // CompilerBug
                                 var backingField = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
                                                                .ConfigureAwait(false);
                                 var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
@@ -124,6 +127,7 @@
                                         x => x.WithoutInitializer());
                                 }
 
+#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
                                 _ = editor.FormatNode(propertyDeclaration);
                             }
                         }
@@ -143,6 +147,7 @@
 
                             async Task NotifyWhenValueChangesAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
+#pragma warning disable CS8602, CS8604, CS8631 // CompilerBug
                                 if (setter.ExpressionBody != null)
                                 {
                                     var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
@@ -167,11 +172,13 @@
                                                          .ConfigureAwait(false);
                                     editor.InsertAfter(statement, onPropertyChanged);
                                     _ = editor.FormatNode(propertyDeclaration);
+#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
                                 }
                             }
 
                             async Task NotifyAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
+#pragma warning disable CS8602, CS8604, CS8631 // CompilerBug
                                 if (setter.ExpressionBody != null)
                                 {
                                     var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
@@ -189,6 +196,7 @@
                                     var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
                                                                         .ConfigureAwait(false);
                                     editor.InsertAfter(statement, onPropertyChanged);
+#pragma warning restore CS8602, CS8604, CS8631 // CompilerBug
                                     _ = editor.FormatNode(propertyDeclaration);
                                 }
                             }
