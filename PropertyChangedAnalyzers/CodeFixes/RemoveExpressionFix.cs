@@ -33,11 +33,11 @@
                     OnPropertyChanged.Find(type, semanticModel, context.CancellationToken) is { } invoker &&
                     invoker.Parameters.TrySingle(out var parameter) &&
                     parameter.Type == KnownSymbol.String &&
-                    PropertyChanged.TryGetName(invocation, semanticModel, context.CancellationToken, out var name) == AnalysisResult.Yes)
+                    PropertyChanged.FindPropertyName(invocation, semanticModel, context.CancellationToken) is { Value: var propertyName })
                 {
                     if (parameter.IsCallerMemberName() &&
                         argument.TryFirstAncestor(out PropertyDeclarationSyntax? propertyDeclaration) &&
-                        propertyDeclaration.Identifier.ValueText == name)
+                        propertyDeclaration.Identifier.ValueText == propertyName)
                     {
                         context.RegisterCodeFix(
                             "Use overload that does not use expression.",

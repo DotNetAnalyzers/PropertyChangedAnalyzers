@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     public enum AnalysisResult
     {

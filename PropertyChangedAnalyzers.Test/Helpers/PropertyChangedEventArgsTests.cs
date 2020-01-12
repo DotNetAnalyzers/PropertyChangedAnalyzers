@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -53,8 +53,9 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var argument = syntaxTree.FindInvocation("this.OnPropertyChanged(Cached)").ArgumentList.Arguments[0];
-            Assert.AreEqual(true, PropertyChangedEventArgs.TryGetPropertyName(argument.Expression, semanticModel, CancellationToken.None, out var name));
-            Assert.AreEqual("Bar", name);
+            var findPropertyName = PropertyChangedEventArgs.FindPropertyName(argument.Expression, semanticModel, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, findPropertyName?.Result);
+            Assert.AreEqual("Bar", findPropertyName?.Value);
         }
 
         [Test]

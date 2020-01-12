@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -89,8 +89,9 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation(call);
                 Assert.AreEqual(call, invocation.ToString());
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetName(invocation, semanticModel, CancellationToken.None, out var name));
-                Assert.AreEqual("Bar", name);
+                var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
+                Assert.AreEqual(AnalysisResult.Yes, findPropertyName?.Result);
+                Assert.AreEqual("Bar", findPropertyName?.Value);
             }
 
             [TestCase("this.OnPropertyChanged()")]
@@ -168,7 +169,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation(call);
                 Assert.AreEqual(call, invocation.ToString());
-                Assert.AreEqual(AnalysisResult.No, PropertyChanged.TryGetName(invocation, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(null, PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None));
             }
 
             [TestCase("propertyName ?? string.Empty")]
@@ -219,8 +220,9 @@ namespace N
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("this.OnPropertyChanged();");
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetName(invocation, semanticModel, CancellationToken.None, out var name));
-                Assert.AreEqual("Bar", name);
+                var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
+                Assert.AreEqual(AnalysisResult.Yes, findPropertyName?.Result);
+                Assert.AreEqual("Bar", findPropertyName?.Value);
             }
 
             [TestCase("propertyName ?? string.Empty")]
@@ -272,8 +274,9 @@ namespace N
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("this.OnPropertyChanged();");
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.TryGetName(invocation, semanticModel, CancellationToken.None, out var name));
-                Assert.AreEqual("Bar", name);
+                var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
+                Assert.AreEqual(AnalysisResult.Yes, findPropertyName?.Result);
+                Assert.AreEqual("Bar", findPropertyName?.Value);
             }
         }
     }

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
@@ -37,16 +37,17 @@ namespace PropertyChangedAnalyzers
             }
         }
 
-        internal static bool TryGetPropertyName(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out string? propertyName)
+        internal static AnalysisResult<string?>? FindPropertyName(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (TryGetCreation(expression, out var nameArgument) ||
                 TryGetCached(expression, semanticModel, cancellationToken, out nameArgument))
             {
-                return nameArgument.TryGetStringValue(semanticModel, cancellationToken, out propertyName);
+                return nameArgument.TryGetStringValue(semanticModel, cancellationToken, out var propertyName)
+                     ? new AnalysisResult<string?>(AnalysisResult.Yes, propertyName)
+                     : (AnalysisResult<string?>?)null;
             }
 
-            propertyName = null;
-            return false;
+            return null;
         }
 
         internal static bool TryGetPropertyNameArgument(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArgument)

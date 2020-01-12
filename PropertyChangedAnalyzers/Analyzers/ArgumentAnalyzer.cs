@@ -103,9 +103,7 @@
                 {
                     if (argumentList.Arguments.Count == 1 &&
                         OnPropertyChanged.Match(invokeCandidate, context.SemanticModel, context.CancellationToken) is { } &&
-                        PropertyChanged.TryGetName(invokeCandidate, context.SemanticModel, context.CancellationToken, out var propertyName) == AnalysisResult.Yes &&
-                        !string.IsNullOrEmpty(propertyName) &&
-                        !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _))
+                        IsMissing())
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
                     }
@@ -113,11 +111,16 @@
                     if (PropertyChangedEvent.IsInvoke(invokeCandidate, context.SemanticModel, context.CancellationToken) &&
                          argumentList.Arguments[1] == argument &&
                          context.SemanticModel.TryGetSymbol(invokeCandidate, context.CancellationToken, out _) &&
-                         PropertyChanged.TryGetName(invokeCandidate, context.SemanticModel, context.CancellationToken, out propertyName) == AnalysisResult.Yes &&
-                         !string.IsNullOrEmpty(propertyName) &&
-                         !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _))
+                         IsMissing())
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
+                    }
+
+                    bool IsMissing()
+                    {
+                        return PropertyChanged.FindPropertyName(invokeCandidate, context.SemanticModel, context.CancellationToken) is { Value: var propertyName } &&
+                               !string.IsNullOrEmpty(propertyName) &&
+                               !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _);
                     }
                 }
             }

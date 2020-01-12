@@ -26,7 +26,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is InvocationExpressionSyntax invocation &&
-                PropertyChanged.TryGetName(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No)
+                PropertyChanged.FindPropertyName(invocation, context.SemanticModel, context.CancellationToken) is { })
             {
                 if (invocation.TryFirstAncestor(out AccessorDeclarationSyntax? setter) &&
                     setter.IsKind(SyntaxKind.SetAccessorDeclaration))
