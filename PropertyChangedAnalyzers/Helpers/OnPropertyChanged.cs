@@ -104,22 +104,16 @@
             return AnalysisResult.No;
         }
 
-        internal static AnalysisResult IsMatch(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, out IParameterSymbol parameter)
+        internal static OnPropertyChangedMatch? Match(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var result = IsMatch(method, semanticModel, cancellationToken);
-            if (result == AnalysisResult.No)
+            if (result != AnalysisResult.No &&
+                method.Parameters.TrySingle(out var parameter))
             {
-                parameter = null;
-                return AnalysisResult.No;
+                return new OnPropertyChangedMatch(result, parameter);
             }
 
-            if (method.Parameters.TrySingle(out parameter))
-            {
-                return result;
-            }
-
-            parameter = null;
-            return AnalysisResult.No;
+            return null;
         }
 
         internal static AnalysisResult IsMatch(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken, PooledSet<IMethodSymbol>? visited = null)

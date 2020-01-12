@@ -27,11 +27,11 @@
                 context.ContainingSymbol is IMethodSymbol method &&
                 context.Node is MethodDeclarationSyntax methodDeclaration)
             {
-                if (OnPropertyChanged.IsMatch(method, context.SemanticModel, context.CancellationToken, out var parameter) == AnalysisResult.Yes)
+                if (OnPropertyChanged.Match(method, context.SemanticModel, context.CancellationToken) is { AnalysisResult: AnalysisResult.Yes, Name: { } parameter })
                 {
-                    if (ShouldBeCallerMemberName(parameter, out var parameterSyntax))
+                    if (ShouldBeCallerMemberName(parameter) is { } parameterLocation)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax!.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterLocation));
                     }
 
                     if (ShouldBeProtected() is { } location)
@@ -44,9 +44,9 @@
                 }
                 else if (TrySet.Match(method, context.SemanticModel, context.CancellationToken) is { AnalysisResult: AnalysisResult.Yes, Name: { } nameParameter })
                 {
-                    if (ShouldBeCallerMemberName(nameParameter, out var parameterSyntax))
+                    if (ShouldBeCallerMemberName(nameParameter) is { } parameterLocation)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterSyntax!.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, parameterLocation));
                     }
 
                     if (ShouldBeProtected() is { } location)
@@ -59,13 +59,14 @@
                 }
             }
 
-            bool ShouldBeCallerMemberName(IParameterSymbol candidate, out ParameterSyntax? parameterSyntax)
+            Location? ShouldBeCallerMemberName(IParameterSymbol candidate)
             {
-                parameterSyntax = null;
                 return !candidate.IsCallerMemberName() &&
                        candidate.Type is { SpecialType: SpecialType.System_String } &&
-                       methodDeclaration.TryFindParameter(candidate.Name, out parameterSyntax) &&
-                       CallerMemberNameAttribute.IsAvailable(context.SemanticModel);
+                       CallerMemberNameAttribute.IsAvailable(context.SemanticModel) &&
+                       candidate.TrySingleDeclaration(context.CancellationToken, out var declaration)
+                    ? declaration.GetLocation()
+                    : null;
             }
 
             Location? ShouldBeProtected()
