@@ -11,9 +11,8 @@
     {
         internal static ExpressionSyntax? FindSingleMutated(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return property.TryGetSetter(out var setter) &&
-                  Setter.FindSingleMutated(setter, semanticModel, cancellationToken, out var backing)
-                  ? backing
+            return property.TryGetSetter(out var setter)
+                  ? Setter.FindSingleMutated(setter, semanticModel, cancellationToken)
                   : null;
         }
 
@@ -35,7 +34,7 @@
             if (propertyDeclaration.TryGetGetter(out var getter) &&
                 propertyDeclaration.TryGetSetter(out var setter) &&
                 Getter.TrySingleReturned(getter, out var get) &&
-                Setter.FindSingleMutated(setter, semanticModel, cancellationToken, out var set))
+                Setter.FindSingleMutated(setter, semanticModel, cancellationToken) is { } set)
             {
                 if (MemberPath.Equals(get, set))
                 {

@@ -1,7 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -25,7 +24,7 @@
         {
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is AssignmentExpressionSyntax assignment &&
-                ShouldSetBackingField(assignment, context, out var fieldAccess))
+                ShouldSetBackingField(assignment, context) is {} fieldAccess)
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(
@@ -35,22 +34,19 @@
             }
         }
 
-        private static bool ShouldSetBackingField(AssignmentExpressionSyntax assignment, SyntaxNodeAnalysisContext context, [NotNullWhen(true)] out ExpressionSyntax? fieldAccess)
+        private static ExpressionSyntax? ShouldSetBackingField(AssignmentExpressionSyntax assignment, SyntaxNodeAnalysisContext context)
         {
-            fieldAccess = null;
-            return context.ContainingSymbol is IMethodSymbol { IsStatic: false, MethodKind: MethodKind.Constructor } ctor &&
-                   Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
-                   !assignment.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _) &&
-                   !assignment.TryFirstAncestor<LocalFunctionStatementSyntax>(out _) &&
-                   propertyDeclaration.TryGetSetter(out var setter) &&
-                   IsSimple(out fieldAccess);
-
-            bool IsSimple(out ExpressionSyntax? backing)
+            if (context.ContainingSymbol is IMethodSymbol { IsStatic: false, MethodKind: MethodKind
+                    .Constructor } ctor &&
+                Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
+                !assignment.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _) &&
+                !assignment.TryFirstAncestor<LocalFunctionStatementSyntax>(out _) &&
+                propertyDeclaration.TryGetSetter(out var setter))
             {
                 switch (setter)
                 {
                     case { ExpressionBody: { } }:
-                        return IsAssigningField(out backing);
+                        return FindAssignedField();
                     case { Body: { Statements: { } statements } }:
                         foreach (var statement in statements)
                         {
@@ -66,25 +62,25 @@
                             }
 
                             // If there is for example validation or side effects we don't suggest setting the field.
-                            backing = null;
-                            return false;
+                            return null;
                         }
 
-                        return IsAssigningField(out backing);
+                        return FindAssignedField();
                     default:
-                        backing = null;
-                        return false;
+                        return null;
                 }
             }
 
-            bool IsAssigningField(out ExpressionSyntax? backingField)
+            return null;
+
+            ExpressionSyntax? FindAssignedField()
             {
-#pragma warning disable CS8604 // Possible null reference argument. CompilerBug
-                return Setter.FindSingleMutated(setter, context.SemanticModel, context.CancellationToken, out backingField) &&
-#pragma warning restore CS8604 // Possible null reference argument.
+                return Setter.FindSingleMutated(setter, context.SemanticModel, context.CancellationToken) is {} backingField &&
                        MemberPath.TrySingle(backingField, out var single) &&
                        context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol? field) &&
-                       Equals(ctor.ContainingType, field.ContainingType);
+                       Equals(ctor.ContainingType, field.ContainingType)
+                    ? backingField
+                    : null;
             }
 
             bool IsWhiteListedExpression(ExpressionStatementSyntax candidate)

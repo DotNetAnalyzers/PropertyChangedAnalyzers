@@ -66,7 +66,7 @@
 
                         if (single is LiteralExpressionSyntax &&
                             propertyDeclaration.TryGetSetter(out var set) &&
-                            Setter.FindSingleMutated(set, context.SemanticModel, context.CancellationToken, out var fieldAccess))
+                            Setter.FindSingleMutated(set, context.SemanticModel, context.CancellationToken) is { } fieldAccess)
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(

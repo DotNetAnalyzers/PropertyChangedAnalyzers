@@ -43,23 +43,24 @@
             return false;
         }
 
-        internal static bool FindSingleMutated(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? backing)
+        internal static ExpressionSyntax? FindSingleMutated(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            backing = null;
             using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken))
             {
                 if (mutations.All().TrySingle(x => x.IsEither(SyntaxKind.SimpleAssignmentExpression, SyntaxKind.Argument), out var mutation))
                 {
                     return mutation switch
                     {
-                        AssignmentExpressionSyntax assignment => IsMutation(assignment, semanticModel, cancellationToken, out _, out backing),
-                        ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } => IsMutation(invocation, semanticModel, cancellationToken, out _, out backing),
-                        _ => false,
+                        AssignmentExpressionSyntax assignment
+                        => IsMutation(assignment, semanticModel, cancellationToken, out _, out var backing) ? backing : null,
+                        ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } }
+                        => IsMutation(invocation, semanticModel, cancellationToken, out _, out var backing) ? backing : null,
+                        _ => null,
                     };
                 }
             }
 
-            return false;
+            return null;
         }
 
         internal static bool IsMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? parameter, [NotNullWhen(true)] out ExpressionSyntax? backing)
@@ -108,19 +109,16 @@
 
         internal static bool TryGetBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IFieldSymbol? field)
         {
-            if (FindSingleMutated(setter, semanticModel, cancellationToken, out var mutated))
+            switch (FindSingleMutated(setter, semanticModel, cancellationToken))
             {
-                switch (mutated)
-                {
-                    case IdentifierNameSyntax _:
-                        return semanticModel.TryGetSymbol(mutated, cancellationToken, out field);
-                    case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ }:
-                        return semanticModel.TryGetSymbol(mutated, cancellationToken, out field);
-                }
+                case IdentifierNameSyntax identifierName:
+                    return semanticModel.TryGetSymbol(identifierName, cancellationToken, out field);
+                case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name }:
+                    return semanticModel.TryGetSymbol(name, cancellationToken, out field);
+                default:
+                    field = null;
+                    return false;
             }
-
-            field = null;
-            return false;
         }
 
         internal static bool AssignsValueToBackingField(AccessorDeclarationSyntax setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)
