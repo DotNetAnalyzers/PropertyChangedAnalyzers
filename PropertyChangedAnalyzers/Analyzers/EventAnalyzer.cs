@@ -47,14 +47,14 @@
             {
                 if (eventSymbol is { IsStatic: false, ContainingType: { TypeKind: TypeKind.Class } } &&
                     eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
-                    !OnPropertyChanged.TryFind(eventSymbol, context.SemanticModel, context.CancellationToken, out _))
+                    OnPropertyChanged.Find(eventSymbol, context.SemanticModel, context.CancellationToken) is null)
                 {
                     return !eventSymbol.ContainingType.IsSealed ||
                            eventSymbol.ContainingType.GetMembers().TryFirstOfType(x => x.SetMethod != null, out IPropertySymbol _);
                 }
 
                 return eventSymbol.IsStatic &&
-                       !OnPropertyChanged.TryFind(eventSymbol, context.SemanticModel, context.CancellationToken, out _);
+                       OnPropertyChanged.Find(eventSymbol, context.SemanticModel, context.CancellationToken) is null;
             }
         }
     }

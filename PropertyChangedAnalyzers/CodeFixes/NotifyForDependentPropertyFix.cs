@@ -30,7 +30,7 @@
                     if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionSyntax? expression) &&
                         expression.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
                         semanticModel.TryGetNamedType(classDeclaration, context.CancellationToken, out var type) &&
-                        OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var onPropertyChangedMethod) &&
+                        OnPropertyChanged.Find(type, semanticModel, context.CancellationToken) is { } onPropertyChangedMethod &&
                         onPropertyChangedMethod.Parameters.TrySingle(out var parameter) &&
                         parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {

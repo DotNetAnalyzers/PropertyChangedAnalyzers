@@ -1,7 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -9,16 +8,16 @@
 
     internal static class OnPropertyChanged
     {
-        internal static bool TryFind(IEventSymbol propertyChangedEvent, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? invoker)
+        internal static IMethodSymbol? Find(IEventSymbol propertyChanged, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            invoker = null;
-            var containingType = propertyChangedEvent.ContainingType;
-            while (propertyChangedEvent != null)
+            IMethodSymbol? match = null;
+            var containingType = propertyChanged.ContainingType;
+            while (propertyChanged != null)
             {
-                foreach (var member in propertyChangedEvent.ContainingType.GetMembers())
+                foreach (var member in propertyChanged.ContainingType.GetMembers())
                 {
                     if (member is IMethodSymbol { MethodKind: MethodKind.Ordinary } candidate &&
-                        candidate.IsStatic == propertyChangedEvent.IsStatic)
+                        candidate.IsStatic == propertyChanged.IsStatic)
                     {
                         if (!Equals(candidate.ContainingType, containingType) &&
                             candidate.DeclaredAccessibility == Accessibility.Private)
@@ -31,44 +30,38 @@
                             case AnalysisResult.No:
                                 continue;
                             case AnalysisResult.Yes:
-                                invoker = candidate;
-                                if (candidate.Parameters.TrySingle(out var parameter) &&
-                                    parameter.Type == KnownSymbol.String)
-                                {
-                                    return true;
-                                }
-
-                                break;
                             case AnalysisResult.Maybe:
-                                if (invoker is null ||
-                                    (candidate.Parameters.TrySingle<IParameterSymbol>(out parameter) &&
-                                     parameter.Type == KnownSymbol.String))
+                                if (candidate.Parameters.TrySingle(out var parameter) &&
+                                    parameter.Type is { SpecialType: SpecialType.System_String })
                                 {
-                                    invoker = candidate;
+                                    return candidate;
+                                }
+                                else
+                                {
+                                    match = candidate;
+                                    break;
                                 }
 
-                                break;
                             default:
                                 throw new InvalidOperationException("Unknown AnalysisResult");
                         }
                     }
                 }
 
-                propertyChangedEvent = propertyChangedEvent.OverriddenEvent;
+                propertyChanged = propertyChanged.OverriddenEvent;
             }
 
-            return invoker != null;
+            return match;
         }
 
-        internal static bool TryFind(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? invoker)
+        internal static IMethodSymbol? Find(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (PropertyChangedEvent.TryFind(type, out var propertyChangedEvent))
             {
-                return TryFind(propertyChangedEvent, semanticModel, cancellationToken, out invoker);
+                return Find(propertyChangedEvent, semanticModel, cancellationToken);
             }
 
-            invoker = null;
-            return false;
+            return null;
         }
 
         internal static OnPropertyChangedMatch? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)

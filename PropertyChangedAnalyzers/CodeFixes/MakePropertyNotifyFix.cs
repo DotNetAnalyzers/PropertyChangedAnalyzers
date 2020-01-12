@@ -88,7 +88,7 @@
                         }
                     }
 
-                    if (OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var invoker) &&
+                    if (OnPropertyChanged.Find(type, semanticModel, context.CancellationToken) is { } invoker &&
                         invoker.Parameters.TrySingle(out var parameter) &&
                         parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {

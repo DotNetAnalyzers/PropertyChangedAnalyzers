@@ -30,7 +30,7 @@
                     argument.Parent is ArgumentListSyntax { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
                     argument.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
                     semanticModel.TryGetSymbol(classDeclaration, context.CancellationToken, out var type) &&
-                    OnPropertyChanged.TryFind(type, semanticModel, context.CancellationToken, out var invoker) &&
+                    OnPropertyChanged.Find(type, semanticModel, context.CancellationToken) is { } invoker &&
                     invoker.Parameters.TrySingle(out var parameter) &&
                     parameter.Type == KnownSymbol.String &&
                     PropertyChanged.TryGetName(invocation, semanticModel, context.CancellationToken, out var name) == AnalysisResult.Yes)

@@ -39,7 +39,7 @@
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
                         }
                         else if (parameter.TrySingleDeclaration<SyntaxNode>(context.CancellationToken, out _) &&
-                                 OnPropertyChanged.IsMatch(method, context.SemanticModel, context.CancellationToken) == AnalysisResult.Yes)
+                                 OnPropertyChanged.Match(method, context.SemanticModel, context.CancellationToken) is { AnalysisResult: AnalysisResult.Yes })
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
                         }

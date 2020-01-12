@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
 
     public static partial class OnPropertyChangedTests
     {
-        public static class TryFind
+        public static class Find
         {
             [Test]
             public static void ElvisCallerMemberName()
@@ -33,8 +33,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -62,8 +61,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -97,8 +95,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -132,8 +129,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -171,8 +167,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(code);
                 var classDeclaration = code.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("N.ViewModelBase.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.ViewModelBase.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -210,7 +205,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(code);
                 var classDeclaration = code.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(false, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(null, OnPropertyChanged.Find(type, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -260,8 +255,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -288,8 +282,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -323,7 +316,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(false, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(null, OnPropertyChanged.Find(type, semanticModel, CancellationToken.None));
             }
 
             [TestCase("propertyName ?? string.Empty")]
@@ -354,8 +347,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [TestCase("propertyName ?? string.Empty")]
@@ -387,8 +379,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(true, OnPropertyChanged.TryFind(type, semanticModel, CancellationToken.None, out var invoker));
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", invoker.ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
         }
     }
