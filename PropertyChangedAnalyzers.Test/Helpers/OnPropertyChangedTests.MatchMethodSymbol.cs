@@ -8,7 +8,7 @@
 
     public partial class OnPropertyChangedTests
     {
-        public static class IsMatchMethod
+        public static class MatchMethodSymbol
         {
             [Test]
             public static void Elvis()
@@ -33,7 +33,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
                 var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.IsMatch(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
 
             [Test]
@@ -60,7 +60,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
                 var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.IsMatch(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
 
             [Test]
@@ -110,7 +110,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
                 var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.IsMatch(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
 
             [Test]
@@ -163,7 +163,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindMethodDeclaration("RaiseForChild");
                 var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.No, OnPropertyChanged.IsMatch(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(null, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -197,7 +197,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
                 var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.IsMatch(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
 
             [Test]
@@ -234,7 +234,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
                 var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.IsMatch(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
 
             [Test]
@@ -271,7 +271,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RaisePropertyChanged");
                 var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.IsMatch(method, semanticModel, CancellationToken.None));
+                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
 
             [Test]
