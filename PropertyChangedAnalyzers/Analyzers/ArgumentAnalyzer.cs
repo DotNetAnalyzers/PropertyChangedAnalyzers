@@ -48,7 +48,7 @@
                     if (SyntaxFacts.IsValidIdentifier(text))
                     {
                         if (argumentList.Parent is InvocationExpressionSyntax onPropertyChangedCandidate &&
-                            OnPropertyChanged.IsMatch(onPropertyChangedCandidate, context.SemanticModel, context.CancellationToken) != AnalysisResult.No &&
+                            OnPropertyChanged.Match(onPropertyChangedCandidate, context.SemanticModel, context.CancellationToken) is { } &&
                             !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(text, out _))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, argument.GetLocation()));
@@ -58,7 +58,7 @@
                             parentArg.FirstAncestor<InvocationExpressionSyntax>() is { } parentInvocation &&
                             context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbol.PropertyChangedEventArgs, context.CancellationToken, out _))
                         {
-                            if ((OnPropertyChanged.IsMatch(parentInvocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No ||
+                            if ((OnPropertyChanged.Match(parentInvocation, context.SemanticModel, context.CancellationToken) is { } ||
                                  PropertyChangedEvent.IsInvoke(parentInvocation, context.SemanticModel, context.CancellationToken)) &&
                                 !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(text, out _))
                             {
@@ -87,7 +87,7 @@
                     argumentList is { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
                     GetNameFromLambda(lambda) is { } lambdaName)
                 {
-                    if (OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No)
+                    if (OnPropertyChanged.Match(invocation, context.SemanticModel, context.CancellationToken) is { })
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC012DoNotUseExpression, argument.GetLocation()));
                         if (!context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(lambdaName, out _))
@@ -102,7 +102,7 @@
                     argumentList.Parent is InvocationExpressionSyntax invokeCandidate)
                 {
                     if (argumentList.Arguments.Count == 1 &&
-                        OnPropertyChanged.IsMatch(invokeCandidate, context.SemanticModel, context.CancellationToken) != AnalysisResult.No &&
+                        OnPropertyChanged.Match(invokeCandidate, context.SemanticModel, context.CancellationToken) is { } &&
                         PropertyChanged.TryGetName(invokeCandidate, context.SemanticModel, context.CancellationToken, out var propertyName) == AnalysisResult.Yes &&
                         !string.IsNullOrEmpty(propertyName) &&
                         !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _))

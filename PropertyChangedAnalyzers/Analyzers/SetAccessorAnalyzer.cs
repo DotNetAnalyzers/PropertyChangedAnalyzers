@@ -72,7 +72,7 @@
                                         backing = temp.Expression;
                                     }
                                     else if (backing is null &&
-                                        (OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
+                                        (OnPropertyChanged.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
                                          PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken)))
                                     {
                                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));

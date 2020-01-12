@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System;
     using System.Threading;
@@ -126,8 +126,7 @@ namespace PropertyChangedAnalyzers
                 return AnalysisResult.No;
             }
 
-            if (OnPropertyChanged.IsMatch(invocation, semanticModel, cancellationToken, out var onPropertyChanged) != AnalysisResult.No &&
-                onPropertyChanged.Parameters.TrySingle(out var parameter))
+            if (OnPropertyChanged.Match(invocation, semanticModel, cancellationToken) is { Name: { } parameter })
             {
                 switch (invocation)
                 {

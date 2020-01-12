@@ -71,20 +71,14 @@
             return false;
         }
 
-        internal static AnalysisResult IsMatch(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static OnPropertyChangedMatch? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return IsMatch(invocation, semanticModel, cancellationToken, out _);
-        }
-
-        internal static AnalysisResult IsMatch(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol? method)
-        {
-            method = null;
             if (invocation is null ||
                 invocation.ArgumentList?.Arguments.Count > 1 ||
                 !invocation.IsPotentialReturnVoid() ||
                 !invocation.IsPotentialThisOrBase())
             {
-                return AnalysisResult.No;
+                return null;
             }
 
             if (invocation.TryFirstAncestor(out ClassDeclarationSyntax? containingClass))
@@ -92,16 +86,16 @@
                 if (containingClass.BaseList?.Types is null ||
                     containingClass.BaseList.Types.Count == 0)
                 {
-                    return AnalysisResult.No;
+                    return null;
                 }
 
-                if (semanticModel.TryGetSymbol(invocation, cancellationToken, out method))
+                if (semanticModel.TryGetSymbol(invocation, cancellationToken, out var method))
                 {
-                    return IsMatch(method, semanticModel, cancellationToken);
+                    return Match(method, semanticModel, cancellationToken);
                 }
             }
 
-            return AnalysisResult.No;
+            return null;
         }
 
         internal static OnPropertyChangedMatch? Match(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)

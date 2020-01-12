@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -296,7 +296,7 @@ namespace N
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Bar();");
-                Assert.AreEqual(AnalysisResult.No, OnPropertyChanged.IsMatch(invocation, semanticModel, CancellationToken.None));
+                Assert.AreEqual(null, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None));
             }
 
             [TestCase("Bar1()", AnalysisResult.No)]
@@ -345,7 +345,15 @@ namespace N
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation(call);
-                Assert.AreEqual(expected, OnPropertyChanged.IsMatch(invocation, semanticModel, CancellationToken.None));
+                if (expected == AnalysisResult.No)
+                {
+                    Assert.AreEqual(null, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None));
+                }
+                else
+                {
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Assert.AreEqual(expected, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None).Value.AnalysisResult);
+                }
             }
 
             [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
@@ -469,8 +477,7 @@ namespace N
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("OnPropertyChanged()");
-                Assert.AreEqual(AnalysisResult.Maybe, OnPropertyChanged.IsMatch(invocation, semanticModel, CancellationToken.None, out var method));
-                Assert.AreEqual("Gu.Wpf.Reactive.CommandBase<object>.OnPropertyChanged(string)", method.ToString());
+                Assert.AreEqual(AnalysisResult.Maybe, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None).Value.AnalysisResult);
             }
         }
     }

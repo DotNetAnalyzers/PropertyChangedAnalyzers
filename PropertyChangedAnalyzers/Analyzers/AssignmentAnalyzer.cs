@@ -87,7 +87,7 @@
                 return candidate.Expression switch
                 {
                     InvocationExpressionSyntax invocation
-                    => OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
+                    => OnPropertyChanged.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
                        TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No,
                     AssignmentExpressionSyntax candidateAssignment
                     => Setter.IsMutation(candidateAssignment, context.SemanticModel, context.CancellationToken, out _, out _),

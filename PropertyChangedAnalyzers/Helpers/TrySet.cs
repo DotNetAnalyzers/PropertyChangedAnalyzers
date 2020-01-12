@@ -140,7 +140,7 @@
 
                         bool Notifies(InvocationExpressionSyntax x)
                         {
-                            return OnPropertyChanged.IsMatch(x, recursion.SemanticModel, recursion.CancellationToken) != AnalysisResult.No ||
+                            return OnPropertyChanged.Match(x, recursion.SemanticModel, recursion.CancellationToken) is { } ||
                                    PropertyChangedEvent.IsInvoke(x, recursion.SemanticModel, recursion.CancellationToken);
                         }
                     }
