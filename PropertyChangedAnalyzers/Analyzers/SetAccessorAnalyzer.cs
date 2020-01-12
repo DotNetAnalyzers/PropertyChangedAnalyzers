@@ -54,7 +54,44 @@
                                     property.Name));
                         }
 
-                        Walk(body);
+                        ExpressionSyntax? backing = null;
+                        foreach (var statement in body.Statements)
+                        {
+                            switch (statement)
+                            {
+                                case IfStatementSyntax { Condition: { } condition }
+                                    when Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out _, out _):
+                                    break;
+                                case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: { } left, Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } } }:
+                                    backing = left;
+                                    break;
+                                case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax { ArgumentList: { Arguments: { } arguments } } invocation }:
+                                    if (TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No &&
+                                        arguments.TrySingle<ArgumentSyntax>(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var temp))
+                                    {
+                                        backing = temp.Expression;
+                                    }
+                                    else if (backing is null &&
+                                        (OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
+                                         PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken)))
+                                    {
+                                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
+                                    }
+
+                                    break;
+                                case ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax invocation } }:
+                                    if (backing is null &&
+                                        PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken))
+                                    {
+                                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
+                                    }
+
+                                    break;
+                                default:
+                                    return;
+                            }
+                        }
+
                         break;
                     case { Body: null, ExpressionBody: null }:
                         if (Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
@@ -67,47 +104,6 @@
                         }
 
                         break;
-                }
-
-                void Walk(BlockSyntax body)
-                {
-                    ExpressionSyntax? backing = null;
-                    foreach (var statement in body.Statements)
-                    {
-                        switch (statement)
-                        {
-                            case IfStatementSyntax { Condition: { } condition }
-                                when Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out _, out _):
-                                break;
-                            case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: { } left, Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } } }:
-                                backing = left;
-                                break;
-                            case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax { ArgumentList: { Arguments: { } arguments } } invocation }:
-                                if (TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No &&
-                                    arguments.TrySingle<ArgumentSyntax>(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var temp))
-                                {
-                                    backing = temp.Expression;
-                                }
-                                else if (backing is null &&
-                                    (OnPropertyChanged.IsMatch(invocation, context.SemanticModel, context.CancellationToken, out _) != AnalysisResult.No ||
-                                     PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken)))
-                                {
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
-                                }
-
-                                break;
-                            case ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax invocation } }:
-                                if (backing is null &&
-                                    PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken))
-                                {
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
-                                }
-
-                                break;
-                            default:
-                                return;
-                        }
-                    }
                 }
             }
 
