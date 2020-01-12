@@ -43,14 +43,7 @@
             return false;
         }
 
-        internal static bool TryFindSingleMutation(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? backing)
-        {
-            backing = null;
-            return property.TryGetSetter(out var setter) &&
-                   TryFindSingleMutation(setter, semanticModel, cancellationToken, out backing);
-        }
-
-        internal static bool TryFindSingleMutation(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? backing)
+        internal static bool FindSingleMutated(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? backing)
         {
             backing = null;
             using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken))
@@ -115,7 +108,7 @@
 
         internal static bool TryGetBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IFieldSymbol? field)
         {
-            if (TryFindSingleMutation(setter, semanticModel, cancellationToken, out var mutated))
+            if (FindSingleMutated(setter, semanticModel, cancellationToken, out var mutated))
             {
                 switch (mutated)
                 {

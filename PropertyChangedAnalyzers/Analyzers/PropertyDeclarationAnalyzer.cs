@@ -66,7 +66,7 @@
 
                         if (single is LiteralExpressionSyntax &&
                             propertyDeclaration.TryGetSetter(out var set) &&
-                            Setter.TryFindSingleMutation(set, context.SemanticModel, context.CancellationToken, out var fieldAccess))
+                            Setter.FindSingleMutated(set, context.SemanticModel, context.CancellationToken, out var fieldAccess))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
@@ -84,7 +84,7 @@
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, setter.GetLocation()));
                     }
 
-                    if (Property.GetsAndSetsSame(propertyDeclaration, context.SemanticModel, context.CancellationToken, out _, out _) == false)
+                    if (Property.GetsAndSetsSame(propertyDeclaration, context.SemanticModel, context.CancellationToken) is { Same: false })
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, propertyDeclaration.Identifier.GetLocation()));
                     }

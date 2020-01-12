@@ -9,6 +9,14 @@
 
     internal static class Property
     {
+        internal static ExpressionSyntax? FindSingleMutated(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return property.TryGetSetter(out var setter) &&
+                  Setter.FindSingleMutated(setter, semanticModel, cancellationToken, out var backing)
+                  ? backing
+                  : null;
+        }
+
         internal static bool TrySingleReturned(PropertyDeclarationSyntax property, [NotNullWhen(true)] out ExpressionSyntax? result)
         {
             if (property.ExpressionBody is { Expression: { } expression })
@@ -22,42 +30,40 @@
                    Getter.TrySingleReturned(getter, out result);
         }
 
-        internal static bool? GetsAndSetsSame(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken, out ExpressionSyntax get, out ExpressionSyntax set)
+        internal static GetAndSetResult? GetsAndSetsSame(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertyDeclaration.TryGetGetter(out var getter) &&
                 propertyDeclaration.TryGetSetter(out var setter) &&
-                Getter.TrySingleReturned(getter, out get) &&
-                Setter.TryFindSingleMutation(setter, semanticModel, cancellationToken, out set))
+                Getter.TrySingleReturned(getter, out var get) &&
+                Setter.FindSingleMutated(setter, semanticModel, cancellationToken, out var set))
             {
                 if (MemberPath.Equals(get, set))
                 {
-                    return true;
+                    return new GetAndSetResult(same: true, get: get, set: set);
                 }
 
                 if (propertyDeclaration.Parent is TypeDeclarationSyntax containing)
                 {
                     if (MemberPath.TrySingle(get, out var getMember) &&
                         containing.TryFindProperty(getMember.Text, out var getProperty) &&
-                        TrySingleReturned(getProperty, out get) &&
-                        MemberPath.Equals(get, set))
+                        TrySingleReturned(getProperty, out var rootGet) &&
+                        MemberPath.Equals(rootGet, set))
                     {
-                        return true;
+                        return new GetAndSetResult(same: true, get: rootGet, set: set);
                     }
 
                     if (MemberPath.TrySingle(set, out var setMember) &&
                         containing.TryFindProperty(setMember.Text, out var setProperty) &&
-                        Setter.TryFindSingleMutation(setProperty, semanticModel, cancellationToken, out set) &&
-                        MemberPath.Equals(get, set))
+                        FindSingleMutated(setProperty, semanticModel, cancellationToken) is { } rootSet &&
+                        MemberPath.Equals(get, rootSet))
                     {
-                        return true;
+                        return new GetAndSetResult(same: true, get: get, set: rootSet);
                     }
                 }
 
-                return false;
+                return new GetAndSetResult(same: false, get: get, set: set);
             }
 
-            get = null;
-            set = null;
             return null;
         }
 
