@@ -104,9 +104,7 @@
 
                             void Subclass(DocumentEditor editor, bool addUsings)
                             {
-#pragma warning disable CS8602 // Dereference of a possibly null reference. CompilerBug
-                                if (classDeclaration.BaseList is { Types: { } types } &&
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                                if (classDeclaration!.BaseList is { Types: { } types } &&
                                     types.TryFirst(x => x.Type == KnownSymbol.INotifyPropertyChanged, out var baseType))
                                 {
                                     _ = editor.ReplaceNode(
@@ -155,9 +153,7 @@
 
                     async Task ImplementINotifyPropertyChangedAsync(DocumentEditor editor, bool addUsings, CancellationToken cancellationToken)
                     {
-#pragma warning disable CS8604 // Possible null reference argument. CompilerBug
-                        if (!type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, editor.SemanticModel.Compilation) &&
-#pragma warning restore CS8604 // Possible null reference argument.
+                        if (!type!.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, editor.SemanticModel.Compilation) &&
                             !HasINotifyPropertyChangedInterface(out var baseType))
                         {
                             if (baseType is null)
