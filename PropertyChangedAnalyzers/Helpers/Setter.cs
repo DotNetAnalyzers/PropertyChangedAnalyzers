@@ -113,11 +113,6 @@
             }
         }
 
-        internal static bool IsMutation(ExpressionStatementSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ExpressionSyntax? parameter, [NotNullWhen(true)] out ExpressionSyntax? backing)
-        {
-            return IsMutation(candidate.Expression, semanticModel, cancellationToken, out parameter, out backing);
-        }
-
         internal static bool TryGetBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IFieldSymbol? field)
         {
             if (TryFindSingleMutation(setter, semanticModel, cancellationToken, out var mutated))

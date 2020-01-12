@@ -76,16 +76,6 @@
             return IsMatch(invocation, semanticModel, cancellationToken, out _);
         }
 
-        internal static AnalysisResult IsMatch(ExpressionStatementSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (candidate.Expression is InvocationExpressionSyntax invocation)
-            {
-                return IsMatch(invocation, semanticModel, cancellationToken, out _);
-            }
-
-            return AnalysisResult.No;
-        }
-
         internal static AnalysisResult IsMatch(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken, out IMethodSymbol? method)
         {
             method = null;
