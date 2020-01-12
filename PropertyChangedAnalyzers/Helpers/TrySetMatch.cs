@@ -12,7 +12,7 @@
 
         internal readonly IParameterSymbol Name;
 
-        public TrySetMatch(AnalysisResult analysisResult, IParameterSymbol field, IParameterSymbol value, IParameterSymbol name)
+        internal TrySetMatch(AnalysisResult analysisResult, IParameterSymbol field, IParameterSymbol value, IParameterSymbol name)
         {
             this.AnalysisResult = analysisResult;
             this.Field = field;

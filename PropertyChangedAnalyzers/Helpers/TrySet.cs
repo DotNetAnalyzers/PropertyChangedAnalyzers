@@ -39,9 +39,27 @@
             }
         }
 
-        internal static bool TryFind(ITypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out IMethodSymbol? method)
+        internal static IMethodSymbol? Find(INamedTypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return type.TryFindFirstMethodRecursive(x => TrySet.CanCreateInvocation(x, out _) && IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out method);
+            using var recursion = Recursion.Borrow(type, semanticModel, cancellationToken);
+
+            // We want to return the one that we can invoke if any.
+            return type.TryFindFirstMethodRecursive(x => IsMatchAndCanCreateInvocation(x), out var method) ||
+                   type.TryFindFirstMethodRecursive(x => Matches(x), out method)
+                ? method
+                : null;
+
+            bool IsMatchAndCanCreateInvocation(IMethodSymbol candidate)
+            {
+                return CanCreateInvocation(candidate, out _) &&
+                       Matches(candidate);
+            }
+
+            bool Matches(IMethodSymbol candidate)
+            {
+                // ReSharper disable once AccessToDisposedClosure
+                return IsMatch(candidate, recursion) != AnalysisResult.No;
+            }
         }
 
         internal static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -58,7 +76,8 @@
 
         internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (candidate.ContainingType is { } containingType)
+            if (candidate is { ContainingType: { } containingType, MethodKind: MethodKind.Ordinary, ReturnType: { SpecialType: SpecialType.System_Boolean }, IsGenericMethod: true, TypeParameters: { Length: 1 } } &&
+                candidate.Parameters.Length > 2)
             {
                 using var recursion = Recursion.Borrow(containingType, semanticModel, cancellationToken);
                 return IsMatch(candidate, recursion);

@@ -34,7 +34,7 @@
                     propertyDeclaration.Parent is ClassDeclarationSyntax classDeclarationSyntax &&
                     semanticModel.TryGetNamedType(classDeclarationSyntax, context.CancellationToken, out var type))
                 {
-                    if (TrySet.TryFind(type, semanticModel, context.CancellationToken, out var trySetMethod) &&
+                    if (TrySet.Find(type, semanticModel, context.CancellationToken) is { } trySetMethod &&
                         TrySet.CanCreateInvocation(trySetMethod, out _))
                     {
                         if (Property.IsMutableAutoProperty(propertyDeclaration, out var getter, out var setter))

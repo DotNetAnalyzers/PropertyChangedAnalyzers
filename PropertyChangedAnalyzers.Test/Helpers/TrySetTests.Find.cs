@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Linq;
     using System.Threading;
@@ -50,8 +50,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
-                Assert.AreEqual("TrySet", method.Name);
+                Assert.AreEqual("TrySet", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
             }
 
             [Test]
@@ -109,8 +108,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ObservableObject");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
-                Assert.AreEqual("TrySet", method.Name);
+                Assert.AreEqual("TrySet", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
             }
 
             [Test]
@@ -135,8 +133,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
-                Assert.AreEqual("Set", method.Name);
+                Assert.AreEqual("Set", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
             }
 
             [Test]
@@ -161,8 +158,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(true, TrySet.TryFind(type, semanticModel, CancellationToken.None, out var method));
-                Assert.AreEqual("TrySet", method.Name);
+                Assert.AreEqual("TrySet", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
             }
 
             [Test]
@@ -202,7 +198,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(false, TrySet.TryFind(type, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(null, TrySet.Find(type, semanticModel, CancellationToken.None));
             }
 
             [Test]
@@ -237,7 +233,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(false, TrySet.TryFind(type, semanticModel, CancellationToken.None, out _));
+                Assert.AreEqual(null, TrySet.Find(type, semanticModel, CancellationToken.None));
             }
         }
     }

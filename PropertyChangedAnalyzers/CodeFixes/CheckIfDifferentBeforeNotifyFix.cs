@@ -37,7 +37,7 @@
                         if (semanticModel.TryGetSymbol(assignment.Left, CancellationToken.None, out var assignedSymbol) &&
                             assignedSymbol.Kind == SymbolKind.Field &&
                             semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol? setterSymbol) &&
-                            TrySet.TryFind(setterSymbol.ContainingType, semanticModel, context.CancellationToken, out var trySetMethod) &&
+                            TrySet.Find(setterSymbol.ContainingType, semanticModel, context.CancellationToken) is { } trySetMethod &&
                             TrySet.CanCreateInvocation(trySetMethod, out _) &&
                             setter.TryFirstAncestor(out PropertyDeclarationSyntax? property))
                         {
