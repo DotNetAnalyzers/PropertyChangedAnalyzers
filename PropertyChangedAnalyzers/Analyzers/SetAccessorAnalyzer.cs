@@ -62,26 +62,21 @@
                                 case IfStatementSyntax { Condition: { } condition }
                                     when Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out _, out _):
                                     break;
-                                case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: { } left, Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } } }:
-                                    backing = left;
+                                case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax assignment }
+                                    when Setter.MatchMutation(assignment, context.SemanticModel, context.CancellationToken) is { Member: { } member }:
+                                    backing = member;
                                     break;
-                                case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax { ArgumentList: { Arguments: { } arguments } } invocation }:
-                                    if (TrySet.IsMatch(invocation, context.SemanticModel, context.CancellationToken) != AnalysisResult.No &&
-                                        arguments.TrySingle<ArgumentSyntax>(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out var temp))
-                                    {
-                                        backing = temp.Expression;
-                                    }
-                                    else if (backing is null &&
-                                        (OnPropertyChanged.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
-                                         PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken)))
-                                    {
-                                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
-                                    }
-
+                                case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax invocation }
+                                    when TrySet.Match(invocation, context.SemanticModel, context.CancellationToken) is { Field: { Expression: { } member } }:
+                                    backing = member;
                                     break;
-                                case ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax invocation } }:
-                                    if (backing is null &&
-                                        PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken))
+                                case ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax conditionalInvoke } }
+                                    when PropertyChangedEvent.IsInvoke(conditionalInvoke, context.SemanticModel, context.CancellationToken):
+                                case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax invoke }
+                                    when PropertyChangedEvent.IsInvoke(invoke, context.SemanticModel, context.CancellationToken):
+                                case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax onPropertyChanged }
+                                    when OnPropertyChanged.Match(onPropertyChanged, context.SemanticModel, context.CancellationToken) is { }:
+                                    if (backing is null)
                                     {
                                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
                                     }
