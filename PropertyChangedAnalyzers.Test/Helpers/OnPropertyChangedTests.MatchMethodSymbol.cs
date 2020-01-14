@@ -283,26 +283,26 @@ namespace N
 {
     public class C
     {
-        public Foo()
+        public C()
         {
-            P();
+            M();
         }
 
-        private void P()
+        private void M()
         {
         }
     }
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("P();");
+                var invocation = syntaxTree.FindInvocation("M();");
                 Assert.AreEqual(null, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None));
             }
 
-            [TestCase("P1()", AnalysisResult.No)]
-            [TestCase("P2()", AnalysisResult.No)]
-            [TestCase("P3()", AnalysisResult.No)]
-            [TestCase("P4()", AnalysisResult.No)]
+            [TestCase("M1()", AnalysisResult.No)]
+            [TestCase("M2()", AnalysisResult.No)]
+            [TestCase("M3()", AnalysisResult.No)]
+            [TestCase("M4()", AnalysisResult.No)]
             [TestCase("OnPropertyChanged();", AnalysisResult.Yes)]
             public static void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, AnalysisResult expected)
             {
@@ -312,12 +312,12 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        public Foo()
+        public C()
         {
-            P1();
-            var a = P2();
-            a = P3();
-            if (P4())
+            M1();
+            var a = M2();
+            a = M3();
+            if (M4())
             {
             }
 
@@ -331,15 +331,15 @@ namespace N
             PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
 
-        private void P1()
+        private void M1()
         {
         }
 
-        private int P2() => 1;
+        private int M2() => 1;
 
-        private int P3() => 2;
+        private int M3() => 2;
 
-        private bool P4() => true;
+        private bool M4() => true;
     }
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
