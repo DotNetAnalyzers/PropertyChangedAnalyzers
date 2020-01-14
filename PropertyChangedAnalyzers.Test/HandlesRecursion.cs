@@ -143,53 +143,53 @@ namespace N
 
         public int P2 => P2;
 
-        public int Value3 => this.P1;
+        public int P3 => this.P1;
 
-        public int Value4
+        public int P4
         {
             get
             {
-                return this.Value4;
+                return this.P4;
             }
 
             set
             {
-                if (value == this.Value4)
+                if (value == this.P4)
                 {
                     return;
                 }
 
-                this.Value4 = value;
+                this.P4 = value;
                 this.OnPropertyChanged();
             }
         }
 
-        public int Value5
+        public int P5
         {
-            get => this.Value5;
+            get => this.P5;
             set
             {
-                if (value == this.Value5)
+                if (value == this.P5)
                 {
                     return;
                 }
 
-                this.Value5 = value;
+                this.P5 = value;
                 this.OnPropertyChanged();
             }
         }
 
-        public int Value6
+        public int P6
         {
-            get => this.Value5;
+            get => this.P5;
             set
             {
-                if (value == this.Value5)
+                if (value == this.P5)
                 {
                     return;
                 }
 
-                this.Value5 = value;
+                this.P5 = value;
                 this.OnPropertyChanged();
             }
         }

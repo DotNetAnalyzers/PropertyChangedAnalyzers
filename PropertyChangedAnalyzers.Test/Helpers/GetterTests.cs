@@ -6,10 +6,10 @@
 
     public static class GetterTests
     {
-        [TestCase("Value11", "this.value1")]
-        [TestCase("Value12", "this.value1")]
-        [TestCase("Value1", "this.value1")]
-        [TestCase("Value2", "this.value2")]
+        [TestCase("P11", "this.p1")]
+        [TestCase("P12", "this.p1")]
+        [TestCase("P1", "this.p1")]
+        [TestCase("P2", "this.p2")]
         public static void TrySingleReturned(string propertyName, string expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(
@@ -18,26 +18,26 @@ namespace N
 {
     public class Foo
     {
-        private int value1;
-        private int value2;
+        private int p1;
+        private int p2;
 
-        public int Value11 => this.value1;
+        public int P11 => this.p1;
 
-        public int Value12
+        public int P12
         {
-            get => this.value1;
+            get => this.p1;
         }
 
-        public int Value1
+        public int P1
         {
-            get { return this.value1; }
-            set { this.value1 = value; }
+            get { return this.p1; }
+            set { this.p1 = value; }
         }
 
-        public int Value2
+        public int P2
         {
-            get => this.value2;
-            set => this.value2 = value;
+            get => this.p2;
+            set => this.p2 = value;
         }
     }
 }");
