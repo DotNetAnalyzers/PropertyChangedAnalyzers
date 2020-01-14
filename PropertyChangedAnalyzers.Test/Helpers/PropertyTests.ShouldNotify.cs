@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -9,16 +9,16 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     {
         public static class ShouldNotify
         {
-            [TestCase("Value1", false)]
-            [TestCase("Value2", true)]
-            [TestCase("Value3", true)]
-            [TestCase("Value4", false)]
-            [TestCase("Value5", true)]
-            [TestCase("Value6", true)]
-            [TestCase("Value7", false)]
-            [TestCase("Value8", true)]
-            [TestCase("Value9", true)]
-            [TestCase("Value10", true)]
+            [TestCase("P1", false)]
+            [TestCase("P2", true)]
+            [TestCase("P3", true)]
+            [TestCase("P4", false)]
+            [TestCase("P5", true)]
+            [TestCase("P6", true)]
+            [TestCase("P7", false)]
+            [TestCase("P8", true)]
+            [TestCase("P9", true)]
+            [TestCase("P10", true)]
             public static void MiscProperties(string propertyName, bool expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
@@ -26,36 +26,36 @@ namespace PropertyChangedAnalyzers.Test.Helpers
     {
         public Foo(int value4, int value5)
         {
-            this.Value4 = value4;
-            this.Value5 = value5;
-            this.Value10 = 1;
+            this.P4 = value4;
+            this.P5 = value5;
+            this.P10 = 1;
         }
 
-        public int Value1 { get; }
+        public int P1 { get; }
 
-        public int Value2 { get; set; }
+        public int P2 { get; set; }
 
-        public int Value3 { get; protected set; }
+        public int P3 { get; protected set; }
 
-        public int Value4 { get; private set; }
+        public int P4 { get; private set; }
 
-        public int Value5 { get; private set; }
+        public int P5 { get; private set; }
 
-        public int Value6 { get; private set; }
+        public int P6 { get; private set; }
 
-        internal int Value7 { get; }
+        internal int P7 { get; }
 
-        internal int Value8 { get; set; }
+        internal int P8 { get; set; }
 
-        internal int Value9 { get; private set; }
+        internal int P9 { get; private set; }
 
-        internal int Value10 { get; private set; }
+        internal int P10 { get; private set; }
 
         public void Mutate()
         {
-            this.Value5++;
-            this.Value6--;
-            this.Value10 = 2;
+            this.P5++;
+            this.P6--;
+            this.P10 = 2;
         }
     }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
@@ -65,16 +65,16 @@ namespace PropertyChangedAnalyzers.Test.Helpers
                 Assert.AreEqual(expected, Property.ShouldNotify(propertyDeclaration, propertySymbol, semanticModel, CancellationToken.None));
             }
 
-            [TestCase("Value1", false)]
-            [TestCase("Value2", true)]
-            [TestCase("Value3", true)]
-            [TestCase("Value4", false)]
-            [TestCase("Value5", true)]
-            [TestCase("Value6", true)]
-            [TestCase("Value7", false)]
-            [TestCase("Value8", true)]
-            [TestCase("Value9", true)]
-            [TestCase("Value10", true)]
+            [TestCase("P1", false)]
+            [TestCase("P2", true)]
+            [TestCase("P3", true)]
+            [TestCase("P4", false)]
+            [TestCase("P5", true)]
+            [TestCase("P6", true)]
+            [TestCase("P7", false)]
+            [TestCase("P8", true)]
+            [TestCase("P9", true)]
+            [TestCase("P10", true)]
             public static void MiscPropertiesUnderscoreNames(string propertyName, bool expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
@@ -84,36 +84,36 @@ namespace N
     {
         public Foo(int value4, int value5)
         {
-            Value4 = value4;
-            Value5 = value5;
-            Value10 = 1;
+            P4 = value4;
+            P5 = value5;
+            P10 = 1;
         }
 
-        public int Value1 { get; }
+        public int P1 { get; }
 
-        public int Value2 { get; set; }
+        public int P2 { get; set; }
 
-        public int Value3 { get; protected set; }
+        public int P3 { get; protected set; }
 
-        public int Value4 { get; private set; }
+        public int P4 { get; private set; }
 
-        public int Value5 { get; private set; }
+        public int P5 { get; private set; }
 
-        public int Value6 { get; private set; }
+        public int P6 { get; private set; }
 
-        internal int Value7 { get; }
+        internal int P7 { get; }
 
-        internal int Value8 { get; set; }
+        internal int P8 { get; set; }
 
-        internal int Value9 { get; private set; }
+        internal int P9 { get; private set; }
 
-        internal int Value10 { get; private set; }
+        internal int P10 { get; private set; }
 
         public void Mutate()
         {
-            Value5++;
-            Value6--;
-            Value10 = 1;
+            P5++;
+            P6--;
+            P10 = 1;
         }
     }
 }");
@@ -124,9 +124,9 @@ namespace N
                 Assert.AreEqual(expected, Property.ShouldNotify(propertyDeclaration, propertySymbol, semanticModel, CancellationToken.None));
             }
 
-            [TestCase("this.Value = 1;")]
-            [TestCase("this.Value++")]
-            [TestCase("this.Value--")]
+            [TestCase("this.P = 1;")]
+            [TestCase("this.P++")]
+            [TestCase("this.P--")]
             public static void PrivateSetAssignedInLambdaInCtor(string assignCode)
             {
                 var code = @"
@@ -134,23 +134,23 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
-        public Foo()
+        public C()
         {
-            Bar += (_, __) => this.Value = 1;
+            E += (_, __) => this.P = 1;
         }
 
-        public event EventHandler Bar;
+        public event EventHandler E;
 
-        public int Value { get; private set; }
+        public int P { get; private set; }
     }
-}".AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.P = 1", assignCode);
 
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var propertyDeclaration = syntaxTree.FindPropertyDeclaration("Value");
+                var propertyDeclaration = syntaxTree.FindPropertyDeclaration("P");
                 var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration);
                 Assert.AreEqual(true, Property.ShouldNotify(propertyDeclaration, propertySymbol, semanticModel, CancellationToken.None));
             }
