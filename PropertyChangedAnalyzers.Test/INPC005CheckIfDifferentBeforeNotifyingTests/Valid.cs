@@ -1,13 +1,15 @@
-namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static partial class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC005CheckIfDifferentBeforeNotifying;
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
         {
@@ -20,8 +22,8 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
             new TestCaseData("string", "Object.Equals(Bar, value)"),
             new TestCaseData("string", "System.Object.Equals(Bar, value)"),
             new TestCaseData("string", "Nullable.Equals(value, this.bar)"),
-            new TestCaseData("int?", "Nullable.Equals(value, this.bar)"),
-            new TestCaseData("int?", "System.Nullable.Equals(value, this.bar)"),
+            new TestCaseData("int?",   "Nullable.Equals(value, this.bar)"),
+            new TestCaseData("int?",   "System.Nullable.Equals(value, this.bar)"),
             new TestCaseData("string", "value.Equals(this.bar)"),
             new TestCaseData("string", "value.Equals(bar)"),
             new TestCaseData("string", "this.bar.Equals(value)"),
@@ -117,7 +119,7 @@ namespace N
         }
 
         [Test]
-        public static void SimpleProperty()
+        public static void SimplePropertyBlockBodies()
         {
             var code = @"
 namespace N
@@ -143,11 +145,11 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [Test]
-        public static void CallsRaisePropertyChangedWithEventArgsIfReturn()
+        public static void SimplePropertyExpressionBodies()
         {
             var code = @"
 namespace N
@@ -163,7 +165,37 @@ namespace N
 
         public int P
         {
-            get { return this.p; }
+            get => this.p;
+            set => this.p = value;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
+        }
+
+        [Test]
+        public static void IfValueEqualsFieldReturnElseAssignAndNotify()
+        {
+            var code = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
+        {
+            get => this.p;
             set
             {
                 if (value == this.p) return;
@@ -183,7 +215,7 @@ namespace N
         }
 
         [Test]
-        public static void CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
+        public static void IfValueEqualsPropertyReturnElseAssignAndNotify()
         {
             var code = @"
 namespace N
@@ -199,7 +231,7 @@ namespace N
 
         public int P
         {
-            get { return this.p; }
+            get => this.p;
             set
             {
                 if (value == this.P) return;
@@ -218,7 +250,7 @@ namespace N
         }
 
         [Test]
-        public static void CallsRaisePropertyChangedWithEventArgsIfBody()
+        public static void IfValueNotEqualsFieldAssignAndNotifyCallerMemberName()
         {
             var code = @"
 namespace N
@@ -234,7 +266,44 @@ namespace N
 
         public int P
         {
-            get { return this.p; }
+            get => this.p;
+            set
+            {
+                if (value != this.p)
+                {
+                    this.p = value;
+                    this.OnPropertyChanged();
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.Valid(Analyzer, code);
+        }
+
+        [Test]
+        public static void IfValueNotEqualsFieldAssignAndNotifyPropertyChangedEventArgs()
+        {
+            var code = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
+        {
+            get => this.p;
             set
             {
                 if (value != this.p)
@@ -271,7 +340,7 @@ namespace N
 
         public int P
         {
-            get { return this.p; }
+            get => this.p;
             set
             {
                 if (value == this.p) return;
@@ -304,7 +373,7 @@ namespace N
 
         public int P
         {
-            get { return this.p; }
+            get => this.p;
             set
             {
                 if (value == this.p)
@@ -339,7 +408,7 @@ namespace N
 
         public int P
         {
-            get { return this.p; }
+            get => this.p;
             set
             {
                 if (value == this.p)
@@ -375,7 +444,7 @@ namespace N
 
         public string P
         {
-            get { return this.p; }
+            get => this.p;
             set
             {
                 if (Equals(value, this.p))

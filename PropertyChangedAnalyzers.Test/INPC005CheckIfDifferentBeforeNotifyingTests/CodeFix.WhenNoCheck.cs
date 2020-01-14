@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -367,25 +367,20 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public static class C
     {
-        private static int value;
+        private static int p;
 
         public static event PropertyChangedEventHandler PropertyChanged;
 
-        public static int Value
+        public static int P
         {
-            get
-            {
-                return value;
-            }
-
+            get => p;
             set
             {
-                value = value;
-                ↓PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(Value)));
+                p = value;
+                ↓PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
             }
         }
     }
@@ -395,30 +390,25 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public static class C
     {
-        private static int value;
+        private static int p;
 
         public static event PropertyChangedEventHandler PropertyChanged;
 
-        public static int Value
+        public static int P
         {
-            get
-            {
-                return value;
-            }
-
+            get => p;
             set
             {
-                if (value == value)
+                if (value == p)
                 {
                     return;
                 }
 
-                value = value;
-                PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(Value)));
+                p = value;
+                PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
             }
         }
     }
@@ -623,89 +613,6 @@ namespace N
                 this.value = value;
                 this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(Value)));
             }
-        }
-    }
-}";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
-
-            [Test]
-            public static void WarnOnlyOnFirst()
-            {
-                var before = @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class C : INotifyPropertyChanged
-    {
-        private int value;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int Squared => this.Value * this.Value;
-
-        public int Value
-        {
-            get
-            {
-                return this.value;
-            }
-
-            set
-            {
-                this.value = value;
-                ↓this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(Squared));
-            }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
-                var after = @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class C : INotifyPropertyChanged
-    {
-        private int value;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int Squared => this.Value * this.Value;
-
-        public int Value
-        {
-            get
-            {
-                return this.value;
-            }
-
-            set
-            {
-                if (value == this.value)
-                {
-                    return;
-                }
-
-                this.value = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(Squared));
-            }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
@@ -1041,6 +948,81 @@ namespace N
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet(ref field, value, propertyName)");
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "TrySet(ref field, value, propertyName)");
+            }
+
+            [Test]
+            public static void WarnOnlyOnFirstOnPropertyChanged()
+            {
+                var before = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Squared => this.value * this.value;
+
+        public int Value
+        {
+            get => this.value;
+            set
+            {
+                this.value = value;
+                ↓this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(Squared));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+                var after = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Squared => this.value * this.value;
+
+        public int Value
+        {
+            get => this.value;
+            set
+            {
+                if (value == this.value)
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(Squared));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
         }
     }

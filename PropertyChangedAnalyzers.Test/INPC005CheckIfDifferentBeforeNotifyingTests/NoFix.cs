@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTe
 
     public static class NoFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
         private static readonly CodeFixProvider Fix = new CheckIfDifferentBeforeNotifyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying);
 
@@ -107,7 +107,7 @@ namespace N
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public static void NegatedCheckReturn(string type, string expression)
+        public static void IfNotEqualsReturnElseAssignAndOnPropertyChanged(string type, string expression)
         {
             var code = @"
 namespace N
@@ -149,7 +149,7 @@ namespace N
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public static void NegatedCheckAssignReturn(string type, string expression)
+        public static void IfNotEqualsAssignReturnElseOnPropertyChanged(string type, string expression)
         {
             var code = @"
 namespace N
@@ -171,8 +171,8 @@ namespace N
             {
                 if (!Equals(value, this.bar))
                 {
-                    return;
                     this.bar = value;
+                    return;
                 }
 
                 ↓this.OnPropertyChanged();
@@ -271,8 +271,9 @@ namespace N
             RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
         }
 
+        [Ignore("Don't think this is the correct warning here.")]
         [Test]
-        public static void OperatorEqualsNoAssignButNotifyOutside()
+        public static void IfOperatorEqualsAssignThenOnPropertyChanged()
         {
             var code = @"
 namespace N
@@ -288,7 +289,7 @@ namespace N
 
         public int Bar
         {
-            get { return this.bar; }
+            get => this.bar;
             set
             {
                 if (value == this.bar)
@@ -327,7 +328,7 @@ namespace N
 
         public int Bar
         {
-            get { return this.bar; }
+            get => this.bar;
             set
             {
                 if (value == this.bar)

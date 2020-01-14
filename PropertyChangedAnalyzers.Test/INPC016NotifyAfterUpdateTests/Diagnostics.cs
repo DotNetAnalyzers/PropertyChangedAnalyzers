@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -63,7 +63,7 @@ namespace N
 
         public int P
         {
-            get { return this.p; }
+            get => this.p;
             set
             {
                 if (value == this.p)
@@ -71,12 +71,12 @@ namespace N
                     return;
                 }
 
-                ↓this.OnPropertyChanged(nameof(this.P));
+                ↓this.OnPropertyChanged();
                 this.p = value;
             }
         }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

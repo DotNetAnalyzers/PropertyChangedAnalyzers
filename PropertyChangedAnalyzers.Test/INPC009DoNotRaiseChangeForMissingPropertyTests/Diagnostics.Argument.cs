@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC009DontRaiseChangeForMissingPropertyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC009DoNotRaiseChangeForMissingPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;

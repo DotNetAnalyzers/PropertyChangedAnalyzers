@@ -1,12 +1,14 @@
-namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
 {
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
         private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC016NotifyAfterMutation;
 
         private const string ViewModelBaseCode = @"
 namespace N.Core
@@ -158,7 +160,38 @@ namespace N.Client
     }
 }".AssertReplace("this.TrySet(ref this.name, value);", trySet);
 
-            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
+        }
+
+        [Test]
+        public static void AfterIfTrySetReturn()
+        {
+            var code = @"
+namespace N.Client
+{
+    public class C : N.Core.ViewModelBase
+    {
+        private string name;
+
+        public string Greeting => $""Hello {this.Name}"";
+
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                if (this.TrySet(ref this.name, value))
+                {
+                    return;
+                }
+
+                this.OnPropertyChanged(nameof(this.Greeting));
+            }
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
         }
 
         [Test]

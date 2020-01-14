@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -108,15 +108,13 @@ namespace N
             }
 
             [Test]
-            public static void IfTrySetEmpty()
+            public static void IfTrySetEmptyStatement()
             {
                 var before = @"
 namespace N
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
@@ -129,9 +127,10 @@ namespace N
 
         public string Name
         {
-            get { return this.name; }
+            get => this.name;
             set
             {
+                // note the semicolon here
                 if (this.TrySet(ref this.name, value));
                 ↓this.OnPropertyChanged(nameof(this.Greeting));
             }
@@ -159,10 +158,8 @@ namespace N
                 var after = @"
 namespace N
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
@@ -175,9 +172,10 @@ namespace N
 
         public string Name
         {
-            get { return this.name; }
+            get => this.name;
             set
             {
+                // note the semicolon here
                 if (this.TrySet(ref this.name, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
