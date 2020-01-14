@@ -24,7 +24,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value { get; set; }
+        public int ↓P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -42,21 +42,21 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }

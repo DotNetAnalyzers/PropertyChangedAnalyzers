@@ -1,4 +1,4 @@
-#pragma warning disable GURA04,GURA06 // Move test to correct class.
+﻿#pragma warning disable GURA04,GURA06 // Move test to correct class.
 namespace PropertyChangedAnalyzers.Test
 {
     using System;
@@ -53,16 +53,16 @@ namespace N.Core
             var code = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
-        private int value2;
+        private int p2;
 
-        public int Value1 { get; set; }
+        public int P1 { get; set; }
 
-        public int Value2
+        public int P2
         {
-            get { return this.value2; }
-            set { this.TrySet(ref this.value2, value); }
+            get { return this.p2; }
+            set { this.TrySet(ref this.p2, value); }
         }
     }
 }";
@@ -92,27 +92,27 @@ namespace N.Core
             var code = @"
 namespace N.Client
 {
-    public class Foo : N.Core.ViewModelBase
+    public class C : N.Core.ViewModelBase
     {
-        private int value2;
+        private int p2;
 
-        public int Value1 { get; set; }
+        public int P1 { get; set; }
 
-        public int Value2
+        public int P2
         {
             get
             {
-                return this.value2;
+                return this.p2;
             }
 
             set
             {
-                if (value == this.value2)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.value2 = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
             }
         }
@@ -132,18 +132,18 @@ namespace N
     using System.Drawing;
     using System.Runtime.CompilerServices;
 
-    public class Foo
+    public class C
     {
         private Point point;
         private double h1;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value1 => this.Value1;
+        public int P1 => this.P1;
 
-        public int Value2 => Value2;
+        public int P2 => P2;
 
-        public int Value3 => this.Value1;
+        public int Value3 => this.P1;
 
         public int Value4
         {
