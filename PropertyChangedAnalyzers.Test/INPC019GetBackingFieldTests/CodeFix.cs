@@ -19,12 +19,12 @@ namespace N
 {
     public sealed class C
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
             get => ↓""abc"";
-            set => this.name = value;
+            set => this.p = value;
         }
     }
 }";
@@ -33,12 +33,12 @@ namespace N
 {
     public sealed class C
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.name = value;
+            get => this.p;
+            set => this.p = value;
         }
     }
 }";

@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
+namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdateTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -165,8 +165,8 @@ namespace N
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
-        [TestCase("this.TrySet(ref this.name, value)")]
-        [TestCase("_ = this.TrySet(ref this.name, value)")]
+        [TestCase("this.TrySet(ref this.p, value)")]
+        [TestCase("_ = this.TrySet(ref this.p, value)")]
         public static void BeforeTrySet(string trySet)
         {
             var code = @"
@@ -174,21 +174,21 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
         public string Greeting => $""Hello {this.Name}"";
 
-        public string Name
+        public string P
         {
-            get { return this.name; }
+            get { return this.p; }
             set
             {
                 ↓this.OnPropertyChanged(nameof(this.Greeting));
-                this.TrySet(ref this.name, value);
+                this.TrySet(ref this.p, value);
             }
         }
     }
-}".AssertReplace("this.TrySet(ref this.name, value)", trySet);
+}".AssertReplace("this.TrySet(ref this.p, value)", trySet);
 
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, ViewModelBaseCode, code);
         }

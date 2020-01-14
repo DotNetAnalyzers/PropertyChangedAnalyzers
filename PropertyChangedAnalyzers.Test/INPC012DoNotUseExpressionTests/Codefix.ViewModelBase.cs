@@ -58,10 +58,10 @@ namespace N.Client
 
         public int Name
         {
-            get { return this.name; }
+            get { return this.p; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p, value))
                 {
                     this.OnPropertyChanged(↓() => this.Greeting);
                 }
@@ -81,10 +81,10 @@ namespace N.Client
 
         public int Name
         {
-            get { return this.name; }
+            get { return this.p; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }
@@ -109,10 +109,10 @@ namespace N.Client
 
         internal int Name
         {
-            get { return this.name; }
+            get { return this.p; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p, value))
                 {
                     this.OnPropertyChanged(↓() => this.Greeting);
                 }
@@ -132,10 +132,10 @@ namespace N.Client
 
         internal int Name
         {
-            get { return this.name; }
+            get { return this.p; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p, value))
                 {
                     this.OnPropertyChanged(nameof(this.Greeting));
                 }

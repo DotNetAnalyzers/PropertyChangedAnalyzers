@@ -25,17 +25,17 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
 
             ↓set
             {
-                this.TrySet(ref this.name, value);
+                this.TrySet(ref this.p, value);
             }
         }
 
@@ -64,15 +64,15 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
 
-            set => this.TrySet(ref this.name, value);
+            set => this.TrySet(ref this.p, value);
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -105,17 +105,17 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
 
             ↓set
             {
-                _ = this.TrySet(ref this.name, value);
+                _ = this.TrySet(ref this.p, value);
             }
         }
 
@@ -144,15 +144,15 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
 
-            set => _ = this.TrySet(ref this.name, value);
+            set => _ = this.TrySet(ref this.p, value);
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -184,27 +184,27 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.name}"";
+        public string Greeting => $""Hello {this.p}"";
 
-        public string Name
+        public string P
         {
             ↓get
             {
-                return this.name;
+                return this.p;
             }
 
             set
             {
-                if (value == this.name)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.Greeting));
             }
@@ -222,24 +222,24 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.name}"";
+        public string Greeting => $""Hello {this.p}"";
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
 
             set
             {
-                if (value == this.name)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.Greeting));
             }

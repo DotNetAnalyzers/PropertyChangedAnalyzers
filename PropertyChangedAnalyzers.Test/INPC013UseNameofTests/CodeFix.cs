@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
+namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -188,11 +188,11 @@ namespace N
 
     public static class C
     {
-        private static string name;
+        private static string p;
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
 
-        public static string Name
+        public static string P
         {
             get
             {
@@ -221,11 +221,11 @@ namespace N
 
     public static class C
     {
-        private static string name;
+        private static string p;
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
 
-        public static string Name
+        public static string P
         {
             get
             {
@@ -259,12 +259,12 @@ namespace N
 
     public class C
     {
-        private static string name;
+        private static string p;
         private int value;
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
 
-        public static string Name
+        public static string P
         {
             get
             {
@@ -305,12 +305,12 @@ namespace N
 
     public class C
     {
-        private static string name;
+        private static string p;
         private int value;
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
 
-        public static string Name
+        public static string P
         {
             get
             {
@@ -394,7 +394,7 @@ namespace N
 {
     public class C
     {
-        public static readonly string Name = M(↓""Value"");
+        public static readonly string P = M(↓""Value"");
 
         public int Value { get; set; }
 
@@ -407,7 +407,7 @@ namespace N
 {
     public class C
     {
-        public static readonly string Name = M(nameof(Value));
+        public static readonly string P = M(nameof(Value));
 
         public int Value { get; set; }
 
@@ -425,7 +425,7 @@ namespace N
 {
     public class C
     {
-        public readonly string Name = string.Format(↓""Value"");
+        public readonly string P = string.Format(↓""Value"");
 
         private int value;
 
@@ -442,7 +442,7 @@ namespace N
 {
     public class C
     {
-        public readonly string Name = string.Format(nameof(Value));
+        public readonly string P = string.Format(nameof(Value));
 
         private int value;
 
