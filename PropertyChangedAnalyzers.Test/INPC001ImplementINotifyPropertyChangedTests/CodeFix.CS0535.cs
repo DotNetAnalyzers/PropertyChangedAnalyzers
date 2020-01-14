@@ -147,7 +147,7 @@ namespace N
 
     public class C : ↓INotifyPropertyChanged
     {
-        private int _value;
+        private int _p;
     }
 }";
 
@@ -160,7 +160,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int _value;
+        private int _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -184,7 +184,7 @@ namespace N
 
     public class C : ↓INotifyPropertyChanged
     {
-        private int _value;
+        private int _p;
     }
 }";
 
@@ -196,7 +196,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int _value;
+        private int _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

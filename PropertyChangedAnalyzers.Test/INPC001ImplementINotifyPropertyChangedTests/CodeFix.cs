@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
+namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChangedTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -118,17 +118,17 @@ namespace N
 {
     public class ↓C
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
             private set
             {
-                this.value = value;
+                this.p = value;
             }
         }
     }
@@ -139,19 +139,19 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
             private set
             {
-                this.value = value;
+                this.p = value;
             }
         }
 
@@ -173,12 +173,12 @@ namespace N
 {
     public class ↓C
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            private set => this.value = value;
+            get => this.p;
+            private set => this.p = value;
         }
     }
 }";
@@ -188,14 +188,14 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            private set => this.value = value;
+            get => this.p;
+            private set => this.p = value;
         }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -216,17 +216,17 @@ namespace N
 {
     public class ↓C
     {
-        private int _value;
+        private int _p;
 
-        public int Value
+        public int P
         {
             get
             {
-                return _value;
+                return _p;
             }
             private set
             {
-                _value = value;
+                _p = value;
             }
         }
     }
@@ -237,19 +237,19 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int _value;
+        private int _p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return _value;
+                return _p;
             }
             private set
             {
-                _value = value;
+                _p = value;
             }
         }
 

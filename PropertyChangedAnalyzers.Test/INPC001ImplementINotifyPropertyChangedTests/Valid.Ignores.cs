@@ -251,12 +251,12 @@ namespace N
     public class WpfControl : Control
     {
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value),
+            nameof(P),
             typeof(int),
             typeof(WpfControl),
             new PropertyMetadata(default(int)));
 
-        public int Value
+        public int P
         {
             get { return (int) this.GetValue(ValueProperty); }
             set { this.SetValue(ValueProperty, value); }
@@ -427,9 +427,9 @@ namespace N
                 RoslynAssert.Valid(Analyzer, code);
             }
 
-            [TestCase("Value = value;")]
-            [TestCase("Value++;")]
-            [TestCase("Value--;")]
+            [TestCase("P = value;")]
+            [TestCase("P++;")]
+            [TestCase("P--;")]
             public static void PrivateSetterOnlyAssignedInCtor(string expression)
             {
                 var code = @"
@@ -443,20 +443,20 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(int value)
+        public C(int p)
         {
-            Value = value;
+            P = p;
         }
 
         [DataMember]
-        public int Value { get; private set; }
+        public int P { get; private set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("Value = value;", expression);
+}".AssertReplace("P = value;", expression);
 
                 RoslynAssert.Valid(Analyzer, code);
             }
