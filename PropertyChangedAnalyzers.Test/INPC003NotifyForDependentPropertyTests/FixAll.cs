@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
+namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;

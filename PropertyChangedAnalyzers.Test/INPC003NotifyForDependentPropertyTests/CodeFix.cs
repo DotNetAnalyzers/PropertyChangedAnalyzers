@@ -709,7 +709,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.FullName}"";
+        public string P1 => $""Hello {this.FullName}"";
 
         public string FullName
         {
@@ -756,7 +756,7 @@ namespace N
                 this.lastName = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.FullName));
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -780,7 +780,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.FullName}"";
+        public string P1 => $""Hello {this.FullName}"";
 
         public string FullName
         {
@@ -806,7 +806,7 @@ namespace N
 
                 this.firstName = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
                 this.OnPropertyChanged(nameof(this.FullName));
             }
         }
@@ -828,7 +828,7 @@ namespace N
                 this.lastName = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.FullName));
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -858,7 +858,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.FullName}"";
+        public string P1 => $""Hello {this.FullName}"";
 
         public string FullName
         {
@@ -907,7 +907,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.FullName}"";
+        public string P1 => $""Hello {this.FullName}"";
 
         public string FullName
         {
@@ -933,7 +933,7 @@ namespace N
 
                 this.firstName = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
                 this.OnPropertyChanged(nameof(this.FullName));
             }
         }
@@ -949,8 +949,8 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase("=> CreateGreeting()")]
-        [TestCase("=> this.CreateGreeting()")]
+        [TestCase("=> CreateP1()")]
+        [TestCase("=> this.CreateP1()")]
         public static void WhenUsingPropertiesExpressionCallingMethod(string call)
         {
             var before = @"
@@ -966,7 +966,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => CreateGreeting();
+        public string P1 => CreateP1();
 
         public string FullName
         {
@@ -1013,18 +1013,18 @@ namespace N
                 this.lastName = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.FullName));
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
-        public string CreateGreeting() => $""Hello {this.FullName}"";
+        public string CreateP1() => $""Hello {this.FullName}"";
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("=> CreateGreeting()", call);
+}".AssertReplace("=> CreateP1()", call);
 
             var after = @"
 namespace N
@@ -1039,7 +1039,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => CreateGreeting();
+        public string P1 => CreateP1();
 
         public string FullName
         {
@@ -1065,7 +1065,7 @@ namespace N
 
                 this.firstName = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
                 this.OnPropertyChanged(nameof(this.FullName));
             }
         }
@@ -1087,18 +1087,18 @@ namespace N
                 this.lastName = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.FullName));
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
-        public string CreateGreeting() => $""Hello {this.FullName}"";
+        public string CreateP1() => $""Hello {this.FullName}"";
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("=> CreateGreeting()", call);
+}".AssertReplace("=> CreateP1()", call);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
@@ -2109,49 +2109,49 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string p2;
+        private string p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string[] Names => new[] { this.firstName, this.lastName };
+        public string[] P1 => new[] { this.p2, this.p3 };
 
-        public string FirstName
+        public string P2
         {
             get
             {
-                return this.firstName;
+                return this.p2;
             }
 
             set
             {
-                if (value == this.firstName)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                ↓this.firstName = value;
+                ↓this.p2 = value;
                 this.OnPropertyChanged();
             }
         }
 
-        public string LastName
+        public string P3
         {
             get
             {
-                return this.lastName;
+                return this.p3;
             }
 
             set
             {
-                if (value == this.lastName)
+                if (value == this.p3)
                 {
                     return;
                 }
 
-                this.lastName = value;
+                this.p3 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Names));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -2170,50 +2170,50 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string p2;
+        private string p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string[] Names => new[] { this.firstName, this.lastName };
+        public string[] P1 => new[] { this.p2, this.p3 };
 
-        public string FirstName
+        public string P2
         {
             get
             {
-                return this.firstName;
+                return this.p2;
             }
 
             set
             {
-                if (value == this.firstName)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.firstName = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Names));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
-        public string LastName
+        public string P3
         {
             get
             {
-                return this.lastName;
+                return this.p3;
             }
 
             set
             {
-                if (value == this.lastName)
+                if (value == this.p3)
                 {
                     return;
                 }
 
-                this.lastName = value;
+                this.p3 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Names));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -2240,56 +2240,56 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string p2;
+        private string p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public IEnumerable<string> Names
+        public IEnumerable<string> P1
         {
             get
             {
-                yield return this.firstName;
-                yield return this.lastName;
+                yield return this.p2;
+                yield return this.p3;
             }
         }
 
-        public string FirstName
+        public string P2
         {
             get
             {
-                return this.firstName;
+                return this.p2;
             }
 
             set
             {
-                if (value == this.firstName)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                ↓this.firstName = value;
+                ↓this.p2 = value;
                 this.OnPropertyChanged();
             }
         }
 
-        public string LastName
+        public string P3
         {
             get
             {
-                return this.lastName;
+                return this.p3;
             }
 
             set
             {
-                if (value == this.lastName)
+                if (value == this.p3)
                 {
                     return;
                 }
 
-                this.lastName = value;
+                this.p3 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Names));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -2309,57 +2309,57 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string p2;
+        private string p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public IEnumerable<string> Names
+        public IEnumerable<string> P1
         {
             get
             {
-                yield return this.firstName;
-                yield return this.lastName;
+                yield return this.p2;
+                yield return this.p3;
             }
         }
 
-        public string FirstName
+        public string P2
         {
             get
             {
-                return this.firstName;
+                return this.p2;
             }
 
             set
             {
-                if (value == this.firstName)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.firstName = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Names));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
-        public string LastName
+        public string P3
         {
             get
             {
-                return this.lastName;
+                return this.p3;
             }
 
             set
             {
-                if (value == this.lastName)
+                if (value == this.p3)
                 {
                     return;
                 }
 
-                this.lastName = value;
+                this.p3 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Names));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 

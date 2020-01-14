@@ -60,18 +60,18 @@ namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.P2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.RaisePropertyChanged(nameof(Greeting));
+                    this.RaisePropertyChanged(nameof(P1));
                 }
             }
         }
@@ -88,18 +88,18 @@ namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello{this.P2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.RaisePropertyChanged(() => this.Greeting);
+                    this.RaisePropertyChanged(() => this.P1);
                 }
             }
         }
