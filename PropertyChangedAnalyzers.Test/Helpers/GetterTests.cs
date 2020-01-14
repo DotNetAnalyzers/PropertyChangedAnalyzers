@@ -16,7 +16,7 @@
                 @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int p1;
         private int p2;

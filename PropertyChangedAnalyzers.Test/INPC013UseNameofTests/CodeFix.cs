@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -552,12 +552,12 @@ namespace N
     using System.Windows;
     using System.Windows.Controls;
 
-    public class FooControl : Control
+    public class WpfControl : Control
     {
         public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
             ↓""Number"",
             typeof(int),
-            typeof(FooControl),
+            typeof(WpfControl),
             new PropertyMetadata(default(int)));
 
         public int Number
@@ -574,12 +574,12 @@ namespace N
     using System.Windows;
     using System.Windows.Controls;
 
-    public class FooControl : Control
+    public class WpfControl : Control
     {
         public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
             nameof(Number),
             typeof(int),
-            typeof(FooControl),
+            typeof(WpfControl),
             new PropertyMetadata(default(int)));
 
         public int Number

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -23,7 +23,7 @@ namespace N
 {
     using System;
 
-    public class Foo
+    public class C
     {
         private readonly int value;
         private int value5;
@@ -115,7 +115,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo
+    public class C
     {
         private readonly int value3;
         private readonly int value4;

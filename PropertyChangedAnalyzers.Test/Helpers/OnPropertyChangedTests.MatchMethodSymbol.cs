@@ -45,7 +45,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    internal class Foo : INotifyPropertyChanged
+    internal class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -72,7 +72,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int p;
 
@@ -173,7 +173,7 @@ namespace N
                     @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int p;
 
@@ -207,7 +207,7 @@ namespace N
                     @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private int p;
 
@@ -244,7 +244,7 @@ namespace N
                     @"
 namespace N
 {
-    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private int p;
 
@@ -281,7 +281,7 @@ namespace N
                     @"
 namespace N
 {
-    public class Foo
+    public class C
     {
         public Foo()
         {
@@ -310,7 +310,7 @@ namespace N
                     @"
 namespace N
 {
-    public class Foo : System.ComponentModel.INotifyPropertyChanged
+    public class C : System.ComponentModel.INotifyPropertyChanged
     {
         public Foo()
         {
@@ -370,7 +370,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -410,7 +410,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

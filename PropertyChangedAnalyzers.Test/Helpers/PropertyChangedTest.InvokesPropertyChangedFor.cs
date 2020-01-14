@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -24,7 +24,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int _value1;
         private int _value2;
@@ -127,7 +127,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -181,7 +181,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int value;
 
@@ -234,7 +234,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int _value1;
         private int _value2;

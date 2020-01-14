@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -37,7 +37,7 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

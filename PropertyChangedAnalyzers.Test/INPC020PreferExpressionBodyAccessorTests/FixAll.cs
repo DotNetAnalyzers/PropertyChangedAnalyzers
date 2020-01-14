@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC020PreferExpressionBodyAccessorTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC020PreferExpressionBodyAccessorTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -20,12 +20,12 @@ namespace N
     using System.Windows;
     using System.Windows.Controls;
 
-    public class FooControl : Control
+    public class WpfControl : Control
     {
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
             nameof(Bar),
             typeof(int),
-            typeof(FooControl),
+            typeof(WpfControl),
             new PropertyMetadata(default(int)));
 
         public int Bar
@@ -41,12 +41,12 @@ namespace N
     using System.Windows;
     using System.Windows.Controls;
 
-    public class FooControl : Control
+    public class WpfControl : Control
     {
         public static readonly DependencyProperty BarProperty = DependencyProperty.Register(
             nameof(Bar),
             typeof(int),
-            typeof(FooControl),
+            typeof(WpfControl),
             new PropertyMetadata(default(int)));
 
         public int Bar

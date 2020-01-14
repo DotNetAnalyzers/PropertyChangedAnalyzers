@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Linq;
     using System.Threading;
@@ -18,7 +18,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
                     @"
 namespace N
 {
-    public class Foo : Stylet.PropertyChangedBase
+    public class C : Stylet.PropertyChangedBase
     {
         private int value;
 
@@ -43,7 +43,7 @@ namespace N
                     @"
 namespace N
 {
-    public class Foo : Caliburn.Micro.PropertyChangedBase
+    public class C : Caliburn.Micro.PropertyChangedBase
     {
         private int value;
 
@@ -71,7 +71,7 @@ namespace N
                     @"
 namespace N
 {
-    public class Foo : GalaSoft.MvvmLight.ViewModelBase
+    public class C : GalaSoft.MvvmLight.ViewModelBase
     {
         private int value;
 

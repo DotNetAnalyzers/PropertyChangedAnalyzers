@@ -31,7 +31,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(""P"");
 
@@ -115,7 +115,7 @@ namespace N
     using System.Linq.Expressions;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private int p;
 

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers.SyntaxTreeHelpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers.SyntaxTreeHelpers
 {
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
@@ -14,7 +14,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers.SyntaxTreeHelpers
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int value1;
         private int value2;
@@ -44,7 +44,7 @@ namespace N
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
-    public class Foo
+    public class C
     {
         private int value1;
         private int value2;

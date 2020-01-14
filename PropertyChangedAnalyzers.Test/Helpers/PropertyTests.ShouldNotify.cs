@@ -22,7 +22,7 @@
             public static void MiscProperties(string propertyName, bool expected)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
-    public class Foo
+    public class C
     {
         public Foo(int value4, int value5)
         {
@@ -80,7 +80,7 @@
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
-    public class Foo
+    public class C
     {
         public Foo(int value4, int value5)
         {
