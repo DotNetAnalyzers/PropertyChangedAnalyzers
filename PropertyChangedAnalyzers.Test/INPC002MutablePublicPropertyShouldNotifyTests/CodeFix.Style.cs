@@ -19,7 +19,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string ↓Name { get; set; }
+        public string ↓P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -49,11 +49,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name { get => this.name; set => this.TrySet(ref this.name, value); }
+        public string P { get => this.p; set => this.TrySet(ref this.p, value); }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -91,7 +91,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string ↓Name { get; set; }
+        public string ↓P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -121,11 +121,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string _name;
+        private string _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name { get => _name; set => TrySet(ref _name, value); }
+        public string P { get => _p; set => TrySet(ref _p, value); }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -163,7 +163,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string ↓Name { get; set; }
+        public string ↓P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -193,11 +193,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string _name;
+        private string _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name { get => this._name; set => TrySet(ref this._name, value); }
+        public string P { get => this._p; set => TrySet(ref this._p, value); }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -235,7 +235,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string ↓Name { get; set; }
+        public string ↓P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -265,11 +265,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name { get => name; set => TrySet(ref name, value); }
+        public string P { get => p; set => TrySet(ref p, value); }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -307,7 +307,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string ↓Name { get; set; }
+        public string ↓P { get; set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -337,11 +337,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name { get => this.name; set => TrySet(ref this.name, value); }
+        public string P { get => this.p; set => TrySet(ref this.p, value); }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -377,14 +377,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string ↓Name
+        public string ↓P
         {
-            get => this.name;
-            set => this.name = value;
+            get => this.p;
+            set => this.p = value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -415,14 +415,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.TrySet(ref this.name, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

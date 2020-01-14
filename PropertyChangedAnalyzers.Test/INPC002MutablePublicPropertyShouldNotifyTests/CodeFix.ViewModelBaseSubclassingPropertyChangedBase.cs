@@ -239,12 +239,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get { return this.name; }
-            set { this.name = value; }
+            get { return this.p; }
+            set { this.p = value; }
         }
     }
 }";
@@ -254,12 +254,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get { return this.name; }
-            set { this.TrySet(ref this.name, value); }
+            get { return this.p; }
+            set { this.TrySet(ref this.p, value); }
         }
     }
 }";
@@ -275,12 +275,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get => this.name;
-            set => this.name = value;
+            get => this.p;
+            set => this.p = value;
         }
     }
 }";
@@ -290,12 +290,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.TrySet(ref this.name, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
     }
 }";
@@ -311,12 +311,12 @@ namespace N
 {
     public class C : N.ViewModelBase
     {
-        private string _name;
+        private string _p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return _p; }
+            set { _p = value; }
         }
     }
 }";
@@ -326,12 +326,12 @@ namespace N
 {
     public class C : N.ViewModelBase
     {
-        private string _name;
+        private string _p;
 
-        public string Name
+        public string P
         {
-            get { return _name; }
-            set { TrySet(ref _name, value); }
+            get { return _p; }
+            set { TrySet(ref _p, value); }
         }
     }
 }";
@@ -347,12 +347,12 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private string _name;
+        private string _p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get => _name;
-            set => _name = value;
+            get => _p;
+            set => _p = value;
         }
     }
 }";
@@ -362,12 +362,12 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private string _name;
+        private string _p;
 
-        public string Name
+        public string P
         {
-            get => _name;
-            set => TrySet(ref _name, value);
+            get => _p;
+            set => TrySet(ref _p, value);
         }
     }
 }";

@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -764,7 +764,7 @@ namespace ValidCode
 
     public sealed class WithEventDeclaration : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged
         {
@@ -774,18 +774,18 @@ namespace ValidCode
 
         private event PropertyChangedEventHandler propertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
 
             set
             {
-                if (value == this.name)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }

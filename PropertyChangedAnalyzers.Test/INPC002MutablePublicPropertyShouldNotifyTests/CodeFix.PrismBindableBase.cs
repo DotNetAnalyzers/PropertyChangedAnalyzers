@@ -235,12 +235,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string name;
+        private string p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get { return this.name; }
-            set { this.name = value; }
+            get { return this.p; }
+            set { this.p = value; }
         }
     }
 }";
@@ -250,12 +250,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get { return this.name; }
-            set { this.SetProperty(ref this.name, value); }
+            get { return this.p; }
+            set { this.SetProperty(ref this.p, value); }
         }
     }
 }";
@@ -271,12 +271,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string name;
+        private string p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get => this.name;
-            set => this.name = value;
+            get => this.p;
+            set => this.p = value;
         }
     }
 }";
@@ -286,12 +286,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.SetProperty(ref this.name, value);
+            get => this.p;
+            set => this.SetProperty(ref this.p, value);
         }
     }
 }";
@@ -307,12 +307,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string _name;
+        private string _p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return _p; }
+            set { _p = value; }
         }
     }
 }";
@@ -322,12 +322,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string _name;
+        private string _p;
 
-        public string Name
+        public string P
         {
-            get { return _name; }
-            set { SetProperty(ref _name, value); }
+            get { return _p; }
+            set { SetProperty(ref _p, value); }
         }
     }
 }";
@@ -343,12 +343,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string _name;
+        private string _p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get => _name;
-            set => _name = value;
+            get => _p;
+            set => _p = value;
         }
     }
 }";
@@ -358,12 +358,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string _name;
+        private string _p;
 
-        public string Name
+        public string P
         {
-            get => _name;
-            set => SetProperty(ref _name, value);
+            get => _p;
+            set => SetProperty(ref _p, value);
         }
     }
 }";
