@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -19,25 +19,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
             get
             {
-                return this.name;
+                return this.p;
             }
 
             set
             {
-                if (value == this.name)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -63,25 +63,25 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
             get
             {
-                return this.name;
+                return this.p;
             }
 
             set
             {
-                if (value == this.name)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
