@@ -24,7 +24,7 @@
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
     public class C
     {
-        public Foo(int value4, int value5)
+        public C(int value4, int value5)
         {
             this.P4 = value4;
             this.P5 = value5;
@@ -82,7 +82,7 @@ namespace N
 {
     public class C
     {
-        public Foo(int value4, int value5)
+        public C(int value4, int value5)
         {
             P4 = value4;
             P5 = value5;
