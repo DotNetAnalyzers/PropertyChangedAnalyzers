@@ -427,7 +427,7 @@ namespace N
                 RoslynAssert.Valid(Analyzer, code);
             }
 
-            [TestCase("P = value;")]
+            [TestCase("P = p;")]
             [TestCase("P++;")]
             [TestCase("P--;")]
             public static void PrivateSetterOnlyAssignedInCtor(string expression)
@@ -456,7 +456,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("P = value;", expression);
+}".AssertReplace("P = p;", expression);
 
                 RoslynAssert.Valid(Analyzer, code);
             }
