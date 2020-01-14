@@ -235,12 +235,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get { return this.name; }
-            set { this.name = value; }
+            get { return this.p; }
+            set { this.p = value; }
         }
     }
 }";
@@ -250,12 +250,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get { return this.name; }
-            set { this.Set(ref this.name, value); }
+            get { return this.p; }
+            set { this.Set(ref this.p, value); }
         }
     }
 }";
@@ -271,12 +271,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get => this.name;
-            set => this.name = value;
+            get => this.p;
+            set => this.p = value;
         }
     }
 }";
@@ -286,12 +286,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.Set(ref this.name, value);
+            get => this.p;
+            set => this.Set(ref this.p, value);
         }
     }
 }";
@@ -307,9 +307,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string ↓Name { get => this.name; set => this.name = value; }
+        public string ↓P { get => this.p; set => this.p = value; }
     }
 }";
 
@@ -318,9 +318,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string Name { get => this.name; set => this.Set(ref this.name, value); }
+        public string P { get => this.p; set => this.Set(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", metadataReferences: MetadataReferences);
@@ -335,12 +335,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _name;
+        private string _p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return _p; }
+            set { _p = value; }
         }
     }
 }";
@@ -350,12 +350,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _name;
+        private string _p;
 
-        public string Name
+        public string P
         {
-            get { return _name; }
-            set { Set(ref _name, value); }
+            get { return _p; }
+            set { Set(ref _p, value); }
         }
     }
 }";
@@ -371,12 +371,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _name;
+        private string _p;
 
-        public string ↓Name
+        public string ↓P
         {
-            get => _name;
-            set => _name = value;
+            get => _p;
+            set => _p = value;
         }
     }
 }";
@@ -386,12 +386,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _name;
+        private string _p;
 
-        public string Name
+        public string P
         {
-            get => _name;
-            set => Set(ref _name, value);
+            get => _p;
+            set => Set(ref _p, value);
         }
     }
 }";
