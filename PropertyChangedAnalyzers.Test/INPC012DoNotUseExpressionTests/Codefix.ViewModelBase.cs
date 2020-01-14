@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -52,18 +52,18 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public int Name
+        public string P2
         {
-            get { return this.p; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.p, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(↓() => this.Greeting);
+                    this.OnPropertyChanged(↓() => this.P1);
                 }
             }
         }
@@ -75,18 +75,18 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public int Name
+        public string P2
         {
-            get { return this.p; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.p, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -103,18 +103,18 @@ namespace N.Client
 {
     internal class C : N.Core.ViewModelBase
     {
-        private int name;
+        private string p2;
 
-        internal string Greeting => $""Hello{this.Name}"";
+        internal string P1 => $""Hello {this.p2}"";
 
-        internal int Name
+        internal string P2
         {
-            get { return this.p; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.p, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(↓() => this.Greeting);
+                    this.OnPropertyChanged(↓() => this.P1);
                 }
             }
         }
@@ -126,18 +126,18 @@ namespace N.Client
 {
     internal class C : N.Core.ViewModelBase
     {
-        private int name;
+        private string p2;
 
-        internal string Greeting => $""Hello{this.Name}"";
+        internal string P1 => $""Hello {this.p2}"";
 
-        internal int Name
+        internal string P2
         {
-            get { return this.p; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.p, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }

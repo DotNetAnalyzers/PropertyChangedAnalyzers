@@ -407,14 +407,14 @@ namespace N.Client
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         ↓public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get { return this.name; }
-            set { this.TrySet(ref this.name, value); }
+            get { return this.p; }
+            set { this.TrySet(ref this.p, value); }
         }
 
         protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
@@ -440,14 +440,14 @@ namespace N.Client
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get { return this.name; }
-            set { this.TrySet(ref this.name, value); }
+            get { return this.p; }
+            set { this.TrySet(ref this.p, value); }
         }
 
         protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)

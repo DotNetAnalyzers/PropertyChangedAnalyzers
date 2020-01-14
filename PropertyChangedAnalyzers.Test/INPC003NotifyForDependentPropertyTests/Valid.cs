@@ -571,16 +571,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name => this.name;
+        public string P => this.p;
 
-        protected virtual void UpdateName(string name)
+        protected virtual void UpdateName(string p)
         {
-            this.name = name;
-            this.OnPropertyChanged(nameof(Name));
+            this.p = p;
+            this.OnPropertyChanged(nameof(P));
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -605,20 +605,20 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private readonly object gate = new object();
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name => this.name;
+        public string P => this.p;
 
-        protected virtual void UpdateName(string name)
+        protected virtual void Update(string p)
         {
             lock (this.gate)
             {
-                this.name = name;
+                this.p = p;
             }
 
-            this.OnPropertyChanged(nameof(Name));
+            this.OnPropertyChanged(nameof(P));
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -642,20 +642,20 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public C()
         {
             this.PropertyChanged += (o, e) =>
                 {
-                    this.name = this.name + ""meh"";
-                    this.OnPropertyChanged(nameof(this.Name));
+                    this.p = this.p + ""meh"";
+                    this.OnPropertyChanged(nameof(this.P));
                 };
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name => this.name;
+        public string P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -715,7 +715,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public void M(int a)
         {
@@ -732,7 +732,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name => this.name;
+        public string P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

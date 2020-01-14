@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
+namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -52,12 +52,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get { return this.name; }
-            set { this.TrySet(ref this.name, value); }
+            get { return this.p; }
+            set { this.TrySet(ref this.p, value); }
         }
     }
 }";
@@ -102,12 +102,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get { return this.name; }
-            set { this.TrySet(ref this.name, value); }
+            get { return this.p; }
+            set { this.TrySet(ref this.p, value); }
         }
     }
 }";
@@ -122,12 +122,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.TrySet(ref this.name, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
     }
 }";
@@ -220,11 +220,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
     {
-        private int name;
+        private string name;
 
         public string Greeting => $""Hello{this.Name}"";
 
-        public int Name
+        public string Name
         {
             get { return this.name; }
             set

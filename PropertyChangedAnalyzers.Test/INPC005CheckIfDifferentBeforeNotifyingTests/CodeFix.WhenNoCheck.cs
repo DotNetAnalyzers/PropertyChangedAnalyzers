@@ -707,16 +707,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                this.name = value;
+                this.p = value;
                 ↓this.OnPropertyChanged();
             }
         }
@@ -750,14 +750,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.TrySet(ref this.name, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
 
         protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
@@ -793,17 +793,17 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                this.name = value;
-                ↓this.OnPropertyChanged(nameof(this.Name));
+                this.p = value;
+                ↓this.OnPropertyChanged(nameof(this.P));
             }
         }
 
@@ -834,14 +834,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.TrySet(ref this.name, value, nameof(this.Name));
+            get => this.p;
+            set => this.TrySet(ref this.p, value, nameof(this.P));
         }
 
         protected bool TrySet<T>(ref T field, T value, string propertyName)
@@ -877,17 +877,17 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string _name;
+        private string _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => _name;
+            get => _p;
             set
             {
-                _name = value;
-                ↓OnPropertyChanged(nameof(Name));
+                _p = value;
+                ↓OnPropertyChanged(nameof(P));
             }
         }
 
@@ -918,14 +918,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string _name;
+        private string _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
-            get => _name;
-            set => TrySet(ref _name, value, nameof(Name));
+            get => _p;
+            set => TrySet(ref _p, value, nameof(P));
         }
 
         protected bool TrySet<T>(ref T field, T value, string propertyName)

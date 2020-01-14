@@ -20,18 +20,18 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public int Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.NotifyOfPropertyChange(↓() => this.Greeting);
+                    this.NotifyOfPropertyChange(↓() => this.P1);
                 }
             }
         }
@@ -43,18 +43,18 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public int Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.NotifyOfPropertyChange(nameof(this.Greeting));
+                    this.NotifyOfPropertyChange(nameof(this.P1));
                 }
             }
         }
@@ -71,18 +71,18 @@ namespace N
 {
     internal class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        internal int Name
+        internal string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.NotifyOfPropertyChange(↓() => this.Greeting);
+                    this.NotifyOfPropertyChange(↓() => this.P1);
                 }
             }
         }
@@ -94,18 +94,18 @@ namespace N
 {
     internal class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        internal int Name
+        internal string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.NotifyOfPropertyChange(nameof(this.Greeting));
+                    this.NotifyOfPropertyChange(nameof(this.P1));
                 }
             }
         }

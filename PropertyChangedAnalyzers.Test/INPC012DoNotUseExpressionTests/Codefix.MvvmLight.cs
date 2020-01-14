@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpressionTests
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
@@ -20,18 +20,18 @@ namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public int Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.RaisePropertyChanged(↓() => this.Greeting);
+                    this.RaisePropertyChanged(↓() => this.P1);
                 }
             }
         }
@@ -43,18 +43,18 @@ namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public int Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.RaisePropertyChanged(nameof(this.Greeting));
+                    this.RaisePropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -71,18 +71,18 @@ namespace N
 {
     internal class C : GalaSoft.MvvmLight.ViewModelBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        internal int Name
+        internal string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.RaisePropertyChanged(↓() => this.Greeting);
+                    this.RaisePropertyChanged(↓() => this.P1);
                 }
             }
         }
@@ -94,18 +94,18 @@ namespace N
 {
     internal class C : GalaSoft.MvvmLight.ViewModelBase
     {
-        private int name;
+        private string p2;
 
-        public string Greeting => $""Hello{this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        internal int Name
+        internal string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.Set(ref this.name, value))
+                if (this.Set(ref this.p2, value))
                 {
-                    this.RaisePropertyChanged(nameof(this.Greeting));
+                    this.RaisePropertyChanged(nameof(this.P1));
                 }
             }
         }

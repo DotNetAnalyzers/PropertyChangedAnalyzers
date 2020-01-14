@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
@@ -20,14 +20,14 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                this.name = value;
+                this.p = value;
                 ↓this.NotifyOfPropertyChange();
             }
         }
@@ -39,19 +39,19 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                if (value == this.name)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p = value;
                 this.NotifyOfPropertyChange();
             }
         }
@@ -69,14 +69,14 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                this.name = value;
+                this.p = value;
                 ↓this.NotifyOfPropertyChange();
             }
         }
@@ -88,12 +88,12 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.SetAndNotify(ref this.name, value);
+            get => this.p;
+            set => this.SetAndNotify(ref this.p, value);
         }
     }
 }";
@@ -109,15 +109,15 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                this.name = value;
-                ↓this.NotifyOfPropertyChange(() => this.Name);
+                this.p = value;
+                ↓this.NotifyOfPropertyChange(() => this.P);
             }
         }
     }
@@ -128,12 +128,12 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.SetAndNotify(ref this.name, value);
+            get => this.p;
+            set => this.SetAndNotify(ref this.p, value);
         }
     }
 }";
@@ -149,17 +149,17 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                this.SetAndNotify(ref this.name, value);
-                ↓this.NotifyOfPropertyChange(nameof(this.Greeting));
+                this.SetAndNotify(ref this.p2, value);
+                ↓this.NotifyOfPropertyChange(nameof(this.P1));
             }
         }
     }
@@ -170,18 +170,18 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.SetAndNotify(ref this.name, value))
+                if (this.SetAndNotify(ref this.p2, value))
                 {
-                    this.NotifyOfPropertyChange(nameof(this.Greeting));
+                    this.NotifyOfPropertyChange(nameof(this.P1));
                 }
             }
         }
@@ -199,17 +199,17 @@ namespace N
 {
     internal class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p2;
 
-        internal string Greeting => $""Hello {this.Name}"";
+        internal string P1 => $""Hello {this.p2}"";
 
-        internal string Name
+        internal string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                this.SetAndNotify(ref this.name, value);
-                ↓this.NotifyOfPropertyChange(nameof(this.Greeting));
+                this.SetAndNotify(ref this.p2, value);
+                ↓this.NotifyOfPropertyChange(nameof(this.P1));
             }
         }
     }
@@ -220,18 +220,18 @@ namespace N
 {
     internal class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p2;
 
-        internal string Greeting => $""Hello {this.Name}"";
+        internal string P1 => $""Hello {this.p2}"";
 
-        internal string Name
+        internal string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.SetAndNotify(ref this.name, value))
+                if (this.SetAndNotify(ref this.p2, value))
                 {
-                    this.NotifyOfPropertyChange(nameof(this.Greeting));
+                    this.NotifyOfPropertyChange(nameof(this.P1));
                 }
             }
         }
@@ -249,20 +249,20 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.SetAndNotify(ref this.name, value))
+                if (this.SetAndNotify(ref this.p2, value))
                 {
                 }
 
-                ↓this.NotifyOfPropertyChange(nameof(this.Greeting));
+                ↓this.NotifyOfPropertyChange(nameof(this.P1));
             }
         }
     }
@@ -273,18 +273,18 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.SetAndNotify(ref this.name, value))
+                if (this.SetAndNotify(ref this.p2, value))
                 {
-                    this.NotifyOfPropertyChange(nameof(this.Greeting));
+                    this.NotifyOfPropertyChange(nameof(this.P1));
                 }
             }
         }
@@ -302,23 +302,23 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.P1}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.SetAndNotify(ref this.name, value))
+                if (this.SetAndNotify(ref this.p3, value))
                 {
-                    this.NotifyOfPropertyChange(nameof(this.Greeting1));
+                    this.NotifyOfPropertyChange(nameof(this.P1));
                 }
 
-                ↓this.NotifyOfPropertyChange(nameof(this.Greeting2));
+                ↓this.NotifyOfPropertyChange(nameof(this.P2));
             }
         }
     }
@@ -329,21 +329,21 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.P1}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.SetAndNotify(ref this.name, value))
+                if (this.SetAndNotify(ref this.p3, value))
                 {
-                    this.NotifyOfPropertyChange(nameof(this.Greeting1));
-                    this.NotifyOfPropertyChange(nameof(this.Greeting2));
+                    this.NotifyOfPropertyChange(nameof(this.P1));
+                    this.NotifyOfPropertyChange(nameof(this.P2));
                 }
             }
         }
@@ -361,20 +361,20 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.SetAndNotify(ref this.name, value))
-                    this.NotifyOfPropertyChange(nameof(this.Greeting1));
-                ↓this.NotifyOfPropertyChange(nameof(this.Greeting2));
+                if (this.SetAndNotify(ref this.p3, value))
+                    this.NotifyOfPropertyChange(nameof(this.P1));
+                ↓this.NotifyOfPropertyChange(nameof(this.P2));
             }
         }
     }
@@ -385,21 +385,21 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.SetAndNotify(ref this.name, value))
+                if (this.SetAndNotify(ref this.p3, value))
                 {
-                    this.NotifyOfPropertyChange(nameof(this.Greeting1));
-                    this.NotifyOfPropertyChange(nameof(this.Greeting2));
+                    this.NotifyOfPropertyChange(nameof(this.P1));
+                    this.NotifyOfPropertyChange(nameof(this.P2));
                 }
             }
         }

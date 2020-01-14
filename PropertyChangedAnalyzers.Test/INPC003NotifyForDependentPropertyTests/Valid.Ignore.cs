@@ -322,16 +322,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
-        public C(string name)
+        public C(string p)
         {
-            this.name = name;
+            this.p = p;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name => this.name;
+        public string P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -354,15 +354,15 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name => this.name;
+        public string P => this.p;
 
-        public C Create(string name)
+        public C Create(string p)
         {
-            return new C { name = name };
+            return new C { p = p };
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -417,17 +417,17 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
         private int getCount;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
             get
             {
                 this.getCount++;
-                return this.name;
+                return this.p;
             }
         }
 
@@ -452,20 +452,20 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
             get
             {
-                if (this.name == null)
+                if (this.p == null)
                 {
-                    this.name = string.Empty;
+                    this.p = string.Empty;
                 }
 
-                return this.name;
+                return this.p;
             }
         }
 
@@ -490,11 +490,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name => this.name ?? (this.name = string.Empty);
+        public string P => this.p ?? (this.p = string.Empty);
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -518,17 +518,17 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged, IDisposable
     {
-        private string name;
+        private string p;
         private bool disposed;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name
+        public string P
         {
             get
             {
                 this.ThrowIfDisposed();
-                return this.name ?? (this.name = string.Empty);
+                return this.p ?? (this.p = string.Empty);
             }
         }
 

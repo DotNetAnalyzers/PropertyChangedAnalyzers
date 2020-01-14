@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -52,14 +52,14 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                this.name = value;
+                this.p = value;
                 ↓this.OnPropertyChanged();
             }
         }
@@ -71,19 +71,19 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                if (value == this.name)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -101,14 +101,14 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                this.name = value;
+                this.p = value;
                 ↓this.OnPropertyChanged();
             }
         }
@@ -120,12 +120,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.TrySet(ref this.name, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
     }
 }";
@@ -141,14 +141,14 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string _name;
+        private string _p;
 
-        public string Name
+        public string P
         {
-            get => _name;
+            get => _p;
             set
             {
-                _name = value;
+                _p = value;
                 ↓OnPropertyChanged();
             }
         }
@@ -160,12 +160,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string _name;
+        private string _p;
 
-        public string Name
+        public string P
         {
-            get => _name;
-            set => TrySet(ref _name, value);
+            get => _p;
+            set => TrySet(ref _p, value);
         }
     }
 }";
@@ -181,15 +181,15 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
+            get => this.p;
             set
             {
-                this.name = value;
-                ↓this.OnPropertyChanged(() => this.Name);
+                this.p = value;
+                ↓this.OnPropertyChanged(() => this.P);
             }
         }
     }
@@ -200,12 +200,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.TrySet(ref this.name, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
     }
 }";
@@ -221,17 +221,17 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                this.TrySet(ref this.name, value)
-                ↓this.OnPropertyChanged(nameof(this.Greeting));
+                this.TrySet(ref this.p2, value)
+                ↓this.OnPropertyChanged(nameof(this.P1));
             }
         }
     }
@@ -242,18 +242,18 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -271,20 +271,20 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
                 }
 
-                ↓this.OnPropertyChanged(nameof(this.Greeting));
+                ↓this.OnPropertyChanged(nameof(this.P1));
             }
         }
     }
@@ -295,18 +295,18 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -325,17 +325,17 @@ namespace N.Client
 {
     internal class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        internal string Greeting => $""Hello {this.Name}"";
+        internal string P1 => $""Hello {this.p2}"";
 
-        internal string Name
+        internal string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                this.TrySet(ref this.name, value)
-                ↓this.OnPropertyChanged(nameof(this.Greeting));
+                this.TrySet(ref this.p2, value)
+                ↓this.OnPropertyChanged(nameof(this.P1));
             }
         }
     }
@@ -346,18 +346,18 @@ namespace N.Client
 {
     internal class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        internal string Greeting => $""Hello {this.Name}"";
+        internal string P1 => $""Hello {this.p2}"";
 
-        internal string Name
+        internal string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -375,20 +375,20 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
                 }
 
-                ↓this.OnPropertyChanged(nameof(this.Greeting));
+                ↓this.OnPropertyChanged(nameof(this.P1));
             }
         }
     }
@@ -399,18 +399,18 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -428,23 +428,23 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p3, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting1));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
 
-                ↓this.OnPropertyChanged(nameof(this.Greeting2));
+                ↓this.OnPropertyChanged(nameof(this.P2));
             }
         }
     }
@@ -455,21 +455,21 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p3, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting1));
-                    this.OnPropertyChanged(nameof(this.Greeting2));
+                    this.OnPropertyChanged(nameof(this.P1));
+                    this.OnPropertyChanged(nameof(this.P2));
                 }
             }
         }
@@ -487,20 +487,20 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.TrySet(ref this.name, value))
-                    this.OnPropertyChanged(nameof(this.Greeting1));
-                ↓this.OnPropertyChanged(nameof(this.Greeting2));
+                if (this.TrySet(ref this.p3, value))
+                    this.OnPropertyChanged(nameof(this.P1));
+                ↓this.OnPropertyChanged(nameof(this.P2));
             }
         }
     }
@@ -511,21 +511,21 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p3, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting1));
-                    this.OnPropertyChanged(nameof(this.Greeting2));
+                    this.OnPropertyChanged(nameof(this.P1));
+                    this.OnPropertyChanged(nameof(this.P2));
                 }
             }
         }

@@ -196,18 +196,18 @@ namespace N
         {
             get
             {
-                return name;
+                return p;
             }
 
             set
             {
-                if (value == name)
+                if (value == p)
                 {
                     return;
                 }
 
-                name = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""Name""));
+                p = value;
+                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""P""));
             }
         }
     }
@@ -229,18 +229,18 @@ namespace N
         {
             get
             {
-                return name;
+                return p;
             }
 
             set
             {
-                if (value == name)
+                if (value == p)
                 {
                     return;
                 }
 
-                name = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(Name)));
+                p = value;
+                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
             }
         }
     }
@@ -268,18 +268,18 @@ namespace N
         {
             get
             {
-                return name;
+                return p;
             }
 
             set
             {
-                if (value == name)
+                if (value == p)
                 {
                     return;
                 }
 
-                name = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""Name""));
+                p = value;
+                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""P""));
             }
         }
 
@@ -314,18 +314,18 @@ namespace N
         {
             get
             {
-                return name;
+                return p;
             }
 
             set
             {
-                if (value == name)
+                if (value == p)
                 {
                     return;
                 }
 
-                name = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(Name)));
+                p = value;
+                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
             }
         }
 

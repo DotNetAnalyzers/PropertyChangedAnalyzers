@@ -20,12 +20,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get { return this.name; }
-            set { this.SetProperty(ref this.name, value); }
+            get { return this.p; }
+            set { this.SetProperty(ref this.p, value); }
         }
     }
 }";
@@ -40,12 +40,12 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string name;
+        private string p;
 
-        public string Name
+        public string P
         {
-            get => this.name;
-            set => this.SetProperty(ref this.name, value);
+            get => this.p;
+            set => this.SetProperty(ref this.p, value);
         }
     }
 }";
@@ -88,11 +88,11 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private int name;
+        private string name;
 
         public string Greeting => $""Hello{this.Name}"";
 
-        public int Name
+        public string Name
         {
             get { return this.name; }
             set

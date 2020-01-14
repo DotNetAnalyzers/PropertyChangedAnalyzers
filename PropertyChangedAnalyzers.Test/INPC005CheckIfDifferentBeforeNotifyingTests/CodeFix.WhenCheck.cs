@@ -21,19 +21,19 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                this.TrySet(ref this.name, value)
-                ↓this.OnPropertyChanged(nameof(this.Greeting));
+                this.TrySet(ref this.p2, value)
+                ↓this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -67,20 +67,20 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -119,20 +119,20 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get => this.name;
+            get => this.p2;
             set
             {
                 // note the semicolon here
-                if (this.TrySet(ref this.name, value));
-                ↓this.OnPropertyChanged(nameof(this.Greeting));
+                if (this.TrySet(ref this.p2, value));
+                ↓this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -164,21 +164,21 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get => this.name;
+            get => this.p2;
             set
             {
                 // note the semicolon here
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -219,22 +219,22 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
                 }
 
-                ↓this.OnPropertyChanged(nameof(this.Greeting));
+                ↓this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -268,20 +268,20 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -322,25 +322,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hello {this.Name}"";
+        public string P2 => $""Hello {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p3, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting1));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
 
-                ↓this.OnPropertyChanged(nameof(this.Greeting2));
+                ↓this.OnPropertyChanged(nameof(this.P2));
             }
         }
 
@@ -374,23 +374,23 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hello {this.Name}"";
+        public string P2 => $""Hello {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p3, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting1));
-                    this.OnPropertyChanged(nameof(this.Greeting2));
+                    this.OnPropertyChanged(nameof(this.P1));
+                    this.OnPropertyChanged(nameof(this.P2));
                 }
             }
         }
@@ -431,23 +431,23 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hello {this.Name}"";
+        public string P2 => $""Hello {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.TrySet(ref this.name, value))
-                    this.OnPropertyChanged(nameof(this.Greeting1));
+                if (this.TrySet(ref this.p3, value))
+                    this.OnPropertyChanged(nameof(this.P1));
 
-                ↓this.OnPropertyChanged(nameof(this.Greeting2));
+                ↓this.OnPropertyChanged(nameof(this.P2));
             }
         }
 
@@ -481,23 +481,23 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.p3}"";
 
-        public string Greeting2 => $""Hello {this.Name}"";
+        public string P2 => $""Hello {this.p3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p3, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting1));
-                    this.OnPropertyChanged(nameof(this.Greeting2));
+                    this.OnPropertyChanged(nameof(this.P1));
+                    this.OnPropertyChanged(nameof(this.P2));
                 }
             }
         }
