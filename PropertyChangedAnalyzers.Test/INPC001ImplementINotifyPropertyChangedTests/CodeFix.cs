@@ -334,9 +334,9 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
-        [TestCase("this.Value = 1;")]
-        [TestCase("this.Value++")]
-        [TestCase("this.Value--")]
+        [TestCase("this.P = 1;")]
+        [TestCase("this.P++")]
+        [TestCase("this.P--")]
         public static void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
         {
             var before = @"
@@ -348,14 +348,14 @@ namespace N
     {
         public C()
         {
-            Bar += (_, __) => this.Value = 1;
+            E += (_, __) => this.P = 1;
         }
 
-        public event EventHandler Bar;
+        public event EventHandler E;
 
-        public int Value { get; private set; }
+        public int P { get; private set; }
     }
-}".AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.P = 1", assignCode);
 
             var after = @"
 namespace N
@@ -366,20 +366,20 @@ namespace N
     {
         public C()
         {
-            Bar += (_, __) => this.Value = 1;
+            E += (_, __) => this.P = 1;
         }
 
-        public event EventHandler Bar;
+        public event EventHandler E;
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value { get; private set; }
+        public int P { get; private set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.P = 1", assignCode);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }

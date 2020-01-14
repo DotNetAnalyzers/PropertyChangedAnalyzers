@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -314,9 +314,9 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase("this.Value = 1;")]
-        [TestCase("this.Value++")]
-        [TestCase("this.Value--")]
+        [TestCase("this.P = 1;")]
+        [TestCase("this.P++")]
+        [TestCase("this.P--")]
         public static void WhenPrivateSetAssignedInLambdaInCtor(string assignCode)
         {
             var before = @"
@@ -330,21 +330,21 @@ namespace N
     {
         public C()
         {
-            Bar += (_, __) => this.Value = 1;
+            E += (_, __) => this.P = 1;
         }
 
-        public event EventHandler Bar;
+        public event EventHandler E;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value { get; private set; }
+        public int ↓P { get; private set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.P = 1", assignCode);
 
             var after = @"
 namespace N
@@ -355,28 +355,28 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public C()
         {
-            Bar += (_, __) => this.Value = 1;
+            E += (_, __) => this.P = 1;
         }
 
-        public event EventHandler Bar;
+        public event EventHandler E;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             private set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -386,7 +386,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.Value = 1", assignCode);
+}".AssertReplace("this.P = 1", assignCode);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
@@ -399,16 +399,16 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                this.value = value;
+                this.p = value;
             }
         }
 
@@ -424,21 +424,21 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
