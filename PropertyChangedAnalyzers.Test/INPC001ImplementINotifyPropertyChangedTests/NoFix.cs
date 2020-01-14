@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
-    public static partial class NoFix
+    public static class NoFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new ClassDeclarationAnalyzer();
         private static readonly CodeFixProvider Fix = new ImplementINotifyPropertyChangedFix();
