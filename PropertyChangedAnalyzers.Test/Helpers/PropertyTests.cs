@@ -7,10 +7,10 @@
 
     public partial class PropertyTests
     {
-        [TestCase("Value1", false)]
-        [TestCase("Value2", false)]
-        [TestCase("Value3", false)]
-        [TestCase("Value4", false)]
+        [TestCase("P1", false)]
+        [TestCase("P2", false)]
+        [TestCase("P3", false)]
+        [TestCase("P4", false)]
         [TestCase("Lazy1", true)]
         [TestCase("Lazy2", true)]
         [TestCase("Lazy3", true)]
@@ -25,8 +25,8 @@ namespace N
 
     public class C
     {
-        private readonly int value;
-        private int value5;
+        private readonly int p;
+        private int p5;
 
         private string lazy1;
         private string lazy2;
@@ -34,9 +34,9 @@ namespace N
         private string lazy4;
         private Action lazy5;
  
-        public int Value1 { get; }
+        public int P1 { get; }
 
-        public int Value2 => this.value;
+        public int P2 => this.p;
        
         public string Lazy1
         {
@@ -77,20 +77,20 @@ namespace N
 
         public Action Lazy5 => this.lazy5 ?? (this.lazy5 = new Action(() => this.lazy5 = null));
 
-        public int Value3
+        public int P3
         {
             get
             {
-                this.value;
+                this.p;
             }
         }
 
-        public int Value4 { get; set; }
+        public int P4 { get; set; }
 
-        public int Value5
+        public int P5
         {
-            get { return this.value5; }
-            set { this.value5 = value; }
+            get { return this.p5; }
+            set { this.p5 = value; }
         }
     }
 }");
@@ -100,12 +100,12 @@ namespace N
             Assert.AreEqual(expected, Property.IsLazy(property, semanticModel, CancellationToken.None));
         }
 
-        [TestCase("Value1", false)]
-        [TestCase("Value2", true)]
-        [TestCase("Value3", false)]
-        [TestCase("Value4", false)]
-        [TestCase("Value5", false)]
-        [TestCase("Value6", false)]
+        [TestCase("P1", false)]
+        [TestCase("P2", true)]
+        [TestCase("P3", false)]
+        [TestCase("P4", false)]
+        [TestCase("P5", false)]
+        [TestCase("P6", false)]
         public static void IsMutableAutoProperty(string propertyName, bool expected)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(@"
@@ -117,35 +117,35 @@ namespace N
 
     public class C
     {
-        private readonly int value3;
-        private readonly int value4;
-        private int value5;
-        private int value6;
+        private readonly int p3;
+        private readonly int p4;
+        private int p5;
+        private int p6;
 
-        public int Value1 { get; }
+        public int P1 { get; }
 
-        public int Value2 { get; set; }
+        public int P2 { get; set; }
 
-        public int Value3 => this.value3;
+        public int P3 => this.p3;
 
-        public int Value4
+        public int P4
         {
             get
             {
-                return this.value4;
+                return this.p4;
             }
         }
 
-        public int Value5
+        public int P5
         {
-            get { return this.value5; }
-            set { this.value5 = value; }
+            get { return this.p5; }
+            set { this.p5 = value; }
         }
 
-        public int Value6
+        public int P6
         {
-            get => this.value6;
-            private set => this.value6 = value;
+            get => this.p6;
+            private set => this.p6 = value;
         }
     }
 }");

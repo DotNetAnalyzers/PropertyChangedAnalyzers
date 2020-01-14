@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -24,7 +24,7 @@
                 var syntaxTree = CSharpSyntaxTree.ParseText(@"
     public class C
     {
-        public C(int value4, int value5)
+        public C(int p4, int p5)
         {
             this.P4 = value4;
             this.P5 = value5;
@@ -82,7 +82,7 @@ namespace N
 {
     public class C
     {
-        public C(int value4, int value5)
+        public C(int p4, int p5)
         {
             P4 = value4;
             P5 = value5;

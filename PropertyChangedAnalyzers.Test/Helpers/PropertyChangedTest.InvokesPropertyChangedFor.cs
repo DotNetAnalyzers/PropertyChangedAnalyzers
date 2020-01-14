@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -10,8 +10,8 @@
     {
         public static class InvokesPropertyChangedFor
         {
-            [TestCase("_value1 = value", "Value1")]
-            [TestCase("_value2 = value", "Value2")]
+            [TestCase("_p1 = value", "P1")]
+            [TestCase("_p2 = value", "P2")]
             public static void Assignment(string signature, string propertyName)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
@@ -26,54 +26,54 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int _value1;
-        private int _value2;
-        private int _value3;
+        private int _p1;
+        private int _p2;
+        private int _p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value1
+        public int P1
         {
             get
             {
-                return _value1;
+                return _p1;
             }
 
             set
             {
-                if (value == _value1)
+                if (value == _p1)
                 {
                     return;
                 }
 
-                _value1 = value;
+                _p1 = value;
                 OnPropertyChanged();
             }
         }
 
-        public int Value2
+        public int P2
         {
             get
             {
-                return _value2;
+                return _p2;
             }
 
             set
             {
-                if (value == _value2)
+                if (value == _p2)
                 {
                     return;
                 }
 
-                _value2 = value;
-                OnPropertyChanged(() => this.Value2);
+                _p2 = value;
+                OnPropertyChanged(() => this.P2);
             }
         }
 
-        public int Value3
+        public int P3
         {
-            get { return _value3; }
-            set { TrySet(ref _value3, value); }
+            get { return _p3; }
+            set { TrySet(ref _p3, value); }
         }
 
         protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
@@ -111,13 +111,13 @@ namespace N
                 Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
             }
 
-            [TestCase("this.TrySet(ref this.value, value)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, \"Value\")", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, nameof(this.Value))", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, nameof(Value))", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, null)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, string.Empty)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, \"Wrong\")", AnalysisResult.No)]
+            [TestCase("this.TrySet(ref this.p, value)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, \"P\")", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, nameof(this.P))", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, nameof(P))", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, null)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, string.Empty)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, \"Wrong\")", AnalysisResult.No)]
             public static void TrySetCallerMemberName(string trySetCode, AnalysisResult expected)
             {
                 var code = @"
@@ -129,14 +129,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            set => this.TrySet(ref this.value, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
 
         protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
@@ -156,22 +156,22 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.TrySet(ref this.value, value)", trySetCode);
+}".AssertReplace("this.TrySet(ref this.p, value)", trySetCode);
 
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var node = syntaxTree.FindArgument("ref this.value");
-                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("Value"));
+                var node = syntaxTree.FindArgument("ref this.p");
+                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("P"));
                 Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node.Expression, property, semanticModel, CancellationToken.None));
             }
 
-            [TestCase("this.TrySet(ref this.value, value, \"Value\")", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, nameof(Value))", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, nameof(this.Value))", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, null)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, string.Empty)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.value, value, \"Wrong\")", AnalysisResult.No)]
+            [TestCase("this.TrySet(ref this.p, value, \"P\")", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, nameof(P))", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, nameof(this.P))", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, null)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, string.Empty)", AnalysisResult.Yes)]
+            [TestCase("this.TrySet(ref this.p, value, \"Wrong\")", AnalysisResult.No)]
             public static void TrySet(string trySetCode, AnalysisResult expected)
             {
                 var code = @"
@@ -183,14 +183,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            set => this.TrySet(ref this.value, value, nameof(Value));
+            get => this.p;
+            set => this.TrySet(ref this.p, value, nameof(P));
         }
 
         protected bool TrySet<T>(ref T field, T value, string propertyName)
@@ -210,19 +210,19 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.TrySet(ref this.value, value, nameof(Value))", trySetCode);
+}".AssertReplace("this.TrySet(ref this.p, value, nameof(P))", trySetCode);
 
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var node = syntaxTree.FindArgument("ref this.value");
-                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("Value"));
+                var node = syntaxTree.FindArgument("ref this.p");
+                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("P"));
                 Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node.Expression, property, semanticModel, CancellationToken.None));
             }
 
-            [TestCase("_value1 = value", "Value1")]
-            [TestCase("_value2 = value", "Value2")]
-            [TestCase("TrySet(ref _value3, value);", "Value3")]
+            [TestCase("_p1 = value", "P1")]
+            [TestCase("_p2 = value", "P2")]
+            [TestCase("TrySet(ref _p3, value);", "P3")]
             public static void WhenRecursive(string signature, string propertyName)
             {
                 var syntaxTree = CSharpSyntaxTree.ParseText(
@@ -236,54 +236,54 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int _value1;
-        private int _value2;
-        private int _value3;
+        private int _p1;
+        private int _p2;
+        private int _p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value1
+        public int P1
         {
             get
             {
-                return _value1;
+                return _p1;
             }
 
             set
             {
-                if (value == _value1)
+                if (value == _p1)
                 {
                     return;
                 }
 
-                _value1 = value;
+                _p1 = value;
                 OnPropertyChanged();
             }
         }
 
-        public int Value2
+        public int P2
         {
             get
             {
-                return _value2;
+                return _p2;
             }
 
             set
             {
-                if (value == _value2)
+                if (value == _p2)
                 {
                     return;
                 }
 
-                _value2 = value;
-                OnPropertyChanged(() => this.Value2);
+                _p2 = value;
+                OnPropertyChanged(() => this.P2);
             }
         }
 
-        public int Value3
+        public int P3
         {
-            get { return _value3; }
-            set { TrySet(ref _value3, value); }
+            get { return _p3; }
+            set { TrySet(ref _p3, value); }
         }
 
         protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)

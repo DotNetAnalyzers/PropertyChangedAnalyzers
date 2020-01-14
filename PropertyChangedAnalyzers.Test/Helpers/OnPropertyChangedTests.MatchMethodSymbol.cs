@@ -124,25 +124,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -352,7 +352,7 @@ namespace N
                 else
                 {
                     // ReSharper disable once PossibleInvalidOperationException
-                    Assert.AreEqual(expected, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None).Value.AnalysisResult);
+                    Assert.AreEqual(expected, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None)?.AnalysisResult);
                 }
             }
 
@@ -477,7 +477,7 @@ namespace N
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("OnPropertyChanged()");
-                Assert.AreEqual(AnalysisResult.Maybe, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None).Value.AnalysisResult);
+                Assert.AreEqual(AnalysisResult.Maybe, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
         }
     }
