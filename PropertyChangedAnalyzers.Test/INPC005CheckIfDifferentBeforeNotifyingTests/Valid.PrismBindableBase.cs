@@ -76,21 +76,21 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.P3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.P3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.SetProperty(ref this.name, value))
+                if (this.SetProperty(ref this.p3, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting1));
-                    this.OnPropertyChanged(nameof(this.Greeting2));
+                    this.OnPropertyChanged(nameof(this.P1));
+                    this.OnPropertyChanged(nameof(this.P2));
                 }
             }
         }
@@ -107,21 +107,21 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string name;
+        private string p3;
 
-        public string Greeting1 => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.P3}"";
 
-        public string Greeting2 => $""Hej {this.Name}"";
+        public string P2 => $""Hej {this.P3}"";
 
-        public string Name
+        public string P3
         {
-            get { return this.name; }
+            get { return this.p3; }
             set
             {
-                if (this.SetProperty(ref this.name, value))
+                if (this.SetProperty(ref this.p3, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting1));
-                    this.OnPropertyChanged(nameof(this.Greeting2));
+                    this.OnPropertyChanged(nameof(this.P1));
+                    this.OnPropertyChanged(nameof(this.P2));
                 }
             }
         }
