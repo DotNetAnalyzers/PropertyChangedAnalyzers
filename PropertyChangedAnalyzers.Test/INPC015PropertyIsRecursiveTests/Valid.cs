@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursiveTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -21,26 +21,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -65,12 +65,12 @@ namespace N
 
     public class C
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            set => this.value = value;
+            get => this.p;
+            set => this.p = value;
         }
     }
 }";
@@ -86,12 +86,12 @@ namespace N
 {
     public class A
     {
-        public virtual int Value => 1;
+        public virtual int P => 1;
     }
 
     public class B : A
     {
-        public override int Value => base.Value;
+        public override int P => base.P;
     }
 }";
 
@@ -106,15 +106,15 @@ namespace N
 {
     public class C1
     {
-        public virtual int Value { get; set; }
+        public virtual int P { get; set; }
     }
 
     public class C2 : C1
     {
-        public int Value
+        public int P
         {
-            get => base.Value;
-            set => base.Value = value;
+            get => base.P;
+            set => base.P = value;
         }
     }
 }";
@@ -209,14 +209,14 @@ namespace ValidCode.Wrapping
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
