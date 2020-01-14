@@ -14,19 +14,19 @@
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
         {
-            new TestCaseData("ReferenceType",    "ReferenceEquals(value, this.p)"),
-            new TestCaseData("ReferenceType",    "ReferenceEquals(this.p, value)"),
-            new TestCaseData("ReferenceType",    "ReferenceEquals(value, p)"),
-            new TestCaseData("ReferenceType",    "ReferenceEquals(value, P)"),
-            new TestCaseData("ReferenceType",    "ReferenceEquals(P, value)"),
-            new TestCaseData("int?",             "Nullable.Equals(value, this.p)"),
-            new TestCaseData("string",           "value.Equals(this.p)"),
-            new TestCaseData("string",           "value.Equals(p)"),
-            new TestCaseData("string",           "this.p.Equals(value)"),
-            new TestCaseData("string",           "p.Equals(value)"),
-            new TestCaseData("string",           "string.Equals(value, this.p, StringComparison.OrdinalIgnoreCase)"),
-            new TestCaseData("string",           "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
-            new TestCaseData("string",           "ReferenceEquals(value, this.p)"),
+            new TestCaseData("ReferenceType", "ReferenceEquals(value, this.p)"),
+            new TestCaseData("ReferenceType", "ReferenceEquals(this.p, value)"),
+            new TestCaseData("ReferenceType", "ReferenceEquals(value, p)"),
+            new TestCaseData("ReferenceType", "ReferenceEquals(value, P)"),
+            new TestCaseData("ReferenceType", "ReferenceEquals(P, value)"),
+            new TestCaseData("int?",          "Nullable.Equals(value, this.p)"),
+            new TestCaseData("string",        "value.Equals(this.p)"),
+            new TestCaseData("string",        "value.Equals(p)"),
+            new TestCaseData("string",        "this.p.Equals(value)"),
+            new TestCaseData("string",        "p.Equals(value)"),
+            new TestCaseData("string",        "string.Equals(value, this.p, StringComparison.OrdinalIgnoreCase)"),
+            new TestCaseData("string",        "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
+            new TestCaseData("string",        "ReferenceEquals(value, this.p)"),
         };
 
         private const string ReferenceType = @"
