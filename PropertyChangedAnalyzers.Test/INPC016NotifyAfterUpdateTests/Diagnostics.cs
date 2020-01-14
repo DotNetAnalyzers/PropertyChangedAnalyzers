@@ -165,8 +165,8 @@ namespace N
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
 
-        [TestCase("this.TrySet(ref this.name, value)")]
-        [TestCase("_ = this.TrySet(ref this.name, value)")]
+        [TestCase("this.TrySet(ref this.p2, value)")]
+        [TestCase("_ = this.TrySet(ref this.p2, value)")]
         public static void BeforeTrySet(string trySet)
         {
             var code = @"
@@ -174,21 +174,21 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.P2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                ↓this.OnPropertyChanged(nameof(this.Greeting));
-                this.TrySet(ref this.name, value);
+                ↓this.OnPropertyChanged(nameof(this.P1));
+                this.TrySet(ref this.p2, value);
             }
         }
     }
-}".AssertReplace("this.TrySet(ref this.name, value)", trySet);
+}".AssertReplace("this.TrySet(ref this.p2, value)", trySet);
 
             RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, ViewModelBaseCode, code);
         }

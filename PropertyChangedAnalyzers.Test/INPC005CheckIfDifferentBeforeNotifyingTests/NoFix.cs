@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
@@ -395,18 +395,18 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.P2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (!this.TrySet(ref this.name, value))
+                if (!this.TrySet(ref this.p2, value))
                 {
-                    ↓this.OnPropertyChanged(nameof(this.Greeting));
+                    ↓this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }

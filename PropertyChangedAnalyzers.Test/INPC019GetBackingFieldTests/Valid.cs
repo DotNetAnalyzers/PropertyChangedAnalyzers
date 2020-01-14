@@ -1,4 +1,4 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC019GetBackingFieldTests
+namespace PropertyChangedAnalyzers.Test.INPC019GetBackingFieldTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -21,26 +21,26 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get => this.name;
+            get => this.p2;
 
             set
             {
-                if (value == this.name)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -63,22 +63,22 @@ namespace ValidCode.TrySet
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
         private int value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
-            get => this.name;
+            get => this.p2;
 
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -118,29 +118,29 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.name}"";
+        public string P1 => $""Hello {this.p2}"";
 
-        public string Name
+        public string P2
         {
             get
             {
-                return this.name;
+                return this.p2;
             }
 
             set
             {
-                if (value == this.name)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 

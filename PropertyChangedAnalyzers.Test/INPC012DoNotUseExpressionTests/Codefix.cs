@@ -420,29 +420,29 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello { this.Name}"";
+        public string P1 => $""Hello { this.P2}"";
 
-        public string Name
+        public string P2
         {
             get
             {
-                return this.name;
+                return this.p2;
             }
 
             set
             {
-                if (value == this.name)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(↓() => this.Greeting);
+                this.OnPropertyChanged(↓() => this.P1);
             }
         }
 
@@ -468,29 +468,29 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string name;
+        private string p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello { this.Name}"";
+        public string P1 => $""Hello { this.P2}"";
 
-        public string Name
+        public string P2
         {
             get
             {
-                return this.name;
+                return this.p2;
             }
 
             set
             {
-                if (value == this.name)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.name = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 

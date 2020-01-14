@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -471,23 +471,23 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public C(string name)
+        public C(string p2)
         {
-            ↓this.Name = name;
+            ↓this.P2 = p2;
         }
         
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.P2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }
@@ -498,23 +498,23 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string name;
+        private string p2;
 
-        public C(string name)
+        public C(string p2)
         {
-            this.name = name;
+            this.p2 = p2;
         }
         
-        public string Greeting => $""Hello {this.Name}"";
+        public string P1 => $""Hello {this.P2}"";
 
-        public string Name
+        public string P2
         {
-            get { return this.name; }
+            get { return this.p2; }
             set
             {
-                if (this.TrySet(ref this.name, value))
+                if (this.TrySet(ref this.p2, value))
                 {
-                    this.OnPropertyChanged(nameof(this.Greeting));
+                    this.OnPropertyChanged(nameof(this.P1));
                 }
             }
         }

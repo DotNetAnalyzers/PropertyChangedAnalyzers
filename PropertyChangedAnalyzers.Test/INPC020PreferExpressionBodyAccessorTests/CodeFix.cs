@@ -188,7 +188,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.p}"";
+        public string P1 => $""Hello {this.p}"";
 
         public string P
         {
@@ -206,7 +206,7 @@ namespace N
 
                 this.p = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -226,7 +226,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Greeting => $""Hello {this.p}"";
+        public string P1 => $""Hello {this.p}"";
 
         public string P
         {
@@ -241,7 +241,7 @@ namespace N
 
                 this.p = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
