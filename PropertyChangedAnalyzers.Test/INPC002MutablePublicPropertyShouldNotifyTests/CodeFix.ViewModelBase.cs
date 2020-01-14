@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -526,7 +526,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int P;
     }
 }";
 
@@ -704,10 +704,10 @@ namespace N
     {
         private readonly C1 c1 = new C1();
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.c1.C1Value;
-            set => this.c1.C1Value = value;
+            get => this.c1.P;
+            set => this.c1.P = value;
         }
     }
 }";
@@ -721,18 +721,18 @@ namespace N
     {
         private readonly C1 c1 = new C1();
 
-        public int Value
+        public int P
         {
-            get => this.c1.C1Value;
+            get => this.c1.P;
             set
             {
-                if (value == this.c1.C1Value)
+                if (value == this.c1.P)
                 {
                     return;
                 }
 
-                this.c1.C1Value = value;
-                this.NotifyPropertyChanged(nameof(this.Value));
+                this.c1.P = value;
+                this.NotifyPropertyChanged(nameof(this.P));
             }
         }
     }
@@ -765,7 +765,7 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        public int ↓Value { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -774,20 +774,20 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.Value)));
+                this.p = value;
+                this.OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(this.P)));
             }
         }
     }

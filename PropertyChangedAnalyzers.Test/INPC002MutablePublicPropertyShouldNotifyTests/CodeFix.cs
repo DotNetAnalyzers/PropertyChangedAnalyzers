@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -461,14 +461,14 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.value;
-            set => this.value = value;
+            get => this.p;
+            set => this.p = value;
         }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -483,16 +483,16 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -515,14 +515,14 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.value;
-            set => this.value = value;
+            get => this.p;
+            set => this.p = value;
         }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -537,21 +537,21 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -574,16 +574,16 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                this.value = value;
+                this.p = value;
             }
         }
 
@@ -599,16 +599,16 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -631,14 +631,14 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.value;
-            set => this.value = value;
+            get => this.p;
+            set => this.p = value;
         }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -653,16 +653,16 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -685,7 +685,7 @@ namespace N
 {
     public class C1
     {
-        public int CValue;
+        public int P;
     }
 }";
             var before = @"
@@ -700,10 +700,10 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.c1.CValue;
-            set => this.c1.CValue = value;
+            get => this.c1.P;
+            set => this.c1.P = value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -724,17 +724,17 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.c1.CValue;
+            get => this.c1.P;
             set
             {
-                if (value == this.c1.CValue)
+                if (value == this.c1.P)
                 {
                     return;
                 }
 
-                this.c1.CValue = value;
+                this.c1.P = value;
                 this.OnPropertyChanged();
             }
         }
@@ -757,7 +757,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int P;
     }
 }";
             var before = @"
@@ -771,10 +771,10 @@ namespace N
         private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.c1.C1Value;
-            set => this.c1.C1Value = value;
+            get => this.c1.P;
+            set => this.c1.P = value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -794,12 +794,12 @@ namespace N
         private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.c1.C1Value;
+            get => this.c1.P;
             set
             {
-                this.c1.C1Value = value;
+                this.c1.P = value;
                 this.OnPropertyChanged();
             }
         }

@@ -20,12 +20,12 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return value; }
-            set { this.SetAndNotify(ref this.value, value); }
+            get { return p; }
+            set { this.SetAndNotify(ref this.p, value); }
         }
     }
 }";
@@ -41,12 +41,12 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get => value;
-            set => this.SetAndNotify(ref this.value, value);
+            get => p;
+            set => this.SetAndNotify(ref this.p, value);
         }
     }
 }";

@@ -144,16 +144,16 @@ namespace N
 
     public struct EquatableStruct : IEquatable<EquatableStruct>
     {
-        public readonly int Value;
+        public readonly int P;
 
-        public EquatableStruct(int value)
+        public EquatableStruct(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
 
         public bool Equals(EquatableStruct other)
         {
-            return this.Value == other.Value;
+            return this.P == other.P;
         }
 
         public override bool Equals(object obj)
@@ -164,7 +164,7 @@ namespace N
 
         public override int GetHashCode()
         {
-            return this.Value;
+            return this.P;
         }
     }
 }";
@@ -233,16 +233,16 @@ namespace N
 
     public struct EquatableStruct : IEquatable<EquatableStruct>
     {
-        public readonly int Value;
+        public readonly int P;
 
-        public EquatableStruct(int value)
+        public EquatableStruct(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
 
         public bool Equals(EquatableStruct other)
         {
-            return this.Value == other.Value;
+            return this.P == other.P;
         }
 
         public override bool Equals(object obj)
@@ -253,7 +253,7 @@ namespace N
 
         public override int GetHashCode()
         {
-            return this.Value;
+            return this.P;
         }
     }
 }";
@@ -321,12 +321,12 @@ namespace N
 
     public struct EquatableStruct : IEquatable<EquatableStruct>
     {
-        public readonly int Value;
+        public readonly int P;
 
 
-        public EquatableStruct(int value)
+        public EquatableStruct(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
 
         public static bool operator ==(EquatableStruct left, EquatableStruct right)
@@ -341,7 +341,7 @@ namespace N
 
         public bool Equals(EquatableStruct other)
         {
-            return this.Value == other.Value;
+            return this.P == other.P;
         }
 
         public override bool Equals(object obj)
@@ -352,7 +352,7 @@ namespace N
 
         public override int GetHashCode()
         {
-            return this.Value;
+            return this.P;
         }
     }
 }";
@@ -420,11 +420,11 @@ namespace N
 
     public struct EquatableStruct : IEquatable<EquatableStruct>
     {
-        public readonly int Value;
+        public readonly int P;
 
-        public EquatableStruct(int value)
+        public EquatableStruct(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
 
         public static bool operator ==(EquatableStruct left, EquatableStruct right)
@@ -439,7 +439,7 @@ namespace N
 
         public bool Equals(EquatableStruct other)
         {
-            return this.Value == other.Value;
+            return this.P == other.P;
         }
 
         public override bool Equals(object obj)
@@ -450,7 +450,7 @@ namespace N
 
         public override int GetHashCode()
         {
-            return this.Value;
+            return this.P;
         }
     }
 }";
@@ -516,11 +516,11 @@ namespace N
 {
     public struct NotEquatableStruct
     {
-        public readonly int Value;
+        public readonly int P;
 
-        public NotEquatableStruct(int value)
+        public NotEquatableStruct(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
     }
 }";
@@ -586,11 +586,11 @@ namespace N
 {
     public struct NotEquatableStruct
     {
-        public readonly int Value;
+        public readonly int P;
 
-        public NotEquatableStruct(int value)
+        public NotEquatableStruct(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
     }
 }";

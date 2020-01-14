@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -207,13 +207,13 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(int value)
+        public C(int p)
         {
-            Value = value;
+            P = p;
         }
 
         [DataMember]
-        public int Value { get; private set; }
+        public int P { get; private set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {

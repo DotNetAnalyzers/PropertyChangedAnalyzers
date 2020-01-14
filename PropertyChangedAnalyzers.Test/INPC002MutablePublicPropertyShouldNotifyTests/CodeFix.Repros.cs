@@ -193,10 +193,10 @@ namespace N
     {
         private readonly C1 c1 = new C1();
 
-        public int ↓Value
+        public int ↓P
         {
             get => this.c1.C1Value;
-            set => this.c1.C1Value = value;
+            set => this.c1.C1P = value;
         }
     }
 }";
@@ -210,10 +210,10 @@ namespace N
     {
         private readonly C1 c1 = new C1();
 
-        public int Value
+        public int P
         {
             get => this.c1.C1Value;
-            set => this.c1.C1Value = value;
+            set => this.c1.C1P = value;
         }
     }
 }";

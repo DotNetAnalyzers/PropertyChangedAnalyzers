@@ -20,12 +20,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return value; }
-            set { this.Set(ref this.value, value); }
+            get { return p; }
+            set { this.Set(ref this.p, value); }
         }
     }
 }";
@@ -41,12 +41,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get => value;
-            set => this.Set(ref this.value, value);
+            get => p;
+            set => this.Set(ref this.p, value);
         }
     }
 }";

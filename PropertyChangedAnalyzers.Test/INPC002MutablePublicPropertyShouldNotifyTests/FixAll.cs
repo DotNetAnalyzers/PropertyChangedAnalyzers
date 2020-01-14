@@ -22,11 +22,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int value;
+        private readonly int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.value;
+        public int P => this.p;
 
         public int ↓P1 { get; set; }
 
@@ -47,13 +47,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int value;
+        private readonly int p;
         private int p1;
         private int p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.value;
+        public int P => this.p;
 
         public int P1
         {
@@ -105,11 +105,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int value;
+        private readonly int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.value;
+        public int P => this.p;
 
         public int ↓P1 { get; set; }
 
@@ -132,14 +132,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int value;
+        private readonly int p;
         private int p1;
         private int p2;
         private int p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.value;
+        public int P => this.p;
 
         public int P1
         {
@@ -206,11 +206,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int _value;
+        private readonly int _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => _value;
+        public int P => _p;
 
         public int ↓P1 { get; set; }
 
@@ -233,14 +233,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private readonly int _value;
+        private readonly int _p;
         private int _p1;
         private int _p2;
         private int _p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => _value;
+        public int P => _p;
 
         public int P1
         {

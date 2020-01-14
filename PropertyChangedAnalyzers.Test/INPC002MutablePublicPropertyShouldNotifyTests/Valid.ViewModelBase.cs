@@ -45,12 +45,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return this.value; }
-            set { this.TrySet(ref this.value, value); }
+            get { return this.p; }
+            set { this.TrySet(ref this.p, value); }
         }
     }
 }";
@@ -66,12 +66,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return value; }
-            set { this.TrySet(ref this.value, value); }
+            get { return p; }
+            set { this.TrySet(ref this.p, value); }
         }
     }
 }";
@@ -87,12 +87,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get => value;
-            set => this.TrySet(ref this.value, value);
+            get => p;
+            set => this.TrySet(ref this.p, value);
         }
     }
 }";

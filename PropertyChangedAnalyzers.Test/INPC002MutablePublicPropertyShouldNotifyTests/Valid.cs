@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotifyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -61,25 +61,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -141,26 +141,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(() => this.Value);
+                this.p = value;
+                this.OnPropertyChanged(() => this.P);
             }
         }
 
@@ -578,7 +578,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int P;
     }
 }";
             var code = @"
@@ -592,17 +592,17 @@ namespace N
         private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.c1.C1Value;
+            get => this.c1.P;
             set
             {
-                if (value == this.c1.C1Value)
+                if (value == this.c1.P)
                 {
                     return;
                 }
 
-                this.c1.C1Value = value;
+                this.c1.P = value;
                 this.OnPropertyChanged();
             }
         }
