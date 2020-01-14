@@ -78,7 +78,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -112,7 +112,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -223,7 +223,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
             get => this.bar;
 
@@ -299,7 +299,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar { get; set; }
+        public int P { get; set; }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
