@@ -22,7 +22,7 @@ namespace N
 
     public class CustomGesture : MouseGesture
     {
-        public int ↓Foo { get; set; }
+        public int ↓P { get; set; }
     }
 }";
 
@@ -41,7 +41,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Bar { get; set; }
+        public int ↓P { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
