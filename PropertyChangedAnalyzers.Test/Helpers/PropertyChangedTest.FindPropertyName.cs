@@ -10,14 +10,14 @@
         public static class TryGetInvokedPropertyChangedName
         {
             [TestCase("this.OnPropertyChanged()")]
-            [TestCase("this.OnPropertyChanged(\"Bar\")")]
-            [TestCase("this.OnPropertyChanged(nameof(Bar))")]
-            [TestCase("this.OnPropertyChanged(nameof(this.Bar))")]
-            [TestCase("this.OnPropertyChanged(() => Bar)")]
-            [TestCase("this.OnPropertyChanged(() => this.Bar)")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"Bar\"))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)))")]
+            [TestCase("this.OnPropertyChanged(\"P\")")]
+            [TestCase("this.OnPropertyChanged(nameof(P))")]
+            [TestCase("this.OnPropertyChanged(nameof(this.P))")]
+            [TestCase("this.OnPropertyChanged(() => P)")]
+            [TestCase("this.OnPropertyChanged(() => this.P)")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"P\"))")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)))")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.P)))")]
             [TestCase("this.OnPropertyChanged(Cached)")]
             [TestCase("this.OnPropertyChanged(args)")]
             public static void WhenTrue(string call)
@@ -33,38 +33,38 @@ namespace N
 
     public class Foo : INotifyPropertyChanged
     {
-        private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(""Bar"");
+        private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(""P"");
 
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
             get
             {
-                return this.bar;
+                return this.p;
             }
 
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(""Bar"");
-                this.OnPropertyChanged(nameof(Bar));
-                this.OnPropertyChanged(nameof(this.Bar));
-                this.OnPropertyChanged(() => Bar);
-                this.OnPropertyChanged(() => this.Bar);
-                this.OnPropertyChanged(new PropertyChangedEventArgs(""Bar""));
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)));
+                this.OnPropertyChanged(""P"");
+                this.OnPropertyChanged(nameof(P));
+                this.OnPropertyChanged(nameof(this.P));
+                this.OnPropertyChanged(() => P);
+                this.OnPropertyChanged(() => this.P);
+                this.OnPropertyChanged(new PropertyChangedEventArgs(""P""));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.P)));
                 this.OnPropertyChanged(Cached);
-                var args = new PropertyChangedEventArgs(""Bar"");
+                var args = new PropertyChangedEventArgs(""P"");
                 this.OnPropertyChanged(args);
             }
         }
@@ -91,18 +91,18 @@ namespace N
                 Assert.AreEqual(call, invocation.ToString());
                 var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, findPropertyName?.Result);
-                Assert.AreEqual("Bar", findPropertyName?.Value);
+                Assert.AreEqual("P", findPropertyName?.Value);
             }
 
             [TestCase("this.OnPropertyChanged()")]
-            [TestCase("this.OnPropertyChanged(\"Bar\")")]
-            [TestCase("this.OnPropertyChanged(nameof(Bar))")]
-            [TestCase("this.OnPropertyChanged(nameof(this.Bar))")]
-            [TestCase("this.OnPropertyChanged(() => Bar)")]
-            [TestCase("this.OnPropertyChanged(() => this.Bar)")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"Bar\"))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)))")]
+            [TestCase("this.OnPropertyChanged(\"P\")")]
+            [TestCase("this.OnPropertyChanged(nameof(P))")]
+            [TestCase("this.OnPropertyChanged(nameof(this.P))")]
+            [TestCase("this.OnPropertyChanged(() => P)")]
+            [TestCase("this.OnPropertyChanged(() => this.P)")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"P\"))")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)))")]
+            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.P)))")]
             [TestCase("this.OnPropertyChanged(Cached)")]
             public static void WhenRecursive(string call)
             {
@@ -117,34 +117,34 @@ namespace N
 
     public class Foo : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
             get
             {
-                return this.bar;
+                return this.p;
             }
 
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(""Bar"");
-                this.OnPropertyChanged(nameof(Bar));
-                this.OnPropertyChanged(nameof(this.Bar));
-                this.OnPropertyChanged(() => Bar);
-                this.OnPropertyChanged(() => this.Bar);
-                this.OnPropertyChanged(new PropertyChangedEventArgs(""Bar""));
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Bar)));
-                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Bar)));
+                this.OnPropertyChanged(""P"");
+                this.OnPropertyChanged(nameof(P));
+                this.OnPropertyChanged(nameof(this.P));
+                this.OnPropertyChanged(() => P);
+                this.OnPropertyChanged(() => this.P);
+                this.OnPropertyChanged(new PropertyChangedEventArgs(""P""));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.P)));
                 this.OnPropertyChanged(Cached);
             }
         }
@@ -188,25 +188,25 @@ namespace N
     {
         private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> Cache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
 
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
             get
             {
-                return this.bar;
+                return this.p;
             }
 
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -222,7 +222,7 @@ namespace N
                 var invocation = syntaxTree.FindInvocation("this.OnPropertyChanged();");
                 var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, findPropertyName?.Result);
-                Assert.AreEqual("Bar", findPropertyName?.Value);
+                Assert.AreEqual("P", findPropertyName?.Value);
             }
 
             [TestCase("propertyName ?? string.Empty")]
@@ -241,25 +241,25 @@ namespace N
     {
         private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> Cache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
 
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
             get
             {
-                return this.bar;
+                return this.p;
             }
 
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -276,7 +276,7 @@ namespace N
                 var invocation = syntaxTree.FindInvocation("this.OnPropertyChanged();");
                 var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
                 Assert.AreEqual(AnalysisResult.Yes, findPropertyName?.Result);
-                Assert.AreEqual("Bar", findPropertyName?.Value);
+                Assert.AreEqual("P", findPropertyName?.Value);
             }
         }
     }
