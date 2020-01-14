@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesTests
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
@@ -13,26 +13,26 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypesT
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC006UseObjectEqualsForReferenceTypes);
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
-            {
-                new TestCaseData("object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
-                new TestCaseData("Object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
-                new TestCaseData("System.Object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
-                new TestCaseData("ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
-                new TestCaseData("ReferenceEquals(this.p, value)", "Equals(this.p, value)"),
-                new TestCaseData("ReferenceEquals(value, p)", "Equals(value, p)"),
-                new TestCaseData("ReferenceEquals(value, P)", "Equals(value, P)"),
-                new TestCaseData("ReferenceEquals(value, this.P)", "Equals(value, this.P)"),
-                new TestCaseData("ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
-                //new TestCaseData("Nullable.Equals(value, this.p)", "Equals(value, this.p)"),
-                //new TestCaseData("Nullable.Equals(value, this.p)", "Equals(value, this.p)"),
-                //new TestCaseData("string.Equals(value, this.p)", "Equals(value, this.p)"),
-                //new TestCaseData("String.Equals(value, this.p)", "Equals(value, this.p)"),
-                //new TestCaseData("System.String.Equals(value, this.p)", "Equals(value, this.p)"),
-                //new TestCaseData("value.Equals(this.p)", "Equals(value, this.p)"),
-                //new TestCaseData("value.Equals(p)", "Equals(value, this.p)"),
-                //new TestCaseData("this.p.Equals(value)", "Equals(value, this.p)"),
-                //new TestCaseData("p.Equals(value)", "Equals(value, this.p)"),
-            };
+        {
+            new TestCaseData("object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+            new TestCaseData("Object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+            new TestCaseData("System.Object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+            new TestCaseData("ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+            new TestCaseData("ReferenceEquals(this.p, value)", "Equals(this.p, value)"),
+            new TestCaseData("ReferenceEquals(value, p)", "Equals(value, p)"),
+            new TestCaseData("ReferenceEquals(value, P)", "Equals(value, P)"),
+            new TestCaseData("ReferenceEquals(value, this.P)", "Equals(value, this.P)"),
+            new TestCaseData("ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+            //new TestCaseData("Nullable.Equals(value, this.p)", "Equals(value, this.p)"),
+            //new TestCaseData("Nullable.Equals(value, this.p)", "Equals(value, this.p)"),
+            //new TestCaseData("string.Equals(value, this.p)", "Equals(value, this.p)"),
+            //new TestCaseData("String.Equals(value, this.p)", "Equals(value, this.p)"),
+            //new TestCaseData("System.String.Equals(value, this.p)", "Equals(value, this.p)"),
+            //new TestCaseData("value.Equals(this.p)", "Equals(value, this.p)"),
+            //new TestCaseData("value.Equals(p)", "Equals(value, this.p)"),
+            //new TestCaseData("this.p.Equals(value)", "Equals(value, this.p)"),
+            //new TestCaseData("p.Equals(value)", "Equals(value, this.p)"),
+        };
 
         private const string ReferenceType = @"
 namespace N

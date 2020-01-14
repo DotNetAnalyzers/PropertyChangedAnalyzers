@@ -13,27 +13,27 @@
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
         {
-            new TestCaseData("string", "Equals(value, this.bar)"),
-            new TestCaseData("string", "Equals(this.bar, value)"),
-            new TestCaseData("string", "Equals(value, bar)"),
-            new TestCaseData("string", "Equals(value, Bar)"),
-            new TestCaseData("string", "Equals(Bar, value)"),
-            new TestCaseData("string", "object.Equals(Bar, value)"),
-            new TestCaseData("string", "Object.Equals(Bar, value)"),
-            new TestCaseData("string", "System.Object.Equals(Bar, value)"),
-            new TestCaseData("string", "Nullable.Equals(value, this.bar)"),
-            new TestCaseData("int?",   "Nullable.Equals(value, this.bar)"),
-            new TestCaseData("int?",   "System.Nullable.Equals(value, this.bar)"),
-            new TestCaseData("string", "value.Equals(this.bar)"),
-            new TestCaseData("string", "value.Equals(bar)"),
-            new TestCaseData("string", "this.bar.Equals(value)"),
-            new TestCaseData("string", "bar.Equals(value)"),
-            new TestCaseData("string", "string.Equals(value, this.bar, StringComparison.OrdinalIgnoreCase)"),
-            new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.bar)"),
-            new TestCaseData("string", "ReferenceEquals(value, this.bar)"),
-            new TestCaseData("string", "object.ReferenceEquals(value, this.bar)"),
-            new TestCaseData("string", "Object.ReferenceEquals(value, this.bar)"),
-            new TestCaseData("string", "System.Object.ReferenceEquals(value, this.bar)"),
+            new TestCaseData("string", "Equals(value, this.p)"),
+            new TestCaseData("string", "Equals(this.p, value)"),
+            new TestCaseData("string", "Equals(value, p)"),
+            new TestCaseData("string", "Equals(value, P)"),
+            new TestCaseData("string", "Equals(P, value)"),
+            new TestCaseData("string", "object.Equals(P, value)"),
+            new TestCaseData("string", "Object.Equals(P, value)"),
+            new TestCaseData("string", "System.Object.Equals(P, value)"),
+            new TestCaseData("string", "Nullable.Equals(value, this.p)"),
+            new TestCaseData("int?",   "Nullable.Equals(value, this.p)"),
+            new TestCaseData("int?",   "System.Nullable.Equals(value, this.p)"),
+            new TestCaseData("string", "value.Equals(this.p)"),
+            new TestCaseData("string", "value.Equals(p)"),
+            new TestCaseData("string", "this.p.Equals(value)"),
+            new TestCaseData("string", "p.Equals(value)"),
+            new TestCaseData("string", "string.Equals(value, this.p, StringComparison.OrdinalIgnoreCase)"),
+            new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
+            new TestCaseData("string", "ReferenceEquals(value, this.p)"),
+            new TestCaseData("string", "object.ReferenceEquals(value, this.p)"),
+            new TestCaseData("string", "Object.ReferenceEquals(value, this.p)"),
+            new TestCaseData("string", "System.Object.ReferenceEquals(value, this.p)"),
         };
 
         [TestCaseSource(nameof(TestCases))]
@@ -48,21 +48,21 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (Equals(value, this.bar))
+                if (Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -72,7 +72,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("Equals(value, this.bar)", expression)
+}".AssertReplace("Equals(value, this.p)", expression)
   .AssertReplace("int", type);
 
             RoslynAssert.Valid(Analyzer, code);
@@ -90,18 +90,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get { return this.bar; }
+            get { return this.p; }
             set
             {
-                if (!Equals(value, this.bar))
+                if (!Equals(value, this.p))
                 {
-                    this.bar = value;
+                    this.p = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -112,7 +112,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("Equals(value, this.bar)", expression)
+}".AssertReplace("Equals(value, this.p)", expression)
   .AssertReplace("int", type);
 
             RoslynAssert.Valid(Analyzer, code);
