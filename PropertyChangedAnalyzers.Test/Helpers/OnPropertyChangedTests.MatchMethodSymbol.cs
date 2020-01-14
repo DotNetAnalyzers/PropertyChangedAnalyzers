@@ -74,22 +74,22 @@ namespace N
 
     public class Foo : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
 
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -175,19 +175,19 @@ namespace N
 {
     public class Foo : Stylet.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.NotifyOfPropertyChange();
             }
         }
@@ -209,19 +209,19 @@ namespace N
 {
     public class Foo : Caliburn.Micro.PropertyChangedBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.NotifyOfPropertyChange();
             }
         }
@@ -246,19 +246,19 @@ namespace N
 {
     public class Foo : GalaSoft.MvvmLight.ViewModelBase
     {
-        private int bar;
+        private int p;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -285,24 +285,24 @@ namespace N
     {
         public Foo()
         {
-            Bar();
+            P();
         }
 
-        private void Bar()
+        private void P()
         {
         }
     }
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("Bar();");
+                var invocation = syntaxTree.FindInvocation("P();");
                 Assert.AreEqual(null, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None));
             }
 
-            [TestCase("Bar1()", AnalysisResult.No)]
-            [TestCase("Bar2()", AnalysisResult.No)]
-            [TestCase("Bar3()", AnalysisResult.No)]
-            [TestCase("Bar4()", AnalysisResult.No)]
+            [TestCase("P1()", AnalysisResult.No)]
+            [TestCase("P2()", AnalysisResult.No)]
+            [TestCase("P3()", AnalysisResult.No)]
+            [TestCase("P4()", AnalysisResult.No)]
             [TestCase("OnPropertyChanged();", AnalysisResult.Yes)]
             public static void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, AnalysisResult expected)
             {
@@ -314,10 +314,10 @@ namespace N
     {
         public Foo()
         {
-            Bar1();
-            var a = Bar2();
-            a = Bar3();
-            if (Bar4())
+            P1();
+            var a = P2();
+            a = P3();
+            if (P4())
             {
             }
 
@@ -331,15 +331,15 @@ namespace N
             PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
 
-        private void Bar1()
+        private void P1()
         {
         }
 
-        private int Bar2() => 1;
+        private int P2() => 1;
 
-        private int Bar3() => 2;
+        private int P3() => 2;
 
-        private bool Bar4() => true;
+        private bool P4() => true;
     }
 }");
                 var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
