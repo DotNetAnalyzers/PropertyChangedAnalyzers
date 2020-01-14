@@ -7,9 +7,9 @@
 
     public static class PropertyChangedEventArgsTests
     {
-        [TestCase("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(\"Bar\");")]
-        [TestCase("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(nameof(Bar));")]
-        [TestCase("public static PropertyChangedEventArgs Cached { get; } = new PropertyChangedEventArgs(nameof(Bar));")]
+        [TestCase("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(\"P\");")]
+        [TestCase("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(nameof(P));")]
+        [TestCase("public static PropertyChangedEventArgs Cached { get; } = new PropertyChangedEventArgs(nameof(P));")]
         public static void Cached(string cached)
         {
             var code = @"
@@ -18,26 +18,25 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(""Bar"");
+        private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(""P"");
 
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
-
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged(Cached);
             }
         }
@@ -47,7 +46,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}".AssertReplace("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(\"Bar\");", cached);
+}".AssertReplace("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(\"P\");", cached);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
@@ -55,7 +54,7 @@ namespace N
             var argument = syntaxTree.FindInvocation("this.OnPropertyChanged(Cached)").ArgumentList.Arguments[0];
             var findPropertyName = PropertyChangedEventArgs.FindPropertyName(argument.Expression, semanticModel, CancellationToken.None);
             Assert.AreEqual(AnalysisResult.Yes, findPropertyName?.Result);
-            Assert.AreEqual("Bar", findPropertyName?.Value);
+            Assert.AreEqual("P", findPropertyName?.Value);
         }
 
         [Test]
@@ -68,24 +67,23 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class Foo : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private int bar;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Bar
+        public int P
         {
-            get => this.bar;
-
+            get => this.p;
             set
             {
-                if (value == this.bar)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.bar = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
