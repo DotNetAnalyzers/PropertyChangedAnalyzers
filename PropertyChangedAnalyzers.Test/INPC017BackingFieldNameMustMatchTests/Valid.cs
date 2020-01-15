@@ -126,7 +126,7 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C2 : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private readonly C1 c1 = new C1();
 
