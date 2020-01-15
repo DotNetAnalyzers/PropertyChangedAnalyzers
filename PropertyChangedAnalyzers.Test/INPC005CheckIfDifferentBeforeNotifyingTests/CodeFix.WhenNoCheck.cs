@@ -18,21 +18,21 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                this.value = value;
-                ↓this.OnPropertyChanged(nameof(Value));
+                this.p = value;
+                ↓this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -51,26 +51,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -95,21 +95,21 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal int Value
+        internal int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                this.value = value;
-                ↓this.OnPropertyChanged(nameof(Value));
+                this.p = value;
+                ↓this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -128,26 +128,26 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal int Value
+        internal int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -238,21 +238,21 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                this.value = value;
-                ↓this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                this.p = value;
+                ↓this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
     }
@@ -265,26 +265,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                this.p = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
     }
@@ -304,21 +304,21 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                this.value = value;
-                ↓this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+                this.p = value;
+                ↓this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.P)));
             }
         }
     }
@@ -332,26 +332,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.Value)));
+                this.p = value;
+                this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.P)));
             }
         }
     }
@@ -428,21 +428,21 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int _value;
+        private int _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return _value;
+                return _p;
             }
 
             set
             {
-                _value = value;
-                ↓PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                _p = value;
+                ↓PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
     }
@@ -456,26 +456,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int _value;
+        private int _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return _value;
+                return _p;
             }
 
             set
             {
-                if (value == _value)
+                if (value == _p)
                 {
                     return;
                 }
 
-                _value = value;
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                _p = value;
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
     }
@@ -495,21 +495,21 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private static readonly PropertyChangedEventArgs ValuePropertyChangedEventArgs = new PropertyChangedEventArgs(nameof(Value));
-        private int value;
+        private static readonly PropertyChangedEventArgs ValuePropertyChangedEventArgs = new PropertyChangedEventArgs(nameof(P));
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                this.value = value;
+                this.p = value;
                 ↓this.PropertyChanged.Invoke(this, ValuePropertyChangedEventArgs);
             }
         }
@@ -524,26 +524,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private static readonly PropertyChangedEventArgs ValuePropertyChangedEventArgs = new PropertyChangedEventArgs(nameof(Value));
-        private int value;
+        private static readonly PropertyChangedEventArgs ValuePropertyChangedEventArgs = new PropertyChangedEventArgs(nameof(P));
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.PropertyChanged.Invoke(this, ValuePropertyChangedEventArgs);
             }
         }
@@ -564,21 +564,21 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                this.value = value;
-                ↓this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(Value)));
+                this.p = value;
+                ↓this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
     }
@@ -592,26 +592,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(Value)));
+                this.p = value;
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
     }
@@ -628,7 +628,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int F;
     }
 }";
                 var before = @"
@@ -642,12 +642,12 @@ namespace N
         private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.c1.C1Value;
+            get => this.c1.F;
             set
             {
-                this.c1.C1Value = value;
+                this.c1.F = value;
                 ↓this.OnPropertyChanged();
             }
         }
@@ -669,17 +669,17 @@ namespace N
         private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.c1.C1Value;
+            get => this.c1.F;
             set
             {
-                if (value == this.c1.C1Value)
+                if (value == this.c1.F)
                 {
                     return;
                 }
 
-                this.c1.C1Value = value;
+                this.c1.F = value;
                 this.OnPropertyChanged();
             }
         }
@@ -961,18 +961,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => this.value * this.value;
+        public int Squared => this.p * this.p;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                this.value = value;
+                this.p = value;
                 ↓this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(Squared));
             }
@@ -993,23 +993,23 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => this.value * this.value;
+        public int Squared => this.p * this.p;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(Squared));
             }

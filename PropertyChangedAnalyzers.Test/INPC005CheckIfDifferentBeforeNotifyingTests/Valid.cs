@@ -511,8 +511,8 @@ namespace N
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [TestCase("if (Math.Abs(value - this.value) < 1e-6)")]
-        [TestCase("if (Math.Abs(this.value - value) < 1e-6)")]
+        [TestCase("if (Math.Abs(value - this.p) < 1e-6)")]
+        [TestCase("if (Math.Abs(this.p - value) < 1e-6)")]
         public static void WithCheckAndThrowBefore(string expression)
         {
             var code = @"
@@ -522,21 +522,21 @@ namespace N
 
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private double value;
+        private double p;
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public double Value
+        public double P
         {
-            get => value;
+            get => p;
 
             set
             {
-                if (Math.Abs(value - this.value) < 1e-6)
+                if (Math.Abs(value - this.p) < 1e-6)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 OnPropertyChanged();
             }
         }
@@ -546,7 +546,7 @@ namespace N
             PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("if (Math.Abs(value - this.value) < 1e-6)", expression);
+}".AssertReplace("if (Math.Abs(value - this.p) < 1e-6)", expression);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -562,28 +562,28 @@ namespace N
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private readonly object _busyLock = new object();
-        private bool _value;
+        private bool _p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
         public bool Value
         {
-            get => _value;
+            get => _p;
             private set
             {
                 lock (_busyLock)
                 {
-                    if (value && _value)
+                    if (value && _p)
                     {
                         throw new InvalidOperationException();
                     }
 
-                    if (value == _value)
+                    if (value == _p)
                     {
                         return;
                     }
 
-                    _value = value;
+                    _p = value;
                 }
 
                 OnPropertyChanged();
@@ -610,28 +610,28 @@ namespace N
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private readonly object _gate = new object();
-        private object _value;
+        private object _p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
         public object Value
         {
-            get => _value;
+            get => _p;
             private set
             {
-                if (ReferenceEquals(value, _value))
+                if (ReferenceEquals(value, _p))
                 {
                     return;
                 }
 
                 lock (_gate)
                 {
-                    if (ReferenceEquals(value, _value))
+                    if (ReferenceEquals(value, _p))
                     {
                         return;
                     }
 
-                    _value = value;
+                    _p = value;
                 }
 
                 OnPropertyChanged();
@@ -653,9 +653,9 @@ namespace N
             var c2 = @"
 namespace N
 {
-    public class C2
+    public class C1
     {
-        public int C2Value;
+        public int F;
     }
 }";
             var code = @"
@@ -664,22 +664,22 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C1 : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
-        private readonly C2 c2 = new C2();
+        private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.c2.C2Value;
+            get => this.c1.F;
             set
             {
-                if (value == this.c2.C2Value)
+                if (value == this.c1.F)
                 {
                     return;
                 }
 
-                this.c2.C2Value = value;
+                this.c1.F = value;
                 this.OnPropertyChanged();
             }
         }
