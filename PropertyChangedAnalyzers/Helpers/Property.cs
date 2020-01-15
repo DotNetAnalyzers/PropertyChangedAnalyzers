@@ -28,43 +28,6 @@
                    : null;
         }
 
-        internal static GetAndSetResult? GetsAndSetsSame(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (propertyDeclaration.TryGetGetter(out var getter) &&
-                propertyDeclaration.TryGetSetter(out var setter) &&
-                Getter.FindSingleReturned(getter) is { } get &&
-                Setter.FindSingleMutated(setter, semanticModel, cancellationToken) is { } set)
-            {
-                if (MemberPath.Equals(get, set))
-                {
-                    return new GetAndSetResult(same: true, get: get, set: set);
-                }
-
-                if (propertyDeclaration.Parent is TypeDeclarationSyntax containing)
-                {
-                    if (MemberPath.TrySingle(get, out var getMember) &&
-                        containing.TryFindProperty(getMember.Text, out var getProperty) &&
-                        FindSingleReturned(getProperty) is { } rootGet &&
-                        MemberPath.Equals(rootGet, set))
-                    {
-                        return new GetAndSetResult(same: true, get: rootGet, set: set);
-                    }
-
-                    if (MemberPath.TrySingle(set, out var setMember) &&
-                        containing.TryFindProperty(setMember.Text, out var setProperty) &&
-                        FindSingleMutated(setProperty, semanticModel, cancellationToken) is { } rootSet &&
-                        MemberPath.Equals(get, rootSet))
-                    {
-                        return new GetAndSetResult(same: true, get: get, set: rootSet);
-                    }
-                }
-
-                return new GetAndSetResult(same: false, get: get, set: set);
-            }
-
-            return null;
-        }
-
         internal static bool IsLazy(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (propertyDeclaration.TryGetSetter(out _))
