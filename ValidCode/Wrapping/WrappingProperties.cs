@@ -1,4 +1,4 @@
-namespace ValidCode.Wrapping
+﻿namespace ValidCode.Wrapping
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -29,7 +29,7 @@ namespace ValidCode.Wrapping
         {
             get => this.withProperties.P2;
 #pragma warning disable INPC003 // Notify when property changes.
-            set => this.TrySet(ref this.withProperties, new WithProperties { P1 = this.P1, P2 = this.P2 });
+            set => this.TrySet(ref this.withProperties, new WithProperties { P1 = this.P1, P2 = value });
 #pragma warning restore INPC003 // Notify when property changes.
         }
 
