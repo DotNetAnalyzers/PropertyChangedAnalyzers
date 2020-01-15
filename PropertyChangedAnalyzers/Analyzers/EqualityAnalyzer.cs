@@ -29,7 +29,7 @@
                 {
                     case InvocationExpressionSyntax invocation:
                         {
-                            if (Gu.Roslyn.AnalyzerExtensions.Equality.IsObjectReferenceEquals(invocation, context.SemanticModel, context.CancellationToken, out var x, out var y) &&
+                            if (Equality.IsObjectReferenceEquals(invocation, context.SemanticModel, context.CancellationToken, out var x, out var y) &&
                                 ShouldUseObjectEquals(x, y))
                             {
                                 context.ReportDiagnostic(
@@ -38,8 +38,8 @@
                                         invocation.GetLocation()));
                             }
 
-                            if ((Gu.Roslyn.AnalyzerExtensions.Equality.IsObjectEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y) ||
-                                 Gu.Roslyn.AnalyzerExtensions.Equality.IsInstanceEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y)) &&
+                            if ((Equality.IsObjectEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y) ||
+                                 Equality.IsInstanceEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y)) &&
                                 ShouldUseObjectReferenceEquals(x, y))
                             {
                                 context.ReportDiagnostic(
@@ -53,8 +53,8 @@
 
                     case BinaryExpressionSyntax binary:
                         {
-                            if (Gu.Roslyn.AnalyzerExtensions.Equality.IsOperatorEquals(binary, out var x, out var y) ||
-                                Gu.Roslyn.AnalyzerExtensions.Equality.IsOperatorNotEquals(binary, out x, out y))
+                            if (Equality.IsOperatorEquals(binary, out var x, out var y) ||
+                                Equality.IsOperatorNotEquals(binary, out x, out y))
                             {
                                 if (ShouldUseObjectEquals(x, y))
                                 {
