@@ -2,13 +2,13 @@
 {
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct BackingMemberMutation
+    internal struct BackingMemberAndValue
     {
         internal readonly ExpressionSyntax Member;
 
         internal readonly IdentifierNameSyntax Parameter;
 
-        internal BackingMemberMutation(ExpressionSyntax member, IdentifierNameSyntax parameter)
+        internal BackingMemberAndValue(ExpressionSyntax member, IdentifierNameSyntax parameter)
         {
             this.Member = member;
             this.Parameter = parameter;

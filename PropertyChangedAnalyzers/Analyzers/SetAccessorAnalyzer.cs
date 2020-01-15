@@ -112,7 +112,7 @@
 
         private static void HandleBody(BlockSyntax body, SyntaxNodeAnalysisContext context)
         {
-            BackingMemberMutation? mutation = null;
+            BackingMemberAndValue? mutation = null;
             bool? equals = null;
 
             if (Walk(body))
@@ -154,15 +154,9 @@
                 switch (statement)
                 {
                     case IfStatementSyntax { Condition: { } condition } ifStatement
-                        when Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out _, out _):
+                        when Setter.MatchEquals(condition, context.SemanticModel, context.CancellationToken) is { }:
                         equals = Equals(condition);
                         return WalkIfStatement(ifStatement);
-
-                    case IfStatementSyntax { Condition: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } condition } } ifStatement
-                        when Equality.IsEqualsCheck(condition, context.SemanticModel, context.CancellationToken, out _, out _):
-                        equals = !Equals(condition);
-                        return WalkIfStatement(ifStatement);
-
                     case IfStatementSyntax { Condition: InvocationExpressionSyntax trySet } ifStatement
                         when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
                         mutation = match;
@@ -173,7 +167,7 @@
                         mutation = match;
                         equals = true;
                         return WalkIfStatement(ifStatement);
-                    case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { } assignment }
+                    case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax assignment }
                         when Setter.MatchAssign(assignment, context.SemanticModel, context.CancellationToken) is { } match:
                         mutation = match;
                         return true;
@@ -238,7 +232,7 @@
                         InvocationExpressionSyntax _ => true,
                         BinaryExpressionSyntax { OperatorToken: { ValueText: "==" } } => true,
                         BinaryExpressionSyntax { OperatorToken: { ValueText: "!=" } } => false,
-                        PostfixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } operand } => !Equals(operand),
+                        PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } operand } => !Equals(operand),
                         _ => null,
                     };
                 }
@@ -261,7 +255,7 @@
             }
         }
 
-        private static bool ReturnsDifferent(BackingMemberMutation mutation, SyntaxNodeAnalysisContext context)
+        private static bool ReturnsDifferent(BackingMemberAndValue andValue, SyntaxNodeAnalysisContext context)
         {
             if (context.Node is AccessorDeclarationSyntax { Parent: AccessorListSyntax { Parent: PropertyDeclarationSyntax containingProperty } } &&
                 containingProperty.TryGetGetter(out var getter))
@@ -269,13 +263,13 @@
                 return getter switch
                 {
                     { ExpressionBody: { Expression: { } get } }
-                    => AreDifferent(get, mutation.Member, context),
+                    => AreDifferent(get, andValue.Member, context),
                     { Body: { Statements: { Count: 0 } statements } }
                     when statements[0] is ReturnStatementSyntax { Expression: { } get }
-                    => AreDifferent(get, mutation.Member, context),
+                    => AreDifferent(get, andValue.Member, context),
                     { Body: { } body }
                     when ReturnExpressionsWalker.TryGetSingle(body, out var get)
-                    => AreDifferent(get, mutation.Member, context),
+                    => AreDifferent(get, andValue.Member, context),
                     _ => false
                 };
             }

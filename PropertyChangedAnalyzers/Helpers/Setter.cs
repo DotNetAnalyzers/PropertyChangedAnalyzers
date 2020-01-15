@@ -65,39 +65,48 @@
             return null;
         }
 
-        internal static BackingMemberMutation? MatchMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static BackingMemberAndValue? MatchMutation(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             return MatchAssign(candidate, semanticModel, cancellationToken) ??
                    MatchTrySet(candidate, semanticModel, cancellationToken);
         }
 
-        internal static BackingMemberMutation? MatchAssign(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static BackingMemberAndValue? MatchAssign(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             return candidate switch
             {
                 AssignmentExpressionSyntax { Left: { } left, Right: { } right }
-                when FindParameter(right) is { } parameter &&
-                     IsMember(left) => new BackingMemberMutation(left, parameter),
+                => MatchMemberAndParameter(left, right, semanticModel, cancellationToken),
                 _ => null
             };
-
-            bool IsMember(ExpressionSyntax expression)
-            {
-                return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
-                       symbol.IsEitherKind(SymbolKind.Field, SymbolKind.Property);
-            }
         }
 
-        internal static BackingMemberMutation? MatchTrySet(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static BackingMemberAndValue? MatchTrySet(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             return candidate switch
             {
                 InvocationExpressionSyntax { ArgumentList: { Arguments: { } } } invocation
-                when TrySet.Match(invocation, semanticModel, cancellationToken) is { Field: { } field, Value: { } value } &&
-                     FindParameter(value.Expression) is { } parameter
-                => new BackingMemberMutation(field.Expression, parameter),
+                when TrySet.Match(invocation, semanticModel, cancellationToken) is { Field: { } field, Value: { } value }
+                => MatchMemberAndParameter(field.Expression, value.Expression, semanticModel, cancellationToken),
                 _ => null
             };
+        }
+
+        internal static BackingMemberAndValue? MatchEquals(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (candidate is PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } condition } &&
+                Equality.IsEqualsCheck(condition, semanticModel, cancellationToken, out var x, out var y))
+            {
+                return MatchEquals(condition, semanticModel, cancellationToken);
+            }
+
+            if (Equality.IsEqualsCheck(candidate, semanticModel, cancellationToken, out var left, out var right))
+            {
+                return MatchMemberAndParameter(left, right, semanticModel, cancellationToken) ??
+                       MatchMemberAndParameter(right, left, semanticModel, cancellationToken);
+            }
+
+            return null;
         }
 
         internal static IFieldSymbol? FindBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -137,6 +146,17 @@
             return null;
         }
 
+        internal static BackingMemberAndValue? MatchMemberAndParameter(ExpressionSyntax memberCandidate, ExpressionSyntax parameterCandidate, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (FindParameter(parameterCandidate) is { } parameter &&
+                IsMember(memberCandidate, semanticModel, cancellationToken))
+            {
+                return new BackingMemberAndValue(memberCandidate, parameter);
+            }
+
+            return null;
+        }
+
         private static IdentifierNameSyntax? FindParameter(ExpressionSyntax expression)
         {
             return expression switch
@@ -146,6 +166,12 @@
                 CastExpressionSyntax cast => FindParameter(cast.Expression),
                 _ => null
             };
+        }
+
+        private static bool IsMember(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            return semanticModel.TryGetSymbol(expression, cancellationToken, out var symbol) &&
+                   symbol.IsEitherKind(SymbolKind.Field, SymbolKind.Property);
         }
     }
 }
