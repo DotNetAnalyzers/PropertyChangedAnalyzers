@@ -196,16 +196,16 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        public C(int value )
+        public C(int p1)
         {
-            this.Value = value;
+            this.P1 = p1;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value { get; }
+        public int P1 { get; }
 
-        public int Squared => this.Value * this.Value;
+        public int P2 => this.P1 * this.P1;
     }
 }";
 

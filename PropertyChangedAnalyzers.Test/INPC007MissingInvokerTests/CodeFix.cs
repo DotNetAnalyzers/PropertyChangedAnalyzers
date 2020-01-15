@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvokerTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -116,7 +116,7 @@ namespace N
     {
         ↓public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value { get; set; }
+        public int P { get; set; }
     }
 }";
 
@@ -129,7 +129,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value { get; set; }
+        public int P { get; set; }
 
         private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
@@ -232,16 +232,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public C(int value )
+        public C(int p1)
         {
-            this.Value = value;
+            this.P1 = p1;
         }
 
         ↓public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value { get; }
+        public int P1 { get; }
 
-        public int Squared => this.Value * this.Value;
+        public int P2 => this.P1 * this.P1;
     }
 }";
             var after = @"
@@ -251,16 +251,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public C(int value )
+        public C(int p1)
         {
-            this.Value = value;
+            this.P1 = p1;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value { get; }
+        public int P1 { get; }
 
-        public int Squared => this.Value * this.Value;
+        public int P2 => this.P1 * this.P1;
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
@@ -282,16 +282,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public C(int value )
+        public C(int p1)
         {
-            this.Value = value;
+            this.P1 = p1;
         }
 
         ↓public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value { get; }
+        public int P1 { get; }
 
-        public int Squared => this.Value * this.Value;
+        public int P2 => this.P1 * this.P1;
     }
 }";
             var after = @"
@@ -301,16 +301,16 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        public C(int value )
+        public C(int p1)
         {
-            this.Value = value;
+            this.P1 = p1;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value { get; }
+        public int P1 { get; }
 
-        public int Squared => this.Value * this.Value;
+        public int P2 => this.P1 * this.P1;
     }
 }";
 
@@ -328,21 +328,21 @@ namespace N
 
     public class C1 : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -366,7 +366,7 @@ namespace N
 
         public ObservableCollection<C1> Items { get; } = new ObservableCollection<C1>
         {
-            new C1 { Value = 2 },
+            new C1 { P = 2 },
         };
     }
 }";
@@ -382,7 +382,7 @@ namespace N
 
         public ObservableCollection<C1> Items { get; } = new ObservableCollection<C1>
         {
-            new C1 { Value = 2 },
+            new C1 { P = 2 },
         };
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
