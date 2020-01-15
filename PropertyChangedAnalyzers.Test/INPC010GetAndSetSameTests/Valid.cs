@@ -388,7 +388,7 @@ namespace N
             set => this.p = value;
         }
 
-        object IC.P
+        object I.P
         {
             get => this.p;
             set => this.P = (T)value;
