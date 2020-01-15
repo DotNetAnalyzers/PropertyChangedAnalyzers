@@ -113,7 +113,7 @@
         private static void HandleBody(BlockSyntax body, SyntaxNodeAnalysisContext context)
         {
             BackingMemberAndValue? mutation = null;
-            bool? equals = null;
+            EqualState? equalState = null;
 
             if (Walk(body))
             {
@@ -155,17 +155,17 @@
                 {
                     case IfStatementSyntax { Condition: { } condition } ifStatement
                         when Setter.MatchEquals(condition, context.SemanticModel, context.CancellationToken) is { }:
-                        equals = Equals(condition);
+                        equalState = EqualState.Create(condition);
                         return WalkIfStatement(ifStatement);
                     case IfStatementSyntax { Condition: InvocationExpressionSyntax trySet } ifStatement
                         when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
                         mutation = match;
-                        equals = false;
+                        equalState = new EqualState(trySet, false);
                         return WalkIfStatement(ifStatement);
                     case IfStatementSyntax { Condition: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: InvocationExpressionSyntax trySet } } ifStatement
                         when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
                         mutation = match;
-                        equals = true;
+                        equalState = new EqualState(trySet, true);
                         return WalkIfStatement(ifStatement);
                     case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax assignment }
                         when Setter.MatchAssign(assignment, context.SemanticModel, context.CancellationToken) is { } match:
@@ -186,7 +186,7 @@
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
                         }
 
-                        if (equals != false &&
+                        if (equalState?.IsValueEqualToBacking != false &&
                             !IsPreviousStatementNotify())
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying, statement.GetLocation()));
@@ -225,18 +225,6 @@
                         return false;
                 }
 
-                bool? Equals(ExpressionSyntax e)
-                {
-                    return e switch
-                    {
-                        InvocationExpressionSyntax _ => true,
-                        BinaryExpressionSyntax { OperatorToken: { ValueText: "==" } } => true,
-                        BinaryExpressionSyntax { OperatorToken: { ValueText: "!=" } } => false,
-                        PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } operand } => !Equals(operand),
-                        _ => null,
-                    };
-                }
-
                 bool WalkIfStatement(IfStatementSyntax ifStatement)
                 {
                     if (!Walk(ifStatement.Statement))
@@ -244,7 +232,7 @@
                         return false;
                     }
 
-                    equals = !equals;
+                    equalState = equalState?.Invert();
                     if (ifStatement.Else is { Statement: { } })
                     {
                         return Walk(ifStatement.Else.Statement);
@@ -322,6 +310,40 @@
 
                 return null;
             }
+        }
+
+        private struct EqualState
+        {
+            internal readonly ExpressionSyntax Condition;
+
+            internal readonly bool? IsValueEqualToBacking;
+
+            internal EqualState(ExpressionSyntax condition, bool? isValueEqualToBacking)
+            {
+                this.Condition = condition;
+                this.IsValueEqualToBacking = isValueEqualToBacking;
+            }
+
+            internal static EqualState Create(ExpressionSyntax condition)
+            {
+                return new EqualState(condition, Equals(condition));
+
+                static bool? Equals(ExpressionSyntax e)
+                {
+                    return e switch
+                    {
+                        InvocationExpressionSyntax _ => true,
+                        BinaryExpressionSyntax { OperatorToken: { ValueText: "==" } } => true,
+                        BinaryExpressionSyntax { OperatorToken: { ValueText: "!=" } } => false,
+                        PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } operand } => !Equals(operand),
+                        _ => null,
+                    };
+                }
+            }
+
+            internal EqualState Invert() => new EqualState(
+                this.Condition,
+                this.IsValueEqualToBacking is { } b ? !b : (bool?)null);
         }
     }
 }
