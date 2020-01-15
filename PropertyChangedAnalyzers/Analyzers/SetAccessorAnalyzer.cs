@@ -14,6 +14,8 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.INPC002MutablePublicPropertyShouldNotify,
             Descriptors.INPC005CheckIfDifferentBeforeNotifying,
+            Descriptors.INPC006UseReferenceEqualsForReferenceTypes,
+            Descriptors.INPC006UseObjectEqualsForReferenceTypes,
             Descriptors.INPC010GetAndSetSame,
             Descriptors.INPC016NotifyAfterMutation,
             Descriptors.INPC021SetBackingField);
@@ -149,12 +151,109 @@
                 }
             }
 
+            bool WalkIfStatement(IfStatementSyntax ifStatement)
+            {
+                if (!Walk(ifStatement.Statement))
+                {
+                    return false;
+                }
+
+                equalState = equalState?.Invert();
+                if (ifStatement.Else is { Statement: { } })
+                {
+                    return Walk(ifStatement.Else.Statement);
+                }
+
+                return true;
+            }
+
+            void HandleEquality(ExpressionSyntax condition)
+            {
+                switch (condition)
+                {
+                    case PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: InvocationExpressionSyntax invocation }:
+                        HandleInvocation(invocation);
+                        break;
+                    case InvocationExpressionSyntax invocation:
+                        HandleInvocation(invocation);
+                        break;
+                    case BinaryExpressionSyntax binary:
+                        if (Equality.IsOperatorEquals(binary, out var x, out var y) ||
+                            Equality.IsOperatorNotEquals(binary, out x, out y))
+                        {
+                            if (ShouldUseObjectEquals(x, y))
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.INPC006UseObjectEqualsForReferenceTypes,
+                                        binary.GetLocation()));
+                            }
+                            else if (ShouldUseObjectReferenceEquals(x, y))
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        Descriptors.INPC006UseReferenceEqualsForReferenceTypes,
+                                        binary.GetLocation()));
+                            }
+                        }
+
+                        break;
+                }
+
+                void HandleInvocation(InvocationExpressionSyntax invocation)
+                {
+                    if (Equality.IsObjectReferenceEquals(invocation, context.SemanticModel, context.CancellationToken, out var x, out var y) &&
+                        ShouldUseObjectEquals(x, y))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.INPC006UseObjectEqualsForReferenceTypes,
+                                invocation.GetLocation()));
+                    }
+
+                    if ((Equality.IsObjectEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y) ||
+                         Equality.IsInstanceEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y)) &&
+                        ShouldUseObjectReferenceEquals(x, y))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.INPC006UseReferenceEqualsForReferenceTypes,
+                                invocation.GetLocation()));
+                    }
+                }
+
+                bool ShouldUseObjectReferenceEquals(ExpressionSyntax x, ExpressionSyntax y)
+                {
+                    return context.SemanticModel.TryGetType(x, context.CancellationToken, out var xt) &&
+                           xt.IsReferenceType &&
+                           xt != KnownSymbol.String &&
+                           context.SemanticModel.TryGetType(y, context.CancellationToken, out var yt) &&
+                           yt.IsReferenceType &&
+                           yt != KnownSymbol.String &&
+                           xt.Equals(yt) &&
+                           !Descriptors.INPC006UseReferenceEqualsForReferenceTypes.IsSuppressed(context.SemanticModel);
+                }
+
+                bool ShouldUseObjectEquals(ExpressionSyntax x, ExpressionSyntax y)
+                {
+                    return context.SemanticModel.TryGetType(x, context.CancellationToken, out var xt) &&
+                           xt.IsReferenceType &&
+                           xt != KnownSymbol.String &&
+                           context.SemanticModel.TryGetType(y, context.CancellationToken, out var yt) &&
+                           yt.IsReferenceType &&
+                           yt != KnownSymbol.String &&
+                           xt.Equals(yt) &&
+                           !Descriptors.INPC006UseObjectEqualsForReferenceTypes.IsSuppressed(context.SemanticModel);
+                }
+            }
+
             bool Handle(StatementSyntax statement)
             {
                 switch (statement)
                 {
                     case IfStatementSyntax { Condition: { } condition } ifStatement
                         when Setter.MatchEquals(condition, context.SemanticModel, context.CancellationToken) is { }:
+                        HandleEquality(condition);
                         equalState = EqualState.Create(condition);
                         return WalkIfStatement(ifStatement);
                     case IfStatementSyntax { Condition: InvocationExpressionSyntax trySet } ifStatement
@@ -223,22 +322,6 @@
                         return true;
                     default:
                         return false;
-                }
-
-                bool WalkIfStatement(IfStatementSyntax ifStatement)
-                {
-                    if (!Walk(ifStatement.Statement))
-                    {
-                        return false;
-                    }
-
-                    equalState = equalState?.Invert();
-                    if (ifStatement.Else is { Statement: { } })
-                    {
-                        return Walk(ifStatement.Else.Statement);
-                    }
-
-                    return true;
                 }
             }
         }

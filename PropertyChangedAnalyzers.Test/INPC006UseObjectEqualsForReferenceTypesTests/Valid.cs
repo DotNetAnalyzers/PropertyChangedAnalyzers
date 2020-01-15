@@ -8,7 +8,7 @@
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new EqualityAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
         private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC006UseObjectEqualsForReferenceTypes;
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
@@ -23,13 +23,13 @@
             new TestCaseData("ReferenceType", "value.Equals(p)"),
             new TestCaseData("ReferenceType", "this.p.Equals(value)"),
             new TestCaseData("ReferenceType", "p.Equals(value)"),
-            new TestCaseData("int?",   "Nullable.Equals(value, this.p)"),
-            new TestCaseData("string", "value.Equals(this.p)"),
-            new TestCaseData("string", "value.Equals(p)"),
-            new TestCaseData("string", "this.p.Equals(value)"),
-            new TestCaseData("string", "p.Equals(value)"),
-            new TestCaseData("string", "string.Equals(value, this.p, StringComparison.OrdinalIgnoreCase)"),
-            new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
+            new TestCaseData("int?",          "Nullable.Equals(value, this.p)"),
+            new TestCaseData("string",        "value.Equals(this.p)"),
+            new TestCaseData("string",        "value.Equals(p)"),
+            new TestCaseData("string",        "this.p.Equals(value)"),
+            new TestCaseData("string",        "p.Equals(value)"),
+            new TestCaseData("string",        "string.Equals(value, this.p, StringComparison.OrdinalIgnoreCase)"),
+            new TestCaseData("string",        "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
         };
 
         private const string ReferenceType = @"

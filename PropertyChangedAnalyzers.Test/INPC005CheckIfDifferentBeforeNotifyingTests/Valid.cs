@@ -610,23 +610,23 @@ namespace N
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
         private readonly object _gate = new object();
-        private object _p;
+        private int _p;
 
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        public object Value
+        public int Value
         {
             get => _p;
             private set
             {
-                if (ReferenceEquals(value, _p))
+                if (value == _p)
                 {
                     return;
                 }
 
                 lock (_gate)
                 {
-                    if (ReferenceEquals(value, _p))
+                    if (value == _p)
                     {
                         return;
                     }

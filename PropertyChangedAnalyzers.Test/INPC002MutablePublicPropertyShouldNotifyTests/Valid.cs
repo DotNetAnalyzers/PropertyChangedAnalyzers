@@ -738,7 +738,7 @@ namespace N
 
             private set
             {
-                if (Equals(value, _exception))
+                if (ReferenceEquals(value, _exception))
                 {
                     return;
                 }
@@ -750,7 +750,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [Test]

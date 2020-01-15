@@ -8,7 +8,7 @@
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new EqualityAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
         private static readonly CodeFixProvider Fix = new EqualityFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC006UseObjectEqualsForReferenceTypes);
 

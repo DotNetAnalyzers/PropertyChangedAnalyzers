@@ -8,7 +8,7 @@
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new EqualityAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
 
         private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC006UseReferenceEqualsForReferenceTypes;
 

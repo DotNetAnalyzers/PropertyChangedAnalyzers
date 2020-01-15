@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEqualsTests
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new EqualityAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
         private static readonly CodeFixProvider Fix = new EqualityFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC006UseReferenceEqualsForReferenceTypes);
 

@@ -117,14 +117,14 @@
 
             if (!type.IsReferenceType)
             {
-                if (Gu.Roslyn.AnalyzerExtensions.Equality.HasEqualityOperator(type))
+                if (Equality.HasEqualityOperator(type))
                 {
                     return SyntaxFactory.BinaryExpression(SyntaxKind.EqualsExpression, x, y);
                 }
 
                 if (type == KnownSymbol.NullableOfT)
                 {
-                    if (Gu.Roslyn.AnalyzerExtensions.Equality.HasEqualityOperator(((INamedTypeSymbol)type).TypeArguments[0]))
+                    if (Equality.HasEqualityOperator(((INamedTypeSymbol)type).TypeArguments[0]))
                     {
                         return SyntaxFactory.BinaryExpression(SyntaxKind.EqualsExpression, x, y);
                     }
@@ -147,7 +147,17 @@
                 return Equals($"System.Collections.Generic.EqualityComparer<{type.ToDisplayString()}>.Default", nameof(Equals), x, y);
             }
 
-            return Equals(null, Descriptors.INPC006UseReferenceEqualsForReferenceTypes.IsSuppressed(semanticModel) ? nameof(Equals) : nameof(ReferenceEquals), x, y);
+            return Equals(null, UseReferenceEquals() ? nameof(ReferenceEquals) : nameof(Equals), x, y);
+
+            bool UseReferenceEquals()
+            {
+                if (Descriptors.INPC006UseObjectEqualsForReferenceTypes.IsSuppressed(semanticModel))
+                {
+                    return true;
+                }
+
+                return !Descriptors.INPC006UseReferenceEqualsForReferenceTypes.IsSuppressed(semanticModel);
+            }
         }
 
         internal static AccessorDeclarationSyntax AsExpressionBody(this AccessorDeclarationSyntax accessor, ExpressionSyntax expression)
@@ -321,7 +331,7 @@
             ParameterSyntax Parameter(string name)
             {
                 return callerMemberName
-                    ? InpcFactory.CallerMemberName(name, nullabilityAnnotationsEnabled)
+                    ? CallerMemberName(name, nullabilityAnnotationsEnabled)
                     : SyntaxFactory.Parameter(
                             attributeLists: default,
                             modifiers: default,
