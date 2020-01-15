@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtorTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -20,27 +20,27 @@ namespace N
     [DataContract]
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(int value)
+        public C(int p)
         {
-            this.value = value;
+            this.p = p;
         }
 
         [DataMember]
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             private set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -68,13 +68,13 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(int value)
+        public C(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
 
         [DataMember]
-        public int Value { get; private set; }
+        public int P { get; private set; }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
@@ -96,18 +96,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(int value)
+        public C(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
                 if (value < 0)
@@ -115,12 +115,12 @@ namespace N
                     throw new ArgumentException();
                 }
 
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -147,27 +147,27 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(int value)
+        public C(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
                 GreaterThan(value, 0, nameof(value));
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -202,27 +202,27 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
         private int count;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(int value)
+        public C(int p)
         {
-            this.Value = value;
+            this.P = p;
         }
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.count++;
                 this.OnPropertyChanged();
             }
@@ -237,8 +237,8 @@ namespace N
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [TestCase("(_, __) => this.Value = value;")]
-        [TestCase("delegate { this.Value = value; };")]
+        [TestCase("(_, __) => this.P = p;")]
+        [TestCase("delegate { this.P = p; };")]
         public static void SettingNotifyingPropertyInLambda(string lambda)
         {
             var code = @"
@@ -248,26 +248,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string value;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(string value)
+        public C(string p)
         {
-            this.PropertyChanged += (_, __) => this.Value = value;
+            this.PropertyChanged += (_, __) => this.P = p;
         }
 
-        public string Value
+        public string P
         {
-            get => this.value;
+            get => this.p;
             private set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -277,7 +277,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("(_, __) => this.Value = value;", lambda);
+}".AssertReplace("(_, __) => this.P = p;", lambda);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -292,28 +292,28 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string value;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(string value)
+        public C(string p)
         {
-            void OnChanged(object _, PropertyChangedEventArgs __) => this.Value = value;
+            void OnChanged(object _, PropertyChangedEventArgs __) => this.P = p;
 
             this.PropertyChanged += OnChanged;
         }
 
-        public string Value
+        public string P
         {
-            get => this.value;
+            get => this.p;
             private set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }

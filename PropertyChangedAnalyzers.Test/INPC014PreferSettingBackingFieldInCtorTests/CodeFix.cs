@@ -49,19 +49,19 @@ namespace N
 {
     public class C
     {
-        private int value;
+        private int p;
 
-        public C(int value)
+        public C(int p)
         {
-            ↓this.Value = value;
+            ↓this.P = p;
         }
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             private set
             {
-                this.value = value;
+                this.p = value;
             }
         }
     }
@@ -72,19 +72,19 @@ namespace N
 {
     public class C
     {
-        private int value;
+        private int p;
 
-        public C(int value)
+        public C(int p)
         {
-            this.value = value;
+            this.p = p;
         }
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             private set
             {
-                this.value = value;
+                this.p = value;
             }
         }
     }
@@ -100,17 +100,17 @@ namespace N
 {
     public class C
     {
-        private int value;
+        private int p;
 
-        public C(int value)
+        public C(int p)
         {
-            ↓this.Value = value;
+            ↓this.P = p;
         }
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            private set => this.value = value;
+            get => this.p;
+            private set => this.p = value;
         }
     }
 }";
@@ -120,17 +120,17 @@ namespace N
 {
     public class C
     {
-        private int value;
+        private int p;
 
-        public C(int value)
+        public C(int p)
         {
-            this.value = value;
+            this.p = p;
         }
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            private set => this.value = value;
+            get => this.p;
+            private set => this.p = value;
         }
     }
 }";
@@ -149,10 +149,10 @@ namespace N
 
         public C(int @default)
         {
-            ↓this.Value = @default;
+            ↓this.P = @default;
         }
 
-        public int Value
+        public int P
         {
             get => this.@default;
             private set => this.@default = value;
@@ -172,7 +172,7 @@ namespace N
             this.@default = @default;
         }
 
-        public int Value
+        public int P
         {
             get => this.@default;
             private set => this.@default = value;
@@ -194,10 +194,10 @@ namespace N
 
         public C(int f)
         {
-            ↓this.Value = f;
+            ↓this.P = f;
         }
 
-        public int Value
+        public int P
         {
             get => f;
             private set => f = value;
@@ -217,7 +217,7 @@ namespace N
             this.f = f;
         }
 
-        public int Value
+        public int P
         {
             get => f;
             private set => f = value;
@@ -235,18 +235,18 @@ namespace N
 {
     public class C
     {
-        private int f;
+        private int p;
 
         public C(int value)
         {
-            var f = 1;
-            ↓this.Value = value;
+            var p = 1;
+            ↓this.P = value;
         }
 
-        public int Value
+        public int P
         {
-            get => f;
-            private set => f = value;
+            get => p;
+            private set => p = value;
         }
     }
 }";
@@ -256,18 +256,18 @@ namespace N
 {
     public class C
     {
-        private int f;
+        private int p;
 
         public C(int value)
         {
-            var f = 1;
-            this.f = value;
+            var p = 1;
+            this.p = value;
         }
 
-        public int Value
+        public int P
         {
-            get => f;
-            private set => f = value;
+            get => p;
+            private set => p = value;
         }
     }
 }";
@@ -282,19 +282,19 @@ namespace N
 {
     public class C
     {
-        private int _value;
+        private int _p;
 
-        public C(int value)
+        public C(int p)
         {
-            ↓Value = value;
+            ↓P = p;
         }
 
-        public int Value
+        public int P
         {
-            get => _value;
+            get => _p;
             private set
             {
-                _value = value;
+                _p = value;
             }
         }
     }
@@ -305,19 +305,19 @@ namespace N
 {
     public class C
     {
-        private int _value;
+        private int _p;
 
-        public C(int value)
+        public C(int p)
         {
-            _value = value;
+            _p = p;
         }
 
-        public int Value
+        public int P
         {
-            get => _value;
+            get => _p;
             private set
             {
-                _value = value;
+                _p = value;
             }
         }
     }
@@ -325,14 +325,14 @@ namespace N
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase("value == this.value")]
-        [TestCase("this.value == value")]
-        [TestCase("Equals(this.value, value)")]
-        [TestCase("Equals(value, this.value)")]
-        [TestCase("ReferenceEquals(this.value, value)")]
-        [TestCase("ReferenceEquals(value, this.value)")]
-        [TestCase("value.Equals(this.value)")]
-        [TestCase("this.value.Equals(value)")]
+        [TestCase("value == this.p")]
+        [TestCase("this.p == value")]
+        [TestCase("Equals(this.p, value)")]
+        [TestCase("Equals(value, this.p)")]
+        [TestCase("ReferenceEquals(this.p, value)")]
+        [TestCase("ReferenceEquals(value, this.p)")]
+        [TestCase("value.Equals(this.p)")]
+        [TestCase("this.p.Equals(value)")]
         public static void NotifyingProperty(string equals)
         {
             var before = @"
@@ -344,27 +344,27 @@ namespace N
     [DataContract]
     public class C : INotifyPropertyChanged
     {
-        private string value;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(string value)
+        public C(string p)
         {
-            ↓this.Value = value;
+            ↓this.P = p;
         }
 
         [DataMember]
-        public string Value
+        public string P
         {
-            get => this.value;
+            get => this.p;
             private set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -374,7 +374,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("value == this.value", equals);
+}".AssertReplace("value == this.p", equals);
 
             var after = @"
 namespace N
@@ -385,27 +385,27 @@ namespace N
     [DataContract]
     public class C : INotifyPropertyChanged
     {
-        private string value;
+        private string p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public C(string value)
+        public C(string p)
         {
-            this.value = value;
+            this.p = p;
         }
 
         [DataMember]
-        public string Value
+        public string P
         {
-            get => this.value;
+            get => this.p;
             private set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -415,7 +415,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("value == this.value", equals);
+}".AssertReplace("value == this.p", equals);
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
