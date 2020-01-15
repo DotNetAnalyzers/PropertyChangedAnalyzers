@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -11,16 +11,16 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
         private static readonly CodeFixProvider Fix = new NotifyForDependentPropertyFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
 
-        [TestCase("this.value = value;")]
-        [TestCase("this.value += value;")]
-        [TestCase("this.value -= value;")]
-        [TestCase("this.value *= value;")]
-        [TestCase("this.value /= value;")]
-        [TestCase("this.value %= value;")]
-        [TestCase("this.value++;")]
-        [TestCase("this.value--;")]
-        [TestCase("--this.value;")]
-        [TestCase("++this.value;")]
+        [TestCase("this.p = p;")]
+        [TestCase("this.p += p;")]
+        [TestCase("this.p -= p;")]
+        [TestCase("this.p *= p;")]
+        [TestCase("this.p /= p;")]
+        [TestCase("this.p %= p;")]
+        [TestCase("this.p++;")]
+        [TestCase("this.p--;")]
+        [TestCase("--this.p;")]
+        [TestCase("++this.p;")]
         public static void IntFieldUpdatedInMethod(string update)
         {
             var before = @"
@@ -31,15 +31,15 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.value;
+        public int P => this.p;
 
-        public void Update(int value)
+        public void M(int p)
         {
-            ↓this.value = value;
+            ↓this.p = p;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -47,7 +47,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.value = value;", update);
+}".AssertReplace("this.p = p;", update);
 
             var after = @"
 namespace N
@@ -57,16 +57,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.value;
+        public int P => this.p;
 
-        public void Update(int value)
+        public void M(int p)
         {
-            this.value = value;
-            this.OnPropertyChanged(nameof(this.Value));
+            this.p = p;
+            this.OnPropertyChanged(nameof(this.P));
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -74,22 +74,22 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.value = value;", update);
+}".AssertReplace("this.p = p;", update);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase("_value = value;")]
-        [TestCase("_value += value;")]
-        [TestCase("_value -= value;")]
-        [TestCase("_value *= value;")]
-        [TestCase("_value /= value;")]
-        [TestCase("_value %= value;")]
-        [TestCase("_value++;")]
-        [TestCase("_value--;")]
-        [TestCase("--_value;")]
-        [TestCase("++_value;")]
+        [TestCase("_p = p;")]
+        [TestCase("_p += p;")]
+        [TestCase("_p -= p;")]
+        [TestCase("_p *= p;")]
+        [TestCase("_p /= p;")]
+        [TestCase("_p %= p;")]
+        [TestCase("_p++;")]
+        [TestCase("_p--;")]
+        [TestCase("--_p;")]
+        [TestCase("++_p;")]
         public static void IntFieldUpdatedInMethodUnderscoreNames(string update)
         {
             var before = @"
@@ -100,16 +100,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private static readonly int Meh = 2;
-        private int _value;
+        private static readonly int Two = 2;
+        private int _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => _value;
+        public int P => _p;
 
-        public void Update(int value)
+        public void M(int p)
         {
-            ↓_value = value;
+            ↓_p = p;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -117,7 +117,7 @@ namespace N
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("_value = value;", update);
+}".AssertReplace("_p = p;", update);
 
             var after = @"
 namespace N
@@ -127,17 +127,17 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private static readonly int Meh = 2;
-        private int _value;
+        private static readonly int Two = 2;
+        private int _p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => _value;
+        public int P => _p;
 
-        public void Update(int value)
+        public void M(int p)
         {
-            _value = value;
-            OnPropertyChanged(nameof(Value));
+            _p = p;
+            OnPropertyChanged(nameof(P));
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -145,15 +145,15 @@ namespace N
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("_value = value;", update);
+}".AssertReplace("_p = p;", update);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
         }
 
-        [TestCase("this.value |= value;")]
-        [TestCase("this.value ^= value;")]
-        [TestCase("this.value &= value;")]
+        [TestCase("this.p |= p;")]
+        [TestCase("this.p ^= p;")]
+        [TestCase("this.p &= p;")]
         public static void BoolFieldUpdatedInMethod(string update)
         {
             var before = @"
@@ -164,15 +164,15 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private bool value;
+        private bool p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public bool Value => this.value;
+        public bool P => this.p;
 
-        public void Update(bool value)
+        public void M(bool p)
         {
-            ↓this.value = value;
+            ↓this.p = p;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -180,7 +180,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.value = value;", update);
+}".AssertReplace("this.p = p;", update);
 
             var after = @"
 namespace N
@@ -190,16 +190,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private bool value;
+        private bool p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public bool Value => this.value;
+        public bool P => this.p;
 
-        public void Update(bool value)
+        public void M(bool p)
         {
-            this.value = value;
-            this.OnPropertyChanged(nameof(this.Value));
+            this.p = p;
+            this.OnPropertyChanged(nameof(this.P));
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -207,7 +207,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.value = value;", update);
+}".AssertReplace("this.p = p;", update);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
@@ -3156,8 +3156,8 @@ namespace N
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
 
-        [TestCase("this.c1.C1Value")]
-        [TestCase("c1.C1Value")]
+        [TestCase("this.c1.P")]
+        [TestCase("c1.P")]
         public static void WhenAssigningNestedField(string path)
         {
             var c1 = @"
@@ -3165,7 +3165,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int P;
     }
 }";
             var before = @"
@@ -3180,11 +3180,11 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.c1.C1Value;
+        public int P => this.c1.P;
 
-        public void Update(int value)
+        public void M(int p)
         {
-            ↓this.c1.C1Value = value;
+            ↓this.c1.P = p;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -3192,7 +3192,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.c1.C1Value", path);
+}".AssertReplace("this.c1.P", path);
             var after = @"
 namespace N
 {
@@ -3205,12 +3205,12 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.c1.C1Value;
+        public int P => this.c1.P;
 
-        public void Update(int value)
+        public void M(int p)
         {
-            this.c1.C1Value = value;
-            this.OnPropertyChanged(nameof(this.Value));
+            this.c1.P = p;
+            this.OnPropertyChanged(nameof(this.P));
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -3218,7 +3218,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.c1.C1Value", path);
+}".AssertReplace("this.c1.P", path);
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
             RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
@@ -3232,7 +3232,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int P;
     }
 }";
             var before = @"
@@ -3247,9 +3247,9 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.c1.C1Value;
+        public int P => this.c1.P;
 
-        public void Update(int value)
+        public void Update(int p)
         {
             ↓this.c1 = new C1();
         }
@@ -3272,12 +3272,12 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.c1.C1Value;
+        public int P => this.c1.P;
 
-        public void Update(int value)
+        public void Update(int p)
         {
             this.c1 = new C1();
-            this.OnPropertyChanged(nameof(this.Value));
+            this.OnPropertyChanged(nameof(this.P));
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -3313,7 +3313,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.c1.F;
+        public int P => this.c1.F;
 
         public void Update()
         {
@@ -3338,12 +3338,12 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.c1.F;
+        public int P => this.c1.F;
 
         public void Update()
         {
             this.c1 = new C1();
-            this.OnPropertyChanged(nameof(this.Value));
+            this.OnPropertyChanged(nameof(this.P));
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -3369,7 +3369,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public abstract int Value { get; }
+        public abstract int P { get; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -3382,13 +3382,13 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public override int Value => this.value;
+        public override int P => this.p;
 
         public void Update(int newValue)
         {
-            ↓this.value = newValue;
+            ↓this.p = newValue;
         }
     }
 }";
@@ -3397,14 +3397,14 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public override int Value => this.value;
+        public override int P => this.p;
 
         public void Update(int newValue)
         {
-            this.value = newValue;
-            this.OnPropertyChanged(nameof(this.Value));
+            this.p = newValue;
+            this.OnPropertyChanged(nameof(this.P));
         }
     }
 }";
@@ -3423,22 +3423,22 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.value;
+        public int P => this.p;
 
         public void Update(bool up)
         {
             if (up)
             {
-                ↓this.value++;
+                ↓this.p++;
             }
             else
             {
-                this.value--;
-                this.OnPropertyChanged(nameof(this.Value));
+                this.p--;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 
@@ -3456,23 +3456,23 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value => this.value;
+        public int P => this.p;
 
         public void Update(bool up)
         {
             if (up)
             {
-                this.value++;
-                this.OnPropertyChanged(nameof(this.Value));
+                this.p++;
+                this.OnPropertyChanged(nameof(this.P));
             }
             else
             {
-                this.value--;
-                this.OnPropertyChanged(nameof(this.Value));
+                this.p--;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
 

@@ -150,12 +150,12 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return this.value; }
-            set { this.SetAndNotify(ref this.value, value); }
+            get { return this.p; }
+            set { this.SetAndNotify(ref this.p, value); }
         }
     }
 }";

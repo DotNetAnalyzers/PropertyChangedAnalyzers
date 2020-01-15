@@ -386,14 +386,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get { return this.value; }
-            set { this.value = value; }
+            get { return this.p; }
+            set { this.p = value; }
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

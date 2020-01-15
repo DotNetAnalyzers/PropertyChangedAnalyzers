@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -198,26 +198,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(() => this.Value);
+                this.p = value;
+                this.OnPropertyChanged(() => this.P);
             }
         }
 
@@ -752,7 +752,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int P;
     }
 }";
             var code = @"
@@ -766,17 +766,17 @@ namespace N
         private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.c1.C1Value;
+            get => this.c1.P;
             set
             {
-                if (value == this.c1.C1Value)
+                if (value == this.c1.P)
                 {
                     return;
                 }
 
-                this.c1.C1Value = value;
+                this.c1.P = value;
                 this.OnPropertyChanged();
             }
         }
@@ -836,18 +836,18 @@ namespace N
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [TestCase("this.Value * this.Value")]
-        [TestCase("this.Value * Value")]
-        [TestCase("Value * this.Value")]
-        [TestCase("Value * Value")]
-        [TestCase("this.value * this.Value")]
-        [TestCase("this.value * Value")]
-        [TestCase("value * this.Value")]
-        [TestCase("value * Value")]
-        [TestCase("this.value * this.value")]
-        [TestCase("this.value * value")]
-        [TestCase("value * this.value")]
-        [TestCase("value * value")]
+        [TestCase("this.P2 * this.P2")]
+        [TestCase("this.P2 * P2")]
+        [TestCase("P2 * this.P2")]
+        [TestCase("P2 * P2")]
+        [TestCase("this.p2 * this.P2")]
+        [TestCase("this.p2 * P2")]
+        [TestCase("p2 * this.P2")]
+        [TestCase("p2 * P2")]
+        [TestCase("this.p2 * this.p2")]
+        [TestCase("this.p2 * p2")]
+        [TestCase("p2 * this.p2")]
+        [TestCase("p2 * p2")]
         public static void Squared(string square)
         {
             var code = @"
@@ -858,29 +858,29 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => this.Value * this.Value;
+        public int P1 => this.P2 * this.P2;
 
-        public int Value
+        public int P2
         {
             get
             {
-                return this.value;
+                return this.p2;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(Squared));
+                this.OnPropertyChanged(nameof(P1));
             }
         }
 
@@ -889,13 +889,13 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.Value * this.Value", square);
+}".AssertReplace("this.P2 * this.P2", square);
 
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [TestCase("Value = newValue;")]
-        [TestCase("this.Value = newValue;")]
+        [TestCase("P = newValue;")]
+        [TestCase("this.P = newValue;")]
         public static void WhenSettingPropertyThatNotifies(string statement)
         {
             var code = @"
@@ -906,23 +906,23 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Square => this.Value * this.Value;
+        public int Square => this.P * this.P;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.Square));
             }
@@ -930,7 +930,7 @@ namespace N
 
         public void Update(int newValue)
         {
-            this.Value = newValue;
+            this.P = newValue;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -938,7 +938,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.Value = newValue;", statement);
+}".AssertReplace("this.P = newValue;", statement);
 
             RoslynAssert.Valid(Analyzer, code);
         }
@@ -959,9 +959,9 @@ namespace N
 
         public int P => this.p;
 
-        public void Update(int value)
+        public void M1(int value)
         {
-            UpdateCore(ref this.p, value);
+            M2(ref this.p, value);
         }
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -969,7 +969,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void UpdateCore(ref int field, int value)
+        private void M2(ref int field, int value)
         {
             field = value;
             this.OnPropertyChanged(nameof(this.P));
@@ -991,7 +991,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
         private readonly Nested nested = new Nested();
 
         public event PropertyChangedEventHandler PropertyChanged;
