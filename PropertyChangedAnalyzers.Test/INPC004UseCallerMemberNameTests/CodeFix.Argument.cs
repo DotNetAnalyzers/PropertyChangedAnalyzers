@@ -13,9 +13,9 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
             private static readonly UseCallerMemberNameFix Fix = new UseCallerMemberNameFix();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
 
-            [TestCase(@"""Value""")]
-            [TestCase(@"nameof(Value)")]
-            [TestCase(@"nameof(this.Value)")]
+            [TestCase(@"""P""")]
+            [TestCase(@"nameof(P)")]
+            [TestCase(@"nameof(this.P)")]
             public static void CallsOnPropertyChangedWithExplicitNameOfCallerWhenParameterIsCallerMemberName(
                 string propertyName)
             {
@@ -27,26 +27,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(↓nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(↓nameof(P));
             }
         }
 
@@ -55,7 +55,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace(@"nameof(Value)", propertyName);
+}".AssertReplace(@"nameof(P)", propertyName);
 
                 var after = @"
 namespace N
@@ -65,25 +65,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -99,9 +99,9 @@ namespace N
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
             }
 
-            [TestCase(@"""Value""")]
-            [TestCase(@"nameof(Value)")]
-            [TestCase(@"nameof(this.Value)")]
+            [TestCase(@"""P""")]
+            [TestCase(@"nameof(P)")]
+            [TestCase(@"nameof(this.P)")]
             public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
             {
                 var before = @"
@@ -112,26 +112,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(↓nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(↓nameof(P));
             }
         }
 
@@ -140,7 +140,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace(@"nameof(Value)", propertyName);
+}".AssertReplace(@"nameof(P)", propertyName);
 
                 var after = @"
 namespace N
@@ -150,25 +150,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -195,26 +195,26 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal int Value
+        internal int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(↓nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(↓nameof(P));
             }
         }
 
@@ -233,25 +233,25 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal int Value
+        internal int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -277,26 +277,26 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal int Value
+        internal int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(1, ↓nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(1, ↓nameof(P));
             }
         }
 
@@ -315,25 +315,25 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal int Value
+        internal int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged(1);
             }
         }

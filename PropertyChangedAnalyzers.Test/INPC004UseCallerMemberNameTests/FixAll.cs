@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberNameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -20,50 +20,42 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value1;
-        private int value2;
+        private int p2;
+        private int p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Sum => this.value1 + this.value2;
+        public int P1 => this.p2 + this.p3;
 
-        public int Value1
+        public int P2
         {
-            get
-            {
-                return this.value1;
-            }
-
+            get => this.p2;
             set
             {
-                if (value == this.value1)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.value1 = value;
-                this.OnPropertyChanged(↓nameof(Value1));
-                this.OnPropertyChanged(nameof(this.Sum));
+                this.p2 = value;
+                this.OnPropertyChanged(↓nameof(this.P2));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
-        public int Value2
+        public int P3
         {
-            get
-            {
-                return this.value2;
-            }
-
+            get => this.p3;
             set
             {
-                if (value == this.value2)
+                if (value == this.p3)
                 {
                     return;
                 }
 
-                this.value2 = value;
-                this.OnPropertyChanged(↓nameof(Value2));
-                this.OnPropertyChanged(nameof(this.Sum));
+                this.p3 = value;
+                this.OnPropertyChanged(↓nameof(this.P3));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -81,50 +73,42 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value1;
-        private int value2;
+        private int p2;
+        private int p3;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Sum => this.value1 + this.value2;
+        public int P1 => this.p2 + this.p3;
 
-        public int Value1
+        public int P2
         {
-            get
-            {
-                return this.value1;
-            }
-
+            get => this.p2;
             set
             {
-                if (value == this.value1)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.value1 = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Sum));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
-        public int Value2
+        public int P3
         {
-            get
-            {
-                return this.value2;
-            }
-
+            get => this.p3;
             set
             {
-                if (value == this.value2)
+                if (value == this.p3)
                 {
                     return;
                 }
 
-                this.value2 = value;
+                this.p3 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Sum));
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
