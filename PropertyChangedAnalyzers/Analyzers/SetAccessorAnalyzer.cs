@@ -14,6 +14,7 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.INPC002MutablePublicPropertyShouldNotify,
             Descriptors.INPC005CheckIfDifferentBeforeNotifying,
+            Descriptors.INPC010GetAndSetSame,
             Descriptors.INPC016NotifyAfterMutation,
             Descriptors.INPC021SetBackingField);
 
@@ -33,15 +34,28 @@
             {
                 switch (setter)
                 {
-                    case { ExpressionBody: { Expression: { } expression } }:
-                        if (expression.IsKind(SyntaxKind.SimpleAssignmentExpression) &&
-                            Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
+                    case { ExpressionBody: { Expression: { } expression } }
+                        when Setter.MatchAssign(expression, context.SemanticModel, context.CancellationToken) is { } match:
+                        if (Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
                         {
                             context.ReportDiagnostic(
                                 Diagnostic.Create(
                                     Descriptors.INPC002MutablePublicPropertyShouldNotify,
                                     containingProperty.Identifier.GetLocation(),
                                     property.Name));
+                        }
+
+                        if (ReturnsDifferent(match, context))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, containingProperty.Identifier.GetLocation()));
+                        }
+
+                        break;
+                    case { ExpressionBody: { Expression: { } expression } }
+                        when Setter.MatchTrySet(expression, context.SemanticModel, context.CancellationToken) is { } match:
+                        if (ReturnsDifferent(match, context))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, containingProperty.Identifier.GetLocation()));
                         }
 
                         break;
@@ -98,13 +112,22 @@
 
         private static void HandleBody(BlockSyntax body, SyntaxNodeAnalysisContext context)
         {
-            ExpressionSyntax? mutated = null;
+            BackingMemberMutation? mutation = null;
             bool? equals = null;
 
-            if (Walk(body) &&
-                mutated is null)
+            if (Walk(body))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, body.Parent.GetLocation()));
+                if (mutation is null)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, body.Parent.GetLocation()));
+                }
+                else if (ReturnsDifferent(mutation.Value, context))
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.INPC010GetAndSetSame,
+                            body.FirstAncestor<PropertyDeclarationSyntax>()!.Identifier.GetLocation()));
+                }
             }
 
             bool Walk(StatementSyntax statement)
@@ -141,21 +164,22 @@
                         return WalkIfStatement(ifStatement);
 
                     case IfStatementSyntax { Condition: InvocationExpressionSyntax trySet } ifStatement
-                        when TrySet.Match(trySet, context.SemanticModel, context.CancellationToken) is { Field: { Expression: { } field } }:
-                        mutated = field;
+                        when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
+                        mutation = match;
                         equals = false;
                         return WalkIfStatement(ifStatement);
                     case IfStatementSyntax { Condition: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: InvocationExpressionSyntax trySet } } ifStatement
-                        when TrySet.Match(trySet, context.SemanticModel, context.CancellationToken) is { Field: { Expression: { } field } }:
-                        mutated = field;
+                        when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
+                        mutation = match;
                         equals = true;
                         return WalkIfStatement(ifStatement);
-                    case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: { } left } }:
-                        mutated = left;
+                    case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { } assignment }
+                        when Setter.MatchAssign(assignment, context.SemanticModel, context.CancellationToken) is { } match:
+                        mutation = match;
                         return true;
-                    case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax invocation }
-                        when TrySet.Match(invocation, context.SemanticModel, context.CancellationToken) is { Field: { Expression: { } field } }:
-                        mutated = field;
+                    case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax trySet }
+                        when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
+                        mutation = match;
                         return true;
                     case ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax conditionalInvoke } }
                         when PropertyChangedEvent.IsInvoke(conditionalInvoke, context.SemanticModel, context.CancellationToken):
@@ -163,7 +187,7 @@
                         when PropertyChangedEvent.IsInvoke(invoke, context.SemanticModel, context.CancellationToken):
                     case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax onPropertyChanged }
                         when OnPropertyChanged.Match(onPropertyChanged, context.SemanticModel, context.CancellationToken) is { }:
-                        if (mutated is null)
+                        if (mutation is null)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
                         }
@@ -234,6 +258,75 @@
 
                     return true;
                 }
+            }
+        }
+
+        private static bool ReturnsDifferent(BackingMemberMutation mutation, SyntaxNodeAnalysisContext context)
+        {
+            if (context.Node is AccessorDeclarationSyntax { Parent: AccessorListSyntax { Parent: PropertyDeclarationSyntax containingProperty } } &&
+                containingProperty.TryGetGetter(out var getter))
+            {
+                return getter switch
+                {
+                    { ExpressionBody: { Expression: { } get } }
+                    => AreDifferent(get, mutation.Member, context),
+                    { Body: { Statements: { Count: 0 } statements } }
+                    when statements[0] is ReturnStatementSyntax { Expression: { } get }
+                    => AreDifferent(get, mutation.Member, context),
+                    { Body: { } body }
+                    when ReturnExpressionsWalker.TryGetSingle(body, out var get)
+                    => AreDifferent(get, mutation.Member, context),
+                    _ => false
+                };
+            }
+
+            return false;
+        }
+
+        private static bool AreDifferent(ExpressionSyntax get, ExpressionSyntax set, SyntaxNodeAnalysisContext context)
+        {
+            using var getPath = MemberPath.Get(get);
+            using var setPath = MemberPath.Get(set);
+
+            if (MemberPath.Equals(getPath, setPath))
+            {
+                return false;
+            }
+
+            if (Member(getPath, 0) is { } getField &&
+                Member(setPath, 0) is { } setField)
+            {
+                if (getField.Equals(setField))
+                {
+                    if (Member(getPath, 1) is { } getField1 &&
+                        Member(setPath, 1) is { } setField1)
+                    {
+                        return !getField1.Equals(setField1);
+                    }
+
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
+
+            ISymbol? Member(MemberPath.PathWalker path, int index)
+            {
+                if (path.Tokens.TryElementAt(index, out var token))
+                {
+                    return context.SemanticModel.GetSymbolSafe(token.Parent, context.CancellationToken) switch
+                    {
+                        IFieldSymbol field => field,
+                        IPropertySymbol property
+                        when property.IsAutoProperty()
+                        => property,
+                        _ => null,
+                    };
+                }
+
+                return null;
             }
         }
     }

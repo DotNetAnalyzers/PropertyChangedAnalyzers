@@ -1,5 +1,5 @@
 # INPC010
-## The property sets a different field than it returns.
+## The property gets and sets a different backing member.
 
 | Topic    | Value
 | :--      | :--
@@ -7,11 +7,11 @@
 | Severity | Warning
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [PropertyDeclarationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/PropertyDeclarationAnalyzer.cs)
+| Code     | [SetAccessorAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/SetAccessorAnalyzer.cs)
 
 ## Description
 
-The property sets a different field than it returns.
+The property gets and sets a different backing member.
 
 ## Motivation
 
@@ -30,21 +30,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC010 // The property sets a different field than it returns.
+#pragma warning disable INPC010 // The property gets and sets a different backing member.
 Code violating the rule here
-#pragma warning restore INPC010 // The property sets a different field than it returns.
+#pragma warning restore INPC010 // The property gets and sets a different backing member.
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC010 // The property sets a different field than it returns.
+#pragma warning disable INPC010 // The property gets and sets a different backing member.
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC010:The property sets a different field than it returns.", 
+    "INPC010:The property gets and sets a different backing member.", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

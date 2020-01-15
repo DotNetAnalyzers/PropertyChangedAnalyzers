@@ -6,11 +6,11 @@
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC010GetAndSetSame);
 
         [Test]
-        public static void DifferentFieldsAssign()
+        public static void Message()
         {
             var code = @"
 namespace N
@@ -51,11 +51,82 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property sets a different field than it returns."), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member."), code);
         }
 
         [Test]
-        public static void DifferentFieldsTrySet()
+        public static void DifferentFieldsStatementBodies()
+        {
+            var code = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int f1;
+        private int f2;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int ↓P
+        {
+            get
+            {
+                return this.f1;
+            }
+
+            set
+            {
+                if (value == this.f2)
+                {
+                    return;
+                }
+
+                this.f2 = value;
+                this.OnPropertyChanged(nameof(P));
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+        }
+
+        [Test]
+        public static void DifferentFieldsExpressionBodies()
+        {
+            var code = @"
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int f1 = 1;
+        private int f2;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int ↓P
+        {
+            get => this.f1;
+            set => this.f2 = value;
+        }
+    }
+}";
+
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member."), code);
+        }
+
+        [Test]
+        public static void DifferentFieldsTrySetExpressionBodies()
         {
             var code = @"
 namespace N
@@ -100,6 +171,51 @@ namespace N
         }
 
         [Test]
+        public static void DifferentFieldsTrySetStatementBodies()
+        {
+            var code = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int f1;
+        private int f2;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int ↓P
+        {
+            get { return this.f1; }
+            set { this.TrySet(ref this.f2, value); }
+        }
+
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+        }
+
+        [Test]
         public static void DifferentFieldsInternal()
         {
             var code = @"
@@ -110,8 +226,8 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private int otherValue;
-        private int p;
+        private int f1;
+        private int f2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -119,17 +235,17 @@ namespace N
         {
             get
             {
-                return this.otherValue;
+                return this.f1;
             }
 
             set
             {
-                if (value == this.p)
+                if (value == this.f2)
                 {
                     return;
                 }
 
-                this.p = value;
+                this.f2 = value;
                 this.OnPropertyChanged(nameof(P));
             }
         }
@@ -225,6 +341,103 @@ namespace N
                 }
 
                 this.c1.P2 = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
+        }
+
+        [Test]
+        public static void DifferentInstanceFieldsNestedProperties()
+        {
+            var c1 = @"
+namespace N
+{
+    public class C1
+    {
+        public int P { get; set; }
+    }
+}";
+            var code = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private readonly C1 f1 = new C1();
+        private readonly C1 f2 = new C1();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int ↓P
+        {
+            get => this.f1.P;
+            set
+            {
+                if (value == this.f2.P)
+                {
+                    return;
+                }
+
+                this.f2.P = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
+        }
+
+        [Test]
+        public static void DifferentInstancePropertiesNestedProperties()
+        {
+            var c1 = @"
+namespace N
+{
+    public class C1
+    {
+        public int P { get; set; }
+    }
+}";
+            var code = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public C1 P1 { get; } = new C1();
+
+        public C1 P2 { get; } = new C1();
+
+        public int ↓P3
+        {
+            get => this.P1.P;
+            set
+            {
+                if (value == this.P2.P)
+                {
+                    return;
+                }
+
+                this.P2.P = value;
                 this.OnPropertyChanged();
             }
         }

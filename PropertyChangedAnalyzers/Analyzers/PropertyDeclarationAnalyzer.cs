@@ -14,7 +14,6 @@
     internal class PropertyDeclarationAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            Descriptors.INPC010GetAndSetSame,
             Descriptors.INPC015PropertyIsRecursive,
             Descriptors.INPC017BackingFieldNameMisMatch,
             Descriptors.INPC019GetBackingField,
@@ -81,11 +80,6 @@
                     if (ShouldBeExpressionBody(setter))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, setter.GetLocation()));
-                    }
-
-                    if (GetsAndSetsSame(propertyDeclaration, context.SemanticModel, context.CancellationToken) is false)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, propertyDeclaration.Identifier.GetLocation()));
                     }
 
                     using var assignmentWalker = AssignmentWalker.Borrow(setter);

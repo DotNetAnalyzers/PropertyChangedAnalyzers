@@ -96,12 +96,12 @@ namespace PropertyChangedAnalyzers
 
         internal static readonly DiagnosticDescriptor INPC010GetAndSetSame = Descriptors.Create(
             id: "INPC010",
-            title: "The property sets a different field than it returns.",
-            messageFormat: "The property sets a different field than it returns.",
+            title: "The property gets and sets a different backing member.",
+            messageFormat: "The property gets and sets a different backing member.",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "The property sets a different field than it returns.");
+            description: "The property gets and sets a different backing member.");
 
         internal static readonly DiagnosticDescriptor INPC011DoNotShadow = Descriptors.Create(
             id: "INPC011",

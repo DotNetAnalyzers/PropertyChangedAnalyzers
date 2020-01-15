@@ -25,7 +25,7 @@ Roslyn analyzers for `INotifyPropertyChanged`.
 | [INPC007](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC007.md)| The class has PropertyChangedEvent but no invoker.
 | [INPC008](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC008.md)| Struct must not implement INotifyPropertyChanged
 | [INPC009](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC009.md)| Don't raise PropertyChanged for missing property.
-| [INPC010](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC010.md)| The property sets a different field than it returns.
+| [INPC010](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC010.md)| The property gets and sets a different backing member.
 | [INPC011](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC011.md)| Don't shadow PropertyChanged event.
 | [INPC012](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC012.md)| Don't use expression for raising PropertyChanged.
 | [INPC013](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC013.md)| Use nameof.
