@@ -25,7 +25,7 @@ namespace N
     {
         private int wrong;
 
-        public int Value => this.↓wrong;
+        public int P => this.↓wrong;
     }
 }".AssertReplace("wrong", fieldName);
 
@@ -34,9 +34,9 @@ namespace N
 {
     public class C
     {
-        private int value;
+        private int p;
 
-        public int Value => this.value;
+        public int P => this.p;
     }
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
@@ -44,7 +44,7 @@ namespace N
 
         [TestCase("_wrong")]
         [TestCase("_valuE")]
-        [TestCase("_valuee")]
+        [TestCase("_pe")]
         [TestCase("_alue")]
         [TestCase("_vvalue")]
         public static void ExpressionBodyUnderscore(string fieldName)
@@ -56,7 +56,7 @@ namespace N
     {
         private int _wrong;
 
-        public int Value => ↓_wrong;
+        public int P => ↓_wrong;
     }
 }".AssertReplace("_wrong", fieldName);
 
@@ -65,9 +65,9 @@ namespace N
 {
     public class C
     {
-        private int _value;
+        private int _p;
 
-        public int Value => _value;
+        public int P => _p;
     }
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
@@ -87,7 +87,7 @@ namespace N
     {
         private int wrong;
 
-        public int Value
+        public int P
         {
             get => this.wrong;
         }
@@ -98,11 +98,11 @@ namespace N
 {
     public class C
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get => this.value;
+            get => this.p;
         }
     }
 }";
@@ -124,7 +124,7 @@ namespace N
     {
         private int wrong;
 
-        public int Value
+        public int P
         {
             get { return this.wrong; }
         }
@@ -136,11 +136,11 @@ namespace N
 {
     public class C
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return this.value; }
+            get { return this.p; }
         }
     }
 }";
@@ -150,7 +150,7 @@ namespace N
 
         [TestCase("_wrong")]
         [TestCase("_valuE")]
-        [TestCase("_valuee")]
+        [TestCase("_pe")]
         [TestCase("_alue")]
         [TestCase("_vvalue")]
         public static void ExpressionBodyGetterUnderscore(string fieldName)
@@ -162,7 +162,7 @@ namespace N
     {
         private int _wrong;
 
-        public int Value
+        public int P
         {
             get => ↓_wrong;
         }
@@ -173,11 +173,11 @@ namespace N
 {
     public class C
     {
-        private int _value;
+        private int _p;
 
-        public int Value
+        public int P
         {
-            get => _value;
+            get => _p;
         }
     }
 }";

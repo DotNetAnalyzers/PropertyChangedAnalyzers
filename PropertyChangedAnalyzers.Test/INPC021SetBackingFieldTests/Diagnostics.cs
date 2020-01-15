@@ -66,7 +66,7 @@ namespace ValidCode.TrySet
     public class ExpressionBodies : INotifyPropertyChanged
     {
         private string p2;
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -85,10 +85,10 @@ namespace ValidCode.TrySet
             }
         }
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            set => this.TrySet(ref this.value, value);
+            get => this.p;
+            set => this.TrySet(ref this.p, value);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatchTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -21,26 +21,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -62,9 +62,9 @@ namespace N
 {
     public class C
     {
-        private int value;
+        private int p;
 
-        public int Value => this.value;
+        public int P => this.p;
     }
 }";
 
@@ -96,12 +96,12 @@ namespace N
 {
     public class C
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            set => this.value = value;
+            get => this.p;
+            set => this.p = value;
         }
     }
 }";
@@ -117,7 +117,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int F;
     }
 }";
             var code = @"
@@ -129,19 +129,20 @@ namespace N
     public class C2 : INotifyPropertyChanged
     {
         private readonly C1 c1 = new C1();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
-            get => this.c1.C1Value;
+            get => this.c1.F;
             set
             {
-                if (value == this.c1.C1Value)
+                if (value == this.c1.F)
                 {
                     return;
                 }
 
-                this.c1.C1Value = value;
+                this.c1.F = value;
                 this.OnPropertyChanged();
             }
         }
@@ -258,26 +259,26 @@ namespace N
             var code = @"
 namespace N
 {
-    public class C<T> : IC
+    public class C<T> : I
     {
-        private T value;
+        private T p;
 
-        public T Value
+        public T P
         {
-            get => this.value;
-            set => this.value = value;
+            get => this.p;
+            set => this.p = value;
         }
 
-        object IC.Value
+        object I.P
         {
-            get => this.value;
-            set => this.Value = (T)value;
+            get => this.p;
+            set => this.P = (T)value;
         }
     }
 
-    interface IC
+    interface I
     {
-        object Value { get; set; }
+        object P { get; set; }
     }
 }";
 
@@ -332,41 +333,41 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value1;
-        private int value2;
-        private P p;
+        private int f1;
+        private int f2;
+        private E p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public P P
+        public int P1
         {
-            get => this.p;
+            get
+            {
+                switch (this.p2)
+                {
+                    case E.M1:
+                        return this.f1;
+                    case E.M2:
+                        return this.f2;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        public E P2
+        {
+            get => this.p2;
             set
             {
-                if (value == this.p)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.p = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.CurrentValue));
-            }
-        }
-
-        public int CurrentValue
-        {
-            get
-            {
-                switch (P)
-                {
-                    case P.Value1:
-                        return this.value1;
-                    case P.Value2:
-                        return this.value2;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                this.OnPropertyChanged(nameof(this.P1));
             }
         }
 
@@ -376,10 +377,10 @@ namespace N
         }
     }
 
-    public enum P
+    public enum E
     {
-        Value1,
-        Value2,
+        M1,
+        M2,
     }
 }";
 
@@ -394,9 +395,9 @@ namespace N
 {
     public class C
     {
-        private static readonly int StaticValue = 2;
+        private static readonly int F = 2;
 
-        public int Value => StaticValue;
+        public int P => F;
     }
 }";
 
@@ -411,9 +412,9 @@ namespace N
 {
     public class C
     {
-        private const int StaticValue = 2;
+        private const int F = 2;
 
-        public static int Value => StaticValue;
+        public static int P => F;
     }
 }";
 
@@ -428,9 +429,9 @@ namespace N
 {
     public class C
     {
-        private const int ConstValue = 2;
+        private const int F = 2;
 
-        public int Value => ConstValue;
+        public int P => F;
     }
 }";
 
