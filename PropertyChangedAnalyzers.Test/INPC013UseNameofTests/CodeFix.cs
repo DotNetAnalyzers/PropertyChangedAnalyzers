@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -101,27 +101,27 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => this.Value*this.Value;
+        public int Squared => this.P*this.P;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(↓""Squared"");
             }
@@ -142,27 +142,27 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => this.Value*this.Value;
+        public int Squared => this.P*this.P;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.Squared));
             }
@@ -259,39 +259,39 @@ namespace N
 
     public class C
     {
-        private static string p;
-        private int value;
+        private static string p1;
+        private int p2;
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
 
-        public static string P
+        public static string P1
         {
             get
             {
-                return p;
+                return p1;
             }
 
             set
             {
-                if (value == p)
+                if (value == p1)
                 {
                     return;
                 }
 
-                p = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""P""));
+                p1 = value;
+                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""P1""));
             }
         }
 
-        public int Value
+        public int P2
         {
             get
             {
-                return this.value;
+                return this.p2;
             }
             set
             {
-                this.value = value;
+                this.p2 = value;
             }
         }
     }
@@ -305,39 +305,39 @@ namespace N
 
     public class C
     {
-        private static string p;
-        private int value;
+        private static string p1;
+        private int p2;
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
 
-        public static string P
+        public static string P1
         {
             get
             {
-                return p;
+                return p1;
             }
 
             set
             {
-                if (value == p)
+                if (value == p1)
                 {
                     return;
                 }
 
-                p = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
+                p1 = value;
+                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(P1)));
             }
         }
 
-        public int Value
+        public int P2
         {
             get
             {
-                return this.value;
+                return this.p2;
             }
             set
             {
-                this.value = value;
+                this.p2 = value;
             }
         }
     }
@@ -353,11 +353,11 @@ namespace N
 {
     public class C
     {
-        public int Value { get; set; }
+        public int P { get; set; }
 
         public static void M1()
         {
-            M1(↓""Value"");
+            M1(↓""P"");
         }
 
         public static void M1(string s)
@@ -371,11 +371,11 @@ namespace N
 {
     public class C
     {
-        public int Value { get; set; }
+        public int P { get; set; }
 
         public static void M1()
         {
-            M1(nameof(Value));
+            M1(nameof(P));
         }
 
         public static void M1(string s)
@@ -394,9 +394,9 @@ namespace N
 {
     public class C
     {
-        public static readonly string P = M(↓""Value"");
+        public static readonly string F = M(↓""P"");
 
-        public int Value { get; set; }
+        public int P { get; set; }
 
         public static string M(string s) => s;
     }
@@ -407,9 +407,9 @@ namespace N
 {
     public class C
     {
-        public static readonly string P = M(nameof(Value));
+        public static readonly string F = M(nameof(P));
 
-        public int Value { get; set; }
+        public int P { get; set; }
 
         public static string M(string s) => s;
     }
@@ -425,14 +425,14 @@ namespace N
 {
     public class C
     {
-        public readonly string P = string.Format(↓""Value"");
+        public readonly string F = string.Format(↓""P"");
 
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return this.value; }
-            set { this.value = value; }
+            get { return this.p; }
+            set { this.p = value; }
         }
     }
 }";
@@ -442,14 +442,14 @@ namespace N
 {
     public class C
     {
-        public readonly string P = string.Format(nameof(Value));
+        public readonly string F = string.Format(nameof(P));
 
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return this.value; }
-            set { this.value = value; }
+            get { return this.p; }
+            set { this.p = value; }
         }
     }
 }";
@@ -467,29 +467,29 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int _value;
+        private int _p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => _value*_value;
+        public int P1 => _p2 * _p2;
 
-        public int Value
+        public int P2
         {
             get
             {
-                return _value;
+                return _p2;
             }
 
             set
             {
-                if (value == _value)
+                if (value == _p2)
                 {
                     return;
                 }
 
-                _value = value;
+                _p2 = value;
                 OnPropertyChanged();
-                OnPropertyChanged(↓""Squared"");
+                OnPropertyChanged(↓""P1"");
             }
         }
 
@@ -508,29 +508,29 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int _value;
+        private int _p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => _value*_value;
+        public int P1 => _p2 * _p2;
 
-        public int Value
+        public int P2
         {
             get
             {
-                return _value;
+                return _p2;
             }
 
             set
             {
-                if (value == _value)
+                if (value == _p2)
                 {
                     return;
                 }
 
-                _value = value;
+                _p2 = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(Squared));
+                OnPropertyChanged(nameof(P1));
             }
         }
 

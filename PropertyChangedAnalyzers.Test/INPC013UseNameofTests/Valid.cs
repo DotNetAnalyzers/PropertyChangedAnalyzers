@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC013UseNameofTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -59,10 +59,10 @@ namespace N
             var code = @"
 namespace N
 {
-    [System.Diagnostics.DebuggerDisplay(""{Name}"")]
+    [System.Diagnostics.DebuggerDisplay(""{P}"")]
     public class C
     {
-        public string Name { get; }
+        public string P { get; }
     }
 }";
             RoslynAssert.Valid(Analyzer, code);
@@ -83,9 +83,8 @@ namespace N
             this.M2(""Exception"");
         }
 
-        public void M2(string value)
+        public void M2(string s)
         {
-            throw new ArgumentException(nameof(value), value);
         }
     }
 }";
@@ -107,10 +106,7 @@ namespace N
             var text = this.M2(""text"");
         }
 
-        public string M2(string value)
-        {
-            throw new ArgumentException(nameof(value), value);
-        }
+        public string M2(string s) => string.Empty;
     }
 }";
             RoslynAssert.Valid(Analyzer, code);
@@ -131,9 +127,8 @@ namespace N
             this.M2(""Test"");
         }
 
-        public void M2(string value)
+        public void M2(string p)
         {
-            throw new ArgumentException(nameof(value), value);
         }
     }
 }";
