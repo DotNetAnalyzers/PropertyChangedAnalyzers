@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -111,11 +111,11 @@ namespace N
     internal class C : INotifyPropertyChanged
     {
         private int otherValue;
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal int ↓Value
+        internal int ↓P
         {
             get
             {
@@ -124,13 +124,13 @@ namespace N
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -152,8 +152,8 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
-        public int OtherValue;
+        public int F1;
+        public int F2;
     }
 }";
             var code = @"
@@ -167,17 +167,17 @@ namespace N
         private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.c1.OtherValue;
+            get => this.c1.F2;
             set
             {
-                if (value == this.c1.C1Value)
+                if (value == this.c1.F1)
                 {
                     return;
                 }
 
-                this.c1.C1Value = value;
+                this.c1.F1 = value;
                 this.OnPropertyChanged();
             }
         }
@@ -209,12 +209,12 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C2 : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private readonly C1 c1 = new C1();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
             get => this.c1.P1;
             set
@@ -246,7 +246,7 @@ namespace N
 {
     public class C1
     {
-        public int C1Value;
+        public int F;
     }
 }";
             var code = @"
@@ -255,23 +255,24 @@ namespace N
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public class C2 : INotifyPropertyChanged
+    public class C : INotifyPropertyChanged
     {
         private readonly C1 c11 = new C1();
         private readonly C1 c12 = new C1();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ↓Value
+        public int ↓P
         {
-            get => this.c11.C1Value;
+            get => this.c11.F;
             set
             {
-                if (value == this.c12.C1Value)
+                if (value == this.c12.F)
                 {
                     return;
                 }
 
-                this.c12.C1Value = value;
+                this.c12.F = value;
                 this.OnPropertyChanged();
             }
         }

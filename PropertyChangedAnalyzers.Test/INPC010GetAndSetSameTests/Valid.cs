@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSameTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -21,26 +21,26 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(nameof(Value));
+                this.p = value;
+                this.OnPropertyChanged(nameof(P));
             }
         }
 
@@ -65,12 +65,12 @@ namespace N
 
     public class C
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return this.value; }
-            set { this.value = value; }
+            get { return this.p; }
+            set { this.p = value; }
         }
     }
 }";
@@ -89,15 +89,15 @@ namespace N
 
     public class C
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get { return this.value; }
+            get { return this.p; }
             set
             { 
-                this.value = value;
-                this.value = value;
+                this.p = value;
+                this.p = value;
             }
         }
     }
@@ -117,12 +117,12 @@ namespace N
 
     public class C
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
-            get => this.value;
-            set => this.value = value;
+            get => this.p;
+            set => this.p = value;
         }
     }
 }";
@@ -153,7 +153,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get => this.c1.p;
             set
@@ -201,7 +201,7 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get => this.c1.P2;
             set
@@ -378,26 +378,26 @@ namespace N
             var code = @"
 namespace N
 {
-    public class C<T> : IC
+    public class C<T> : I
     {
-        private T value;
+        private T p;
 
-        public T Value
+        public T P
         {
-            get => this.value;
-            set => this.value = value;
+            get => this.p;
+            set => this.p = value;
         }
 
-        object IC.Value
+        object IC.P
         {
-            get => this.value;
-            set => this.Value = (T)value;
+            get => this.p;
+            set => this.P = (T)value;
         }
     }
 
-    interface IC
+    interface I
     {
-        object Value { get; set; }
+        object P { get; set; }
     }
 }";
 

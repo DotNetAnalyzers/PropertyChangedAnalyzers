@@ -267,24 +267,24 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(nameof(this.Value));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
     }
@@ -347,7 +347,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public C()
         {
@@ -356,21 +356,21 @@ namespace N
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -403,25 +403,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -452,25 +452,25 @@ namespace N
 
     public class C1 : INotifyPropertyChanged
     {
-        private int value;
+        private int p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
             }
         }
@@ -487,7 +487,7 @@ namespace N
         public void M()
         {
             var vm = new C1();
-            vm.OnPropertyChanged(""Value"");
+            vm.OnPropertyChanged(""P"");
         }
     }
 }";
@@ -515,24 +515,24 @@ namespace N
 {
     public class C1 : ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
-                this.OnPropertyChanged(nameof(this.Value));
+                this.p = value;
+                this.OnPropertyChanged(nameof(this.P));
             }
         }
     }
@@ -546,7 +546,7 @@ namespace N
         public void M()
         {
             var vm = new C1();
-            vm.OnPropertyChanged(""Value"");
+            vm.OnPropertyChanged(""P"");
         }
     }
 }";
@@ -667,26 +667,26 @@ namespace N.Client
 
     public class C : ViewModelBase
     {
-        private int value;
+        private int p;
         private int p2;
 
-        public int Sum => this.Value + this.P2;
+        public int Sum => this.P + this.P2;
 
-        public int Value
+        public int P
         {
             get
             {
-                return this.value;
+                return this.p;
             }
 
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(Sum));
             }
@@ -722,7 +722,7 @@ namespace N.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public abstract int Value { get; }
+        public abstract int P { get; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -737,14 +737,14 @@ namespace N.Client
 
     public class C : ViewModelBase
     {
-        private int value;
+        private int p;
 
-        public override int Value => this.value;
+        public override int P => this.p;
 
         public void Update(int newValue)
         {
-            this.value = newValue;
-            this.OnPropertyChanged(nameof(this.Value));
+            this.p = newValue;
+            this.OnPropertyChanged(nameof(this.P));
         }
     }
 }";
