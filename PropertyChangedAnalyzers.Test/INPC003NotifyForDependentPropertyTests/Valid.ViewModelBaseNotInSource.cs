@@ -23,14 +23,14 @@ namespace N.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected virtual bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -173,9 +173,9 @@ namespace N.Client
 {
     public abstract class ViewModelBase : N.Core.ViewModelBase
     {
-        protected override bool TrySet<T>(ref T oldValue, T newValue, string propertyName = null)
+        protected override bool TrySet<T>(ref T oldValue, T value, string propertyName = null)
         {
-            return base.TrySet(ref oldValue, newValue, propertyName);
+            return base.TrySet(ref oldValue, value, propertyName);
         }
     }
 }";

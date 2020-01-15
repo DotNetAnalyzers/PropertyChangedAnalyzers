@@ -3386,9 +3386,9 @@ namespace N
 
         public override int P => this.p;
 
-        public void Update(int newValue)
+        public void Update(int value)
         {
-            ↓this.p = newValue;
+            ↓this.p = value;
         }
     }
 }";
@@ -3401,9 +3401,9 @@ namespace N
 
         public override int P => this.p;
 
-        public void Update(int newValue)
+        public void Update(int value)
         {
-            this.p = newValue;
+            this.p = value;
             this.OnPropertyChanged(nameof(this.P));
         }
     }

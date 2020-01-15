@@ -116,9 +116,9 @@ namespace N
 {
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
-        public override bool Set<T>(ref T oldValue, T newValue,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        public override bool Set<T>(ref T oldValue, T value,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
-            return base.Set(ref oldValue, newValue, propertyName);
+            return base.Set(ref oldValue, value, propertyName);
         }
     }
 }";

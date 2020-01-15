@@ -894,8 +894,8 @@ namespace N
             RoslynAssert.Valid(Analyzer, code);
         }
 
-        [TestCase("P = newValue;")]
-        [TestCase("this.P = newValue;")]
+        [TestCase("P = value;")]
+        [TestCase("this.P = value;")]
         public static void WhenSettingPropertyThatNotifies(string statement)
         {
             var code = @"
@@ -928,9 +928,9 @@ namespace N
             }
         }
 
-        public void Update(int newValue)
+        public void Update(int value)
         {
-            this.P = newValue;
+            this.P = value;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -938,7 +938,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace("this.P = newValue;", statement);
+}".AssertReplace("this.P = value;", statement);
 
             RoslynAssert.Valid(Analyzer, code);
         }

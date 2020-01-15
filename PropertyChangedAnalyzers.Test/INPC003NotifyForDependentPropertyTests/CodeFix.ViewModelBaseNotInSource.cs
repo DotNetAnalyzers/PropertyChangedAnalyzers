@@ -23,14 +23,14 @@ namespace N.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected virtual bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }

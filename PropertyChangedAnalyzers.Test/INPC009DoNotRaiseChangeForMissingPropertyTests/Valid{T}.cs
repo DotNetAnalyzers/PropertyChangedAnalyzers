@@ -642,14 +642,14 @@ namespace N.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
@@ -741,9 +741,9 @@ namespace N.Client
 
         public override int P => this.p;
 
-        public void Update(int newValue)
+        public void Update(int value)
         {
-            this.p = newValue;
+            this.p = value;
             this.OnPropertyChanged(nameof(this.P));
         }
     }
