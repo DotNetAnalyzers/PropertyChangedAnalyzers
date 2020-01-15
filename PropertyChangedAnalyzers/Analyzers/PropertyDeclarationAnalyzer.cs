@@ -67,6 +67,14 @@
                     }
                 }
 
+                if (propertyDeclaration.TryGetGetter(out var getter))
+                {
+                    if (ShouldBeExpressionBody(getter))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, getter.GetLocation()));
+                    }
+                }
+
                 if (propertyDeclaration.TryGetSetter(out var setter))
                 {
                     if (ShouldBeExpressionBody(setter))
@@ -79,20 +87,10 @@
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, propertyDeclaration.Identifier.GetLocation()));
                     }
 
-                    using (var assignmentWalker = AssignmentWalker.Borrow(setter))
+                    using var assignmentWalker = AssignmentWalker.Borrow(setter);
+                    if (assignmentWalker.Assignments.TryFirst(x => IsProperty(x.Left) && !x.Parent.IsKind(SyntaxKind.ObjectInitializerExpression), out var recursiveAssignment))
                     {
-                        if (assignmentWalker.Assignments.TryFirst(x => IsProperty(x.Left) && !x.Parent.IsKind(SyntaxKind.ObjectInitializerExpression), out var recursiveAssignment))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
-                        }
-                    }
-
-                    if (propertyDeclaration.TryGetGetter(out var getter))
-                    {
-                        if (ShouldBeExpressionBody(getter))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor, getter.GetLocation()));
-                        }
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
                     }
                 }
 
@@ -177,8 +175,14 @@
 
         private static bool ShouldBeExpressionBody(AccessorDeclarationSyntax accessor)
         {
-            return accessor.Body is { Statements: { Count: 1 } statements } &&
-                   statements[0].IsEither(SyntaxKind.ReturnStatement, SyntaxKind.ExpressionStatement);
+            return accessor switch
+            {
+                { Keyword: { ValueText: "get" }, Body: { Statements: { Count: 1 } statements } }
+                => statements[0].IsKind(SyntaxKind.ReturnStatement),
+                { Keyword: { ValueText: "set" }, Body: { Statements: { Count: 1 } statements } }
+                => statements[0].IsKind(SyntaxKind.ExpressionStatement),
+                _ => false,
+            };
         }
     }
 }

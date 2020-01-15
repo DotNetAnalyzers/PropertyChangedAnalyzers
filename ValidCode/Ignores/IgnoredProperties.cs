@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode.Ignores
 {
     public class IgnoredProperties
@@ -21,7 +21,9 @@ namespace ValidCode.Ignores
 
         public int StatementBodyGetter
         {
+#pragma warning disable INPC020 // Prefer expression body accessor.
             get { return 1; }
+#pragma warning restore INPC020
         }
 
         public int PrivateSetAssignedInConstructor { get; private set; }

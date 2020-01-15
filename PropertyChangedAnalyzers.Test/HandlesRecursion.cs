@@ -302,13 +302,7 @@ namespace N
             }
         }
 
-        public double Height
-        {
-            get
-            {
-                return Math.Min(this.Height, this.H1);
-            }
-        }
+        public double Height => Math.Min(this.Height, this.H1);
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
