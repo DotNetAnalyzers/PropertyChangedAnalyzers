@@ -64,9 +64,9 @@ namespace ValidCode.Recursion
             this.OnPropertyChanged(propertyName);
         }
 
-        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
+        private bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
-            return this.TrySet(ref field, newValue, propertyName);
+            return this.TrySet(ref field, value, propertyName);
         }
     }
 }

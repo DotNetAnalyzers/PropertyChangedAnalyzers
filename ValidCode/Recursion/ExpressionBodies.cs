@@ -35,6 +35,6 @@ namespace ValidCode.Recursion
 
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.OnPropertyChanged(propertyName);
 
-        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null) => this.TrySet(ref field, newValue, propertyName);
+        private bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null) => this.TrySet(ref field, value, propertyName);
     }
 }

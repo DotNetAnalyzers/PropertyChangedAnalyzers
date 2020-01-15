@@ -1,4 +1,5 @@
-﻿namespace ValidCode.Ignores
+﻿// ReSharper disable All
+namespace ValidCode.Ignores
 {
     using System.Collections;
 

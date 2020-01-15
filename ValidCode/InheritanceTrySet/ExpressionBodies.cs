@@ -1,4 +1,5 @@
-﻿namespace ValidCode.InheritanceTrySet
+﻿// ReSharper disable All
+namespace ValidCode.InheritanceTrySet
 {
     public sealed class ExpressionBodies : ExpressionBodiesViewModelBase
     {

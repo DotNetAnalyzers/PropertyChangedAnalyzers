@@ -1,4 +1,4 @@
-// ReSharper disable UnusedMember.Global
+﻿// ReSharper disable All
 namespace ValidCode.Ignores
 {
     public struct Struct

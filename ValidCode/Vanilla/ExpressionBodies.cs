@@ -1,4 +1,5 @@
-﻿namespace ValidCode.Vanilla
+﻿// ReSharper disable All
+namespace ValidCode.Vanilla
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

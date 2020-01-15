@@ -1,4 +1,5 @@
-﻿namespace ValidCode.Repros
+﻿// ReSharper disable All
+namespace ValidCode.Repros
 {
     using System;
     using System.ComponentModel;

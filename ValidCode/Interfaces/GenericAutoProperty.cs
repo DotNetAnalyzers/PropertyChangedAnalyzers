@@ -1,4 +1,5 @@
-﻿namespace ValidCode.Interfaces
+﻿// ReSharper disable All
+namespace ValidCode.Interfaces
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

@@ -1,4 +1,5 @@
-﻿namespace ValidCode.TrySet
+﻿// ReSharper disable All
+namespace ValidCode.TrySet
 {
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -34,14 +35,14 @@
 
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
+        private bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
             }
 
-            field = newValue;
+            field = value;
             this.OnPropertyChanged(propertyName);
             return true;
         }
