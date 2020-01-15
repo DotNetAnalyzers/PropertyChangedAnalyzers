@@ -7,7 +7,7 @@
 | Severity | Info
 | Enabled  | True
 | Category | PropertyChangedAnalyzers.PropertyChanged
-| Code     | [PropertyDeclarationAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/PropertyDeclarationAnalyzer.cs)
+| Code     | [SetAccessorAnalyzer](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master/PropertyChangedAnalyzers/Analyzers/SetAccessorAnalyzer.cs)
 
 ## Description
 
@@ -15,11 +15,28 @@ Setter should set backing field.
 
 ## Motivation
 
-ADD MOTIVATION HERE
+In the sample below not assigning the backing field is likely a bug.
+
+```cs
+public int P
+{
+    get => this.p;
+    set
+    {
+        if (value == this.p)
+        {
+            return;
+        }
+
+        // this.p = value;
+        this.OnPropertyChanged();
+    }
+}
+```
 
 ## How to fix violations
 
-ADD HOW TO FIX VIOLATIONS HERE
+Assign the backing member.
 
 <!-- start generated config severity -->
 ## Configure severity

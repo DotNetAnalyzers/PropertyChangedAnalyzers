@@ -17,8 +17,7 @@
             Descriptors.INPC015PropertyIsRecursive,
             Descriptors.INPC017BackingFieldNameMisMatch,
             Descriptors.INPC019GetBackingField,
-            Descriptors.INPC020PreferExpressionBodyAccessor,
-            Descriptors.INPC021SetBackingField);
+            Descriptors.INPC020PreferExpressionBodyAccessor);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -52,15 +51,6 @@
                             if (!HasMatchingName(backingField, property))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC017BackingFieldNameMisMatch, path.GetLocation()));
-                            }
-
-                            if (propertyDeclaration.TryGetSetter(out var setAccessor))
-                            {
-                                using var mutationWalker = MutationWalker.Borrow(setAccessor, SearchScope.Member, context.SemanticModel, context.CancellationToken);
-                                if (mutationWalker.IsEmpty)
-                                {
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, setAccessor.GetLocation()));
-                                }
                             }
                         }
 

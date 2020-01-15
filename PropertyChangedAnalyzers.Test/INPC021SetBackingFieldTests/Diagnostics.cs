@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC021SetBackingFieldTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC021SetBackingFieldTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -6,11 +6,11 @@ namespace PropertyChangedAnalyzers.Test.INPC021SetBackingFieldTests
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC021SetBackingField);
 
         [Test]
-        public static void ExpressionBody()
+        public static void ExpressionBodyNotAssigning()
         {
             var code = @"
 namespace N
@@ -29,7 +29,6 @@ namespace N
         public string P2
         {
             get => this.p2;
-
             ↓set
             {
                 if (value == this.p2)

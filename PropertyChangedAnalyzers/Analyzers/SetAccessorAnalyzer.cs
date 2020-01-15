@@ -14,7 +14,8 @@
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Descriptors.INPC002MutablePublicPropertyShouldNotify,
             Descriptors.INPC005CheckIfDifferentBeforeNotifying,
-            Descriptors.INPC016NotifyAfterMutation);
+            Descriptors.INPC016NotifyAfterMutation,
+            Descriptors.INPC021SetBackingField);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -97,10 +98,14 @@
 
         private static void HandleBody(BlockSyntax body, SyntaxNodeAnalysisContext context)
         {
-            ExpressionSyntax? backing = null;
+            ExpressionSyntax? mutated = null;
             bool? equals = null;
 
-            _ = Walk(body);
+            if (Walk(body) &&
+                mutated is null)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, body.Parent.GetLocation()));
+            }
 
             bool Walk(StatementSyntax statement)
             {
@@ -137,20 +142,20 @@
 
                     case IfStatementSyntax { Condition: InvocationExpressionSyntax trySet } ifStatement
                         when TrySet.Match(trySet, context.SemanticModel, context.CancellationToken) is { Field: { Expression: { } field } }:
-                        backing = field;
+                        mutated = field;
                         equals = false;
                         return WalkIfStatement(ifStatement);
                     case IfStatementSyntax { Condition: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: InvocationExpressionSyntax trySet } } ifStatement
                         when TrySet.Match(trySet, context.SemanticModel, context.CancellationToken) is { Field: { Expression: { } field } }:
-                        backing = field;
+                        mutated = field;
                         equals = true;
                         return WalkIfStatement(ifStatement);
                     case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: { } left } }:
-                        backing = left;
+                        mutated = left;
                         return true;
                     case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax invocation }
                         when TrySet.Match(invocation, context.SemanticModel, context.CancellationToken) is { Field: { Expression: { } field } }:
-                        backing = field;
+                        mutated = field;
                         return true;
                     case ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax conditionalInvoke } }
                         when PropertyChangedEvent.IsInvoke(conditionalInvoke, context.SemanticModel, context.CancellationToken):
@@ -158,7 +163,7 @@
                         when PropertyChangedEvent.IsInvoke(invoke, context.SemanticModel, context.CancellationToken):
                     case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax onPropertyChanged }
                         when OnPropertyChanged.Match(onPropertyChanged, context.SemanticModel, context.CancellationToken) is { }:
-                        if (backing is null)
+                        if (mutated is null)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC016NotifyAfterMutation, statement.GetLocation()));
                         }
