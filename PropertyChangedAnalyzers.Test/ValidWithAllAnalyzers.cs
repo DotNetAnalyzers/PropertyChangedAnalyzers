@@ -1,4 +1,4 @@
-#pragma warning disable GURA04,GURA06 // Move test to correct class.
+﻿#pragma warning disable GURA04,GURA06 // Move test to correct class.
 namespace PropertyChangedAnalyzers.Test
 {
     using System;
@@ -91,34 +91,34 @@ namespace N
     }
 }";
 
-            var viewModel1Code = @"
+            var viewModel1 = @"
 namespace N.Client
 {
     using N.Core;
 
     public class ViewModel1 : ViewModelBase
     {
-        private int value;
+        private int p;
         private int p2;
 
-        public int Sum => this.Value + this.P2;
+        public int Sum => this.P + this.P2;
 
-        public int Value
+        public int P
         {
 #pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
-                return this.value;
+                return this.p;
             }
 #pragma warning restore INPC020 // Prefer expression body accessor.
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(Sum));
             }
@@ -138,7 +138,7 @@ namespace N.Client
     }
 }";
 
-            var viewModel2Code = @"
+            var viewModel2 = @"
 namespace N
 {
     using System.ComponentModel;
@@ -146,29 +146,29 @@ namespace N
 
     public class ViewModel2 : INotifyPropertyChanged
     {
-        private int value;
-        private readonly WithMutableField p = new WithMutableField();
+        private int p;
+        private readonly WithMutableField withMutableField = new WithMutableField();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => this.Value * this.Value;
+        public int Squared => this.P * this.P;
 
-        public int Value
+        public int P
         {
 #pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
-                return this.value;
+                return this.p;
             }
 #pragma warning restore INPC020 // Prefer expression body accessor.
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(Squared));
             }
@@ -176,15 +176,15 @@ namespace N
 
         public int P2
         {
-            get => this.p.F;
+            get => this.withMutableField.F;
             set
             {
-                if (value == this.p.F)
+                if (value == this.withMutableField.F)
                 {
                     return;
                 }
 
-                this.p.F = value;
+                this.withMutableField.F = value;
                 this.OnPropertyChanged();
             }
         }
@@ -378,7 +378,7 @@ namespace N
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public abstract int Value { get; }
+        public abstract int P { get; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -391,14 +391,14 @@ namespace N
 {
     public class SubClassingAbstractWithAbstractProperty : AbstractWithAbstractProperty
     {
-        private int value;
+        private int p;
 
-        public override int Value => this.value;
+        public override int P => this.p;
 
-        public void Update(int value)
+        public void M(int p)
         {
-            this.value = value;
-            this.OnPropertyChanged(nameof(this.Value));
+            this.p = p;
+            this.OnPropertyChanged(nameof(this.P));
         }
     }
 }";
@@ -442,8 +442,8 @@ namespace N
                 analyzer,
                 viewModelBase,
                 withMutableField,
-                viewModel1Code,
-                viewModel2Code,
+                viewModel1,
+                viewModel2,
                 oldStyleOnPropertyChanged,
                 wrappingPoint,
                 wrappingTimeSpan,
@@ -463,13 +463,13 @@ namespace N.Core
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public abstract class ViewModelBase<_> : INotifyPropertyChanged
+    public abstract class ViewModelBase<T> : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<U>(ref U field, U value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, value))
+            if (EqualityComparer<U>.Default.Equals(field, value))
             {
                 return false;
             }
@@ -492,27 +492,27 @@ namespace N.Client
 
     public class ViewModel1 : ViewModelBase<int>
     {
-        private int value;
+        private int p;
         private int p2;
 
-        public int Sum => this.Value + this.P2;
+        public int Sum => this.P + this.P2;
 
-        public int Value
+        public int P
         {
 #pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
-                return this.value;
+                return this.p;
             }
 #pragma warning restore INPC020 // Prefer expression body accessor.
             set
             {
-                if (value == this.value)
+                if (value == this.p)
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(Sum));
             }
@@ -541,29 +541,29 @@ namespace N
 
     public class GenericViewModel<T> : INotifyPropertyChanged
     {
-        private T value;
+        private T p;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Text => $""{this.Value}  {this.Value}"";
+        public string Text => $""{this.P}  {this.P}"";
 
-        public T Value
+        public T P
         {
 #pragma warning disable INPC020 // Prefer expression body accessor.
             get
             {
-                return this.value;
+                return this.p;
             }
 #pragma warning restore INPC020 // Prefer expression body accessor.
 
             set
             {
-                if (EqualityComparer<T>.Default.Equals(value, this.value))
+                if (EqualityComparer<T>.Default.Equals(value, this.p))
                 {
                     return;
                 }
 
-                this.value = value;
+                this.p = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(Text));
             }
