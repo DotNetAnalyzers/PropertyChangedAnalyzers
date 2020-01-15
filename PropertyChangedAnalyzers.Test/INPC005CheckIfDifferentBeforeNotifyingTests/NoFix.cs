@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifyingTests
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
@@ -409,6 +409,154 @@ namespace N.Client
                     ↓this.OnPropertyChanged(nameof(this.P1));
                 }
             }
+        }
+    }
+}";
+
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
+        }
+
+        [Test]
+        public static void IfNotTrySetBlockOnPropertyChanged()
+        {
+            var code = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public sealed class C : INotifyPropertyChanged
+    {
+        private string? p2;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public string P1 => $""Hello {this.p2}"";
+
+        public string? P2
+        {
+            get => this.p2;
+            set
+            {
+                if (!this.TrySet(ref this.p2, value))
+                {
+                    ↓this.OnPropertyChanged(nameof(this.P1));
+                }
+            }
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
+        }
+
+        [Test]
+        public static void IfNotTrySetOnPropertyChanged()
+        {
+            var code = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public sealed class C : INotifyPropertyChanged
+    {
+        private string? p2;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public string P1 => $""Hello {this.p2}"";
+
+        public string? P2
+        {
+            get => this.p2;
+            set
+            {
+                if (!this.TrySet(ref this.p2, value))
+                    ↓this.OnPropertyChanged(nameof(this.P1));
+            }
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+
+            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
+        }
+
+        [Test]
+        public static void IfTrySetElseOnPropertyChanged()
+        {
+            var code = @"
+namespace N
+{
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public sealed class C : INotifyPropertyChanged
+    {
+        private string? p2;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public string P1 => $""Hello {this.p2}"";
+
+        public string? P2
+        {
+            get => this.p2;
+            set
+            {
+                if (this.TrySet(ref this.p2, value))
+                {
+                }
+                else
+                {
+                    ↓this.OnPropertyChanged(nameof(this.P1));
+                }
+            }
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+
+            field = newValue;
+            this.OnPropertyChanged(propertyName);
+            return true;
         }
     }
 }";
