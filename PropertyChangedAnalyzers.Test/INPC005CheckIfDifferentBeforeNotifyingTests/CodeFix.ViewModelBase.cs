@@ -213,8 +213,9 @@ namespace N.Client
                 RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
             }
 
-            [Test]
-            public static void NoIfForTrySet()
+            [TestCase("this.TrySet(ref this.p2, value)")]
+            [TestCase("_ = this.TrySet(ref this.p2, value)")]
+            public static void DiscardedTrySetThenOnPropertyChanged(string trySet)
             {
                 var before = @"
 namespace N.Client
@@ -230,12 +231,12 @@ namespace N.Client
             get { return this.p2; }
             set
             {
-                this.TrySet(ref this.p2, value)
+                this.TrySet(ref this.p2, value);
                 ↓this.OnPropertyChanged(nameof(this.P1));
             }
         }
     }
-}";
+}".AssertReplace("this.TrySet(ref this.p2, value)", trySet);
 
                 var after = @"
 namespace N.Client

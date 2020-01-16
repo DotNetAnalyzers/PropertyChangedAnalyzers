@@ -77,6 +77,22 @@
                     {
                         switch (trySet.Parent)
                         {
+                            case AssignmentExpressionSyntax { Parent: ExpressionStatementSyntax assignStatement }
+                                when body.Statements.IndexOf(assignStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1:
+                                context.RegisterCodeFix(
+                                    "Check that value is different before notifying.",
+                                    (editor, __) =>
+                                    {
+                                        editor.RemoveNode(onPropertyChangedStatement);
+                                        _ = editor.ReplaceNode(
+                                            assignStatement,
+                                            x => InpcFactory.IfStatement(
+                                                ((AssignmentExpressionSyntax)x.Expression).Right.WithoutTrivia(),
+                                                onPropertyChangedStatement));
+                                    },
+                                    nameof(CheckIfDifferentBeforeNotifyFix),
+                                    diagnostic);
+                                break;
                             case ExpressionStatementSyntax trySetStatement
                                 when body.Statements.IndexOf(trySetStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1:
                                 context.RegisterCodeFix(

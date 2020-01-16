@@ -51,19 +51,19 @@ namespace N.Core
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
         {
-                new TestCaseData("string", "Equals(value, this.p)"),
-                new TestCaseData("string", "Equals(this.p, value)"),
-                new TestCaseData("string", "Equals(value, p)"),
-                new TestCaseData("string", "Equals(value, P)"),
-                new TestCaseData("string", "Equals(P, value)"),
-                new TestCaseData("string", "Nullable.Equals(value, this.p)"),
-                new TestCaseData("int?",   "Nullable.Equals(value, this.p)"),
-                new TestCaseData("string", "value.Equals(this.p)"),
-                new TestCaseData("string", "value.Equals(p)"),
-                new TestCaseData("string", "this.p.Equals(value)"),
-                new TestCaseData("string", "p.Equals(value)"),
-                new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
-                new TestCaseData("string", "ReferenceEquals(value, this.p)"),
+            new TestCaseData("string", "Equals(value, this.p)"),
+            new TestCaseData("string", "Equals(this.p, value)"),
+            new TestCaseData("string", "Equals(value, p)"),
+            new TestCaseData("string", "Equals(value, P)"),
+            new TestCaseData("string", "Equals(P, value)"),
+            new TestCaseData("string", "Nullable.Equals(value, this.p)"),
+            new TestCaseData("int?",   "Nullable.Equals(value, this.p)"),
+            new TestCaseData("string", "value.Equals(this.p)"),
+            new TestCaseData("string", "value.Equals(p)"),
+            new TestCaseData("string", "this.p.Equals(value)"),
+            new TestCaseData("string", "p.Equals(value)"),
+            new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
+            new TestCaseData("string", "ReferenceEquals(value, this.p)"),
         };
 
         [TestCaseSource(nameof(TestCases))]

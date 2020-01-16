@@ -283,6 +283,10 @@
                         when Setter.MatchAssign(assignment, context.SemanticModel, context.CancellationToken) is { } match:
                         mutation = match;
                         return true;
+                    case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: IdentifierNameSyntax { Identifier: { ValueText: "_" } }, Right: { } right } }
+                        when Setter.MatchTrySet(right, context.SemanticModel, context.CancellationToken) is { } match:
+                        mutation = match;
+                        return true;
                     case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax trySet }
                         when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
                         mutation = match;
