@@ -23,15 +23,6 @@
             new TestCaseData("ReferenceEquals(value, P)",                    "Equals(value, P)"),
             new TestCaseData("ReferenceEquals(value, this.P)",               "Equals(value, this.P)"),
             new TestCaseData("ReferenceEquals(value, this.p)",               "Equals(value, this.p)"),
-            //new TestCaseData("Nullable.Equals(value, this.p)",               "Equals(value, this.p)"),
-            //new TestCaseData("Nullable.Equals(value, this.p)",               "Equals(value, this.p)"),
-            //new TestCaseData("string.Equals(value, this.p)",                 "Equals(value, this.p)"),
-            //new TestCaseData("String.Equals(value, this.p)",                 "Equals(value, this.p)"),
-            //new TestCaseData("System.String.Equals(value, this.p)",          "Equals(value, this.p)"),
-            //new TestCaseData("value.Equals(this.p)",                         "Equals(value, this.p)"),
-            //new TestCaseData("value.Equals(p)",                              "Equals(value, this.p)"),
-            //new TestCaseData("this.p.Equals(value)",                         "Equals(value, this.p)"),
-            //new TestCaseData("p.Equals(value)",                              "Equals(value, this.p)"),
         };
 
         private const string ReferenceType = @"
