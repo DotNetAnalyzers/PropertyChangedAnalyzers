@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC019GetBackingFieldTests
     public static class CodeFix
     {
         private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly CodeFixProvider Fix = new GetBackingFieldFix();
+        private static readonly CodeFixProvider Fix = new ReplaceExpressionFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC019GetBackingField);
 
         [Test]

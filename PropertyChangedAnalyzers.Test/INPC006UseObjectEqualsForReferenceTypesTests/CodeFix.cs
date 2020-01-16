@@ -127,7 +127,7 @@ namespace N
 
         public ReferenceType P
         {
-            get { return this.p; }
+            get => this.p;
             set
             {
                 if (!↓ReferenceEquals(value, this.p))
@@ -160,7 +160,7 @@ namespace N
 
         public ReferenceType P
         {
-            get { return this.p; }
+            get => this.p;
             set
             {
                 if (!Equals(value, this.p))

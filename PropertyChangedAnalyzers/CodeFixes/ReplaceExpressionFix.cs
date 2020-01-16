@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -9,12 +9,13 @@ namespace PropertyChangedAnalyzers
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(GetBackingFieldFix))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ReplaceExpressionFix))]
     [Shared]
-    internal class GetBackingFieldFix : DocumentEditorCodeFixProvider
+    internal class ReplaceExpressionFix : DocumentEditorCodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            Descriptors.INPC019GetBackingField.Id);
+            Descriptors.INPC019GetBackingField.Id,
+            Descriptors.INPC022EqualToBackingField.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
@@ -28,11 +29,11 @@ namespace PropertyChangedAnalyzers
                     syntaxRoot.TryFindNode(additionalLocation, out ExpressionSyntax? fieldAccess))
                 {
                     context.RegisterCodeFix(
-                        "Get backing field.",
+                        $"Use: {fieldAccess.ToString()}",
                         (editor, _) => editor.ReplaceNode(
                             expression,
                             x => fieldAccess.WithTriviaFrom(x)),
-                        "Get backing field.",
+                        diagnostic.Descriptor.Id,
                         diagnostic);
                 }
             }

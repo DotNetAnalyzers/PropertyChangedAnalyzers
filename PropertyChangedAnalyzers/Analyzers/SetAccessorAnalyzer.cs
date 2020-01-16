@@ -18,7 +18,8 @@
             Descriptors.INPC006UseObjectEqualsForReferenceTypes,
             Descriptors.INPC010GetAndSetSame,
             Descriptors.INPC016NotifyAfterMutation,
-            Descriptors.INPC021SetBackingField);
+            Descriptors.INPC021SetBackingField,
+            Descriptors.INPC022EqualToBackingField);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -37,7 +38,7 @@
                 switch (setter)
                 {
                     case { ExpressionBody: { Expression: { } expression } }
-                        when Setter.MatchAssign(expression, context.SemanticModel, context.CancellationToken) is { } match:
+                        when Setter.MatchAssign(expression, context.SemanticModel, context.CancellationToken) is { Member: { } member }:
                         if (Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
                         {
                             context.ReportDiagnostic(
@@ -47,15 +48,15 @@
                                     property.Name));
                         }
 
-                        if (ReturnsDifferent(match, context))
+                        if (ReturnsDifferent(member, context))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, containingProperty.Identifier.GetLocation()));
                         }
 
                         break;
                     case { ExpressionBody: { Expression: { } expression } }
-                        when Setter.MatchTrySet(expression, context.SemanticModel, context.CancellationToken) is { } match:
-                        if (ReturnsDifferent(match, context))
+                        when Setter.MatchTrySet(expression, context.SemanticModel, context.CancellationToken) is { Member: { } member }:
+                        if (ReturnsDifferent(member, context))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC010GetAndSetSame, containingProperty.Identifier.GetLocation()));
                         }
@@ -119,16 +120,28 @@
 
             if (Walk(body))
             {
-                if (mutation is null)
+                if (mutation is { Member: { } mutatedMember })
+                {
+                    if (ReturnsDifferent(mutatedMember, context))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.INPC010GetAndSetSame,
+                                body.FirstAncestor<PropertyDeclarationSyntax>()!.Identifier.GetLocation()));
+                    }
+                    else if (equalState is { MemberAndValue: { Member: { } checkedMember } } &&
+                             AreDifferent(checkedMember, mutatedMember, context))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.INPC022EqualToBackingField,
+                                checkedMember.GetLocation(),
+                                additionalLocations: new[] { mutatedMember.GetLocation() }));
+                    }
+                }
+                else
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, body.Parent.GetLocation()));
-                }
-                else if (ReturnsDifferent(mutation.Value, context))
-                {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            Descriptors.INPC010GetAndSetSame,
-                            body.FirstAncestor<PropertyDeclarationSyntax>()!.Identifier.GetLocation()));
                 }
             }
 
@@ -252,19 +265,19 @@
                 switch (statement)
                 {
                     case IfStatementSyntax { Condition: { } condition } ifStatement
-                        when Setter.MatchEquals(condition, context.SemanticModel, context.CancellationToken) is { }:
+                        when Setter.MatchEquals(condition, context.SemanticModel, context.CancellationToken) is { } match:
                         HandleEquality(condition);
-                        equalState = EqualState.Create(condition);
+                        equalState = EqualState.Create(condition, match);
                         return WalkIfStatement(ifStatement);
                     case IfStatementSyntax { Condition: InvocationExpressionSyntax trySet } ifStatement
                         when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
                         mutation = match;
-                        equalState = new EqualState(trySet, false);
+                        equalState = new EqualState(trySet, match, false);
                         return WalkIfStatement(ifStatement);
                     case IfStatementSyntax { Condition: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: InvocationExpressionSyntax trySet } } ifStatement
                         when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
                         mutation = match;
-                        equalState = new EqualState(trySet, true);
+                        equalState = new EqualState(trySet, match, true);
                         return WalkIfStatement(ifStatement);
                     case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax assignment }
                         when Setter.MatchAssign(assignment, context.SemanticModel, context.CancellationToken) is { } match:
@@ -326,7 +339,7 @@
             }
         }
 
-        private static bool ReturnsDifferent(BackingMemberAndValue andValue, SyntaxNodeAnalysisContext context)
+        private static bool ReturnsDifferent(ExpressionSyntax assignedMember, SyntaxNodeAnalysisContext context)
         {
             if (context.Node is AccessorDeclarationSyntax { Parent: AccessorListSyntax { Parent: PropertyDeclarationSyntax containingProperty } } &&
                 containingProperty.TryGetGetter(out var getter))
@@ -334,13 +347,13 @@
                 return getter switch
                 {
                     { ExpressionBody: { Expression: { } get } }
-                    => AreDifferent(get, andValue.Member, context),
+                    => AreDifferent(get, assignedMember, context),
                     { Body: { Statements: { Count: 0 } statements } }
                     when statements[0] is ReturnStatementSyntax { Expression: { } get }
-                    => AreDifferent(get, andValue.Member, context),
+                    => AreDifferent(get, assignedMember, context),
                     { Body: { } body }
                     when ReturnExpressionsWalker.TryGetSingle(body, out var get)
-                    => AreDifferent(get, andValue.Member, context),
+                    => AreDifferent(get, assignedMember, context),
                     _ => false
                 };
             }
@@ -399,17 +412,20 @@
         {
             internal readonly ExpressionSyntax Condition;
 
+            internal readonly BackingMemberAndValue MemberAndValue;
+
             internal readonly bool? IsValueEqualToBacking;
 
-            internal EqualState(ExpressionSyntax condition, bool? isValueEqualToBacking)
+            internal EqualState(ExpressionSyntax condition, BackingMemberAndValue memberAndValue, bool? isValueEqualToBacking)
             {
                 this.Condition = condition;
+                this.MemberAndValue = memberAndValue;
                 this.IsValueEqualToBacking = isValueEqualToBacking;
             }
 
-            internal static EqualState Create(ExpressionSyntax condition)
+            internal static EqualState Create(ExpressionSyntax condition, BackingMemberAndValue memberAndValue)
             {
-                return new EqualState(condition, Equals(condition));
+                return new EqualState(condition, memberAndValue, Equals(condition));
 
                 static bool? Equals(ExpressionSyntax e)
                 {
@@ -426,6 +442,7 @@
 
             internal EqualState Invert() => new EqualState(
                 this.Condition,
+                this.MemberAndValue,
                 this.IsValueEqualToBacking is { } b ? !b : (bool?)null);
         }
     }

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using Microsoft.CodeAnalysis;
 
@@ -201,6 +201,15 @@ namespace PropertyChangedAnalyzers
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
             description: "Setter should set backing field.");
+
+        internal static readonly DiagnosticDescriptor INPC022EqualToBackingField = Descriptors.Create(
+            id: "INPC022",
+            title: "Comparison should be with backing field.",
+            messageFormat: "Comparison should be with backing field.",
+            category: AnalyzerCategory.PropertyChanged,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            description: "Comparison should be with backing field.");
 
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="Diagnostic" />.
