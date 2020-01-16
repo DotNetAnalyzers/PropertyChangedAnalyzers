@@ -14,21 +14,21 @@
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
         {
-            new TestCaseData("Equals(value, this.p)", "ReferenceEquals(value, this.p)"),
-            new TestCaseData("Equals(this.p, value)", "ReferenceEquals(this.p, value)"),
-            new TestCaseData("Equals(value, p)", "ReferenceEquals(value, p)"),
-            new TestCaseData("Equals(value, P)", "ReferenceEquals(value, P)"),
-            new TestCaseData("Equals(P, value)", "ReferenceEquals(P, value)"),
-            new TestCaseData("Equals(value, this.P)", "ReferenceEquals(value, this.P)"),
-            new TestCaseData("string.Equals(value, this.p)", "ReferenceEquals(value, this.p)"),
-            new TestCaseData("String.Equals(value, this.P)", "ReferenceEquals(value, this.P)"),
+            new TestCaseData("Equals(value, this.p)",               "ReferenceEquals(value, this.p)"),
+            new TestCaseData("Equals(this.p, value)",               "ReferenceEquals(this.p, value)"),
+            new TestCaseData("Equals(value, p)",                    "ReferenceEquals(value, p)"),
+            new TestCaseData("Equals(value, P)",                    "ReferenceEquals(value, P)"),
+            new TestCaseData("Equals(P, value)",                    "ReferenceEquals(P, value)"),
+            new TestCaseData("Equals(value, this.P)",               "ReferenceEquals(value, this.P)"),
+            new TestCaseData("string.Equals(value, this.p)",        "ReferenceEquals(value, this.p)"),
+            new TestCaseData("String.Equals(value, this.P)",        "ReferenceEquals(value, this.P)"),
             new TestCaseData("System.String.Equals(value, this.p)", "ReferenceEquals(value, this.p)"),
-            new TestCaseData("Nullable.Equals(value, this.p)", "ReferenceEquals(value, this.p)"),
-            new TestCaseData("Nullable.Equals(value, this.p)", "ReferenceEquals(value, this.p)"),
-            new TestCaseData("value.Equals(this.p)", "ReferenceEquals(value, this.p)"),
-            new TestCaseData("value.Equals(p)", "ReferenceEquals(value, p)"),
-            new TestCaseData("this.p.Equals(value)", "ReferenceEquals(this.p, value)"),
-            new TestCaseData("p.Equals(value)", "ReferenceEquals(p, value)"),
+            new TestCaseData("Nullable.Equals(value, this.p)",      "ReferenceEquals(value, this.p)"),
+            new TestCaseData("Nullable.Equals(value, this.p)",      "ReferenceEquals(value, this.p)"),
+            new TestCaseData("value.Equals(this.p)",                "ReferenceEquals(value, this.p)"),
+            new TestCaseData("value.Equals(p)",                     "ReferenceEquals(value, p)"),
+            new TestCaseData("this.p.Equals(value)",                "ReferenceEquals(this.p, value)"),
+            new TestCaseData("p.Equals(value)",                     "ReferenceEquals(p, value)"),
         };
 
         private const string ReferenceType = @"
