@@ -198,7 +198,7 @@
             title: "Setter should set backing field.",
             messageFormat: "Setter should set backing field.",
             category: AnalyzerCategory.PropertyChanged,
-            defaultSeverity: DiagnosticSeverity.Info,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Setter should set backing field.");
 
@@ -207,7 +207,7 @@
             title: "Comparison should be with backing field.",
             messageFormat: "Comparison should be with backing field.",
             category: AnalyzerCategory.PropertyChanged,
-            defaultSeverity: DiagnosticSeverity.Info,
+            defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Comparison should be with backing field.");
 
