@@ -11,7 +11,7 @@
     internal class InvocationAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            Descriptors.INPC009DoNotRaiseChangeForMissingProperty);
+            Descriptors.INPC009NotifiesForMissingProperty);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -28,7 +28,7 @@
                 !(invocation.FirstAncestor<AccessorDeclarationSyntax>() is { Keyword: { ValueText: "set" } }) &&
                 PropertyChanged.FindPropertyName(invocation, context.SemanticModel, context.CancellationToken) is { })
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty, invocation.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, invocation.GetLocation()));
             }
         }
     }

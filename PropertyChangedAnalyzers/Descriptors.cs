@@ -85,7 +85,7 @@
             isEnabledByDefault: true,
             description: "Struct must not implement INotifyPropertyChanged");
 
-        internal static readonly DiagnosticDescriptor INPC009DoNotRaiseChangeForMissingProperty = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC009NotifiesForMissingProperty = Descriptors.Create(
             id: "INPC009",
             title: "Don't raise PropertyChanged for missing property.",
             messageFormat: "Don't raise PropertyChanged for missing property.",

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC009DoNotRaiseChangeForMissingPropertyTests
+namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -9,7 +9,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DoNotRaiseChangeForMissingPropert
         public static class Invocation
         {
             private static readonly DiagnosticAnalyzer Analyzer = new InvocationAnalyzer();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty);
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty);
 
             [Test]
             public static void CallsCallerMemberNameFromMethod()

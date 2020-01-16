@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC009DoNotRaiseChangeForMissingPropertyTests
+﻿namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -9,11 +9,12 @@ namespace PropertyChangedAnalyzers.Test.INPC009DoNotRaiseChangeForMissingPropert
         public static class Argument
         {
             private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009DoNotRaiseChangeForMissingProperty);
+            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty);
 
             [TestCase(@"""Missing""")]
             [TestCase(@"nameof(PropertyChanged)")]
             [TestCase(@"nameof(this.PropertyChanged)")]
+            [TestCase(@"nameof(this.p)")]
             public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
             {
                 var code = @"
@@ -43,7 +44,7 @@ namespace N
                 }
 
                 this.p = value;
-                this.OnPropertyChanged(↓nameof(P));
+                this.OnPropertyChanged(↓nameof(this.p));
             }
         }
 
@@ -52,7 +53,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace(@"nameof(P)", propertyName);
+}".AssertReplace(@"nameof(this.p)", propertyName);
 
                 RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }

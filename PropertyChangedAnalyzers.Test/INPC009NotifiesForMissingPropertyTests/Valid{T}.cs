@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC009DoNotRaiseChangeForMissingPropertyTests
+namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingPropertyTests
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -12,7 +12,7 @@ namespace PropertyChangedAnalyzers.Test.INPC009DoNotRaiseChangeForMissingPropert
     {
         private static readonly T Analyzer = new T();
         //// ReSharper disable once StaticMemberInGenericType
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC009DoNotRaiseChangeForMissingProperty;
+        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC009NotifiesForMissingProperty;
 
         [TestCase("null")]
         [TestCase("string.Empty")]
