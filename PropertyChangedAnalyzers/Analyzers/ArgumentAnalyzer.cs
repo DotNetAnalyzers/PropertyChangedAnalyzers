@@ -38,11 +38,34 @@
                     }
 
                     if (!string.IsNullOrEmpty(name) &&
-                        (OnPropertyChanged.Match(targetMethod, context.SemanticModel, context.CancellationToken) is { } ||
-                         targetMethod == KnownSymbol.PropertyChangedEventHandler.Invoke) &&
-                        !Type().TryFindPropertyRecursive(name, out _))
+                        Notifies())
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, expression.GetLocation()));
+                        if (!Type().TryFindPropertyRecursive(name, out _))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, expression.GetLocation()));
+                        }
+
+                        if (expression.IsKind(SyntaxKind.StringLiteralExpression) &&
+                            SyntaxFacts.IsValidIdentifier(name) &&
+                            context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(name, out _))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC013UseNameof, expression.GetLocation()));
+                        }
+                    }
+
+                    bool Notifies()
+                    {
+                        return OnPropertyChanged.Match(targetMethod, context.SemanticModel, context.CancellationToken) is { } ||
+                               TrySet.Match(targetMethod, context.SemanticModel, context.CancellationToken) is { } ||
+                               targetMethod == KnownSymbol.PropertyChangedEventHandler.Invoke ||
+                               EventHandlerOfPropertyChangedEventArgsInvoke();
+
+                        bool EventHandlerOfPropertyChangedEventArgsInvoke()
+                        {
+                            return targetMethod.Name == "Invoke" &&
+                                   targetMethod.ContainingType is { TypeArguments: { Length: 1} typeArguments, MetadataName: "EventHandler`1" } &&
+                                   typeArguments[0] == KnownSymbol.PropertyChangedEventArgs;
+                        }
                     }
 
                     INamedTypeSymbol Type()
@@ -56,27 +79,6 @@
                             => type,
                             _ => context.ContainingSymbol.ContainingType,
                         };
-                    }
-                }
-
-                if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var text))
-                {
-                    if (SyntaxFacts.IsValidIdentifier(text))
-                    {
-                        if (argument.Expression is LiteralExpressionSyntax literal &&
-                            literal.IsKind(SyntaxKind.StringLiteralExpression))
-                        {
-                            if (context.ContainingSymbol is IMethodSymbol containingMethod &&
-                                containingMethod.Parameters.TrySingle(x => x.Name == literal.Token.ValueText, out _))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC013UseNameof, argument.GetLocation()));
-                            }
-
-                            if (context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(literal.Token.ValueText, out _))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC013UseNameof, argument.GetLocation()));
-                            }
-                        }
                     }
                 }
 

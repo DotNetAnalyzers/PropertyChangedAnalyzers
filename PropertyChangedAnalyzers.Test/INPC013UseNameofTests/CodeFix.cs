@@ -11,87 +11,7 @@
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC013UseNameof);
 
         [Test]
-        public static void WhenThrowingArgumentException()
-        {
-            var before = @"
-namespace N
-{
-    using System;
-
-    public class C
-    {
-        public void M(object value)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException(↓""value"");
-            }
-        }
-    }
-}";
-
-            var after = @"
-namespace N
-{
-    using System;
-
-    public class C
-    {
-        public void M(object value)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-        }
-    }
-}";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
-
-        [Test]
-        public static void WhenThrowingArgumentOutOfRangeException()
-        {
-            var before = @"
-namespace N
-{
-    using System;
-
-    public class C
-    {
-        public void M(StringComparison value)
-        {
-            switch (value)
-            {
-                default:
-                    throw new ArgumentOutOfRangeException(↓""value"", value, null);
-            }
-        }
-    }
-}";
-
-            var after = @"
-namespace N
-{
-    using System;
-
-    public class C
-    {
-        public void M(StringComparison value)
-        {
-            switch (value)
-            {
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(value), value, null);
-            }
-        }
-    }
-}";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
-
-        [Test]
-        public static void WhenRaisingPropertyChanged()
+        public static void OnPropertyChanged()
         {
             var before = @"
 namespace N
@@ -101,29 +21,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int p;
+        private int p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => this.P*this.P;
+        public int P1 => this.P2 * this.P2;
 
-        public int P
+        public int P2
         {
-            get
-            {
-                return this.p;
-            }
-
+            get => this.p2;
             set
             {
-                if (value == this.p)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.p = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(↓""Squared"");
+                this.OnPropertyChanged(↓""P2"");
             }
         }
 
@@ -142,29 +58,25 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int p;
+        private int p2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Squared => this.P*this.P;
+        public int P1 => this.P2 * this.P2;
 
-        public int P
+        public int P2
         {
-            get
-            {
-                return this.p;
-            }
-
+            get => this.p2;
             set
             {
-                if (value == this.p)
+                if (value == this.p2)
                 {
                     return;
                 }
 
-                this.p = value;
+                this.p2 = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Squared));
+                this.OnPropertyChanged(nameof(this.P2));
             }
         }
 
@@ -178,286 +90,7 @@ namespace N
         }
 
         [Test]
-        public static void WhenRaisingStaticPropertyChanged()
-        {
-            var before = @"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-
-    public static class C
-    {
-        private static string p;
-
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
-
-        public static string P
-        {
-            get
-            {
-                return p;
-            }
-
-            set
-            {
-                if (value == p)
-                {
-                    return;
-                }
-
-                p = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""P""));
-            }
-        }
-    }
-}";
-
-            var after = @"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-
-    public static class C
-    {
-        private static string p;
-
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
-
-        public static string P
-        {
-            get
-            {
-                return p;
-            }
-
-            set
-            {
-                if (value == p)
-                {
-                    return;
-                }
-
-                p = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
-            }
-        }
-    }
-}";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
-
-        [Test]
-        public static void WhenRaisingStaticPropertyChanged2()
-        {
-            var before = @"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-
-    public class C
-    {
-        private static string p1;
-        private int p2;
-
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
-
-        public static string P1
-        {
-            get
-            {
-                return p1;
-            }
-
-            set
-            {
-                if (value == p1)
-                {
-                    return;
-                }
-
-                p1 = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""P1""));
-            }
-        }
-
-        public int P2
-        {
-            get
-            {
-                return this.p2;
-            }
-            set
-            {
-                this.p2 = value;
-            }
-        }
-    }
-}";
-
-            var after = @"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-
-    public class C
-    {
-        private static string p1;
-        private int p2;
-
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
-
-        public static string P1
-        {
-            get
-            {
-                return p1;
-            }
-
-            set
-            {
-                if (value == p1)
-                {
-                    return;
-                }
-
-                p1 = value;
-                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(P1)));
-            }
-        }
-
-        public int P2
-        {
-            get
-            {
-                return this.p2;
-            }
-            set
-            {
-                this.p2 = value;
-            }
-        }
-    }
-}";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
-
-        [Test]
-        public static void WhenStaticContextNameofInstance()
-        {
-            var before = @"
-namespace N
-{
-    public class C
-    {
-        public int P { get; set; }
-
-        public static void M1()
-        {
-            M1(↓""P"");
-        }
-
-        public static void M1(string s)
-        {
-        }
-    }
-}";
-
-            var after = @"
-namespace N
-{
-    public class C
-    {
-        public int P { get; set; }
-
-        public static void M1()
-        {
-            M1(nameof(P));
-        }
-
-        public static void M1(string s)
-        {
-        }
-    }
-}";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
-
-        [Test]
-        public static void WhenStaticContextNameofInstance2()
-        {
-            var before = @"
-namespace N
-{
-    public class C
-    {
-        public static readonly string F = M(↓""P"");
-
-        public int P { get; set; }
-
-        public static string M(string s) => s;
-    }
-}";
-
-            var after = @"
-namespace N
-{
-    public class C
-    {
-        public static readonly string F = M(nameof(P));
-
-        public int P { get; set; }
-
-        public static string M(string s) => s;
-    }
-}";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
-
-        [Test]
-        public static void WhenStaticContextNameofInstance3()
-        {
-            var before = @"
-namespace N
-{
-    public class C
-    {
-        public readonly string F = string.Format(↓""P"");
-
-        private int p;
-
-        public int P
-        {
-            get { return this.p; }
-            set { this.p = value; }
-        }
-    }
-}";
-
-            var after = @"
-namespace N
-{
-    public class C
-    {
-        public readonly string F = string.Format(nameof(P));
-
-        private int p;
-
-        public int P
-        {
-            get { return this.p; }
-            set { this.p = value; }
-        }
-    }
-}";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
-
-        [Test]
-        public static void WhenRaisingPropertyChangedUnderscoreNames()
+        public static void OnPropertyChangedUnderscoreNames()
         {
             var before = @"
 namespace N
@@ -544,26 +177,36 @@ namespace N
         }
 
         [Test]
-        public static void DependencyProperty()
+        public static void PropertyChangedInvoke()
         {
             var before = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
+    using System.ComponentModel;
 
-    public class WpfControl : Control
+    public class C : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
-            ↓""Number"",
-            typeof(int),
-            typeof(WpfControl),
-            new PropertyMetadata(default(int)));
+        private int p;
 
-        public int Number
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
         {
-            get { return (int)GetValue(NumberProperty); }
-            set { SetValue(NumberProperty, value); }
+            get
+            {
+                return this.p;
+            }
+
+            set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(↓""P""));
+            }
         }
     }
 }";
@@ -571,21 +214,300 @@ namespace N
             var after = @"
 namespace N
 {
-    using System.Windows;
-    using System.Windows.Controls;
+    using System.ComponentModel;
 
-    public class WpfControl : Control
+    public class C : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
-            nameof(Number),
-            typeof(int),
-            typeof(WpfControl),
-            new PropertyMetadata(default(int)));
+        private int p;
 
-        public int Number
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
         {
-            get { return (int)GetValue(NumberProperty); }
-            set { SetValue(NumberProperty, value); }
+            get
+            {
+                return this.p;
+            }
+
+            set
+            {
+                if (value == this.p)
+                {
+                    return;
+                }
+
+                this.p = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.P)));
+            }
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void StaticEventHandlerOfPropertyChangedEventArgsInvoke()
+        {
+            var before = @"
+namespace N
+{
+    using System;
+    using System.ComponentModel;
+
+    public static class C
+    {
+        private static string p;
+
+        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+
+        public static string P
+        {
+            get => p;
+            set
+            {
+                if (value == p)
+                {
+                    return;
+                }
+
+                p = value;
+                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""P""));
+            }
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System;
+    using System.ComponentModel;
+
+    public static class C
+    {
+        private static string p;
+
+        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+
+        public static string P
+        {
+            get => p;
+            set
+            {
+                if (value == p)
+                {
+                    return;
+                }
+
+                p = value;
+                StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
+            }
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Ignore("Low prio")]
+        [Test]
+        public static void StaticEventHandlerOfPropertyChangedEventArgsInvoker()
+        {
+            var before = @"
+namespace N
+{
+    using System;
+    using System.ComponentModel;
+
+    public static class C
+    {
+        private static string p;
+
+        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+
+        public static string P
+        {
+            get => p;
+            set
+            {
+                if (value == p)
+                {
+                    return;
+                }
+
+                p = value;
+                OnStaticPropertyChanged(↓""P"");
+            }
+        }
+
+        private static void OnStaticPropertyChanged(string propertyName)
+        {
+            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System;
+    using System.ComponentModel;
+
+    public static class C
+    {
+        private static string p;
+
+        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+
+        public static string P
+        {
+            get => p;
+            set
+            {
+                if (value == p)
+                {
+                    return;
+                }
+
+                p = value;
+                OnStaticPropertyChanged(nameof(P));
+            }
+        }
+
+        private static void OnStaticPropertyChanged(string propertyName)
+        {
+            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void StaticPropertyChangedEventHandlerInvoke()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C
+    {
+        private static string p;
+
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        public static string P
+        {
+            get => p;
+            set
+            {
+                if (value == p)
+                {
+                    return;
+                }
+
+                p = value;
+                PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(↓""P""));
+            }
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C
+    {
+        private static string p;
+
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        public static string P
+        {
+            get => p;
+            set
+            {
+                if (value == p)
+                {
+                    return;
+                }
+
+                p = value;
+                PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
+            }
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
+
+        [Test]
+        public static void StaticPropertyChangedEventHandlerInvoker()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C
+    {
+        private static string p;
+
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        public static string P
+        {
+            get => p;
+            set
+            {
+                if (value == p)
+                {
+                    return;
+                }
+
+                p = value;
+                OnPropertyChanged(↓""P"");
+            }
+        }
+
+        private static void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C
+    {
+        private static string p;
+
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        public static string P
+        {
+            get => p;
+            set
+            {
+                if (value == p)
+                {
+                    return;
+                }
+
+                p = value;
+                OnPropertyChanged(nameof(P));
+            }
+        }
+
+        private static void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
         }
     }
 }";
