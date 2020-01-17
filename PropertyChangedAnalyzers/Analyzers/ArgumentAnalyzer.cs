@@ -38,6 +38,7 @@
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
                         }
                         else if (target.TrySingleDeclaration<SyntaxNode>(context.CancellationToken, out _) &&
+                                 CallerMemberNameAttribute.IsAvailable(context.SemanticModel) &&
                                  OnPropertyChanged.Match(targetMethod, context.SemanticModel, context.CancellationToken) is { AnalysisResult: AnalysisResult.Yes })
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
