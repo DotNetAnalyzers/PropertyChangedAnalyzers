@@ -1,6 +1,7 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+    using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -28,23 +29,24 @@
             if (!context.IsExcludedFromAnalysis() &&
                 context.Node is ArgumentSyntax { Parent: ArgumentListSyntax argumentList } argument)
             {
-                if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var text))
+                if (NameContext.Create(argument, context.SemanticModel, context.CancellationToken) is { Name: { } name, Expression: { } expression, Target: { ContainingSymbol: IMethodSymbol targetMethod } target })
                 {
-                    if (text == ContainingSymbolName(context.ContainingSymbol) &&
-                        context.SemanticModel.GetSymbolSafe(argumentList.Parent, context.CancellationToken) is IMethodSymbol method &&
-                        method.TryFindParameter(argument, out var parameter))
+                    if (name == ContainingSymbolName(context.ContainingSymbol))
                     {
-                        if (parameter.IsCallerMemberName())
+                        if (target.IsCallerMemberName())
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
                         }
-                        else if (parameter.TrySingleDeclaration<SyntaxNode>(context.CancellationToken, out _) &&
-                                 OnPropertyChanged.Match(method, context.SemanticModel, context.CancellationToken) is { AnalysisResult: AnalysisResult.Yes })
+                        else if (target.TrySingleDeclaration<SyntaxNode>(context.CancellationToken, out _) &&
+                                 OnPropertyChanged.Match(targetMethod, context.SemanticModel, context.CancellationToken) is { AnalysisResult: AnalysisResult.Yes })
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
                         }
                     }
+                }
 
+                if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var text))
+                {
                     if (SyntaxFacts.IsValidIdentifier(text))
                     {
                         if (argumentList.Parent is InvocationExpressionSyntax onPropertyChangedCandidate &&
@@ -149,6 +151,51 @@
                     InvocationExpressionSyntax { Expression: { } expression } => TryGetName(expression),
                     _ => null,
                 };
+            }
+        }
+
+        private struct NameContext
+        {
+            internal readonly string Name;
+            internal readonly ExpressionSyntax Expression;
+#pragma warning disable RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
+            internal readonly IParameterSymbol Target;
+#pragma warning restore RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
+
+            internal NameContext(string name, ExpressionSyntax expression, IParameterSymbol target)
+            {
+                this.Name = name;
+                this.Expression = expression;
+                this.Target = target;
+            }
+
+            internal static NameContext? Create(ArgumentSyntax argument, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                return argument switch
+                {
+                    { Expression: LiteralExpressionSyntax literal }
+                    when literal.IsKind(SyntaxKind.StringLiteralExpression) &&
+                         argument.TryGetStringValue(semanticModel, cancellationToken, out var text) &&
+                         Target() is { } target
+                    => new NameContext(text, literal, target),
+                    { Expression: InvocationExpressionSyntax { Expression: IdentifierNameSyntax { Identifier: { ValueText: "nameof" } }, ArgumentList: { Arguments: { Count: 1 } arguments } } }
+                    when argument.TryGetStringValue(semanticModel, cancellationToken, out var text) &&
+                         Target() is { } target
+                    => new NameContext(text, arguments[0].Expression, target),
+                    _ => null,
+                };
+
+                IParameterSymbol Target()
+                {
+                    if (argument is { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } &&
+                        semanticModel.TryGetSymbol(invocation, cancellationToken, out var method) &&
+                        method.TryFindParameter(argument, out var parameter))
+                    {
+                        return parameter;
+                    }
+
+                    return null;
+                }
             }
         }
     }
