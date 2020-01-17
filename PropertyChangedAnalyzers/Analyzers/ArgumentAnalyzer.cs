@@ -38,10 +38,11 @@
                     }
 
                     if (!string.IsNullOrEmpty(name) &&
-                        OnPropertyChanged.Match(targetMethod, context.SemanticModel, context.CancellationToken) is { } &&
+                        (OnPropertyChanged.Match(targetMethod, context.SemanticModel, context.CancellationToken) is { } ||
+                         targetMethod == KnownSymbol.PropertyChangedEventHandler.Invoke) &&
                         !Type().TryFindPropertyRecursive(name, out _))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, argument.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, expression.GetLocation()));
                     }
 
                     INamedTypeSymbol Type()
@@ -62,18 +63,6 @@
                 {
                     if (SyntaxFacts.IsValidIdentifier(text))
                     {
-                        if (argumentList.Parent is ObjectCreationExpressionSyntax { Parent: ArgumentSyntax parentArg } objectCreation &&
-                            parentArg.FirstAncestor<InvocationExpressionSyntax>() is { } parentInvocation &&
-                            context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbol.PropertyChangedEventArgs, context.CancellationToken, out _))
-                        {
-                            if ((OnPropertyChanged.Match(parentInvocation, context.SemanticModel, context.CancellationToken) is { } ||
-                                 PropertyChangedEvent.IsInvoke(parentInvocation, context.SemanticModel, context.CancellationToken)) &&
-                                !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(text, out _))
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, argument.GetLocation()));
-                            }
-                        }
-
                         if (argument.Expression is LiteralExpressionSyntax literal &&
                             literal.IsKind(SyntaxKind.StringLiteralExpression))
                         {
@@ -187,20 +176,35 @@
                     { Expression: InvocationExpressionSyntax { Expression: IdentifierNameSyntax { Identifier: { ValueText: "nameof" } }, ArgumentList: { Arguments: { Count: 1 } arguments } } }
                     when argument.TryGetStringValue(semanticModel, cancellationToken, out var text) &&
                          Target() is { } target
-                    => new NameContext(text, arguments[0].Expression, target),
+                    => new NameContext(text, Expression(arguments[0]), target),
+                    { Expression: ObjectCreationExpressionSyntax { ArgumentList: { Arguments: { Count: 1 } arguments } } objectCreation }
+                    when objectCreation.Type.IsSameType(KnownSymbol.PropertyChangedEventArgs, semanticModel) &&
+                         Create(arguments[0], semanticModel, cancellationToken) is { Name: { } name, Expression: { } expression } &&
+                         Target() is { } target
+                    => new NameContext(name, expression, target),
                     _ => null,
                 };
 
                 IParameterSymbol? Target()
                 {
-                    if (argument is { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } &&
-                        semanticModel.TryGetSymbol(invocation, cancellationToken, out var method) &&
+                    if (argument is { Parent: ArgumentListSyntax { Parent: ExpressionSyntax parent } } &&
+                        semanticModel.TryGetSymbol(parent, cancellationToken, out IMethodSymbol? method) &&
                         method.TryFindParameter(argument, out var parameter))
                     {
                         return parameter;
                     }
 
                     return null;
+                }
+
+                ExpressionSyntax Expression(ArgumentSyntax a)
+                {
+                    return a switch
+                    {
+                        { Expression: IdentifierNameSyntax identifierName } => identifierName,
+                        { Expression: MemberAccessExpressionSyntax { Name: { } name } } => name,
+                        _ => a.Expression,
+                    };
                 }
             }
         }

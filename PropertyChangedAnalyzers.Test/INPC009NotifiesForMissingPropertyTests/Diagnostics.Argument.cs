@@ -11,10 +11,11 @@
             private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty);
 
-            [TestCase(@"""Missing""")]
-            [TestCase(@"nameof(PropertyChanged)")]
-            [TestCase(@"nameof(this.PropertyChanged)")]
-            [TestCase(@"nameof(this.p)")]
+            [TestCase(@"↓""Missing""")]
+            [TestCase(@"nameof(↓p)")]
+            [TestCase(@"nameof(this.↓p)")]
+            [TestCase(@"nameof(↓PropertyChanged)")]
+            [TestCase(@"nameof(this.↓PropertyChanged)")]
             public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
             {
                 var code = @"
@@ -44,7 +45,7 @@ namespace N
                 }
 
                 this.p = value;
-                this.OnPropertyChanged(↓nameof(this.p));
+                this.OnPropertyChanged(↓""Missing"");
             }
         }
 
@@ -53,21 +54,22 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace(@"nameof(this.p)", propertyName);
+}".AssertReplace(@"↓""Missing""", propertyName);
 
                 RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
-            [TestCase(@"""Missing""")]
-            [TestCase(@"nameof(PropertyChanged)")]
-            [TestCase(@"nameof(this.PropertyChanged)")]
+            [TestCase(@"↓""Missing""")]
+            [TestCase(@"nameof(↓p)")]
+            [TestCase(@"nameof(this.↓p)")]
+            [TestCase(@"nameof(↓PropertyChanged)")]
+            [TestCase(@"nameof(this.↓PropertyChanged)")]
             public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
             {
                 var code = @"
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -82,7 +84,7 @@ namespace N
             {
                 if (value == this.p) return;
                 this.p = value;
-                this.OnPropertyChanged(new PropertyChangedEventArgs(↓nameof(P)));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(↓""Missing""));
             }
         }
 
@@ -91,14 +93,16 @@ namespace N
             this.PropertyChanged?.Invoke(this, e);
         }
     }
-}".AssertReplace(@"nameof(P)", propertyName);
+}".AssertReplace(@"↓""Missing""", propertyName);
 
                 RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
-            [TestCase(@"""Missing""")]
-            [TestCase(@"nameof(PropertyChanged)")]
-            [TestCase(@"nameof(this.PropertyChanged)")]
+            [TestCase(@"↓""Missing""")]
+            [TestCase(@"nameof(↓p)")]
+            [TestCase(@"nameof(this.↓p)")]
+            [TestCase(@"nameof(↓PropertyChanged)")]
+            [TestCase(@"nameof(this.↓PropertyChanged)")]
             public static void Invokes(string propertyName)
             {
                 var code = @"
@@ -128,7 +132,7 @@ namespace N
                 }
 
                 this.p = value;
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(↓nameof(P)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(↓""Missing""));
             }
         }
 
@@ -137,7 +141,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}".AssertReplace(@"nameof(P)", propertyName);
+}".AssertReplace(@"↓""Missing""", propertyName);
 
                 RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
@@ -172,7 +176,7 @@ namespace N
                 }
 
                 this.p = value;
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(↓""MIssing""));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(↓""Missing""));
             }
         }
     }
