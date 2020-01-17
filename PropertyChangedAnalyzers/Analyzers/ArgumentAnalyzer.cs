@@ -36,19 +36,32 @@
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
                     }
+
+                    if (!string.IsNullOrEmpty(name) &&
+                        OnPropertyChanged.Match(targetMethod, context.SemanticModel, context.CancellationToken) is { } &&
+                        !Type().TryFindPropertyRecursive(name, out _))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, argument.GetLocation()));
+                    }
+
+                    INamedTypeSymbol Type()
+                    {
+                        return argumentList switch
+                        {
+                            { Parent: InvocationExpressionSyntax { Parent: MemberAccessExpressionSyntax { Expression: InstanceExpressionSyntax _ } } }
+                            => context.ContainingSymbol.ContainingType,
+                            { Parent: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } e } } }
+                            when context.SemanticModel.TryGetNamedType(e, context.CancellationToken, out var type)
+                            => type,
+                            _ => context.ContainingSymbol.ContainingType,
+                        };
+                    }
                 }
 
                 if (argument.TryGetStringValue(context.SemanticModel, context.CancellationToken, out var text))
                 {
                     if (SyntaxFacts.IsValidIdentifier(text))
                     {
-                        if (argumentList.Parent is InvocationExpressionSyntax onPropertyChangedCandidate &&
-                            OnPropertyChanged.Match(onPropertyChangedCandidate, context.SemanticModel, context.CancellationToken) is { } &&
-                            !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(text, out _))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, argument.GetLocation()));
-                        }
-
                         if (argumentList.Parent is ObjectCreationExpressionSyntax { Parent: ArgumentSyntax parentArg } objectCreation &&
                             parentArg.FirstAncestor<InvocationExpressionSyntax>() is { } parentInvocation &&
                             context.SemanticModel.TryGetSymbol(objectCreation, KnownSymbol.PropertyChangedEventArgs, context.CancellationToken, out _))
@@ -178,7 +191,7 @@
                     _ => null,
                 };
 
-                IParameterSymbol Target()
+                IParameterSymbol? Target()
                 {
                     if (argument is { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } &&
                         semanticModel.TryGetSymbol(invocation, cancellationToken, out var method) &&
