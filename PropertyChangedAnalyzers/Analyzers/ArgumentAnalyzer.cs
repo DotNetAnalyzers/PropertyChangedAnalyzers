@@ -31,18 +31,10 @@
             {
                 if (NameContext.Create(argument, context.SemanticModel, context.CancellationToken) is { Name: { } name, Expression: { } expression, Target: { ContainingSymbol: IMethodSymbol targetMethod } target })
                 {
-                    if (name == ContainingSymbolName(context.ContainingSymbol))
+                    if (name == ContainingSymbolName(context.ContainingSymbol) &&
+                        target.IsCallerMemberName())
                     {
-                        if (target.IsCallerMemberName())
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
-                        }
-                        else if (target.TrySingleDeclaration<SyntaxNode>(context.CancellationToken, out _) &&
-                                 CallerMemberNameAttribute.IsAvailable(context.SemanticModel) &&
-                                 OnPropertyChanged.Match(targetMethod, context.SemanticModel, context.CancellationToken) is { AnalysisResult: AnalysisResult.Yes })
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
-                        }
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC004UseCallerMemberName, argument.GetLocation()));
                     }
                 }
 
