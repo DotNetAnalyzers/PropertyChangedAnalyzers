@@ -27,7 +27,7 @@
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is ArgumentSyntax { Parent: ArgumentListSyntax argumentList } argument)
+                context.Node is ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } argumentList } argument)
             {
                 if (NameContext.Create(argument, context.SemanticModel, context.CancellationToken) is { Name: { } name, Expression: { } expression, Target: { ContainingSymbol: IMethodSymbol targetMethod } target })
                 {
@@ -43,6 +43,11 @@
                         if (!Type().TryFindPropertyRecursive(name, out _))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, expression.GetLocation()));
+                        }
+
+                        if (argument.Expression is AnonymousFunctionExpressionSyntax)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC012DoNotUseExpression, argument.GetLocation()));
                         }
 
                         if (expression.IsKind(SyntaxKind.StringLiteralExpression) &&
@@ -63,7 +68,7 @@
                         bool EventHandlerOfPropertyChangedEventArgsInvoke()
                         {
                             return targetMethod.Name == "Invoke" &&
-                                   targetMethod.ContainingType is { TypeArguments: { Length: 1} typeArguments, MetadataName: "EventHandler`1" } &&
+                                   targetMethod.ContainingType is { TypeArguments: { Length: 1 } typeArguments, MetadataName: "EventHandler`1" } &&
                                    typeArguments[0] == KnownSymbol.PropertyChangedEventArgs;
                         }
                     }
@@ -82,34 +87,19 @@
                     }
                 }
 
-                if (argument is { Expression: AnonymousFunctionExpressionSyntax lambda } &&
-                    argumentList is { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
-                    GetNameFromLambda(lambda) is { } lambdaName)
-                {
-                    if (OnPropertyChanged.Match(invocation, context.SemanticModel, context.CancellationToken) is { })
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC012DoNotUseExpression, argument.GetLocation()));
-                        if (!context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(lambdaName, out _))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, argument.GetLocation()));
-                        }
-                    }
-                }
-
-                if ((argument.Expression is IdentifierNameSyntax ||
-                    argument.Expression is MemberAccessExpressionSyntax) &&
-                    argumentList.Parent is InvocationExpressionSyntax invokeCandidate)
+                if (argument.Expression is IdentifierNameSyntax ||
+                    argument.Expression is MemberAccessExpressionSyntax)
                 {
                     if (argumentList.Arguments.Count == 1 &&
-                        OnPropertyChanged.Match(invokeCandidate, context.SemanticModel, context.CancellationToken) is { } &&
+                        OnPropertyChanged.Match(invocation, context.SemanticModel, context.CancellationToken) is { } &&
                         IsMissing())
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, argument.GetLocation()));
                     }
 
-                    if (PropertyChangedEvent.IsInvoke(invokeCandidate, context.SemanticModel, context.CancellationToken) &&
+                    if (PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken) &&
                         argumentList.Arguments[1] == argument &&
-                        context.SemanticModel.TryGetSymbol(invokeCandidate, context.CancellationToken, out _) &&
+                        context.SemanticModel.TryGetSymbol(invocation, context.CancellationToken, out _) &&
                         IsMissing())
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, argument.GetLocation()));
@@ -117,7 +107,7 @@
 
                     bool IsMissing()
                     {
-                        return PropertyChanged.FindPropertyName(invokeCandidate, context.SemanticModel, context.CancellationToken) is { Value: var propertyName } &&
+                        return PropertyChanged.FindPropertyName(invocation, context.SemanticModel, context.CancellationToken) is { Value: var propertyName } &&
                                !string.IsNullOrEmpty(propertyName) &&
                                !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _);
                     }
@@ -135,22 +125,6 @@
             return symbol.Name;
         }
 
-        private static string? GetNameFromLambda(AnonymousFunctionExpressionSyntax lambda)
-        {
-            return TryGetName(lambda.Body);
-
-            static string? TryGetName(SyntaxNode node)
-            {
-                return node switch
-                {
-                    IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText,
-                    MemberAccessExpressionSyntax { Name: { } memberName } => memberName.Identifier.ValueText,
-                    InvocationExpressionSyntax { Expression: { } expression } => TryGetName(expression),
-                    _ => null,
-                };
-            }
-        }
-
         private struct NameContext
         {
             internal readonly string Name;
@@ -159,7 +133,7 @@
             internal readonly IParameterSymbol Target;
 #pragma warning restore RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
 
-            internal NameContext(string name, ExpressionSyntax expression, IParameterSymbol target)
+            private NameContext(string name, ExpressionSyntax expression, IParameterSymbol target)
             {
                 this.Name = name;
                 this.Expression = expression;
@@ -184,6 +158,10 @@
                          Create(arguments[0], semanticModel, cancellationToken) is { Name: { } name, Expression: { } expression } &&
                          Target() is { } target
                     => new NameContext(name, expression, target),
+                    { Expression: AnonymousFunctionExpressionSyntax lambda }
+                    when Target() is { } target &&
+                         NameFromLambda(lambda) is { } name
+                    => new NameContext(name.Identifier.ValueText, name, target),
                     _ => null,
                 };
 
@@ -206,6 +184,18 @@
                         { Expression: IdentifierNameSyntax identifierName } => identifierName,
                         { Expression: MemberAccessExpressionSyntax { Name: { } name } } => name,
                         _ => a.Expression,
+                    };
+                }
+
+                SimpleNameSyntax? NameFromLambda(AnonymousFunctionExpressionSyntax lambda)
+                {
+                    return lambda.Body switch
+                    {
+                        IdentifierNameSyntax name => name,
+                        MemberAccessExpressionSyntax { Name: { } name } => name,
+                        InvocationExpressionSyntax { Expression: IdentifierNameSyntax name } => name,
+                        InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: { } name } } => name,
+                        _ => null,
                     };
                 }
             }

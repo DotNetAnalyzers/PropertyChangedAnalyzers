@@ -184,8 +184,14 @@ namespace N
                 RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
 
-            [Test]
-            public static void ExpressionInvokerWithMethod()
+            [TestCase("↓p")]
+            [TestCase("this.↓p")]
+            [TestCase("↓PropertyChanged")]
+            [TestCase("this.↓PropertyChanged")]
+            [TestCase("↓M()")]
+            [TestCase("this.↓M()")]
+            [TestCase("string.↓Empty")]
+            public static void ExpressionInvoker(string expression)
             {
                 var code = @"
 namespace N
@@ -203,11 +209,7 @@ namespace N
 
         public int P
         {
-            get
-            {
-                return this.p;
-            }
-
+            get => this.p;
             set
             {
                 if (value == this.p)
@@ -216,176 +218,23 @@ namespace N
                 }
 
                 this.p = value;
-                this.OnPropertyChanged(↓() => this.M());
+                this.OnPropertyChanged(() => this.↓p);
             }
+        }
+
+        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+        {
+            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private int M() => 1;
-
-        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
-        {
-            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
-}";
-
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
-
-            [Test]
-            public static void ExpressionInvokerWithThisEvent()
-            {
-                var code = @"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-    using System.Linq.Expressions;
-    using System.Runtime.CompilerServices;
-
-    public class C : INotifyPropertyChanged
-    {
-        private int p;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int P
-        {
-            get
-            {
-                return this.p;
-            }
-
-            set
-            {
-                if (value == this.p)
-                {
-                    return;
-                }
-
-                this.p = value;
-                this.OnPropertyChanged(↓() => this.PropertyChanged);
-            }
-        }
-
-        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
-        {
-            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
-
-            [Test]
-            public static void ExpressionInvokerWithEvent()
-            {
-                var code = @"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-    using System.Linq.Expressions;
-    using System.Runtime.CompilerServices;
-
-    public class C : INotifyPropertyChanged
-    {
-        private int p;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int P
-        {
-            get
-            {
-                return this.p;
-            }
-
-            set
-            {
-                if (value == this.p)
-                {
-                    return;
-                }
-
-                this.p = value;
-                this.OnPropertyChanged(↓() => PropertyChanged);
-            }
-        }
-
-        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
-        {
-            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
-
-            [Test]
-            public static void ExpressionInvokerWithStringEmpty()
-            {
-                var code = @"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-    using System.Linq.Expressions;
-    using System.Runtime.CompilerServices;
-
-    public class C : INotifyPropertyChanged
-    {
-        private int p;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int P
-        {
-            get
-            {
-                return this.p;
-            }
-
-            set
-            {
-                if (value == this.p)
-                {
-                    return;
-                }
-
-                this.p = value;
-                this.OnPropertyChanged(↓() => string.Empty);
-            }
-        }
-
-        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
-        {
-            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+}".AssertReplace("this.↓p", expression);
 
                 RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
             }
