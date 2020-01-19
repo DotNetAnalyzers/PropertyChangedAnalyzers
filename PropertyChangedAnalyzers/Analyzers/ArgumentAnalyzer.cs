@@ -185,10 +185,7 @@
                 {
                     return semanticModel.TryGetNamedType(cached, cancellationToken, out var type) &&
                            type == KnownSymbol.PropertyChangedEventArgs &&
-                           PropertyChangedEventArgs.FindPropertyName(cached, semanticModel, cancellationToken) is
-                    {
-                        Value: { } name
-                    }
+                           PropertyChangedEventArgs.FindPropertyName(cached, semanticModel, cancellationToken) is { Value: { } name }
                         ? name
                         : null;
                 }
