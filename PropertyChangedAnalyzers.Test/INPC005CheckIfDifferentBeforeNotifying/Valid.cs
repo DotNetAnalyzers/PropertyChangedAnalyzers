@@ -75,7 +75,7 @@ namespace N
 }".AssertReplace("Equals(value, this.p)", expression)
   .AssertReplace("int", type);
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -115,7 +115,7 @@ namespace N
 }".AssertReplace("Equals(value, this.p)", expression)
   .AssertReplace("int", type);
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
 
         [Test]

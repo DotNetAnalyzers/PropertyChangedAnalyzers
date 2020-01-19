@@ -15,7 +15,8 @@
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.INPC006UseReferenceEqualsForReferenceTypes.Id,
-            Descriptors.INPC006UseObjectEqualsForReferenceTypes.Id);
+            Descriptors.INPC006UseObjectEqualsForReferenceTypes.Id,
+            Descriptors.INPC023InstanceEquals.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
@@ -23,54 +24,67 @@
                                                    .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression) &&
-                    TryGetMethodName() is { } name)
+                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression))
                 {
-                    switch (expression)
+                    if (TryGetMethodName() is { } name)
                     {
-                        case InvocationExpressionSyntax { Expression: { } e, ArgumentList: { Arguments: { Count: 2 } } }:
-                            context.RegisterCodeFix(
-                                $"Use {name}",
-                                editor => editor.ReplaceNode(
-                                    e,
-                                    x => SyntaxFactory.IdentifierName(name).WithTriviaFrom(x)),
-                                nameof(EqualityFix),
-                                diagnostic);
-                            break;
-                        case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } invocation:
-                            context.RegisterCodeFix(
-                                $"Use {name}",
-                                editor => editor.ReplaceNode(
-                                    invocation,
-                                    x => InpcFactory.Equals(null, name, left, arguments[0].Expression).WithTriviaFrom(x)),
-                                nameof(EqualityFix),
-                                diagnostic);
-                            break;
-                        case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "==" }, Right: { } } binary:
-                            context.RegisterCodeFix(
-                                $"Use {name}",
-                                editor => editor.ReplaceNode(
-                                    binary,
-                                    x => InpcFactory.Equals(null, name, x.Left.WithoutTrivia(), x.Right.WithoutTrivia()).WithTriviaFrom(x)),
-                                nameof(EqualityFix),
-                                diagnostic);
-                            break;
-                        case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "!=" }, Right: { } } binary:
-                            context.RegisterCodeFix(
-                                $"Use !{name}",
-                                editor => editor.ReplaceNode(
-                                    binary,
-                                    x => SyntaxFactory.PrefixUnaryExpression(
-                                                          SyntaxKind.LogicalNotExpression,
-                                                          InpcFactory.Equals(
-                                                              null,
-                                                              name,
-                                                              x.Left.WithoutTrivia(),
-                                                              x.Right.WithoutTrivia()))
-                                                      .WithTriviaFrom(x)),
-                                nameof(EqualityFix),
-                                diagnostic);
-                            break;
+                        switch (expression)
+                        {
+                            case InvocationExpressionSyntax { Expression: { } e, ArgumentList: { Arguments: { Count: 2 } } }:
+                                context.RegisterCodeFix(
+                                    $"Use {name}",
+                                    editor => editor.ReplaceNode(
+                                        e,
+                                        x => SyntaxFactory.IdentifierName(name).WithTriviaFrom(x)),
+                                    nameof(EqualityFix),
+                                    diagnostic);
+                                break;
+                            case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } invocation:
+                                context.RegisterCodeFix(
+                                    $"Use {name}",
+                                    editor => editor.ReplaceNode(
+                                        invocation,
+                                        x => InpcFactory.Equals(null, name, left, arguments[0].Expression).WithTriviaFrom(x)),
+                                    nameof(EqualityFix),
+                                    diagnostic);
+                                break;
+                            case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "==" }, Right: { } } binary:
+                                context.RegisterCodeFix(
+                                    $"Use {name}",
+                                    editor => editor.ReplaceNode(
+                                        binary,
+                                        x => InpcFactory.Equals(null, name, x.Left.WithoutTrivia(), x.Right.WithoutTrivia()).WithTriviaFrom(x)),
+                                    nameof(EqualityFix),
+                                    diagnostic);
+                                break;
+                            case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "!=" }, Right: { } } binary:
+                                context.RegisterCodeFix(
+                                    $"Use !{name}",
+                                    editor => editor.ReplaceNode(
+                                        binary,
+                                        x => SyntaxFactory.PrefixUnaryExpression(
+                                                              SyntaxKind.LogicalNotExpression,
+                                                              InpcFactory.Equals(
+                                                                  null,
+                                                                  name,
+                                                                  x.Left.WithoutTrivia(),
+                                                                  x.Right.WithoutTrivia()))
+                                                          .WithTriviaFrom(x)),
+                                    nameof(EqualityFix),
+                                    diagnostic);
+                                break;
+                        }
+                    }
+                    else if (expression is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } invocation &&
+                             diagnostic.Id == Descriptors.INPC023InstanceEquals.Id)
+                    {
+                        context.RegisterCodeFix(
+                            "Use null safe equals.",
+                            (editor, cancellationToken) => editor.ReplaceNode(
+                                invocation,
+                                x => InpcFactory.Equals(left, arguments[0].Expression, editor.SemanticModel, cancellationToken).WithTriviaFrom(x)),
+                            Descriptors.INPC023InstanceEquals.Id,
+                            diagnostic);
                     }
                 }
 

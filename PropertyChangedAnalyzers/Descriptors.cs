@@ -211,6 +211,15 @@
             isEnabledByDefault: true,
             description: "Comparison should be with backing field.");
 
+        internal static readonly DiagnosticDescriptor INPC023InstanceEquals = Descriptors.Create(
+            id: "INPC023",
+            title: "Don't use instance equals in setter.",
+            messageFormat: "Instance equals could throw NullReferenceException.",
+            category: AnalyzerCategory.PropertyChanged,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Instance equals could throw NullReferenceException.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="Diagnostic" />.
         /// </summary>

@@ -38,6 +38,7 @@ Roslyn analyzers for `INotifyPropertyChanged`.
 | [INPC020](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC020.md)| Prefer expression body accessor.
 | [INPC021](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC021.md)| Setter should set backing field.
 | [INPC022](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC022.md)| Comparison should be with backing field.
+| [INPC023](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC023.md)| Don't use instance equals in setter.
 
 ## Using PropertyChangedAnalyzers
 

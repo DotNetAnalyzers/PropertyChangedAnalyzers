@@ -19,7 +19,8 @@
             Descriptors.INPC010GetAndSetSame,
             Descriptors.INPC016NotifyAfterMutation,
             Descriptors.INPC021SetBackingField,
-            Descriptors.INPC022EqualToBackingField);
+            Descriptors.INPC022EqualToBackingField,
+            Descriptors.INPC023InstanceEquals);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -231,6 +232,17 @@
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 Descriptors.INPC006UseReferenceEqualsForReferenceTypes,
+                                invocation.GetLocation()));
+                    }
+
+                    if (Equality.IsInstanceEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y) &&
+                        context.ContainingSymbol is IMethodSymbol { Parameters: { Length: 1 } parameters } &&
+                        (parameters[0].Type.IsReferenceType ||
+                         parameters[0].Type is INamedTypeSymbol { OriginalDefinition: { SpecialType: SpecialType.System_Nullable_T } }))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptors.INPC023InstanceEquals,
                                 invocation.GetLocation()));
                     }
                 }
