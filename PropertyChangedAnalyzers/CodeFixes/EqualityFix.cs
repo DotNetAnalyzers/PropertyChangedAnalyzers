@@ -3,7 +3,6 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
-    using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -24,39 +23,30 @@
                                                    .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out InvocationExpressionSyntax? invocation) &&
-                    invocation.ArgumentList is { } argumentList &&
-                    TryGetMethodName(out var name))
+                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression) &&
+                    TryGetMethodName() is { } name)
                 {
-                    if (argumentList.Arguments.Count == 2)
+                    switch (expression)
                     {
-                        context.RegisterCodeFix(
-                            $"Use {name}",
-                            editor => editor.ReplaceNode(
-                                invocation.Expression,
-                                x => SyntaxFactory.IdentifierName(name).WithTriviaFrom(x)),
-                            nameof(EqualityFix),
-                            diagnostic);
-                    }
-                    else if (argumentList.Arguments.TrySingle(out var argument) &&
-                             invocation.Expression is MemberAccessExpressionSyntax { Expression: { } expression })
-                    {
-                        context.RegisterCodeFix(
-                            $"Use {name}",
-                            editor => editor.ReplaceNode(
-                                invocation,
-                                x => InpcFactory.Equals(null, name, expression, argument.Expression).WithTriviaFrom(x)),
-                            nameof(EqualityFix),
-                            diagnostic);
-                    }
-                }
-
-                if (syntaxRoot.TryFindNode(diagnostic, out BinaryExpressionSyntax? binary) &&
-                    TryGetMethodName(out name))
-                {
-                    switch (binary.Kind())
-                    {
-                        case SyntaxKind.EqualsExpression:
+                        case InvocationExpressionSyntax { Expression: { } e, ArgumentList: { Arguments: { Count: 2 } } }:
+                            context.RegisterCodeFix(
+                                $"Use {name}",
+                                editor => editor.ReplaceNode(
+                                    e,
+                                    x => SyntaxFactory.IdentifierName(name).WithTriviaFrom(x)),
+                                nameof(EqualityFix),
+                                diagnostic);
+                            break;
+                        case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } invocation:
+                            context.RegisterCodeFix(
+                                $"Use {name}",
+                                editor => editor.ReplaceNode(
+                                    invocation,
+                                    x => InpcFactory.Equals(null, name, left, arguments[0].Expression).WithTriviaFrom(x)),
+                                nameof(EqualityFix),
+                                diagnostic);
+                            break;
+                        case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "==" }, Right: { } } binary:
                             context.RegisterCodeFix(
                                 $"Use {name}",
                                 editor => editor.ReplaceNode(
@@ -65,7 +55,7 @@
                                 nameof(EqualityFix),
                                 diagnostic);
                             break;
-                        case SyntaxKind.NotEqualsExpression:
+                        case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "!=" }, Right: { } } binary:
                             context.RegisterCodeFix(
                                 $"Use !{name}",
                                 editor => editor.ReplaceNode(
@@ -84,22 +74,19 @@
                     }
                 }
 
-                bool TryGetMethodName(out string result)
+                string? TryGetMethodName()
                 {
                     if (diagnostic.Id == Descriptors.INPC006UseReferenceEqualsForReferenceTypes.Id)
                     {
-                        result = nameof(ReferenceEquals);
-                        return true;
+                        return nameof(ReferenceEquals);
                     }
 
                     if (diagnostic.Id == Descriptors.INPC006UseObjectEqualsForReferenceTypes.Id)
                     {
-                        result = nameof(Equals);
-                        return true;
+                        return nameof(Equals);
                     }
 
-                    result = null!;
-                    return false;
+                    return null!;
                 }
             }
         }
