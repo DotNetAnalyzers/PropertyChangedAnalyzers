@@ -27,7 +27,7 @@
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
-                context.Node is ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } argumentList } argument)
+                context.Node is ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } argument)
             {
                 if (NameContext.Create(argument, context.SemanticModel, context.CancellationToken) is { Name: { } name, Expression: { } expression, Target: { ContainingSymbol: IMethodSymbol targetMethod } target })
                 {
@@ -75,41 +75,15 @@
 
                     INamedTypeSymbol Type()
                     {
-                        return argumentList switch
+                        return invocation switch
                         {
-                            { Parent: InvocationExpressionSyntax { Parent: MemberAccessExpressionSyntax { Expression: InstanceExpressionSyntax _ } } }
+                            { Parent: MemberAccessExpressionSyntax { Expression: InstanceExpressionSyntax _ } }
                             => context.ContainingSymbol.ContainingType,
-                            { Parent: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } e } } }
+                            { Expression: MemberAccessExpressionSyntax { Expression: { } e } }
                             when context.SemanticModel.TryGetNamedType(e, context.CancellationToken, out var type)
                             => type,
                             _ => context.ContainingSymbol.ContainingType,
                         };
-                    }
-                }
-
-                if (argument.Expression is IdentifierNameSyntax ||
-                    argument.Expression is MemberAccessExpressionSyntax)
-                {
-                    if (argumentList.Arguments.Count == 1 &&
-                        OnPropertyChanged.Match(invocation, context.SemanticModel, context.CancellationToken) is { } &&
-                        IsMissing())
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, argument.GetLocation()));
-                    }
-
-                    if (PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken) &&
-                        argumentList.Arguments[1] == argument &&
-                        context.SemanticModel.TryGetSymbol(invocation, context.CancellationToken, out _) &&
-                        IsMissing())
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, argument.GetLocation()));
-                    }
-
-                    bool IsMissing()
-                    {
-                        return PropertyChanged.FindPropertyName(invocation, context.SemanticModel, context.CancellationToken) is { Value: var propertyName } &&
-                               !string.IsNullOrEmpty(propertyName) &&
-                               !context.ContainingSymbol.ContainingType.TryFindPropertyRecursive(propertyName, out _);
                     }
                 }
             }
@@ -159,9 +133,17 @@
                          Target() is { } target
                     => new NameContext(name, expression, target),
                     { Expression: AnonymousFunctionExpressionSyntax lambda }
-                    when Target() is { } target &&
-                         NameFromLambda(lambda) is { } name
+                    when NameFromLambda(lambda) is { } name &&
+                         Target() is { } target
                     => new NameContext(name.Identifier.ValueText, name, target),
+                    { Expression: IdentifierNameSyntax cached }
+                    when NameFromCached(cached) is { } name &&
+                         Target() is { } target
+                    => new NameContext(name, cached, target),
+                    { Expression: MemberAccessExpressionSyntax cached }
+                    when NameFromCached(cached) is { } name &&
+                         Target() is { } target
+                    => new NameContext(name, cached, target),
                     _ => null,
                 };
 
@@ -197,6 +179,18 @@
                         InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Name: { } name } } => name,
                         _ => null,
                     };
+                }
+
+                string? NameFromCached(ExpressionSyntax cached)
+                {
+                    return semanticModel.TryGetNamedType(cached, cancellationToken, out var type) &&
+                           type == KnownSymbol.PropertyChangedEventArgs &&
+                           PropertyChangedEventArgs.FindPropertyName(cached, semanticModel, cancellationToken) is
+                    {
+                        Value: { } name
+                    }
+                        ? name
+                        : null;
                 }
             }
         }
