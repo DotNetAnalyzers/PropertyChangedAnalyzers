@@ -20,7 +20,8 @@
             Descriptors.INPC016NotifyAfterMutation,
             Descriptors.INPC021SetBackingField,
             Descriptors.INPC022EqualToBackingField,
-            Descriptors.INPC023InstanceEquals);
+            Descriptors.INPC023InstanceEquals,
+            Descriptors.INPC024ReferenceEqualsValueType);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -216,13 +217,23 @@
 
                 void HandleInvocation(InvocationExpressionSyntax invocation)
                 {
-                    if (Equality.IsObjectReferenceEquals(invocation, context.SemanticModel, context.CancellationToken, out var x, out var y) &&
-                        ShouldUseObjectEquals(x, y))
+                    if (Equality.IsObjectReferenceEquals(invocation, context.SemanticModel, context.CancellationToken, out var x, out var y))
                     {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptors.INPC006UseObjectEqualsForReferenceTypes,
-                                invocation.GetLocation()));
+                        if (ShouldUseObjectEquals(x, y))
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.INPC006UseObjectEqualsForReferenceTypes,
+                                    invocation.GetLocation()));
+                        }
+
+                        if (ContainingProperty().Type.IsValueType)
+                        {
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptors.INPC024ReferenceEqualsValueType,
+                                    invocation.GetLocation()));
+                        }
                     }
 
                     if ((Equality.IsObjectEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y) ||
@@ -236,15 +247,16 @@
                     }
 
                     if (Equality.IsInstanceEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y) &&
-                        context.ContainingSymbol is IMethodSymbol { Parameters: { Length: 1 } parameters } &&
-                        (parameters[0].Type.IsReferenceType ||
-                         parameters[0].Type is INamedTypeSymbol { OriginalDefinition: { SpecialType: SpecialType.System_Nullable_T } }))
+                        (ContainingProperty().Type.IsReferenceType ||
+                         ContainingProperty().Type is { OriginalDefinition: { SpecialType: SpecialType.System_Nullable_T } }))
                     {
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 Descriptors.INPC023InstanceEquals,
                                 invocation.GetLocation()));
                     }
+
+                    IPropertySymbol ContainingProperty() => (IPropertySymbol)((IMethodSymbol)context.ContainingSymbol).AssociatedSymbol;
                 }
 
                 bool ShouldUseObjectReferenceEquals(ExpressionSyntax x, ExpressionSyntax y)

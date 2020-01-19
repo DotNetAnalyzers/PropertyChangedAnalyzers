@@ -48,10 +48,11 @@
         {
             if (Type() is { } type)
             {
-                return Equals(type!, x.WithoutTrivia(), y.WithoutTrivia(), semanticModel);
+                return Equals(type, x.WithoutTrivia(), y.WithoutTrivia(), semanticModel);
             }
 
             throw new InvalidOperationException("Failed creating equality check.");
+
             ITypeSymbol? Type()
             {
                 if (semanticModel.TryGetType(x, cancellationToken, out var result) ||
@@ -71,6 +72,16 @@
                         IPropertySymbol property => property.Type,
                         _ => null,
                     };
+                }
+
+                if (semanticModel.GetSpeculativeTypeInfo(x.SpanStart, x, SpeculativeBindingOption.BindAsExpression).Type is INamedTypeSymbol xType)
+                {
+                    return xType;
+                }
+
+                if (semanticModel.GetSpeculativeTypeInfo(y.SpanStart, y, SpeculativeBindingOption.BindAsExpression).Type is INamedTypeSymbol yType)
+                {
+                    return yType;
                 }
 
                 return null;

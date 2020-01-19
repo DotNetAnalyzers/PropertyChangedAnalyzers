@@ -220,6 +220,15 @@
             isEnabledByDefault: true,
             description: "Instance equals could throw NullReferenceException.");
 
+        internal static readonly DiagnosticDescriptor INPC024ReferenceEqualsValueType = Descriptors.Create(
+            id: "INPC024",
+            title: "ReferenceEquals is always false for value types.",
+            messageFormat: "ReferenceEquals is always false for value types.",
+            category: AnalyzerCategory.PropertyChanged,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "ReferenceEquals is always false for value types.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="Diagnostic" />.
         /// </summary>

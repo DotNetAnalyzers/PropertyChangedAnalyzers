@@ -39,6 +39,7 @@ Roslyn analyzers for `INotifyPropertyChanged`.
 | [INPC021](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC021.md)| Setter should set backing field.
 | [INPC022](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC022.md)| Comparison should be with backing field.
 | [INPC023](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC023.md)| Don't use instance equals in setter.
+| [INPC024](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC024.md)| ReferenceEquals is always false for value types.
 
 ## Using PropertyChangedAnalyzers
 

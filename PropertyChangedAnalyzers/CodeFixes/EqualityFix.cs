@@ -16,7 +16,8 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
             Descriptors.INPC006UseReferenceEqualsForReferenceTypes.Id,
             Descriptors.INPC006UseObjectEqualsForReferenceTypes.Id,
-            Descriptors.INPC023InstanceEquals.Id);
+            Descriptors.INPC023InstanceEquals.Id,
+            Descriptors.INPC024ReferenceEqualsValueType.Id);
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
@@ -26,7 +27,7 @@
             {
                 if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression))
                 {
-                    if (TryGetMethodName() is { } name)
+                    if (EqualsMethodName() is { } name)
                     {
                         switch (expression)
                         {
@@ -75,20 +76,31 @@
                                 break;
                         }
                     }
-                    else if (expression is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } invocation &&
-                             diagnostic.Id == Descriptors.INPC023InstanceEquals.Id)
+                    else if (diagnostic.Id == Descriptors.INPC023InstanceEquals.Id &&
+                             expression is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } } } instanceEquals)
                     {
                         context.RegisterCodeFix(
                             "Use null safe equals.",
                             (editor, cancellationToken) => editor.ReplaceNode(
-                                invocation,
-                                x => InpcFactory.Equals(left, arguments[0].Expression, editor.SemanticModel, cancellationToken).WithTriviaFrom(x)),
+                                instanceEquals,
+                                x => InpcFactory.Equals(left, x.ArgumentList.Arguments[0].Expression, editor.SemanticModel, cancellationToken).WithTriviaFrom(x)),
                             Descriptors.INPC023InstanceEquals.Id,
+                            diagnostic);
+                    }
+                    else if (diagnostic.Id == Descriptors.INPC024ReferenceEqualsValueType.Id &&
+                             expression is InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 2 } } } referenceEquals)
+                    {
+                        context.RegisterCodeFix(
+                            "Use correct equality.",
+                            (editor, cancellationToken) => editor.ReplaceNode(
+                                referenceEquals,
+                                x => InpcFactory.Equals(x.ArgumentList.Arguments[0].Expression, x.ArgumentList.Arguments[1].Expression, editor.SemanticModel, cancellationToken).WithTriviaFrom(x)),
+                            Descriptors.INPC024ReferenceEqualsValueType.Id,
                             diagnostic);
                     }
                 }
 
-                string? TryGetMethodName()
+                string? EqualsMethodName()
                 {
                     if (diagnostic.Id == Descriptors.INPC006UseReferenceEqualsForReferenceTypes.Id)
                     {
