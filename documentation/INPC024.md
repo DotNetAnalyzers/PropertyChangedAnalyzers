@@ -16,11 +16,45 @@ ReferenceEquals is always false for value types.
 
 ## Motivation
 
-ADD MOTIVATION HERE
+Using `ReferenceEquals` in the sample below is a bug as it is always false.
+
+```cs
+public int P
+{
+    get => this.p;
+    set
+    {
+        if (ReferenceEquals(value, this.p))
+        {
+            return;
+        }
+
+        this.p = value;
+        this.OnPropertyChanged();
+    }
+}
+```
 
 ## How to fix violations
 
-ADD HOW TO FIX VIOLATIONS HERE
+Use the code fix to change it to:
+
+```cs
+public int P
+{
+    get => this.p;
+    set
+    {
+        if (value == this.p)
+        {
+            return;
+        }
+
+        this.p = value;
+        this.OnPropertyChanged();
+    }
+}
+```
 
 <!-- start generated config severity -->
 ## Configure severity

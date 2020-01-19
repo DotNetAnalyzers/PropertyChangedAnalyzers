@@ -1,4 +1,4 @@
-# INPC023
+﻿# INPC023
 ## Don't use instance equals in setter.
 
 | Topic    | Value
@@ -16,11 +16,45 @@ Instance equals could throw NullReferenceException.
 
 ## Motivation
 
-ADD MOTIVATION HERE
+Using instance equality in the sample below throws `NullReferenceException` if property is assigned with null.
+
+```cs
+public int? P
+{
+    get => this.p;
+    set
+    {
+        if (↓value.Equals(this.p))
+        {
+            return;
+        }
+
+        this.p = value;
+        this.OnPropertyChanged();
+    }
+}
+```
 
 ## How to fix violations
 
-ADD HOW TO FIX VIOLATIONS HERE
+Use the code fix to change it to
+
+```cs
+public int? P
+{
+    get => this.p;
+    set
+    {
+        if (value == this.p)
+        {
+            return;
+        }
+
+        this.p = value;
+        this.OnPropertyChanged();
+    }
+}
+```
 
 <!-- start generated config severity -->
 ## Configure severity
