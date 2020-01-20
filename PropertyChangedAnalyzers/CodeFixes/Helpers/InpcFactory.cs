@@ -201,12 +201,14 @@
         {
             return lambda switch
             {
-                { Body: ExpressionSyntax body } => lambda.ReplaceNode(
-                                                             body,
-                                                             SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
-                                                                          .WithLeadingLineFeed())
-                                                         .WithAdditionalAnnotations(Formatter.Annotation),
-                { Body: BlockSyntax block } => lambda.ReplaceNode(block, block.AddStatements(statements)),
+                { Body: ExpressionSyntax body }
+                => lambda.ReplaceNode(
+                             body,
+                             SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
+                                          .WithLeadingLineFeed())
+                         .WithAdditionalAnnotations(Formatter.Annotation),
+                { Body: BlockSyntax block }
+                => lambda.ReplaceNode(block, block.AddStatements(statements)),
                 _ => throw new NotSupportedException(
                     $"No support for adding statements to lambda with the shape: {lambda?.ToString() ?? "null"}"),
             };

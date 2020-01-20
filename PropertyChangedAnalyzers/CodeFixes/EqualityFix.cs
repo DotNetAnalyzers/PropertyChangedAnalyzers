@@ -25,78 +25,80 @@
                                                    .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? expression))
+                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? node))
                 {
-                    if (EqualsMethodName() is { } name)
+                    switch (node)
                     {
-                        switch (expression)
-                        {
-                            case InvocationExpressionSyntax { Expression: { } e, ArgumentList: { Arguments: { Count: 2 } } }:
-                                context.RegisterCodeFix(
-                                    $"Use {name}",
-                                    editor => editor.ReplaceNode(
-                                        e,
-                                        x => SyntaxFactory.IdentifierName(name).WithTriviaFrom(x)),
-                                    nameof(EqualityFix),
-                                    diagnostic);
-                                break;
-                            case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } invocation:
-                                context.RegisterCodeFix(
-                                    $"Use {name}",
-                                    editor => editor.ReplaceNode(
-                                        invocation,
-                                        x => InpcFactory.Equals(null, name, left, arguments[0].Expression).WithTriviaFrom(x)),
-                                    nameof(EqualityFix),
-                                    diagnostic);
-                                break;
-                            case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "==" }, Right: { } } binary:
-                                context.RegisterCodeFix(
-                                    $"Use {name}",
-                                    editor => editor.ReplaceNode(
-                                        binary,
-                                        x => InpcFactory.Equals(null, name, x.Left.WithoutTrivia(), x.Right.WithoutTrivia()).WithTriviaFrom(x)),
-                                    nameof(EqualityFix),
-                                    diagnostic);
-                                break;
-                            case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "!=" }, Right: { } } binary:
-                                context.RegisterCodeFix(
-                                    $"Use !{name}",
-                                    editor => editor.ReplaceNode(
-                                        binary,
-                                        x => SyntaxFactory.PrefixUnaryExpression(
-                                                              SyntaxKind.LogicalNotExpression,
-                                                              InpcFactory.Equals(
-                                                                  null,
-                                                                  name,
-                                                                  x.Left.WithoutTrivia(),
-                                                                  x.Right.WithoutTrivia()))
-                                                          .WithTriviaFrom(x)),
-                                    nameof(EqualityFix),
-                                    diagnostic);
-                                break;
-                        }
-                    }
-                    else if (diagnostic.Id == Descriptors.INPC023InstanceEquals.Id &&
-                             expression is InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } } } instanceEquals)
-                    {
-                        context.RegisterCodeFix(
-                            "Use null safe equals.",
-                            (editor, cancellationToken) => editor.ReplaceNode(
-                                instanceEquals,
-                                x => InpcFactory.Equals(left, x.ArgumentList.Arguments[0].Expression, editor.SemanticModel, cancellationToken).WithTriviaFrom(x)),
-                            Descriptors.INPC023InstanceEquals.Id,
-                            diagnostic);
-                    }
-                    else if (diagnostic.Id == Descriptors.INPC024ReferenceEqualsValueType.Id &&
-                             expression is InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 2 } } } referenceEquals)
-                    {
-                        context.RegisterCodeFix(
-                            "Use correct equality.",
-                            (editor, cancellationToken) => editor.ReplaceNode(
-                                referenceEquals,
-                                x => InpcFactory.Equals(x.ArgumentList.Arguments[0].Expression, x.ArgumentList.Arguments[1].Expression, editor.SemanticModel, cancellationToken).WithTriviaFrom(x)),
-                            Descriptors.INPC024ReferenceEqualsValueType.Id,
-                            diagnostic);
+                        case InvocationExpressionSyntax { Expression: { } oldName, ArgumentList: { Arguments: { Count: 2 } } }
+                            when EqualsMethodName() is { } name:
+                            context.RegisterCodeFix(
+                                $"Use {name}",
+                                editor => editor.ReplaceNode(
+                                    oldName,
+                                    x => SyntaxFactory.IdentifierName(name).WithTriviaFrom(x)),
+                                name,
+                                diagnostic);
+                            break;
+                        case InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 2 } arguments } } referenceEquals
+                            when diagnostic.Id == Descriptors.INPC024ReferenceEqualsValueType.Id:
+                            context.RegisterCodeFix(
+                                "Use correct equality.",
+                                (editor, cancellationToken) => editor.ReplaceNode(
+                                    referenceEquals,
+                                    x => InpcFactory.Equals(arguments[0].Expression, arguments[1].Expression, editor.SemanticModel, cancellationToken).WithTriviaFrom(referenceEquals)),
+                                Descriptors.INPC024ReferenceEqualsValueType.Id,
+                                diagnostic);
+
+                            break;
+                        case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } invocation
+                            when arguments[0] is { Expression: { } right } &&
+                                 EqualsMethodName() is { } name:
+                            context.RegisterCodeFix(
+                                $"Use {name}",
+                                editor => editor.ReplaceNode(
+                                    invocation,
+                                    x => InpcFactory.Equals(null, name, left, right).WithTriviaFrom(x)),
+                                name,
+                                diagnostic);
+                            break;
+                        case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } instanceEquals
+                            when arguments[0] is { Expression: { } right } &&
+                                 diagnostic.Id == Descriptors.INPC023InstanceEquals.Id:
+                            context.RegisterCodeFix(
+                                "Use null safe equals.",
+                                (editor, cancellationToken) => editor.ReplaceNode(
+                                    instanceEquals,
+                                    x => InpcFactory.Equals(left, right, editor.SemanticModel, cancellationToken).WithTriviaFrom(x)),
+                                Descriptors.INPC023InstanceEquals.Id,
+                                diagnostic);
+                            break;
+                        case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "==" }, Right: { } } binary
+                            when EqualsMethodName() is { } name:
+                            context.RegisterCodeFix(
+                                $"Use {name}",
+                                editor => editor.ReplaceNode(
+                                    binary,
+                                    x => InpcFactory.Equals(null, name, x.Left.WithoutTrivia(), x.Right.WithoutTrivia()).WithTriviaFrom(x)),
+                                name,
+                                diagnostic);
+                            break;
+                        case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "!=" }, Right: { } } binary
+                            when EqualsMethodName() is { } name:
+                            context.RegisterCodeFix(
+                                $"Use !{name}",
+                                editor => editor.ReplaceNode(
+                                    binary,
+                                    x => SyntaxFactory.PrefixUnaryExpression(
+                                                          SyntaxKind.LogicalNotExpression,
+                                                          InpcFactory.Equals(
+                                                              null,
+                                                              name,
+                                                              x.Left.WithoutTrivia(),
+                                                              x.Right.WithoutTrivia()))
+                                                      .WithTriviaFrom(x)),
+                                name,
+                                diagnostic);
+                            break;
                     }
                 }
 
