@@ -89,5 +89,80 @@ namespace N
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
+
+        [TestCase("int?", "value != this.p")]
+        [TestCase("string", "value != this.p")]
+        [TestCase("string?", "value != this.p")]
+        public static void Negated(string type, string expected)
+        {
+            var before = @"
+#nullable enable
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int? p;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int? P
+        {
+            get => this.p;
+            set
+            {
+                if (!↓value.Equals(this.p))
+                {
+                    this.p = value;
+                    this.OnPropertyChanged();
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("int?", type);
+
+            var after = @"
+#nullable enable
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int? p;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int? P
+        {
+            get => this.p;
+            set
+            {
+                if (value != this.p)
+                {
+                    this.p = value;
+                    this.OnPropertyChanged();
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}".AssertReplace("int?", type)
+  .AssertReplace("value != this.p", expected);
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
     }
 }

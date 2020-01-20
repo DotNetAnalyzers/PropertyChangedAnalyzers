@@ -44,8 +44,12 @@
                             context.RegisterCodeFix(
                                 "Use correct equality.",
                                 (editor, cancellationToken) => editor.ReplaceNode(
-                                    referenceEquals,
-                                    x => InpcFactory.Equals(arguments[0].Expression, arguments[1].Expression, editor.SemanticModel, cancellationToken).WithTriviaFrom(referenceEquals)),
+                                    referenceEquals switch
+                                    {
+                                        { Parent: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } } negated } => negated,
+                                        _ => (ExpressionSyntax)referenceEquals,
+                                    },
+                                    x => Negate(x, InpcFactory.Equals(arguments[0].Expression, arguments[1].Expression, editor.SemanticModel, cancellationToken))),
                                 Descriptors.INPC024ReferenceEqualsValueType.Id,
                                 diagnostic);
 
@@ -64,11 +68,16 @@
                         case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } instanceEquals
                             when arguments[0] is { Expression: { } right } &&
                                  diagnostic.Id == Descriptors.INPC023InstanceEquals.Id:
+
                             context.RegisterCodeFix(
                                 "Use null safe equals.",
                                 (editor, cancellationToken) => editor.ReplaceNode(
-                                    instanceEquals,
-                                    x => InpcFactory.Equals(left, right, editor.SemanticModel, cancellationToken).WithTriviaFrom(x)),
+                                    instanceEquals switch
+                                    {
+                                        { Parent: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } } negated } => negated,
+                                        _ => (ExpressionSyntax)instanceEquals,
+                                    },
+                                    x => Negate(x, InpcFactory.Equals(left, right, editor.SemanticModel, cancellationToken))),
                                 Descriptors.INPC023InstanceEquals.Id,
                                 diagnostic);
                             break;
@@ -100,6 +109,21 @@
                                 diagnostic);
                             break;
                     }
+                }
+
+                static ExpressionSyntax Negate(ExpressionSyntax original, ExpressionSyntax check)
+                {
+                    return original switch
+                    {
+                        PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } }
+                        when check is BinaryExpressionSyntax { OperatorToken: { ValueText: "==" } } binary
+                        => binary.WithOperatorToken(SyntaxFactory.Token(SyntaxKind.ExclamationEqualsToken))
+                                 .WithTriviaFrom(original),
+                        PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } } negated
+                        when check is { }
+                        => negated.WithOperand(check.WithTriviaFrom(negated.Operand)),
+                        _ => check.WithTriviaFrom(original),
+                    };
                 }
 
                 string? EqualsMethodName()

@@ -84,5 +84,75 @@ namespace N
 
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
         }
+
+        [Test]
+        public static void Negated()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
+        {
+            get => this.p;
+            set
+            {
+                if (!↓ReferenceEquals(value, this.p))
+                {
+                    this.p = value;
+                    this.OnPropertyChanged();
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int P
+        {
+            get => this.p;
+            set
+            {
+                if (value != this.p)
+                {
+                    this.p = value;
+                    this.OnPropertyChanged();
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
     }
 }
