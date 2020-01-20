@@ -1,3 +1,7 @@
+#### 3.2.0:
+ * INPC0023 Instance equals for reference type
+ * INPC024 ReferenceEquals for value type
+
 #### 3.1.1
 * Solution wide nullable fixes.
 * INPC002 ignores when [Bindable(false)]
