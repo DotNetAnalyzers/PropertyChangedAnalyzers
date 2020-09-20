@@ -382,7 +382,7 @@
                     { Body: { } body }
                     when ReturnExpressionsWalker.TryGetSingle(body, out var get)
                     => AreDifferent(get, assignedMember, context),
-                    _ => false
+                    _ => false,
                 };
             }
 

@@ -229,7 +229,7 @@
                     AssignmentExpressionSyntax a => a.Left.Contains(identifierName),
                     PostfixUnaryExpressionSyntax _ => true,
                     PrefixUnaryExpressionSyntax p => !p.IsKind(SyntaxKind.LogicalNotExpression),
-                    _ => false
+                    _ => false,
                 };
             }
 

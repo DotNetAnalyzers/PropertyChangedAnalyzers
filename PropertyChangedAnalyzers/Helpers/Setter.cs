@@ -77,7 +77,7 @@
             {
                 AssignmentExpressionSyntax { Left: { } left, Right: { } right }
                 => MatchMemberAndParameter(left, right, semanticModel, cancellationToken),
-                _ => null
+                _ => null,
             };
         }
 
@@ -88,7 +88,7 @@
                 InvocationExpressionSyntax { ArgumentList: { Arguments: { } } } invocation
                 when TrySet.Match(invocation, semanticModel, cancellationToken) is { Field: { } field, Value: { } value }
                 => MatchMemberAndParameter(field.Expression, value.Expression, semanticModel, cancellationToken),
-                _ => null
+                _ => null,
             };
         }
 
@@ -164,7 +164,7 @@
                 IdentifierNameSyntax { Identifier: { ValueText: "value" } } identifierName
                 => identifierName,
                 CastExpressionSyntax cast => FindParameter(cast.Expression),
-                _ => null
+                _ => null,
             };
         }
 

@@ -100,7 +100,7 @@
                     {
                         IdentifierNameSyntax { Identifier: { ValueText: { } name } } => property.Name == name,
                         MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { Identifier: { ValueText: { } name } } } => property.Name == name,
-                        _ => false
+                        _ => false,
                     };
                 }
             }

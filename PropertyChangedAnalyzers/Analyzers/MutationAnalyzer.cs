@@ -138,7 +138,7 @@
                 { ContainingSymbol: IMethodSymbol { Name: "Dispose" } } => true,
                 { Node: { Parent: ObjectCreationExpressionSyntax _ } } => true,
                 { ContainingSymbol: IMethodSymbol { MethodKind: MethodKind.Constructor } } => !context.Node.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _),
-                _ => false
+                _ => false,
             };
         }
 
