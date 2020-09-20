@@ -1,3 +1,6 @@
+#### 3.2.1:
+* Handle regressions in Roslyn 3.7
+
 #### 3.2.0:
  * INPC0023 Instance equals for reference type
  * INPC024 ReferenceEquals for value type

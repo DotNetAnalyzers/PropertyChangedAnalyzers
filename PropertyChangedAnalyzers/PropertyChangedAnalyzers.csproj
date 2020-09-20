@@ -16,12 +16,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.2.0</Version>
+    <Version>3.2.1</Version>
     <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
     <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>
+      3.2.1:
+      Handle regressions in Roslyn 3.7
       3.2.0:
       INPC0023 Instance equals for reference type
       INPC024 ReferenceEquals for value type
