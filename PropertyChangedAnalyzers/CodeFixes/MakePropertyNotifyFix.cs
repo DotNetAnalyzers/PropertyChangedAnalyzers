@@ -50,12 +50,8 @@
                                 var trySet = await editor.TrySetInvocationAsync(trySetMethod, fieldAccess, InpcFactory.Value, propertyDeclaration, cancellationToken)
                                                          .ConfigureAwait(false);
 
-                                _ = editor.ReplaceNode(
-                                              getter,
-                                              x => x.AsExpressionBody(fieldAccess))
-                                          .ReplaceNode(
-                                              setter,
-                                              x => x.AsExpressionBody(trySet));
+                                _ = editor.ReplaceNode(getter, x => x.AsExpressionBody(fieldAccess))
+                                          .ReplaceNode(setter, x => x.AsExpressionBody(trySet));
 
                                 if (propertyDeclaration.Initializer != null)
                                 {
