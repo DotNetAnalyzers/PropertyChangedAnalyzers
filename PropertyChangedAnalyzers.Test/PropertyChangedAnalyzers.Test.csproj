@@ -23,13 +23,13 @@
 
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro" Version="3.2" />
-    <PackageReference Include="Gu.Analyzers" Version="1.8.1" PrivateAssets="all" />
+    <PackageReference Include="Gu.Analyzers" Version="1.8.2" PrivateAssets="all" />
     <PackageReference Include="Gu.Roslyn.Asserts" Version="3.3.1" />
     <PackageReference Include="Gu.Roslyn.Asserts.Analyzers" Version="3.3.1" PrivateAssets="all" />
     <PackageReference Include="Gu.Wpf.Reactive" Version="4.2.0" />
-    <PackageReference Include="IDisposableAnalyzers" Version="3.4.2" PrivateAssets="all" />
+    <PackageReference Include="IDisposableAnalyzers" Version="3.4.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.7.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="MvvmCross" Version="7.1.2" />
     <PackageReference Include="MvvmLight" Version="5.4.1.1" />
@@ -37,7 +37,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" PrivateAssets="all" />
     <PackageReference Include="Prism.Mvvm" Version="1.1.1" />
     <PackageReference Include="ReflectionAnalyzers" Version="0.1.22-dev" PrivateAssets="all" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.205" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.261" PrivateAssets="all" />
     <PackageReference Include="Stylet" Version="1.3.4" />
   </ItemGroup>
 </Project>
