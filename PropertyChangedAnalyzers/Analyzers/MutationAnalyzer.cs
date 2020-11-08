@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -144,34 +146,29 @@
 
         private static ExpressionSyntax? AssignedExpression(ITypeSymbol containingType, SyntaxNode node)
         {
-            switch (node)
+            return node switch
             {
-                case IdentifierNameSyntax identifierName
+                IdentifierNameSyntax identifierName
                     when !IdentifierTypeWalker.IsLocalOrParameter(identifierName) &&
-                         !containingType.TryFindProperty(identifierName.Identifier.ValueText, out _):
-                    return identifierName;
-                case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name } memberAccess
-                    when !containingType.TryFindProperty(name.Identifier.ValueText, out _):
-                    return memberAccess;
-                case MemberAccessExpressionSyntax memberAccess:
-                    return memberAccess;
-                default:
-                    return null;
-            }
+                         !containingType.TryFindProperty(identifierName.Identifier.ValueText, out _)
+                    => identifierName,
+                MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name } memberAccess
+                    when !containingType.TryFindProperty(name.Identifier.ValueText, out _)
+                    => memberAccess,
+                MemberAccessExpressionSyntax memberAccess => memberAccess,
+                _ => null,
+            };
         }
 
         private static SyntaxNode? ExpressionBodyOrGetter(PropertyDeclarationSyntax property)
         {
-            switch (property)
+            return property switch
             {
-                case { ExpressionBody: { Expression: { } expression } }:
-                    return expression;
-                case { AccessorList: { } }
-                    when property.TryGetGetter(out var getter):
-                    return (SyntaxNode?)getter.Body ?? getter.ExpressionBody;
-                default:
-                    return null;
-            }
+                { ExpressionBody: { Expression: { } expression } } => expression,
+                { AccessorList: { } } when property.TryGetGetter(out var getter) => (SyntaxNode?)getter.Body ??
+                    getter.ExpressionBody,
+                _ => null,
+            };
         }
     }
 }
