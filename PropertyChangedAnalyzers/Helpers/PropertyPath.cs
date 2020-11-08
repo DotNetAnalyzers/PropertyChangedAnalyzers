@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -17,12 +19,6 @@
 
         internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode>? visited = null)
         {
-            if (assigned is null ||
-                returned is null)
-            {
-                return false;
-            }
-
             using var assignedPath = MemberPath.PathWalker.Borrow(assigned);
             var containingType = context.ContainingSymbol.ContainingType;
             if (UsedMemberWalker.Uses(returned, assignedPath, Search.TopLevel, containingType, context.SemanticModel, context.CancellationToken))
@@ -37,7 +33,8 @@
                 Setter.TryFindSingleAssignment(setter, out var assignment))
             {
                 using var set = visited.IncrementUsage();
-                if (set.Add(candidate.Parent))
+                if (candidate.Parent is { } &&
+                    set.Add(candidate.Parent))
                 {
                     return Uses(assignment.Left, returned, context, set);
                 }
@@ -133,7 +130,33 @@
                 base.VisitInvocationExpression(node);
             }
 
-            internal static UsedMemberWalker Borrow(SyntaxNode scope, Search searchOption, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, UsedMemberWalker? parent = null)
+            internal static bool Uses(SyntaxNode scope, MemberPath.PathWalker backing, Search search, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                using var walker = Borrow(scope, search, containingType, semanticModel, cancellationToken);
+                foreach (var used in walker.usedMembers)
+                {
+                    using var usedPath = MemberPath.PathWalker.Borrow(used);
+                    if (PropertyPath.Equals(usedPath, backing))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            protected override void Clear()
+            {
+                this.usedMembers.Clear();
+                this.recursives.Clear();
+                this.localsAndParameters.Clear();
+                this.visited.Clear();
+                this.semanticModel = null!;
+                this.cancellationToken = CancellationToken.None;
+                this.containingType = null!;
+            }
+
+            private static UsedMemberWalker Borrow(SyntaxNode scope, Search searchOption, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken, UsedMemberWalker? parent = null)
             {
                 var pooled = Borrow(() => new UsedMemberWalker());
                 if (parent != null)
@@ -153,34 +176,6 @@
                 return pooled;
             }
 
-            internal static bool Uses(SyntaxNode scope, MemberPath.PathWalker backing, Search search, ITypeSymbol containingType, SemanticModel semanticModel, CancellationToken cancellationToken)
-            {
-                using (var walker = Borrow(scope, search, containingType, semanticModel, cancellationToken))
-                {
-                    foreach (var used in walker.usedMembers)
-                    {
-                        using var usedPath = MemberPath.PathWalker.Borrow(used);
-                        if (PropertyPath.Equals(usedPath, backing))
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
-
-            protected override void Clear()
-            {
-                this.usedMembers.Clear();
-                this.recursives.Clear();
-                this.localsAndParameters.Clear();
-                this.visited.Clear();
-                this.semanticModel = null!;
-                this.cancellationToken = CancellationToken.None;
-                this.containingType = null!;
-            }
-
             private void VisitRecursive()
             {
                 foreach (var recursive in this.recursives)
@@ -193,46 +188,53 @@
                     if (recursive is InvocationExpressionSyntax invocation &&
                         invocation.IsPotentialThisOrBase() &&
                         this.semanticModel.GetSymbolSafe(invocation, this.cancellationToken) is { } method &&
-                        Equals(this.containingType, method.ContainingType) &&
+                        TypeSymbolComparer.Equal(this.containingType, method.ContainingType) &&
                         method.TrySingleDeclaration(this.cancellationToken, out MethodDeclarationSyntax? declaration) &&
                         this.visited.Add(declaration))
                     {
-                        VisitRecursive((SyntaxNode)declaration.Body ?? declaration.ExpressionBody);
+                        switch (declaration)
+                        {
+                            case { Body: { } body }:
+                                VisitNodeRecursive(body);
+                                break;
+                            case { ExpressionBody: { } expressionBody }:
+                                VisitNodeRecursive(expressionBody);
+                                break;
+                        }
                     }
                     else if (TryGetProperty(recursive) is { GetMethod: { } get } &&
                              get.TrySingleDeclaration(this.cancellationToken, out SyntaxNode? getter) &&
                              this.visited.Add(getter))
                     {
-                        VisitRecursive(getter);
+                        VisitNodeRecursive(getter);
                     }
                 }
 
                 IPropertySymbol? TryGetProperty(ExpressionSyntax expression)
                 {
-                    if (expression is IdentifierNameSyntax identifierName &&
+                    if (Identifier() is { } identifierName &&
                         this.containingType.TryFindProperty(identifierName.Identifier.ValueText, out var property) &&
-                        property.Equals(this.semanticModel.GetSymbolSafe(identifierName, this.cancellationToken)))
-                    {
-                        return property;
-                    }
-
-                    if (expression is MemberAccessExpressionSyntax { Expression: InstanceExpressionSyntax _ } memberAccess &&
-                        this.containingType.TryFindProperty(memberAccess.Name.Identifier.ValueText, out property) &&
-                        property.Equals(this.semanticModel.GetSymbolSafe(memberAccess.Name, this.cancellationToken)))
+                        this.semanticModel.GetSymbolSafe(identifierName, this.cancellationToken) is { } symbol &&
+                        SymbolComparer.Equal(property, symbol))
                     {
                         return property;
                     }
 
                     return null;
+
+                    IdentifierNameSyntax? Identifier()
+                    {
+                        return expression switch
+                        {
+                            IdentifierNameSyntax name => name,
+                            MemberAccessExpressionSyntax { Expression:InstanceExpressionSyntax _, Name: IdentifierNameSyntax name} => name,
+                            _ => null,
+                        };
+                    }
                 }
 
-                void VisitRecursive(SyntaxNode body)
+                void VisitNodeRecursive(SyntaxNode body)
                 {
-                    if (body is null)
-                    {
-                        return;
-                    }
-
                     using var walker = Borrow(body, Search.Recursive, this.containingType, this.semanticModel, this.cancellationToken, this);
                     this.usedMembers.AddRange(walker.usedMembers);
                     this.visited.UnionWith(walker.visited);

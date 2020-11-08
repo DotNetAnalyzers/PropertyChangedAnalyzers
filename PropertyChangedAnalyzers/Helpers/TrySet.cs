@@ -60,7 +60,7 @@
             bool Matches(IMethodSymbol candidate)
             {
                 // ReSharper disable once AccessToDisposedClosure
-                return IsMatch(candidate, recursion) != AnalysisResult.No;
+                return IsMatch(candidate, recursion!) != AnalysisResult.No;
             }
         }
 
@@ -122,8 +122,7 @@
 
         private static AnalysisResult IsMatch(InvocationExpressionSyntax candidate, Recursion recursion)
         {
-            if (candidate?.ArgumentList is null ||
-                candidate.ArgumentList.Arguments.Count < 2 ||
+            if (candidate.ArgumentList.Arguments.Count < 2 ||
                 !candidate.ArgumentList.Arguments.TrySingle(x => x.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword), out _) ||
                 !candidate.IsPotentialThisOrBase())
             {
