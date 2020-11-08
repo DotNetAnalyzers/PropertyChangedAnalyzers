@@ -4,8 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -104,7 +106,7 @@
             {
                 return className switch
                 {
-                    null => (ExpressionSyntax)SyntaxFactory.IdentifierName(methodName),
+                    null => SyntaxFactory.IdentifierName(methodName),
 
                     "object" => SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -202,12 +204,12 @@
             return lambda switch
             {
                 { Body: ExpressionSyntax body }
-                => lambda.ReplaceNode(
-                             body,
+                => lambda.WithExpressionBody(null)
+                         .WithBlock(
                              SyntaxFactory.Block(statements.Prepend(SyntaxFactory.ExpressionStatement(body)))
                                           .WithLeadingLineFeed())
                          .WithAdditionalAnnotations(Formatter.Annotation),
-                { Body: BlockSyntax block }
+                { Block: { } block }
                 => lambda.ReplaceNode(block, block.AddStatements(statements)),
                 _ => throw new NotSupportedException(
                     $"No support for adding statements to lambda with the shape: {lambda?.ToString() ?? "null"}"),
