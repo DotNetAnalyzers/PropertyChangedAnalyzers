@@ -35,7 +35,7 @@
 
             return false;
 
-            bool IsPotential(ConditionalAccessExpressionSyntax candidate)
+            static bool IsPotential(ConditionalAccessExpressionSyntax candidate)
             {
                 return candidate.Expression is IdentifierNameSyntax ||
                        candidate.Expression is MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: IdentifierNameSyntax _ };

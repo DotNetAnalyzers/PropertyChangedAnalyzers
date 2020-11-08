@@ -18,7 +18,11 @@
 
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {
-            this.returnValues.Add(node.Expression);
+            if (node.Expression is { })
+            {
+                this.returnValues.Add(node.Expression);
+            }
+
             base.VisitReturnStatement(node);
         }
 
