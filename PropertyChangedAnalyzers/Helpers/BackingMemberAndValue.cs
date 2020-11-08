@@ -4,7 +4,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [DebuggerDisplay("Member: {this.Member.GetText().ToString()} Parameter:{this.Parameter.GetText().ToString()},nq")]
-    internal struct BackingMemberAndValue
+    internal readonly struct BackingMemberAndValue
     {
         internal readonly ExpressionSyntax Member;
 

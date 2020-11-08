@@ -25,7 +25,7 @@
                                                    .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ExpressionSyntax? node))
+                if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ExpressionSyntax node)
                 {
                     switch (node)
                     {
@@ -122,7 +122,7 @@
                         PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } } negated
                         when check is { }
                         => negated.WithOperand(check.WithTriviaFrom(negated.Operand)),
-                        _ => check.WithTriviaFrom(original),
+                        _ => check.WithTriviaFrom(original)!,
                     };
                 }
 

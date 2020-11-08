@@ -23,25 +23,23 @@
                 return false;
             }
 
-            using (var assignedPath = MemberPath.PathWalker.Borrow(assigned))
+            using var assignedPath = MemberPath.PathWalker.Borrow(assigned);
+            var containingType = context.ContainingSymbol.ContainingType;
+            if (UsedMemberWalker.Uses(returned, assignedPath, Search.TopLevel, containingType, context.SemanticModel, context.CancellationToken))
             {
-                var containingType = context.ContainingSymbol.ContainingType;
-                if (UsedMemberWalker.Uses(returned, assignedPath, Search.TopLevel, containingType, context.SemanticModel, context.CancellationToken))
-                {
-                    return true;
-                }
+                return true;
+            }
 
-                if (assignedPath.Tokens.TrySingle(out var candidate) &&
-                    containingType.TryFindPropertyRecursive(candidate.ValueText, out var property) &&
-                    property.TrySingleDeclaration(context.CancellationToken, out var declaration) &&
-                    declaration.TryGetSetter(out var setter) &&
-                    Setter.TryFindSingleAssignment(setter, out var assignment))
+            if (assignedPath.Tokens.TrySingle(out var candidate) &&
+                containingType.TryFindPropertyRecursive(candidate.ValueText, out var property) &&
+                property.TrySingleDeclaration(context.CancellationToken, out var declaration) &&
+                declaration.TryGetSetter(out var setter) &&
+                Setter.TryFindSingleAssignment(setter, out var assignment))
+            {
+                using var set = visited.IncrementUsage();
+                if (set.Add(candidate.Parent))
                 {
-                    using var set = visited.IncrementUsage();
-                    if (set.Add(candidate.Parent))
-                    {
-                        return Uses(assignment.Left, returned, context, set);
-                    }
+                    return Uses(assignment.Left, returned, context, set);
                 }
             }
 

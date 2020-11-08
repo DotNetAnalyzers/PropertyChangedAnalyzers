@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -8,7 +8,7 @@ namespace PropertyChangedAnalyzers
     {
         internal static string Name(this FieldDeclarationSyntax declaration)
         {
-            if (declaration?.Declaration is VariableDeclarationSyntax variableDeclaration &&
+            if (declaration?.Declaration is { } variableDeclaration &&
                 variableDeclaration.Variables.TrySingle(out var variable))
             {
                 return variable.Identifier.Text;

@@ -267,7 +267,7 @@
                            context.SemanticModel.TryGetType(y, context.CancellationToken, out var yt) &&
                            yt.IsReferenceType &&
                            yt != KnownSymbol.String &&
-                           xt.Equals(yt) &&
+                           TypeSymbolComparer.Equal(xt, yt) &&
                            !Descriptors.INPC006UseReferenceEqualsForReferenceTypes.IsSuppressed(context.SemanticModel);
                 }
 
@@ -279,7 +279,7 @@
                            context.SemanticModel.TryGetType(y, context.CancellationToken, out var yt) &&
                            yt.IsReferenceType &&
                            yt != KnownSymbol.String &&
-                           xt.Equals(yt) &&
+                           TypeSymbolComparer.Equal(xt, yt) &&
                            !Descriptors.INPC006UseObjectEqualsForReferenceTypes.IsSuppressed(context.SemanticModel);
                 }
             }

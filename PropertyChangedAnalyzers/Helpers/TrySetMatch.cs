@@ -2,7 +2,7 @@
 {
     using System.Diagnostics.CodeAnalysis;
 
-    internal struct TrySetMatch<T>
+    internal readonly struct TrySetMatch<T>
     {
         internal readonly AnalysisResult AnalysisResult;
 

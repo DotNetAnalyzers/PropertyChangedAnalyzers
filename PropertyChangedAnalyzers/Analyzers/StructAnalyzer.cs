@@ -26,10 +26,20 @@
                 context.ContainingSymbol is INamedTypeSymbol type &&
                 type.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation))
             {
-                var location = baseList.Types.TryFirst(x => x == KnownSymbol.INotifyPropertyChanged, out var inpc)
-                    ? inpc.GetLocation()
-                    : declaration.Identifier.GetLocation();
-                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC008StructMustNotNotify, location, context.ContainingSymbol.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC008StructMustNotNotify, Location(), context.ContainingSymbol.Name));
+
+                Location Location()
+                {
+                    foreach (var baseType in baseList.Types)
+                    {
+                        if (baseType == KnownSymbol.INotifyPropertyChanged)
+                        {
+                            return baseType.GetLocation();
+                        }
+                    }
+
+                    return declaration.GetLocation();
+                }
             }
         }
     }

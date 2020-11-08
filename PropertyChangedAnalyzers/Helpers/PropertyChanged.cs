@@ -76,35 +76,33 @@
                 }
 
                 var result = AnalysisResult.No;
-                using (var walker = InvocationWalker.Borrow(scope))
+                using var walker = InvocationWalker.Borrow(scope);
+                foreach (var candidate in walker.Invocations)
                 {
-                    foreach (var candidate in walker.Invocations)
+                    if (!candidate.Contains(mutation) &&
+                        mutation.IsExecutedBefore(candidate) == ExecutedBefore.No)
                     {
-                        if (!candidate.Contains(mutation) &&
-                            mutation.IsExecutedBefore(candidate) == ExecutedBefore.No)
-                        {
+                        continue;
+                    }
+
+                    switch (FindPropertyName(candidate, semanticModel, cancellationToken))
+                    {
+                        case null:
+                        case { Result: AnalysisResult.No }:
                             continue;
-                        }
+                        case { Result: AnalysisResult.Yes, Value: var propertyName }:
+                            if (string.IsNullOrEmpty(propertyName) ||
+                                propertyName == property.Name)
+                            {
+                                return AnalysisResult.Yes;
+                            }
 
-                        switch (FindPropertyName(candidate, semanticModel, cancellationToken))
-                        {
-                            case null:
-                            case { Result: AnalysisResult.No }:
-                                continue;
-                            case { Result: AnalysisResult.Yes, Value: var propertyName }:
-                                if (string.IsNullOrEmpty(propertyName) ||
-                                    propertyName == property.Name)
-                                {
-                                    return AnalysisResult.Yes;
-                                }
-
-                                continue;
-                            case { Result: AnalysisResult.Maybe }:
-                                result = AnalysisResult.Maybe;
-                                break;
-                            default:
-                                throw new InvalidOperationException("Unknown AnalysisResult");
-                        }
+                            continue;
+                        case { Result: AnalysisResult.Maybe }:
+                            result = AnalysisResult.Maybe;
+                            break;
+                        default:
+                            throw new InvalidOperationException("Unknown AnalysisResult");
                     }
                 }
 

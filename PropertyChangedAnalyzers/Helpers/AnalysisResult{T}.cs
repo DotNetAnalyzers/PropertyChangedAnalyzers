@@ -1,6 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers
 {
-    internal struct AnalysisResult<T>
+    internal readonly struct AnalysisResult<T>
     {
         internal readonly AnalysisResult Result;
 

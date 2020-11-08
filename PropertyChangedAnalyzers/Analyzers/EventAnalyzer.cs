@@ -1,7 +1,9 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -39,8 +41,8 @@
 
             bool Shadows()
             {
-                return eventSymbol is { IsStatic: false, IsOverride: false } &&
-                       eventSymbol.ContainingType.BaseType.TryFindEventRecursive(eventSymbol.Name, out _);
+                return eventSymbol is { ContainingType: { BaseType: { } baseType }, IsStatic: false, IsOverride: false } &&
+                       baseType.TryFindEventRecursive(eventSymbol.Name, out _);
             }
 
             bool MissingInvoker()

@@ -99,15 +99,15 @@
             return symbol.Name;
         }
 
-        private struct NameContext
+        private readonly struct NameContext
         {
-            internal readonly string Name;
+            internal readonly string? Name;
             internal readonly ExpressionSyntax Expression;
 #pragma warning disable RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
             internal readonly IParameterSymbol Target;
 #pragma warning restore RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
 
-            private NameContext(string name, ExpressionSyntax expression, IParameterSymbol target)
+            private NameContext(string? name, ExpressionSyntax expression, IParameterSymbol target)
             {
                 this.Name = name;
                 this.Expression = expression;
@@ -163,7 +163,7 @@
                 {
                     return a switch
                     {
-                        { Expression: IdentifierNameSyntax identifierName } => identifierName,
+                        { Expression: IdentifierNameSyntax name } => name,
                         { Expression: MemberAccessExpressionSyntax { Name: { } name } } => name,
                         _ => a.Expression,
                     };

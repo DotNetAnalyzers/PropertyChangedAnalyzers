@@ -2,7 +2,9 @@
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -45,21 +47,19 @@
 
         internal static ExpressionSyntax? FindSingleMutated(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            using (var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken))
+            using var mutations = MutationWalker.Borrow(setter, SearchScope.Member, semanticModel, cancellationToken);
+            if (mutations.All().TrySingle(x => x.IsEither(SyntaxKind.SimpleAssignmentExpression, SyntaxKind.Argument), out var mutation))
             {
-                if (mutations.All().TrySingle(x => x.IsEither(SyntaxKind.SimpleAssignmentExpression, SyntaxKind.Argument), out var mutation))
+                return mutation switch
                 {
-                    return mutation switch
-                    {
-                        AssignmentExpressionSyntax assignment
+                    AssignmentExpressionSyntax assignment
                         when MatchMutation(assignment, semanticModel, cancellationToken) is { Member: { } backingMember }
                         => backingMember,
-                        ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } }
+                    ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } }
                         when MatchMutation(invocation, semanticModel, cancellationToken) is { Member: { } backingMember }
                         => backingMember,
-                        _ => null,
-                    };
-                }
+                    _ => null,
+                };
             }
 
             return null;
@@ -95,7 +95,7 @@
         internal static BackingMemberAndValue? MatchEquals(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (candidate is PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } condition } &&
-                Equality.IsEqualsCheck(condition, semanticModel, cancellationToken, out var x, out var y))
+                Equality.IsEqualsCheck(condition, semanticModel, cancellationToken, out _, out _))
             {
                 return MatchEquals(condition, semanticModel, cancellationToken);
             }
@@ -111,34 +111,33 @@
 
         internal static IFieldSymbol? FindBackingField(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            switch (FindSingleMutated(setter, semanticModel, cancellationToken))
+            return FindSingleMutated(setter, semanticModel, cancellationToken) switch
             {
-                case IdentifierNameSyntax identifierName:
-                    return semanticModel.TryGetSymbol(identifierName, cancellationToken, out IFieldSymbol? field) ? field : null;
-                case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name }:
-                    return semanticModel.TryGetSymbol(name, cancellationToken, out field) ? field : null;
-                default:
-                    return null;
-            }
+                IdentifierNameSyntax identifierName
+                    => semanticModel.TryGetSymbol(identifierName, cancellationToken, out IFieldSymbol? field)
+                    ? field
+                    : null,
+                MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name }
+                    => semanticModel.TryGetSymbol(name, cancellationToken, out IFieldSymbol? field) ? field : null,
+                _ => null,
+            };
         }
 
         internal static AssignmentExpressionSyntax? AssignsValueToBackingField(AccessorDeclarationSyntax setter)
         {
-            using (var walker = AssignmentWalker.Borrow(setter))
+            using var walker = AssignmentWalker.Borrow(setter);
+            foreach (var assignment in walker.Assignments)
             {
-                foreach (var assignment in walker.Assignments)
+                if (assignment is { Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } })
                 {
-                    if (assignment is { Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } })
+                    switch (assignment.Left)
                     {
-                        switch (assignment.Left)
-                        {
-                            case IdentifierNameSyntax _:
-                            case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ }:
-                            case MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax _ }:
-                            case MemberAccessExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax _ } }:
-                            case MemberAccessExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ } }:
-                                return assignment;
-                        }
+                        case IdentifierNameSyntax _:
+                        case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ }:
+                        case MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax _ }:
+                        case MemberAccessExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax _ } }:
+                        case MemberAccessExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ } }:
+                            return assignment;
                     }
                 }
             }

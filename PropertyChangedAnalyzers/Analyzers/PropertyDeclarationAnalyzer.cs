@@ -3,7 +3,6 @@
     using System.Collections.Immutable;
     using System.Globalization;
     using System.Linq;
-    using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -156,8 +155,7 @@
 
                 if (property.Name[pi] != backingField.Name[fi])
                 {
-                    if (pi == 0 ||
-                        !char.IsUpper(property.Name[pi - 1]) ||
+                    if (!char.IsUpper(property.Name[pi - 1]) ||
                         char.ToUpper(backingField.Name[fi], CultureInfo.InvariantCulture) != property.Name[pi])
                     {
                         return false;
@@ -178,43 +176,6 @@
                 => statements[0].IsKind(SyntaxKind.ExpressionStatement),
                 _ => false,
             };
-        }
-
-        private static bool? GetsAndSetsSame(PropertyDeclarationSyntax propertyDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (propertyDeclaration.TryGetGetter(out var getter) &&
-                propertyDeclaration.TryGetSetter(out var setter) &&
-                Getter.FindSingleReturned(getter) is { } get &&
-                Setter.FindSingleMutated(setter, semanticModel, cancellationToken) is { } set)
-            {
-                if (MemberPath.Equals(get, set))
-                {
-                    return true;
-                }
-
-                if (propertyDeclaration.Parent is TypeDeclarationSyntax containing)
-                {
-                    if (MemberPath.TrySingle(get, out var getMember) &&
-                        containing.TryFindProperty(getMember.Text, out var getProperty) &&
-                        Property.FindSingleReturned(getProperty) is { } rootGet &&
-                        MemberPath.Equals(rootGet, set))
-                    {
-                        return true;
-                    }
-
-                    if (MemberPath.TrySingle(set, out var setMember) &&
-                        containing.TryFindProperty(setMember.Text, out var setProperty) &&
-                        Property.FindSingleMutated(setProperty, semanticModel, cancellationToken) is { } rootSet &&
-                        MemberPath.Equals(get, rootSet))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            return null;
         }
     }
 }

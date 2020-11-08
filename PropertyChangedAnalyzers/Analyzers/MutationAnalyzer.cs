@@ -99,7 +99,7 @@
                 }
 
                 var firstIdentifierNameSymbol = context.SemanticModel.GetSymbolInfo(firstTokenInPath.Parent, context.CancellationToken).Symbol;
-                if (!Equals(firstIdentifierNameSymbol?.ContainingType, containingType))
+                if (!TypeSymbolComparer.Equal(firstIdentifierNameSymbol?.ContainingType, containingType))
                 {
                     return;
                 }
@@ -168,7 +168,7 @@
                     return expression;
                 case { AccessorList: { } }
                     when property.TryGetGetter(out var getter):
-                    return (SyntaxNode)getter.Body ?? getter.ExpressionBody;
+                    return (SyntaxNode?)getter.Body ?? getter.ExpressionBody;
                 default:
                     return null;
             }
