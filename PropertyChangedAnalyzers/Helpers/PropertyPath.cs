@@ -227,7 +227,7 @@
                         return expression switch
                         {
                             IdentifierNameSyntax name => name,
-                            MemberAccessExpressionSyntax { Expression:InstanceExpressionSyntax _, Name: IdentifierNameSyntax name} => name,
+                            MemberAccessExpressionSyntax { Expression: InstanceExpressionSyntax _, Name: IdentifierNameSyntax name } => name,
                             _ => null,
                         };
                     }

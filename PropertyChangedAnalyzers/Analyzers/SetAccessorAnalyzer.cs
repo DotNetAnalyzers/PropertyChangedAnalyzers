@@ -246,7 +246,7 @@
                                 invocation.GetLocation()));
                     }
 
-                    if (Equality.IsInstanceEquals(invocation, context.SemanticModel, context.CancellationToken, out x, out y) &&
+                    if (Equality.IsInstanceEquals(invocation, context.SemanticModel, context.CancellationToken, out _, out _) &&
                         (ContainingProperty().Type.IsReferenceType ||
                          ContainingProperty().Type is { OriginalDefinition: { SpecialType: SpecialType.System_Nullable_T } }))
                     {
