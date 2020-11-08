@@ -19,7 +19,7 @@
                     if (member is IMethodSymbol { MethodKind: MethodKind.Ordinary } candidate &&
                         candidate.IsStatic == propertyChanged.IsStatic)
                     {
-                        if (!Equals(candidate.ContainingType, recursion.ContainingType) &&
+                        if (!TypeSymbolComparer.Equal(candidate.ContainingType, recursion.ContainingType) &&
                             candidate.DeclaredAccessibility == Accessibility.Private)
                         {
                             continue;
@@ -48,7 +48,9 @@
                     }
                 }
 
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 propertyChanged = propertyChanged.OverriddenEvent;
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             }
 
             return match;

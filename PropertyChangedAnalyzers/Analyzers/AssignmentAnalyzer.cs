@@ -1,7 +1,9 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -37,7 +39,7 @@
         private static ExpressionSyntax? ShouldSetBackingField(AssignmentExpressionSyntax assignment, SyntaxNodeAnalysisContext context)
         {
             if (context.ContainingSymbol is IMethodSymbol { IsStatic: false, MethodKind: MethodKind.Constructor } ctor &&
-                Property.TryGetAssignedProperty(assignment, out var propertyDeclaration) &&
+                Property.FindAssignedProperty(assignment) is { } propertyDeclaration &&
                 !assignment.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _) &&
                 !assignment.TryFirstAncestor<LocalFunctionStatementSyntax>(out _) &&
                 propertyDeclaration.TryGetSetter(out var setter))
@@ -77,7 +79,7 @@
                 return Setter.FindSingleMutated(setter!, context.SemanticModel, context.CancellationToken) is { } backingField &&
                        MemberPath.TrySingle(backingField, out var single) &&
                        context.SemanticModel.TryGetSymbol(single, context.CancellationToken, out IFieldSymbol? field) &&
-                       Equals(ctor.ContainingType, field.ContainingType)
+                       TypeSymbolComparer.Equal(ctor.ContainingType, field.ContainingType)
                     ? backingField
                     : null;
             }

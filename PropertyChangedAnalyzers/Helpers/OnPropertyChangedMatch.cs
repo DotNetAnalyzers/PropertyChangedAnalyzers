@@ -2,7 +2,7 @@
 {
     using Microsoft.CodeAnalysis;
 
-    internal struct OnPropertyChangedMatch
+    internal readonly struct OnPropertyChangedMatch
     {
         internal readonly AnalysisResult AnalysisResult;
         internal readonly IParameterSymbol Name;

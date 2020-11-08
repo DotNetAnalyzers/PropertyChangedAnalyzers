@@ -9,13 +9,6 @@
 
     internal static class Property
     {
-        internal static ExpressionSyntax? FindSingleMutated(PropertyDeclarationSyntax property, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            return property.TryGetSetter(out var setter)
-                  ? Setter.FindSingleMutated(setter, semanticModel, cancellationToken)
-                  : null;
-        }
-
         internal static ExpressionSyntax? FindSingleReturned(PropertyDeclarationSyntax property)
         {
             if (property.ExpressionBody is { Expression: { } expression })
@@ -42,20 +35,18 @@
                     return false;
                 }
 
-                using (var walker = ReturnExpressionsWalker.Borrow(getter))
+                using var walker = ReturnExpressionsWalker.Borrow(getter);
+                foreach (var returnValue in walker.ReturnValues)
                 {
-                    foreach (var returnValue in walker.ReturnValues)
+                    if (IsCoalesceAssign(returnValue))
                     {
-                        if (IsCoalesceAssign(returnValue))
-                        {
-                            return true;
-                        }
+                        return true;
+                    }
 
-                        if (semanticModel.TryGetSymbol(returnValue, cancellationToken, out IFieldSymbol? returnedField) &&
-                            AssignmentExecutionWalker.FirstFor(returnedField, getter, SearchScope.Instance, semanticModel, cancellationToken, out _))
-                        {
-                            return true;
-                        }
+                    if (semanticModel.TryGetSymbol(returnValue, cancellationToken, out IFieldSymbol? returnedField) &&
+                        AssignmentExecutionWalker.FirstFor(returnedField, getter, SearchScope.Instance, semanticModel, cancellationToken, out _))
+                    {
+                        return true;
                     }
                 }
 
@@ -76,8 +67,7 @@
 
         internal static bool ShouldNotify(PropertyDeclarationSyntax declaration, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (declaration is null ||
-                declaration.Modifiers.Any(SyntaxKind.PrivateKeyword) ||
+            if (declaration.Modifiers.Any(SyntaxKind.PrivateKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.ProtectedKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
                 declaration.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
@@ -150,20 +140,22 @@
             return false;
         }
 
-        internal static bool TryGetAssignedProperty(AssignmentExpressionSyntax assignment, [NotNullWhen(true)] out PropertyDeclarationSyntax? propertyDeclaration)
+        internal static PropertyDeclarationSyntax? FindAssignedProperty(AssignmentExpressionSyntax assignment)
         {
-            propertyDeclaration = null;
-            switch (assignment)
+            return assignment switch
             {
-                case { Left: IdentifierNameSyntax identifierName }:
-                    return assignment.TryFirstAncestor(out TypeDeclarationSyntax? containingType) &&
-                           containingType.TryFindProperty(identifierName.Identifier.ValueText, out propertyDeclaration);
-                case { Left: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name } }:
-                    return assignment.TryFirstAncestor(out containingType) &&
-                           containingType.TryFindProperty(name.Identifier.ValueText, out propertyDeclaration);
-                default:
-                    return false;
-            }
+                { Left: IdentifierNameSyntax identifierName } =>
+                    assignment.TryFirstAncestor(out TypeDeclarationSyntax? containingType) &&
+                    containingType.TryFindProperty(identifierName.Identifier.ValueText, out var propertyDeclaration)
+                        ? propertyDeclaration
+                        : null,
+                { Left: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { } name } } =>
+                    assignment.TryFirstAncestor<TypeDeclarationSyntax>(out var containingType) &&
+                    containingType.TryFindProperty(name.Identifier.ValueText, out var propertyDeclaration)
+                        ? propertyDeclaration
+                        : null,
+                _ => null,
+            };
         }
 
         internal static bool IsAutoPropertyMutatedOnlyInConstructor(this PropertyDeclarationSyntax property)

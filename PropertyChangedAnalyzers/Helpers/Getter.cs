@@ -6,18 +6,15 @@
     {
         internal static ExpressionSyntax? FindSingleReturned(AccessorDeclarationSyntax getter)
         {
-            switch (getter)
+            return getter switch
             {
-                case { ExpressionBody: { Expression: { } expression } }:
-                    return expression;
-                case { Body: { Statements: { Count: 1 } statements } }
-                    when statements[0] is ReturnStatementSyntax returnStatement:
-                    return returnStatement.Expression;
-                case { Body: { } body }:
-                    return ReturnExpressionsWalker.TryGetSingle(body, out var result) ? result : null;
-                default:
-                    return null;
-            }
+                { ExpressionBody: { Expression: { } expression } } => expression,
+                { Body: { Statements: { Count: 1 } statements } }
+                    when statements[0] is ReturnStatementSyntax returnStatement
+                    => returnStatement.Expression,
+                { Body: { } body } => ReturnExpressionsWalker.TryGetSingle(body, out var result) ? result : null,
+                _ => null,
+            };
         }
     }
 }
