@@ -3,7 +3,9 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,9 +19,9 @@
                    candidate.TypeParameters.TrySingle(out var typeParameter) &&
                    candidate.Parameters.Length > 2 &&
                    candidate.Parameters[0].RefKind == RefKind.Ref &&
-                   candidate.Parameters[0].Type.Equals(typeParameter) &&
+                   TypeSymbolComparer.Equal(candidate.Parameters[0].Type, typeParameter) &&
                    candidate.Parameters[1].RefKind == RefKind.None &&
-                   candidate.Parameters[1].Type.Equals(typeParameter) &&
+                   TypeSymbolComparer.Equal(candidate.Parameters[1].Type, typeParameter) &&
                    candidate.Parameters.TrySingle(x => x is { Type: { SpecialType: SpecialType.System_String } }, out nameParameter) &&
                    RestAreOptional();
 

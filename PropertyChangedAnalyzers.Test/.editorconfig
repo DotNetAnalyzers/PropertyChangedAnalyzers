@@ -13,3 +13,9 @@ dotnet_diagnostic.CA1030.severity = none
 
 # CA1034: Nested types should not be visible
 dotnet_diagnostic.CA1034.severity = none
+
+# CA1000: Do not declare static members on generic types
+dotnet_diagnostic.CA1000.severity = none
+
+# CA1724: The type name MvvmLight conflicts in whole or in part with the namespace name 'GalaSoft.MvvmLight'. Change either name to eliminate the conflict.
+dotnet_diagnostic.CA1724.severity = none
