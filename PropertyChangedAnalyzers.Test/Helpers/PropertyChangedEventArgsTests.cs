@@ -102,8 +102,7 @@ namespace N
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var argument = syntaxTree.FindInvocation("Invoke(this, args)").ArgumentList.Arguments[1];
-            Assert.AreEqual(true, PropertyChangedEventArgs.TryGetPropertyNameArgument(argument.Expression, semanticModel, CancellationToken.None, out var name));
-            Assert.AreEqual("propertyName", name.ToString());
+            Assert.AreEqual("propertyName", PropertyChangedEventArgs.Match(argument.Expression, semanticModel, CancellationToken.None)?.Argument.ToString());
         }
     }
 }

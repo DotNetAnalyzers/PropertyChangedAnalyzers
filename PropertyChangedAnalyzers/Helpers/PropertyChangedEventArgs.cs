@@ -1,6 +1,5 @@
 ﻿namespace PropertyChangedAnalyzers
 {
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     using Gu.Roslyn.AnalyzerExtensions;
@@ -9,23 +8,19 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class PropertyChangedEventArgs
+    internal readonly struct PropertyChangedEventArgs
     {
+        internal readonly ArgumentSyntax Argument;
+
+        private PropertyChangedEventArgs(ArgumentSyntax argument)
+        {
+            this.Argument = argument;
+        }
+
         internal static bool IsCreatedWith(ExpressionSyntax expression, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (TryGetCached(expression, semanticModel, cancellationToken, out var argument))
-            {
-                return IsMatch(argument);
-            }
-
-            if (expression is ObjectCreationExpressionSyntax)
-            {
-                return parameter.Type == KnownSymbol.String &&
-                       TryGetCreation(expression, out argument) &&
-                       IsMatch(argument);
-            }
-
-            return false;
+            return Match(expression, semanticModel, cancellationToken) is { Argument: { } argument } &&
+                   IsMatch(argument);
 
             bool IsMatch(ArgumentSyntax candidate)
             {
@@ -41,10 +36,9 @@
 
         internal static AnalysisResult<string?>? FindPropertyName(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (TryGetCreation(expression, out var nameArgument) ||
-                TryGetCached(expression, semanticModel, cancellationToken, out nameArgument))
+            if (Match(expression, semanticModel, cancellationToken) is { Argument: { } argument })
             {
-                return nameArgument.TryGetStringValue(semanticModel, cancellationToken, out var propertyName)
+                return argument.TryGetStringValue(semanticModel, cancellationToken, out var propertyName)
                      ? new AnalysisResult<string?>(AnalysisResult.Yes, propertyName)
                      : (AnalysisResult<string?>?)null;
             }
@@ -52,13 +46,13 @@
             return null;
         }
 
-        internal static bool TryGetPropertyNameArgument(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArgument)
+        internal static PropertyChangedEventArgs? Match(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return TryGetCreation(expression, out nameArgument) ||
-                   TryGetCached(expression, semanticModel, cancellationToken, out nameArgument);
+            return MatchCreation(expression) ??
+                   MatchCached(expression, semanticModel, cancellationToken);
         }
 
-        private static bool TryGetCached(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out ArgumentSyntax? nameArg)
+        private static PropertyChangedEventArgs? MatchCached(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (semanticModel.TryGetSymbol(expression, cancellationToken, out var candidate))
             {
@@ -68,37 +62,37 @@
                         when field.TrySingleDeclaration(cancellationToken, out var declaration) &&
                              declaration.Declaration.Variables.TryLast(out var variable) &&
                              variable.Initializer is { } initializer:
-                        return TryGetCreation(initializer.Value, out nameArg);
+                        return MatchCreation(initializer.Value);
                     case IPropertySymbol property
                         when property.TrySingleDeclaration(cancellationToken, out PropertyDeclarationSyntax? declaration) &&
                              declaration.Initializer is { } initializer:
-                        return TryGetCreation(initializer.Value, out nameArg);
+                        return MatchCreation(initializer.Value);
                     case ILocalSymbol local
                         when local.TrySingleDeclaration(cancellationToken, out VariableDeclarationSyntax? declaration) &&
                              declaration.Variables.TryLast(out var variable) &&
                              variable.Initializer is { } initializer:
-                        return TryGetCreation(initializer.Value, out nameArg) ||
-                               TryGetCached(initializer.Value, semanticModel, cancellationToken, out nameArg);
+                        return MatchCreation(initializer.Value) ??
+                               MatchCached(initializer.Value, semanticModel, cancellationToken);
                     case IMethodSymbol { Name: "GetOrAdd", ContainingType: { TypeArguments: { Length: 2 } typeArguments } } method
                         when method.ContainingType == KnownSymbol.ConcurrentDictionaryOfTKeyTValue &&
                              typeArguments[0] == KnownSymbol.String &&
                              typeArguments[1] == KnownSymbol.PropertyChangedEventArgs &&
                              expression is InvocationExpressionSyntax invocation &&
-                             invocation.TryFindArgument(method.Parameters[0], out nameArg):
-                        return true;
+                             invocation.TryFindArgument(method.Parameters[0], out var nameArg):
+                        return new PropertyChangedEventArgs(nameArg);
                 }
             }
 
-            nameArg = null;
-            return false;
+            return null;
         }
 
-        private static bool TryGetCreation(ExpressionSyntax expression, [NotNullWhen(true)] out ArgumentSyntax? nameArg)
+        private static PropertyChangedEventArgs? MatchCreation(ExpressionSyntax expression)
         {
-            nameArg = null;
             return expression is ObjectCreationExpressionSyntax { Type: { } type, ArgumentList: { Arguments: { Count: 1 } arguments } } &&
                    type == KnownSymbol.PropertyChangedEventArgs &&
-                   arguments.TrySingle(out nameArg);
+                   arguments.TrySingle(out var nameArg)
+                ? new PropertyChangedEventArgs(nameArg)
+                : (PropertyChangedEventArgs?)null;
         }
     }
 }

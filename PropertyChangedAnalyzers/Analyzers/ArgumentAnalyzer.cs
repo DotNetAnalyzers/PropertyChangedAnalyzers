@@ -159,7 +159,7 @@
                     return null;
                 }
 
-                ExpressionSyntax Expression(ArgumentSyntax a)
+                static ExpressionSyntax Expression(ArgumentSyntax a)
                 {
                     return a switch
                     {
@@ -169,7 +169,7 @@
                     };
                 }
 
-                SimpleNameSyntax? NameFromLambda(AnonymousFunctionExpressionSyntax lambda)
+                static SimpleNameSyntax? NameFromLambda(AnonymousFunctionExpressionSyntax lambda)
                 {
                     return lambda.Body switch
                     {
