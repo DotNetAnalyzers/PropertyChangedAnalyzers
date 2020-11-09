@@ -21,7 +21,7 @@
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out MemberDeclarationSyntax? eventDeclaration))
+                if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is MemberDeclarationSyntax eventDeclaration)
                 {
                     context.RegisterCodeFix(
                         "Remove shadowing event.",

@@ -23,8 +23,7 @@
                                        .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ArgumentSyntax? argument) &&
-                    argument.Expression is LiteralExpressionSyntax literal &&
+                if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ArgumentSyntax { Expression: LiteralExpressionSyntax literal } argument &&
                     semanticModel.LookupSymbols(argument.SpanStart, name: literal.Token.ValueText).TryFirst(out var member))
                 {
                     context.RegisterCodeFix(

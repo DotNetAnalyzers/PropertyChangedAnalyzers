@@ -3,8 +3,10 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -26,7 +28,7 @@
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode(diagnostic, out ParameterSyntax? parameter))
+                if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ParameterSyntax parameter)
                 {
                     context.RegisterCodeFix(
                         "Use [CallerMemberName]",
@@ -36,10 +38,8 @@
                         nameof(UseCallerMemberNameFix),
                         diagnostic);
                 }
-                else if (syntaxRoot.TryFindNode(diagnostic, out ArgumentSyntax? argument) &&
-                         argument.Parent is ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } &&
-                         semanticModel.TryGetSymbol(invocation, context.CancellationToken, out var method) &&
-                         method.TryFindParameter(argument, out var parameterSymbol))
+                else if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } argument &&
+                         semanticModel.TryGetSymbol(invocation, context.CancellationToken, out var method) && method.TryFindParameter(argument, out var parameterSymbol))
                 {
                     if (parameterSymbol.IsCallerMemberName())
                     {

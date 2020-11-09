@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -22,7 +22,7 @@ namespace PropertyChangedAnalyzers
                                           .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start) is SyntaxToken token)
+                if (syntaxRoot?.FindToken(diagnostic.Location.SourceSpan.Start) is { } token)
                 {
                     if (token.IsKind(SyntaxKind.PrivateKeyword))
                     {

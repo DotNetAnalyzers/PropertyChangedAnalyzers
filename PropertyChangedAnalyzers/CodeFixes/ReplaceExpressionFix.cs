@@ -29,7 +29,7 @@
                     syntaxRoot.TryFindNode(additionalLocation, out ExpressionSyntax? fieldAccess))
                 {
                     context.RegisterCodeFix(
-                        $"Use: {fieldAccess.ToString()}",
+                        $"Use: {fieldAccess}",
                         (editor, _) => editor.ReplaceNode(
                             expression,
                             x => fieldAccess.WithTriviaFrom(x)),

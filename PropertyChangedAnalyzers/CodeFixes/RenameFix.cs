@@ -4,8 +4,10 @@
     using System.Composition;
     using System.Linq;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -31,7 +33,7 @@
                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNode<ExpressionSyntax>(diagnostic, out var expression) &&
+                if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ExpressionSyntax expression &&
                     semanticModel.TryGetSymbol(expression, context.CancellationToken, out IFieldSymbol? field) &&
                     expression.TryFirstAncestor(out PropertyDeclarationSyntax? propertyDeclaration) &&
                     semanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property))
