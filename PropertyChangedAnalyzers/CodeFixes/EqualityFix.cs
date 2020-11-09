@@ -120,7 +120,6 @@
                         => binary.WithOperatorToken(SyntaxFactory.Token(SyntaxKind.ExclamationEqualsToken))
                                  .WithTriviaFrom(original),
                         PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } } negated
-                        when check is { }
                         => negated.WithOperand(check.WithTriviaFrom(negated.Operand)),
                         _ => check.WithTriviaFrom(original)!,
                     };
@@ -138,7 +137,7 @@
                         return nameof(Equals);
                     }
 
-                    return null!;
+                    return null;
                 }
             }
         }

@@ -2,10 +2,11 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -26,7 +27,7 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax? argument) &&
-                    TryGetNameExpression(argument, out var nameExpression) &&
+                    FindName(argument) is { } nameExpression &&
                     argument.Parent is ArgumentListSyntax { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
                     argument.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
                     semanticModel.TryGetNamedType(classDeclaration, context.CancellationToken, out var type) &&
@@ -62,23 +63,14 @@
             }
         }
 
-        private static bool TryGetNameExpression(ArgumentSyntax argument, [NotNullWhen(true)] out ExpressionSyntax? expression)
+        private static ExpressionSyntax? FindName(ArgumentSyntax argument)
         {
-            if (argument.Expression is ParenthesizedLambdaExpressionSyntax lambda)
+            return argument.Expression switch
             {
-                switch (lambda.Body)
-                {
-                    case IdentifierNameSyntax identifierName:
-                        expression = identifierName;
-                        return true;
-                    case MemberAccessExpressionSyntax memberAccess:
-                        expression = memberAccess;
-                        return true;
-                }
-            }
-
-            expression = null;
-            return false;
+                ParenthesizedLambdaExpressionSyntax { Body: IdentifierNameSyntax name } => name,
+                ParenthesizedLambdaExpressionSyntax { Body: MemberAccessExpressionSyntax memberAccess } => memberAccess,
+                _ => null,
+            };
         }
     }
 }
