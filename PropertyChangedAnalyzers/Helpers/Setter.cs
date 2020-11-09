@@ -1,6 +1,5 @@
 ﻿namespace PropertyChangedAnalyzers
 {
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     using Gu.Roslyn.AnalyzerExtensions;
@@ -11,16 +10,12 @@
 
     internal static class Setter
     {
-        internal static bool TryFindSingleTrySet(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken, [NotNullWhen(true)] out InvocationExpressionSyntax? invocation)
+        internal static InvocationExpressionSyntax? FindSingleTrySet(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            invocation = null;
-            if (setter is null)
-            {
-                return false;
-            }
-
             using var walker = InvocationWalker.Borrow(setter);
-            return walker.Invocations.TrySingle<InvocationExpressionSyntax>(x => TrySet.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
+            return walker.Invocations.TrySingle<InvocationExpressionSyntax>(x => TrySet.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out var invocation)
+                ? invocation
+                : null;
         }
 
         internal static AssignmentExpressionSyntax? FindSingleAssignment(AccessorDeclarationSyntax setter)

@@ -74,7 +74,7 @@
                             diagnostic);
                     }
                     else if (onPropertyChangedStatement.Parent == body &&
-                             Setter.TryFindSingleTrySet(setter, semanticModel, context.CancellationToken, out var trySet))
+                             Setter.FindSingleTrySet(setter, semanticModel, context.CancellationToken) is { } trySet)
                     {
                         switch (trySet.Parent)
                         {
