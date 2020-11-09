@@ -23,26 +23,16 @@
             return walker.Invocations.TrySingle<InvocationExpressionSyntax>(x => TrySet.IsMatch(x, semanticModel, cancellationToken) != AnalysisResult.No, out invocation);
         }
 
-        internal static bool TryFindSingleAssignment(AccessorDeclarationSyntax setter, [NotNullWhen(true)] out AssignmentExpressionSyntax? assignment)
+        internal static AssignmentExpressionSyntax? FindSingleAssignment(AccessorDeclarationSyntax setter)
         {
-            assignment = null;
-            if (setter is null)
+            using var walker = AssignmentWalker.Borrow(setter);
+            if (walker.Assignments.TrySingle<AssignmentExpressionSyntax>(out var assignment) &&
+                assignment.Right is IdentifierNameSyntax { Identifier: { ValueText: "value" } })
             {
-                return false;
+                return assignment;
             }
 
-            using (var walker = AssignmentWalker.Borrow(setter))
-            {
-                if (walker.Assignments.TrySingle<AssignmentExpressionSyntax>(out assignment) &&
-                    assignment.Right is IdentifierNameSyntax identifierName &&
-                    identifierName.Identifier.ValueText == "value")
-                {
-                    return true;
-                }
-            }
-
-            assignment = null;
-            return false;
+            return null;
         }
 
         internal static ExpressionSyntax? FindSingleMutated(AccessorDeclarationSyntax setter, SemanticModel semanticModel, CancellationToken cancellationToken)

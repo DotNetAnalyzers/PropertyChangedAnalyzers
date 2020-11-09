@@ -4,8 +4,10 @@
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -31,8 +33,7 @@
                     setter.IsKind(SyntaxKind.SetAccessorDeclaration) &&
                     setter.Body is { } body)
                 {
-                    if (Setter.TryFindSingleAssignment(setter, out var assignment) &&
-                        assignment.Parent is ExpressionStatementSyntax assignmentStatement &&
+                    if (Setter.FindSingleAssignment(setter) is { Parent: ExpressionStatementSyntax assignmentStatement } assignment &&
                         body.Statements.IndexOf(assignmentStatement) == 0)
                     {
                         if (semanticModel.TryGetSymbol(assignment.Left, CancellationToken.None, out var assignedSymbol) &&

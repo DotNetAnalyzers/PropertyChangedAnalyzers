@@ -30,7 +30,7 @@
                 containingType.TryFindPropertyRecursive(candidate.ValueText, out var property) &&
                 property.TrySingleDeclaration(context.CancellationToken, out var declaration) &&
                 declaration.TryGetSetter(out var setter) &&
-                Setter.TryFindSingleAssignment(setter, out var assignment))
+                Setter.FindSingleAssignment(setter) is { } assignment)
             {
                 using var set = visited.IncrementUsage();
                 if (candidate.Parent is { } &&
