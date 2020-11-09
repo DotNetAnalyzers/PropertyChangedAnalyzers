@@ -6,8 +6,17 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal static class OnPropertyChanged
+    internal readonly struct OnPropertyChanged
     {
+        internal readonly AnalysisResult AnalysisResult;
+        internal readonly IParameterSymbol Name;
+
+        internal OnPropertyChanged(AnalysisResult analysisResult, IParameterSymbol name)
+        {
+            this.AnalysisResult = analysisResult;
+            this.Name = name;
+        }
+
         internal static IMethodSymbol? Find(IEventSymbol propertyChanged, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             IMethodSymbol? match = null;
@@ -63,10 +72,9 @@
                 : null;
         }
 
-        internal static OnPropertyChangedMatch? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static OnPropertyChanged? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is null ||
-                invocation.ArgumentList?.Arguments.Count > 1 ||
+            if (invocation.ArgumentList?.Arguments.Count > 1 ||
                 !invocation.IsPotentialReturnVoid() ||
                 !invocation.IsPotentialThisOrBase())
             {
@@ -90,14 +98,14 @@
             return null;
         }
 
-        internal static OnPropertyChangedMatch? Match(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static OnPropertyChanged? Match(IMethodSymbol method, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             using var recursion = Recursion.Borrow(method.ContainingType, semanticModel, cancellationToken);
             var result = IsMatch(method, recursion);
             if (result != AnalysisResult.No &&
                 method.Parameters.TrySingle(out var parameter))
             {
-                return new OnPropertyChangedMatch(result, parameter);
+                return new OnPropertyChanged(result, parameter);
             }
 
             return null;
