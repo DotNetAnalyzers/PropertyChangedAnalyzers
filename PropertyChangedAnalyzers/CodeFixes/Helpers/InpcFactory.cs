@@ -146,7 +146,7 @@
                 }
 
                 if (type.GetMembers(nameof(Equals))
-                        .TrySingleOfType(m => m.Parameters.Length == 1 && Equals(type, m.Parameters[0].Type), out IMethodSymbol _))
+                        .TrySingleOfType(m => m.Parameters.Length == 1 && TypeSymbolComparer.Equal(type, m.Parameters[0].Type), out IMethodSymbol _))
                 {
                     return SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
@@ -212,7 +212,7 @@
                 { Block: { } block }
                 => lambda.ReplaceNode(block, block.AddStatements(statements)),
                 _ => throw new NotSupportedException(
-                    $"No support for adding statements to lambda with the shape: {lambda?.ToString() ?? "null"}"),
+                    $"No support for adding statements to lambda with the shape: {lambda}"),
             };
         }
 
