@@ -17,6 +17,8 @@
             this.Argument = argument;
         }
 
+        internal PropertyNameArgument? FindPropertyName(SemanticModel semanticModel, CancellationToken cancellationToken) => PropertyNameArgument.Match(this.Argument, semanticModel, cancellationToken);
+
         internal static bool IsCreatedWith(ExpressionSyntax expression, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             return Match(expression, semanticModel, cancellationToken) is { Argument: { } argument } &&

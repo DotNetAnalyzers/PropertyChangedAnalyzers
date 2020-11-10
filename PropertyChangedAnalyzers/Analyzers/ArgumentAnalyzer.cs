@@ -2,7 +2,9 @@
 {
     using System.Collections.Immutable;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -185,7 +187,8 @@
                 {
                     return semanticModel.TryGetNamedType(cached, cancellationToken, out var type) &&
                            type == KnownSymbol.PropertyChangedEventArgs &&
-                           PropertyChangedEventArgs.FindPropertyName(cached, semanticModel, cancellationToken) is { Value: { } name }
+                           PropertyChangedEventArgs.Match(cached, semanticModel, cancellationToken) is { } propertyChangedEventArgs &&
+                           propertyChangedEventArgs.FindPropertyName(semanticModel, cancellationToken) is { Name: { } name }
                         ? name
                         : null;
                 }
