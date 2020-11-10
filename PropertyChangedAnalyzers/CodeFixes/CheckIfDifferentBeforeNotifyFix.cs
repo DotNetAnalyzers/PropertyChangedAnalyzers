@@ -28,7 +28,9 @@
                                                       .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionStatementSyntax? onPropertyChangedStatement) &&
+                if (syntaxRoot is { } &&
+                    semanticModel is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionStatementSyntax? onPropertyChangedStatement) &&
                     onPropertyChangedStatement.TryFirstAncestor(out AccessorDeclarationSyntax? setter) &&
                     setter.IsKind(SyntaxKind.SetAccessorDeclaration) &&
                     setter.Body is { } body)
@@ -40,7 +42,7 @@
                             assignedSymbol.Kind == SymbolKind.Field &&
                             semanticModel.TryGetSymbol(setter, context.CancellationToken, out IMethodSymbol? setterSymbol) &&
                             TrySet.Find(setterSymbol.ContainingType, semanticModel, context.CancellationToken) is { } trySetMethod &&
-                            TrySet.CanCreateInvocation(trySetMethod, out _) &&
+                            TrySet.CanCreateInvocation(trySetMethod) is { } &&
                             setter.TryFirstAncestor(out PropertyDeclarationSyntax? property))
                         {
                             if (setter.Body.Statements.Count == 2)

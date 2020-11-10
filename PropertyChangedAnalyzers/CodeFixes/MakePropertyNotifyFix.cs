@@ -4,8 +4,10 @@
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -30,10 +32,11 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (Find() is { Property: { Parent: ClassDeclarationSyntax containingClass } propertyDeclaration, Getter: { } getter, Setter: { } setter } &&
+                    semanticModel is { } &&
                     semanticModel.TryGetNamedType(containingClass, context.CancellationToken, out var type))
                 {
                     if (TrySet.Find(type, semanticModel, context.CancellationToken) is { } trySetMethod &&
-                        TrySet.CanCreateInvocation(trySetMethod, out _))
+                        TrySet.CanCreateInvocation(trySetMethod) is { })
                     {
                         if (Property.IsMutableAutoProperty(propertyDeclaration))
                         {

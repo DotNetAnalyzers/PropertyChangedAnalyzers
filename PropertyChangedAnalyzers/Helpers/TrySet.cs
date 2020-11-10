@@ -1,7 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     using Gu.Roslyn.AnalyzerExtensions;
@@ -12,9 +11,8 @@
 
     internal static class TrySet
     {
-        internal static bool CanCreateInvocation(IMethodSymbol candidate, [NotNullWhen(true)] out IParameterSymbol? nameParameter)
+        internal static IParameterSymbol? CanCreateInvocation(IMethodSymbol candidate)
         {
-            nameParameter = null;
             return candidate is { IsGenericMethod: true } &&
                    candidate.TypeParameters.TrySingle(out var typeParameter) &&
                    candidate.Parameters.Length > 2 &&
@@ -22,8 +20,10 @@
                    TypeSymbolComparer.Equal(candidate.Parameters[0].Type, typeParameter) &&
                    candidate.Parameters[1].RefKind == RefKind.None &&
                    TypeSymbolComparer.Equal(candidate.Parameters[1].Type, typeParameter) &&
-                   candidate.Parameters.TrySingle(x => x is { Type: { SpecialType: SpecialType.System_String } }, out nameParameter) &&
-                   RestAreOptional();
+                   candidate.Parameters.TrySingle(x => x is { Type: { SpecialType: SpecialType.System_String } }, out var nameParameter) &&
+                   RestAreOptional()
+                ? nameParameter
+                : null;
 
             bool RestAreOptional()
             {
@@ -53,7 +53,7 @@
 
             bool IsMatchAndCanCreateInvocation(IMethodSymbol candidate)
             {
-                return CanCreateInvocation(candidate, out _) &&
+                return CanCreateInvocation(candidate) is { } &&
                        Matches(candidate);
             }
 
