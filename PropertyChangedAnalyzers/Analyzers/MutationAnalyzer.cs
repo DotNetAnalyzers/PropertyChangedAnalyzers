@@ -95,7 +95,8 @@
                 mutation.TryFirstAncestorOrSelf<TypeDeclarationSyntax>(out var typeDeclaration))
             {
                 using var pathWalker = MemberPath.PathWalker.Borrow(backing);
-                if (!pathWalker.TryFirst(out var firstTokenInPath))
+                if (!pathWalker.TryFirst(out var firstTokenInPath) ||
+                    firstTokenInPath.Parent is null)
                 {
                     return;
                 }

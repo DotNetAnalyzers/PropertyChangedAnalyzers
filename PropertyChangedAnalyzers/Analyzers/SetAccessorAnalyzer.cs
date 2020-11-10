@@ -1,7 +1,9 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -141,7 +143,7 @@
                                 additionalLocations: new[] { mutatedMember.GetLocation() }));
                     }
                 }
-                else
+                else if (body.Parent is { })
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC021SetBackingField, body.Parent.GetLocation()));
                 }
@@ -256,7 +258,7 @@
                                 invocation.GetLocation()));
                     }
 
-                    IPropertySymbol ContainingProperty() => (IPropertySymbol)((IMethodSymbol)context.ContainingSymbol).AssociatedSymbol;
+                    IPropertySymbol ContainingProperty() => (IPropertySymbol)((IMethodSymbol)context.ContainingSymbol).AssociatedSymbol!;
                 }
 
                 bool ShouldUseObjectReferenceEquals(ExpressionSyntax x, ExpressionSyntax y)
@@ -402,12 +404,12 @@
             if (Member(getPath, 0) is { } getField &&
                 Member(setPath, 0) is { } setField)
             {
-                if (getField.Equals(setField))
+                if (SymbolComparer.Equal(getField, setField))
                 {
                     if (Member(getPath, 1) is { } getField1 &&
                         Member(setPath, 1) is { } setField1)
                     {
-                        return !getField1.Equals(setField1);
+                        return !SymbolComparer.Equal(getField1, setField1);
                     }
 
                     return false;
@@ -420,7 +422,8 @@
 
             ISymbol? Member(MemberPath.PathWalker path, int index)
             {
-                if (path.Tokens.TryElementAt(index, out var token))
+                if (path.Tokens.TryElementAt(index, out var token) &&
+                    token.Parent is { })
                 {
                     return context.SemanticModel.GetSymbolSafe(token.Parent, context.CancellationToken) switch
                     {
@@ -436,40 +439,38 @@
             }
         }
 
-        private struct EqualState
+        private readonly struct EqualState
         {
-            internal readonly ExpressionSyntax Condition;
-
             internal readonly BackingMemberAndValue MemberAndValue;
-
             internal readonly bool? IsValueEqualToBacking;
+            private readonly ExpressionSyntax condition;
 
             internal EqualState(ExpressionSyntax condition, BackingMemberAndValue memberAndValue, bool? isValueEqualToBacking)
             {
-                this.Condition = condition;
+                this.condition = condition;
                 this.MemberAndValue = memberAndValue;
                 this.IsValueEqualToBacking = isValueEqualToBacking;
             }
 
             internal static EqualState Create(ExpressionSyntax condition, BackingMemberAndValue memberAndValue)
             {
-                return new EqualState(condition, memberAndValue, Equals(condition));
+                return new EqualState(condition, memberAndValue, Equal(condition));
 
-                static bool? Equals(ExpressionSyntax e)
+                static bool? Equal(ExpressionSyntax e)
                 {
                     return e switch
                     {
                         InvocationExpressionSyntax _ => true,
                         BinaryExpressionSyntax { OperatorToken: { ValueText: "==" } } => true,
                         BinaryExpressionSyntax { OperatorToken: { ValueText: "!=" } } => false,
-                        PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } operand } => !Equals(operand),
+                        PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } operand } => !Equal(operand),
                         _ => null,
                     };
                 }
             }
 
             internal EqualState Invert() => new EqualState(
-                this.Condition,
+                this.condition,
                 this.MemberAndValue,
                 this.IsValueEqualToBacking is { } b ? !b : (bool?)null);
         }

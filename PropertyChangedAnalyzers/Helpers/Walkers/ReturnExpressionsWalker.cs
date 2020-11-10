@@ -42,7 +42,7 @@
         internal static bool TryGetSingle(SyntaxNode node, [NotNullWhen(true)] out ExpressionSyntax? returnValue)
         {
             using var walker = Borrow(node);
-            return walker.returnValues.TrySingle(out returnValue);
+            return walker.returnValues.TrySingle(out returnValue!);
         }
 
         protected override void Clear()
