@@ -27,7 +27,9 @@
             {
                 if (diagnostic.Properties.TryGetValue(MutationAnalyzer.PropertyNameKey, out var propertyName))
                 {
-                    if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionSyntax? expression) &&
+                    if (syntaxRoot is { } &&
+                        semanticModel is { } &&
+                        syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ExpressionSyntax? expression) &&
                         expression.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
                         semanticModel.TryGetNamedType(classDeclaration, context.CancellationToken, out var type) &&
                         OnPropertyChanged.Find(type, semanticModel, context.CancellationToken) is { } onPropertyChangedMethod &&

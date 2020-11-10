@@ -25,7 +25,8 @@
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration))
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration))
                 {
                     context.RegisterCodeFix(
                         "Add OnPropertyChanged()",
@@ -40,7 +41,8 @@
                         !classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword))
                     {
                         var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-                        if (ShouldSeal(classDeclaration, semanticModel, context.CancellationToken))
+                        if (semanticModel is { } &&
+                            ShouldSeal(classDeclaration, semanticModel, context.CancellationToken))
                         {
                             context.RegisterCodeFix(
                                 "Seal class.",

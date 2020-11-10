@@ -34,6 +34,7 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ExpressionSyntax expression &&
+                    semanticModel is { } &&
                     semanticModel.TryGetSymbol(expression, context.CancellationToken, out IFieldSymbol? field) &&
                     expression.TryFirstAncestor(out PropertyDeclarationSyntax? propertyDeclaration) &&
                     semanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property))

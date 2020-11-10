@@ -26,7 +26,9 @@
                                              .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax? argument) &&
+                if (syntaxRoot is { } &&
+                    semanticModel is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax? argument) &&
                     FindName(argument) is { } nameExpression &&
                     argument.Parent is ArgumentListSyntax { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
                     argument.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&

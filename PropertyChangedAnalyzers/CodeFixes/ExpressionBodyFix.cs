@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -21,7 +21,8 @@ namespace PropertyChangedAnalyzers
                                                    .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AccessorDeclarationSyntax? accessor) &&
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out AccessorDeclarationSyntax? accessor) &&
                     accessor.Body is { Statements: { Count: 1 } statements } &&
                     GetExpression(statements[0]) is { } expression)
                 {

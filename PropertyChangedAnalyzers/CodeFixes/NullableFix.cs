@@ -29,6 +29,8 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Id == "CS8618" &&
+                    syntaxRoot is { } &&
+                    semanticModel is { } &&
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax? member) &&
                     diagnostic.GetMessage(CultureInfo.InvariantCulture) is { } message)
                 {

@@ -39,6 +39,7 @@
                         diagnostic);
                 }
                 else if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } argument &&
+                         semanticModel is { } &&
                          semanticModel.TryGetSymbol(invocation, context.CancellationToken, out var method) && method.TryFindParameter(argument, out var parameterSymbol))
                 {
                     if (parameterSymbol.IsCallerMemberName())
@@ -49,7 +50,7 @@
                             nameof(UseCallerMemberNameFix),
                             diagnostic);
                     }
-                    else if (parameterSymbol.TrySingleDeclaration(context.CancellationToken, out parameter))
+                    else if (parameterSymbol.TrySingleDeclaration(context.CancellationToken, out parameter!))
                     {
                         context.RegisterCodeFix(
                             "Use [CallerMemberName]",
@@ -72,7 +73,8 @@
             parameter = parameter.AddAttributeLists(InpcFactory.CallerMemberNameAttributeList)
                                  .WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)));
 
-            if (nullabilityAnnotationsEnabled)
+            if (nullabilityAnnotationsEnabled &&
+                parameter.Type is { })
             {
                 parameter = parameter.WithType(InpcFactory.WithNullability(parameter.Type, nullable: true));
             }
