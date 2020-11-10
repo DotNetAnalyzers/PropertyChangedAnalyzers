@@ -51,22 +51,22 @@
 
                             async Task TrySet(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-                                var fieldAccess = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
+                                var fieldAccess = await editor.AddBackingFieldAsync(propertyDeclaration!, cancellationToken)
                                                               .ConfigureAwait(false);
-                                var trySet = await editor.TrySetInvocationAsync(trySetMethod, fieldAccess, InpcFactory.Value, propertyDeclaration, cancellationToken)
+                                var trySet = await editor.TrySetInvocationAsync(trySetMethod!, fieldAccess, InpcFactory.Value, propertyDeclaration!, cancellationToken)
                                                          .ConfigureAwait(false);
 
-                                _ = editor.ReplaceNode(getter, x => x.AsExpressionBody(fieldAccess))
-                                          .ReplaceNode(setter, x => x.AsExpressionBody(trySet));
+                                _ = editor.ReplaceNode(getter!, x => x.AsExpressionBody(fieldAccess!))
+                                          .ReplaceNode(setter!, x => x.AsExpressionBody(trySet));
 
-                                if (propertyDeclaration.Initializer != null)
+                                if (propertyDeclaration is { Initializer: { } })
                                 {
                                     editor.ReplaceNode(
                                         propertyDeclaration,
                                         (node, g) => ((PropertyDeclarationSyntax)node).WithoutInitializer());
                                 }
 
-                                _ = editor.FormatNode(propertyDeclaration);
+                                _ = editor.FormatNode(propertyDeclaration!);
                             }
                         }
                         else if (FindSimpleAssignment(propertyDeclaration) is { } assignment)
@@ -102,29 +102,29 @@
 
                             async Task NotifyWhenValueChangesAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-                                var backingField = await editor.AddBackingFieldAsync(propertyDeclaration, cancellationToken)
+                                var backingField = await editor.AddBackingFieldAsync(propertyDeclaration!, cancellationToken)
                                                                .ConfigureAwait(false);
-                                var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker!, propertyDeclaration!, cancellationToken)
                                                                     .ConfigureAwait(false);
                                 _ = editor.ReplaceNode(
-                                    getter,
+                                    getter!,
                                     x => x.AsExpressionBody(backingField)
                                           .WithTrailingLineFeed());
                                 _ = editor.ReplaceNode(
-                                    setter,
+                                    setter!,
                                     x => x.AsBlockBody(
                                         InpcFactory.IfReturn(
                                             InpcFactory.Equals(property!.Type, InpcFactory.Value, backingField, editor.SemanticModel)),
                                         SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, backingField, InpcFactory.Value)),
                                         onPropertyChanged));
-                                if (propertyDeclaration.Initializer != null)
+                                if (propertyDeclaration is { Initializer: { } })
                                 {
                                     _ = editor.ReplaceNode(
                                         propertyDeclaration,
                                         x => x.WithoutInitializer());
                                 }
 
-                                _ = editor.FormatNode(propertyDeclaration);
+                                _ = editor.FormatNode(propertyDeclaration!);
                             }
                         }
                         else if (FindSimpleAssignment(propertyDeclaration) is { } assignment)
@@ -143,53 +143,53 @@
 
                             async Task NotifyWhenValueChangesAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-                                if (setter.ExpressionBody != null)
+                                if (setter is { ExpressionBody: { } })
                                 {
-                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker!, propertyDeclaration!, cancellationToken)
                                                                         .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
-                                        setter,
+                                        setter!,
                                         x => x.AsBlockBody(
                                             InpcFactory.IfReturn(
-                                                InpcFactory.Equals(assignment.Right, assignment.Left, editor.SemanticModel, cancellationToken)),
+                                                InpcFactory.Equals(assignment!.Right, assignment.Left, editor.SemanticModel, cancellationToken)),
                                             SyntaxFactory.ExpressionStatement(assignment),
                                             onPropertyChanged));
-                                    _ = editor.FormatNode(propertyDeclaration);
+                                    _ = editor.FormatNode(propertyDeclaration!);
                                 }
-                                else if (setter.Body is { Statements: { Count: 1 } } body &&
+                                else if (setter!.Body is { Statements: { Count: 1 } } body &&
                                          body.Statements.TrySingle(out var statement))
                                 {
                                     editor.InsertBefore(
                                         statement,
                                         InpcFactory.IfReturn(
-                                            InpcFactory.Equals(assignment.Right, assignment.Left, editor.SemanticModel, cancellationToken)));
-                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                            InpcFactory.Equals(assignment!.Right, assignment.Left, editor.SemanticModel, cancellationToken)));
+                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker!, propertyDeclaration!, cancellationToken)
                                                          .ConfigureAwait(false);
                                     editor.InsertAfter(statement, onPropertyChanged);
-                                    _ = editor.FormatNode(propertyDeclaration);
+                                    _ = editor.FormatNode(propertyDeclaration!);
                                 }
                             }
 
                             async Task NotifyAsync(DocumentEditor editor, CancellationToken cancellationToken)
                             {
-                                if (setter.ExpressionBody != null)
+                                if (setter is { ExpressionBody: { } })
                                 {
-                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker!, propertyDeclaration!, cancellationToken)
                                                                         .ConfigureAwait(false);
                                     _ = editor.ReplaceNode(
                                         setter,
                                         x => x.AsBlockBody(
-                                            SyntaxFactory.ExpressionStatement(assignment),
+                                            SyntaxFactory.ExpressionStatement(assignment!),
                                             onPropertyChanged));
-                                    _ = editor.FormatNode(propertyDeclaration);
+                                    _ = editor.FormatNode(propertyDeclaration!);
                                 }
-                                else if (setter.Body is { Statements: { Count: 1 } } body &&
+                                else if (setter!.Body is { Statements: { Count: 1 } } body &&
                                          body.Statements.TrySingle(out var statement))
                                 {
-                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker, propertyDeclaration, cancellationToken)
+                                    var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker!, propertyDeclaration!, cancellationToken)
                                                                         .ConfigureAwait(false);
                                     editor.InsertAfter(statement, onPropertyChanged);
-                                    _ = editor.FormatNode(propertyDeclaration);
+                                    _ = editor.FormatNode(propertyDeclaration!);
                                 }
                             }
                         }
