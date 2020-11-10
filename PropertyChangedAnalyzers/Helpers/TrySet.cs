@@ -174,7 +174,7 @@
                         bool Notifies(InvocationExpressionSyntax x)
                         {
                             return OnPropertyChanged.Match(x, recursion.SemanticModel, recursion.CancellationToken) is { } ||
-                                   PropertyChangedEvent.IsInvoke(x, recursion.SemanticModel, recursion.CancellationToken);
+                                   PropertyChanged.Invoke.Match(x, recursion.SemanticModel, recursion.CancellationToken) is { };
                         }
                     }
 
@@ -219,7 +219,7 @@
             {
                 return candidate switch
                 {
-                    { IsStatic: true } => PropertyChangedEvent.Find(candidate.ContainingType) is { IsStatic: true },
+                    { IsStatic: true } => PropertyChanged.Find(candidate.ContainingType) is { IsStatic: true },
                     { IsStatic: false } => candidate.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, recursion.SemanticModel.Compilation),
                     _ => false, // never getting here, candidate never null.
                 };

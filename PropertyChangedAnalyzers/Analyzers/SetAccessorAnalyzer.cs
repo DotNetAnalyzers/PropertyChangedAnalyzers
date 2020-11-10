@@ -95,7 +95,7 @@
             bool ShouldCheck()
             {
                 if (property.IsStatic &&
-                    PropertyChangedEvent.Find(containingType) is null)
+                    PropertyChanged.Find(containingType) is null)
                 {
                     return false;
                 }
@@ -318,9 +318,9 @@
                         mutation = match;
                         return true;
                     case ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax conditionalInvoke } }
-                        when PropertyChangedEvent.IsInvoke(conditionalInvoke, context.SemanticModel, context.CancellationToken):
+                        when PropertyChanged.Invoke.Match(conditionalInvoke, context.SemanticModel, context.CancellationToken) is { }:
                     case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax invoke }
-                        when PropertyChangedEvent.IsInvoke(invoke, context.SemanticModel, context.CancellationToken):
+                        when PropertyChanged.Invoke.Match(invoke, context.SemanticModel, context.CancellationToken) is { }:
                     case ExpressionStatementSyntax { Expression: InvocationExpressionSyntax onPropertyChanged }
                         when OnPropertyChanged.Match(onPropertyChanged, context.SemanticModel, context.CancellationToken) is { }:
                         if (mutation is null)
@@ -344,9 +344,9 @@
                                 return previous switch
                                 {
                                     ExpressionStatementSyntax { Expression: ConditionalAccessExpressionSyntax { WhenNotNull: InvocationExpressionSyntax invocation } }
-                                    => PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken),
+                                    => PropertyChanged.Invoke.Match(invocation, context.SemanticModel, context.CancellationToken) is { },
                                     ExpressionStatementSyntax { Expression: InvocationExpressionSyntax invocation }
-                                    => PropertyChangedEvent.IsInvoke(invocation, context.SemanticModel, context.CancellationToken) ||
+                                    => PropertyChanged.Invoke.Match(invocation, context.SemanticModel, context.CancellationToken) is { } ||
                                        OnPropertyChanged.Match(invocation, context.SemanticModel, context.CancellationToken) is { },
                                     _ => false,
                                 };

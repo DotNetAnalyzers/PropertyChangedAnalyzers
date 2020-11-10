@@ -2,7 +2,9 @@
 {
     using System;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -67,7 +69,7 @@
 
         internal static IMethodSymbol? Find(INamedTypeSymbol type, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            return PropertyChangedEvent.Find(type) is { } propertyChanged
+            return PropertyChanged.Find(type) is { } propertyChanged
                 ? Find(propertyChanged, semanticModel, cancellationToken)
                 : null;
         }
@@ -133,7 +135,7 @@
                 {
                     if (invocation is { ArgumentList: { Arguments: { Count: 2 } oneArg } } &&
                         oneArg.TryElementAt(1, out var argument) &&
-                        PropertyChangedEvent.IsInvoke(invocation, recursion.SemanticModel, recursion.CancellationToken))
+                        PropertyChanged.Invoke.Match(invocation, recursion.SemanticModel, recursion.CancellationToken) is { })
                     {
                         if (argument.Expression is IdentifierNameSyntax identifierName &&
                             identifierName.Identifier.ValueText == parameter.Name)
@@ -226,7 +228,7 @@
             {
                 if (method.IsStatic)
                 {
-                    return PropertyChangedEvent.Find(method.ContainingType) is { IsStatic: true };
+                    return PropertyChanged.Find(method.ContainingType) is { IsStatic: true };
                 }
 
                 return method.ContainingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, compilation);

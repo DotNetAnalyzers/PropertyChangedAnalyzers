@@ -43,7 +43,7 @@
                             $"The class {type.Name} should notify for:{Environment.NewLine}{properties}"));
                 }
 
-                if (PropertyChangedEvent.Find(type) is { IsStatic: false })
+                if (PropertyChanged.Find(type) is { IsStatic: false })
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(

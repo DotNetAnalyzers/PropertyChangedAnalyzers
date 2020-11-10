@@ -114,7 +114,7 @@
 
         internal static AnalysisResult<string?>? FindPropertyName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (PropertyChangedEvent.IsInvoke(invocation, semanticModel, cancellationToken))
+            if (Invoke.Match(invocation, semanticModel, cancellationToken) is { })
             {
                 if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
                     arguments.TryElementAt(1, out var propertyChangedArg))
@@ -166,6 +166,48 @@
             }
 
             return default;
+        }
+
+        internal static IEventSymbol? Find(ITypeSymbol type)
+        {
+            return type.TryFindEventRecursive("PropertyChanged", out var propertyChangedEvent)
+                ? propertyChangedEvent
+                : null;
+        }
+
+        internal readonly struct Invoke
+        {
+            internal readonly InvocationExpressionSyntax Invocation;
+
+            private Invoke(InvocationExpressionSyntax invocation)
+            {
+                this.Invocation = invocation;
+            }
+
+            internal static Invoke? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+            {
+                if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+                    arguments[0].Expression.IsEither(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
+                    invocation.IsPotentialReturnVoid())
+                {
+                    return invocation.Parent switch
+                    {
+                        ConditionalAccessExpressionSyntax { Expression: IdentifierNameSyntax _ }
+                            when semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _)
+                            => new Invoke(invocation),
+                        ConditionalAccessExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: IdentifierNameSyntax _ } }
+                            when semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _)
+                            => new Invoke(invocation),
+                        ExpressionStatementSyntax _
+                            when semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol) &&
+                                 symbol == KnownSymbol.PropertyChangedEventHandler.Invoke
+                            => new Invoke(invocation),
+                        _ => null,
+                    };
+                }
+
+                return null;
+            }
         }
     }
 }
