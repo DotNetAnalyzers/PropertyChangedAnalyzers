@@ -76,7 +76,7 @@
 
         internal static OnPropertyChanged? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation.ArgumentList?.Arguments.Count > 1 ||
+            if (invocation.ArgumentList.Arguments.Count > 1 ||
                 !invocation.IsPotentialReturnVoid() ||
                 !invocation.IsPotentialThisOrBase())
             {

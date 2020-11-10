@@ -1,8 +1,9 @@
 ﻿namespace PropertyChangedAnalyzers
 {
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -100,7 +101,7 @@
                 return false;
             }
 
-            if (IsMutableAutoProperty(declaration))
+            if (MutableAutoProperty.Match(declaration) is { })
             {
                 return true;
             }
@@ -115,28 +116,6 @@
                 return false;
             }
 
-            return false;
-        }
-
-        internal static bool IsMutableAutoProperty(PropertyDeclarationSyntax property)
-        {
-            return IsMutableAutoProperty(property, out _, out _);
-        }
-
-        internal static bool IsMutableAutoProperty(PropertyDeclarationSyntax property, [NotNullWhen(true)] out AccessorDeclarationSyntax? getter, [NotNullWhen(true)] out AccessorDeclarationSyntax? setter)
-        {
-            if (property.TryGetGetter(out getter) &&
-                getter.Body is null &&
-                getter.ExpressionBody is null &&
-                property.TryGetSetter(out setter) &&
-                setter.Body is null &&
-                setter.ExpressionBody is null)
-            {
-                return true;
-            }
-
-            getter = null;
-            setter = null;
             return false;
         }
 

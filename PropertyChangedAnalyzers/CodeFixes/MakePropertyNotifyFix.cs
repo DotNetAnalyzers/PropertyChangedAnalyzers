@@ -38,7 +38,7 @@
                     if (TrySet.Find(type, semanticModel, context.CancellationToken) is { } trySetMethod &&
                         TrySet.CanCreateInvocation(trySetMethod) is { })
                     {
-                        if (Property.IsMutableAutoProperty(propertyDeclaration))
+                        if (MutableAutoProperty.Match(propertyDeclaration) is { })
                         {
                             context.RegisterCodeFix(
                                 trySetMethod.DisplaySignature(),
@@ -87,7 +87,7 @@
                         invoker.Parameters.TrySingle(out var parameter) &&
                         parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs))
                     {
-                        if (Property.IsMutableAutoProperty(propertyDeclaration) &&
+                        if (MutableAutoProperty.Match(propertyDeclaration) is { } &&
                             semanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property))
                         {
                             context.RegisterCodeFix(
