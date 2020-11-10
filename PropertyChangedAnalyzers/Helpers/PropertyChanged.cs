@@ -58,6 +58,7 @@
                      (assignmentExpression.Left is IdentifierNameSyntax ||
                       assignmentExpression.Left is MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ }) &&
                      semanticModel.TryGetSymbol(assignmentExpression.Left, cancellationToken, out IPropertySymbol? otherProperty) &&
+                     otherProperty.SetMethod is { } &&
                      otherProperty.SetMethod.TrySingleDeclaration(cancellationToken, out AccessorDeclarationSyntax? otherSetter) &&
                     Notifies(otherSetter) == AnalysisResult.Yes)
             {
@@ -108,58 +109,49 @@
 
         internal static PropertyNameArgument? FindPropertyName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (Invoke.Match(invocation, semanticModel, cancellationToken) is { EventArgument: { } arg } &&
-                PropertyChangedEventArgs.Match(arg.Expression, semanticModel, cancellationToken) is { } propertyChangedEventArgs)
+            switch (invocation)
             {
-                return propertyChangedEventArgs.PropertyName(semanticModel, cancellationToken);
+                case { ArgumentList: { Arguments: { Count: 0 } } }
+                    when OnPropertyChanged.Match(invocation, semanticModel, cancellationToken) is { Name: { } parameter } &&
+                         parameter.IsCallerMemberName():
+                    return invocation.FirstAncestorOrSelf<MemberDeclarationSyntax>() switch
+                    {
+                        MethodDeclarationSyntax declaration => new PropertyNameArgument(null, declaration.Identifier.ValueText),
+                        PropertyDeclarationSyntax declaration => new PropertyNameArgument(null, declaration.Identifier.ValueText),
+                        EventDeclarationSyntax declaration => new PropertyNameArgument(null, declaration.Identifier.ValueText),
+                        IndexerDeclarationSyntax _ => new PropertyNameArgument(null, "this[]"),
+                        _ => null,
+                    };
+                case { ArgumentList: { Arguments: { Count: 1 } arguments } }
+                    when arguments[0] is { } argument &&
+                         OnPropertyChanged.Match(invocation, semanticModel, cancellationToken) is { Name: { } parameter }:
+                    if (parameter.Type.SpecialType == SpecialType.System_String)
+                    {
+                        return PropertyNameArgument.Match(argument, semanticModel, cancellationToken);
+                    }
+
+                    if (PropertyChangedEventArgs.Match(argument.Expression, semanticModel, cancellationToken) is { } eventArgs)
+                    {
+                        return eventArgs.PropertyName(semanticModel, cancellationToken);
+                    }
+
+                    if (argument is { Expression: ParenthesizedLambdaExpressionSyntax { Body: { } body } } &&
+                        semanticModel.GetSymbolSafe(body, cancellationToken) is { } property)
+                    {
+                        return new PropertyNameArgument(argument, property.Name);
+                    }
+
+                    break;
+
+                case { ArgumentList: { Arguments: { Count: 2 } } }
+                    when Invoke.Match(invocation, semanticModel, cancellationToken) is { EventArgument: { } arg } &&
+                         PropertyChangedEventArgs.Match(arg.Expression, semanticModel, cancellationToken) is { } propertyChangedEventArgs:
+                    return propertyChangedEventArgs.PropertyName(semanticModel, cancellationToken);
+                default:
+                    return null;
             }
 
-            if (OnPropertyChanged.Match(invocation, semanticModel, cancellationToken) is { Name: { } parameter })
-            {
-                switch (invocation)
-                {
-                    case { ArgumentList: { Arguments: { Count: 0 } } }:
-                        if (parameter.IsCallerMemberName())
-                        {
-                            return invocation.FirstAncestorOrSelf<MemberDeclarationSyntax>() switch
-                            {
-                                MethodDeclarationSyntax declaration => new PropertyNameArgument(null, declaration.Identifier.ValueText),
-                                PropertyDeclarationSyntax declaration => new PropertyNameArgument(null, declaration.Identifier.ValueText),
-                                EventDeclarationSyntax declaration => new PropertyNameArgument(null, declaration.Identifier.ValueText),
-                                IndexerDeclarationSyntax _ => new PropertyNameArgument(null, "this[]"),
-                                _ => default,
-                            };
-                        }
-
-                        return parameter.ExplicitDefaultValue is string defaultValue
-                            ? new PropertyNameArgument(null, defaultValue)
-                            : (PropertyNameArgument?)null;
-                    case { ArgumentList: { Arguments: { Count: 1 } arguments } }
-                        when arguments[0] is { } argument:
-                        if (parameter.Type.SpecialType == SpecialType.System_String)
-                        {
-                            return PropertyNameArgument.Match(argument, semanticModel, cancellationToken);
-                        }
-
-                        if (PropertyChangedEventArgs.Match(argument.Expression, semanticModel, cancellationToken) is { } eventArgs)
-                        {
-                            return eventArgs.PropertyName(semanticModel, cancellationToken);
-                        }
-
-                        if (argument is { Expression: ParenthesizedLambdaExpressionSyntax { Body: { } body } } &&
-                            semanticModel.GetSymbolSafe(body, cancellationToken) is { } property)
-                        {
-                            return new PropertyNameArgument(argument, property.Name);
-                        }
-
-                        break;
-
-                    default:
-                        return default;
-                }
-            }
-
-            return default;
+            return null;
         }
 
         internal static IEventSymbol? Find(ITypeSymbol type)
