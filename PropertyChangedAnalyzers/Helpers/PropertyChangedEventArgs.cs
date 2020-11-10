@@ -17,8 +17,6 @@
             this.Argument = argument;
         }
 
-        internal PropertyNameArgument? FindPropertyName(SemanticModel semanticModel, CancellationToken cancellationToken) => PropertyNameArgument.Match(this.Argument, semanticModel, cancellationToken);
-
         internal static bool IsCreatedWith(ExpressionSyntax expression, IParameterSymbol parameter, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             return Match(expression, semanticModel, cancellationToken) is { Argument: { } argument } &&
@@ -36,23 +34,13 @@
             }
         }
 
-        internal static AnalysisResult<string?>? FindPropertyName(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (Match(expression, semanticModel, cancellationToken) is { Argument: { } argument })
-            {
-                return argument.TryGetStringValue(semanticModel, cancellationToken, out var propertyName)
-                     ? new AnalysisResult<string?>(AnalysisResult.Yes, propertyName)
-                     : (AnalysisResult<string?>?)null;
-            }
-
-            return null;
-        }
-
         internal static PropertyChangedEventArgs? Match(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             return MatchCreation(expression) ??
                    MatchCached(expression, semanticModel, cancellationToken);
         }
+
+        internal PropertyNameArgument? PropertyName(SemanticModel semanticModel, CancellationToken cancellationToken) => PropertyNameArgument.Match(this.Argument, semanticModel, cancellationToken);
 
         private static PropertyChangedEventArgs? MatchCached(ExpressionSyntax expression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {

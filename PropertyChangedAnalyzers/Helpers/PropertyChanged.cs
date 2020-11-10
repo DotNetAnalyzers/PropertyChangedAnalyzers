@@ -90,9 +90,8 @@
                     switch (FindPropertyName(candidate, semanticModel, cancellationToken))
                     {
                         case null:
-                        case { Result: AnalysisResult.No }:
                             continue;
-                        case { Result: AnalysisResult.Yes, Value: var propertyName }:
+                        case { Name: var propertyName }:
                             if (string.IsNullOrEmpty(propertyName) ||
                                 propertyName == property.Name)
                             {
@@ -100,11 +99,6 @@
                             }
 
                             continue;
-                        case { Result: AnalysisResult.Maybe }:
-                            result = AnalysisResult.Maybe;
-                            break;
-                        default:
-                            throw new InvalidOperationException("Unknown AnalysisResult");
                     }
                 }
 
@@ -112,11 +106,12 @@
             }
         }
 
-        internal static AnalysisResult<string?>? FindPropertyName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static PropertyNameArgument? FindPropertyName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (Invoke.Match(invocation, semanticModel, cancellationToken) is { EventArgument: { } arg })
+            if (Invoke.Match(invocation, semanticModel, cancellationToken) is { EventArgument: { } arg } &&
+                PropertyChangedEventArgs.Match(arg.Expression, semanticModel, cancellationToken) is { } propertyChangedEventArgs)
             {
-                return PropertyChangedEventArgs.FindPropertyName(arg.Expression, semanticModel, cancellationToken);
+                return propertyChangedEventArgs.PropertyName(semanticModel, cancellationToken);
             }
 
             if (OnPropertyChanged.Match(invocation, semanticModel, cancellationToken) is { Name: { } parameter })
@@ -128,32 +123,37 @@
                         {
                             return invocation.FirstAncestorOrSelf<MemberDeclarationSyntax>() switch
                             {
-                                MethodDeclarationSyntax declaration => new AnalysisResult<string?>(AnalysisResult.Yes, declaration.Identifier.ValueText),
-                                PropertyDeclarationSyntax declaration => new AnalysisResult<string?>(AnalysisResult.Yes, declaration.Identifier.ValueText),
-                                EventDeclarationSyntax declaration => new AnalysisResult<string?>(AnalysisResult.Yes, declaration.Identifier.ValueText),
-                                IndexerDeclarationSyntax _ => new AnalysisResult<string?>(AnalysisResult.Yes, "this[]"),
+                                MethodDeclarationSyntax declaration => new PropertyNameArgument(null, declaration.Identifier.ValueText),
+                                PropertyDeclarationSyntax declaration => new PropertyNameArgument(null, declaration.Identifier.ValueText),
+                                EventDeclarationSyntax declaration => new PropertyNameArgument(null, declaration.Identifier.ValueText),
+                                IndexerDeclarationSyntax _ => new PropertyNameArgument(null, "this[]"),
                                 _ => default,
                             };
                         }
 
-                        return new AnalysisResult<string?>(AnalysisResult.Maybe, parameter.ExplicitDefaultValue as string);
+                        return parameter.ExplicitDefaultValue is string defaultValue
+                            ? new PropertyNameArgument(null, defaultValue)
+                            : (PropertyNameArgument?)null;
                     case { ArgumentList: { Arguments: { Count: 1 } arguments } }
-                        when arguments[0] is { } argument &&
-                             parameter.Type.SpecialType == SpecialType.System_String:
-                        return argument.TryGetStringValue(semanticModel, cancellationToken, out var propertyName)
-                            ? new AnalysisResult<string?>(AnalysisResult.Yes, propertyName)
-                            : default;
+                        when arguments[0] is { } argument:
+                        if (parameter.Type.SpecialType == SpecialType.System_String)
+                        {
+                            return PropertyNameArgument.Match(argument, semanticModel, cancellationToken);
+                        }
 
-                    case { ArgumentList: { Arguments: { Count: 1 } arguments } }
-                        when arguments[0] is { } argument &&
-                             parameter.Type == KnownSymbol.PropertyChangedEventArgs:
-                        return PropertyChangedEventArgs.FindPropertyName(argument.Expression, semanticModel, cancellationToken);
+                        if (PropertyChangedEventArgs.Match(argument.Expression, semanticModel, cancellationToken) is { } eventArgs)
+                        {
+                            return eventArgs.PropertyName(semanticModel, cancellationToken);
+                        }
 
-                    case { ArgumentList: { Arguments: { Count: 1 } arguments } }
-                        when arguments[0] is { Expression: ParenthesizedLambdaExpressionSyntax { Body: { } body } }:
-                        return semanticModel.GetSymbolSafe(body, cancellationToken) is { } property
-                            ? new AnalysisResult<string?>(AnalysisResult.Yes, property.Name)
-                            : default;
+                        if (argument is { Expression: ParenthesizedLambdaExpressionSyntax { Body: { } body } } &&
+                            semanticModel.GetSymbolSafe(body, cancellationToken) is { } property)
+                        {
+                            return new PropertyNameArgument(argument, property.Name);
+                        }
+
+                        break;
+
                     default:
                         return default;
                 }

@@ -36,7 +36,7 @@
                     OnPropertyChanged.Find(type, semanticModel, context.CancellationToken) is { } invoker &&
                     invoker.Parameters.TrySingle(out var parameter) &&
                     parameter.Type == KnownSymbol.String &&
-                    PropertyChanged.FindPropertyName(invocation, semanticModel, context.CancellationToken) is { Value: var propertyName })
+                    PropertyChanged.FindPropertyName(invocation, semanticModel, context.CancellationToken) is { Name: var propertyName })
                 {
                     if (parameter.IsCallerMemberName() &&
                         argument.TryFirstAncestor(out PropertyDeclarationSyntax? propertyDeclaration) &&
