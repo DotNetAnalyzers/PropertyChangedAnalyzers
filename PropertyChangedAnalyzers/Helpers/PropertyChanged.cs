@@ -114,15 +114,9 @@
 
         internal static AnalysisResult<string?>? FindPropertyName(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (Invoke.Match(invocation, semanticModel, cancellationToken) is { })
+            if (Invoke.Match(invocation, semanticModel, cancellationToken) is { EventArgument: { } arg })
             {
-                if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
-                    arguments.TryElementAt(1, out var propertyChangedArg))
-                {
-                    return PropertyChangedEventArgs.FindPropertyName(propertyChangedArg.Expression, semanticModel, cancellationToken);
-                }
-
-                return default;
+                return PropertyChangedEventArgs.FindPropertyName(arg.Expression, semanticModel, cancellationToken);
             }
 
             if (OnPropertyChanged.Match(invocation, semanticModel, cancellationToken) is { Name: { } parameter })
@@ -183,6 +177,8 @@
             {
                 this.Invocation = invocation;
             }
+
+            internal ArgumentSyntax EventArgument => this.Invocation.ArgumentList.Arguments[1];
 
             internal static Invoke? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
             {

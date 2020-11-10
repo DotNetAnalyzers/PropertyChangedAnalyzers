@@ -133,9 +133,7 @@
                 using var walker = InvocationWalker.Borrow(declaration);
                 foreach (var invocation in walker.Invocations)
                 {
-                    if (invocation is { ArgumentList: { Arguments: { Count: 2 } oneArg } } &&
-                        oneArg.TryElementAt(1, out var argument) &&
-                        PropertyChanged.Invoke.Match(invocation, recursion.SemanticModel, recursion.CancellationToken) is { })
+                    if (PropertyChanged.Invoke.Match(invocation, recursion.SemanticModel, recursion.CancellationToken) is { EventArgument: { } argument })
                     {
                         if (argument.Expression is IdentifierNameSyntax identifierName &&
                             identifierName.Identifier.ValueText == parameter.Name)
