@@ -31,7 +31,10 @@
                                                       .ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (Find() is { Property: { Parent: ClassDeclarationSyntax containingClass } propertyDeclaration, Getter: { } getter, Setter: { } setter } &&
+                if (syntaxRoot is { } &&
+                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax? propertyDeclaration) &&
+                    propertyDeclaration is { Parent: ClassDeclarationSyntax containingClass } &&
+                    MutableProperty.Match(propertyDeclaration) is { Getter: { } getter, Setter: { } setter } &&
                     semanticModel is { } &&
                     semanticModel.TryGetNamedType(containingClass, context.CancellationToken, out var type))
                 {
@@ -191,18 +194,6 @@
                             }
                         }
                     }
-                }
-
-                (PropertyDeclarationSyntax Property, AccessorDeclarationSyntax Getter, AccessorDeclarationSyntax Setter)? Find()
-                {
-                    if (syntaxRoot.TryFindNodeOrAncestor(diagnostic, out PropertyDeclarationSyntax? p) &&
-                        p.TryGetGetter(out var g) &&
-                        p.TryGetSetter(out var s))
-                    {
-                        return (p, g, s);
-                    }
-
-                    return null;
                 }
             }
         }
