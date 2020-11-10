@@ -84,7 +84,7 @@
                                 when body.Statements.IndexOf(assignStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1:
                                 context.RegisterCodeFix(
                                     "Check that value is different before notifying.",
-                                    (editor, __) =>
+                                    editor =>
                                     {
                                         editor.RemoveNode(onPropertyChangedStatement);
                                         _ = editor.ReplaceNode(
@@ -100,7 +100,7 @@
                                 when body.Statements.IndexOf(trySetStatement) == body.Statements.IndexOf(onPropertyChangedStatement) - 1:
                                 context.RegisterCodeFix(
                                     "Check that value is different before notifying.",
-                                    (editor, __) =>
+                                    editor =>
                                     {
                                         editor.RemoveNode(onPropertyChangedStatement);
                                         _ = editor.ReplaceNode(
@@ -116,7 +116,7 @@
                                 when body.Statements.IndexOf(ifTrySet) == body.Statements.IndexOf(onPropertyChangedStatement) - 1:
                                 context.RegisterCodeFix(
                                     "Check that value is different before notifying.",
-                                    (editor, _) => editor.MoveOnPropertyChangedInside(
+                                    editor => editor.MoveOnPropertyChangedInside(
                                         ifTrySet,
                                         onPropertyChangedStatement),
                                     nameof(CheckIfDifferentBeforeNotifyFix),
