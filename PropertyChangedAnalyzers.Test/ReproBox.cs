@@ -11,7 +11,7 @@ namespace PropertyChangedAnalyzers.Test
     using NUnit.Framework;
     using PropertyChangedAnalyzers;
 
-    [Explicit("For harvesting test cases only.")]
+    [Ignore("For harvesting test cases only.")]
     public static class ReproBox
     {
         // ReSharper disable once UnusedMember.Local
@@ -26,7 +26,7 @@ namespace PropertyChangedAnalyzers.Test
             AllAnalyzers,
             MetadataReferences.FromAttributes());
 
-        [Explicit("For harvesting test cases only.")]
+        [Ignore("For harvesting test cases only.")]
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void SolutionRepro(DiagnosticAnalyzer analyzer)
         {
@@ -34,7 +34,7 @@ namespace PropertyChangedAnalyzers.Test
             RoslynAssert.Valid(analyzer, Solution);
         }
 
-        [Explicit("For harvesting test cases only.")]
+        [Ignore("For harvesting test cases only.")]
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void Repro(DiagnosticAnalyzer analyzer)
         {

@@ -1,7 +1,9 @@
 ﻿namespace PropertyChangedAnalyzers
 {
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -23,9 +25,10 @@
             {
                 return invocation.Parent switch
                 {
-                    ConditionalAccessExpressionSyntax conditionalAccess
-                    => IsPotential(conditionalAccess) &&
-                       semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _),
+                    ConditionalAccessExpressionSyntax { Expression: IdentifierNameSyntax _ }
+                    => semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _),
+                    ConditionalAccessExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: IdentifierNameSyntax _ } }
+                        => semanticModel.TryGetSymbol(invocation, KnownSymbol.PropertyChangedEventHandler.Invoke, cancellationToken, out _),
                     ExpressionStatementSyntax _
                     => semanticModel.TryGetSymbol(invocation, cancellationToken, out var symbol) &&
                        symbol == KnownSymbol.PropertyChangedEventHandler.Invoke,
@@ -34,12 +37,6 @@
             }
 
             return false;
-
-            static bool IsPotential(ConditionalAccessExpressionSyntax candidate)
-            {
-                return candidate.Expression is IdentifierNameSyntax ||
-                       candidate.Expression is MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: IdentifierNameSyntax _ };
-            }
         }
     }
 }
