@@ -24,6 +24,7 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ArgumentSyntax { Expression: LiteralExpressionSyntax literal } argument &&
+                    semanticModel is { } &&
                     semanticModel.LookupSymbols(argument.SpanStart, name: literal.Token.ValueText).TryFirst(out var member))
                 {
                     context.RegisterCodeFix(

@@ -5,8 +5,10 @@
     using System.Globalization;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.CodeFixExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
@@ -40,7 +42,7 @@
                     {
                         context.RegisterCodeFix(
                             $"Declare {eventName} as nullable.",
-                            (editor, _) => editor.ReplaceNode(
+                            editor => editor.ReplaceNode(
                                 type,
                                 x => SyntaxFactory.NullableType(x)),
                             "Declare event as nullable.",
@@ -54,7 +56,7 @@
                     {
                         context.RegisterCodeFix(
                             $"Declare field {fieldName} and property {property.Identifier.ValueText} as nullable.",
-                            (editor, _) => editor.ReplaceNode(
+                            editor => editor.ReplaceNode(
                                                      fieldType,
                                                      x => SyntaxFactory.NullableType(x))
                                                  .ReplaceNode(
@@ -117,11 +119,13 @@
                     }
                 }
                 else if (diagnostic.Id == "CS8625" &&
-                         syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ParameterSyntax? parameter))
+                         syntaxRoot is { } &&
+                         syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ParameterSyntax? parameter) &&
+                         parameter.Type is { })
                 {
                     context.RegisterCodeFix(
                         $"Declare {parameter.Identifier} as nullable.",
-                        (editor, _) => editor.ReplaceNode(
+                        editor => editor.ReplaceNode(
                             parameter.Type,
                             x => SyntaxFactory.NullableType(x)),
                         "Declare parameter as nullable.",

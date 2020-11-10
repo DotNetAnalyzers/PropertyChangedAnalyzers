@@ -2,7 +2,9 @@
 {
     using System;
     using System.Threading;
+
     using Gu.Roslyn.AnalyzerExtensions;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -55,8 +57,8 @@
             else if (mutation is AssignmentExpressionSyntax assignmentExpression &&
                      (assignmentExpression.Left is IdentifierNameSyntax ||
                       assignmentExpression.Left is MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ }) &&
-                      semanticModel.TryGetSymbol(assignmentExpression.Left, cancellationToken, out IPropertySymbol? otherProperty) &&
-                      otherProperty.SetMethod.TrySingleDeclaration(cancellationToken, out AccessorDeclarationSyntax? otherSetter) &&
+                     semanticModel.TryGetSymbol(assignmentExpression.Left, cancellationToken, out IPropertySymbol? otherProperty) &&
+                     otherProperty.SetMethod.TrySingleDeclaration(cancellationToken, out AccessorDeclarationSyntax? otherSetter) &&
                     Notifies(otherSetter) == AnalysisResult.Yes)
             {
                 return AnalysisResult.Yes;
