@@ -198,21 +198,18 @@
                 {
                     if (arguments.TrySingle(out var argument))
                     {
-                        switch (argument.Expression)
+                        return argument.Expression switch
                         {
-                            case LiteralExpressionSyntax literal
+                            LiteralExpressionSyntax literal
                                 when literal.IsKind(SyntaxKind.StringLiteralExpression) &&
-                                     TryFindIndex(literal.Token.ValueText, out var index):
-                                return index;
-                            case InvocationExpressionSyntax nameof
+                                     TryFindIndex(literal.Token.ValueText, out var index) => index,
+                            InvocationExpressionSyntax nameof
                                 when nameof.IsNameOf() &&
                                      nameof.ArgumentList.Arguments.TrySingle(out var nameofArg) &&
                                      MemberPath.TryFindLast(nameofArg.Expression, out var last) &&
-                                     TryFindIndex(last.ValueText, out var index):
-                                return index;
-                            default:
-                                return int.MaxValue;
-                        }
+                                     TryFindIndex(last.ValueText, out var index) => index,
+                            _ => int.MaxValue,
+                        };
 
                         bool TryFindIndex(string name, out int result)
                         {
@@ -291,22 +288,15 @@
 
         internal static Task<ExpressionSyntax> SymbolAccessAsync(this DocumentEditor editor, ISymbol symbol, SyntaxNode context, CancellationToken cancellationToken)
         {
-            switch (symbol)
+            return symbol switch
             {
-                case ILocalSymbol _:
-                case IParameterSymbol _:
-                    return Task.FromResult(InpcFactory.SymbolAccess(symbol.Name, CodeStyleResult.No));
-                case IFieldSymbol member:
-                    return FieldAccessAsync(editor, member, context, cancellationToken);
-                case IEventSymbol member:
-                    return EventAccessAsync(editor, member, context, cancellationToken);
-                case IPropertySymbol member:
-                    return PropertyAccessAsync(editor, member, context, cancellationToken);
-                case IMethodSymbol member:
-                    return MethodAccessAsync(editor, member, context, cancellationToken);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(symbol));
-            }
+                ILocalSymbol _ or IParameterSymbol _ => Task.FromResult(InpcFactory.SymbolAccess(symbol.Name, CodeStyleResult.No)),
+                IFieldSymbol member => FieldAccessAsync(editor, member, context, cancellationToken),
+                IEventSymbol member => EventAccessAsync(editor, member, context, cancellationToken),
+                IPropertySymbol member => PropertyAccessAsync(editor, member, context, cancellationToken),
+                IMethodSymbol member => MethodAccessAsync(editor, member, context, cancellationToken),
+                _ => throw new ArgumentOutOfRangeException(nameof(symbol)),
+            };
         }
 
         internal static async Task<ExpressionSyntax> FieldAccessAsync(this DocumentEditor editor, IFieldSymbol symbol, SyntaxNode context, CancellationToken cancellationToken)

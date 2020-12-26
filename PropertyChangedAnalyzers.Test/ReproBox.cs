@@ -1,5 +1,4 @@
-﻿#pragma warning disable GURA06, GURA04 // Move test to correct class.
-namespace PropertyChangedAnalyzers.Test
+﻿namespace PropertyChangedAnalyzers.Test
 {
     using System;
     using System.Collections.Generic;
