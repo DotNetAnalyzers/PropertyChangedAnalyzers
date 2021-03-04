@@ -1,3 +1,6 @@
+#### 3.2.2
+* Handle new messages from Roslyn
+
 #### 3.2.1:
 * Handle regressions in Roslyn 3.7
 

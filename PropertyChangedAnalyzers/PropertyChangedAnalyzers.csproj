@@ -21,24 +21,26 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.2.1</Version>
+    <Version>3.2.2</Version>
     <DevelopmentDependency>true</DevelopmentDependency>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
     <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>
-      3.2.1:
+      3.2.2
+      Handle new messages from Roslyn
+      3.2.1
       Handle regressions in Roslyn 3.7
-      3.2.0:
+      3.2.0
       INPC0023 Instance equals for reference type
       INPC024 ReferenceEquals for value type
-      3.1.1:
+      3.1.1
       Solution wide nullable fixes.
       INPC002 ignores when [Bindable(false)]
-      3.1.0:
+      3.1.0
       FEATURE: Handle nullable.
       FEATURE: Fixes for nullable warnings.
-      3.0.0:
+      3.0.0
       BREAKING: 3.x is for VS2019+
       BUGFIX INPC015: don't warn on object initializer in setter.
       BUGFIX INPC003: Handle chained expression bodied properties.
