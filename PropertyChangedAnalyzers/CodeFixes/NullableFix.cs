@@ -20,14 +20,15 @@
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create("CS8618", "CS8625");
 
-        protected override DocumentEditorFixAllProvider? FixAllProvider() => DocumentEditorFixAllProvider.Solution;
+        protected override DocumentEditorFixAllProvider FixAllProvider() => DocumentEditorFixAllProvider.Solution;
 
         protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                                           .ConfigureAwait(false);
+                                                            .ConfigureAwait(false);
             var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
                                              .ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Id == "CS8618" &&
@@ -36,8 +37,7 @@
                     syntaxRoot.TryFindNodeOrAncestor(diagnostic, out MemberDeclarationSyntax? member) &&
                     diagnostic.GetMessage(CultureInfo.InvariantCulture) is { } message)
                 {
-                    if (Regex.Match(message, "Non-nullable event '(?<name>[^']+)' is uninitialized") is { Success: true } eventMatch &&
-                        eventMatch.Groups["name"].Value is { } eventName &&
+                    if (MatchEvent(message) is { } eventName &&
                         FindEventType(member) is { } type)
                     {
                         context.RegisterCodeFix(
@@ -49,8 +49,7 @@
                             diagnostic);
                     }
 
-                    if (Regex.Match(message, "Non-nullable field '(?<name>[^']+)' is uninitialized") is { Success: true } fieldMatch &&
-                        fieldMatch.Groups["name"].Value is { } fieldName &&
+                    if (MatchField(message) is { } fieldName &&
                         FindFieldType(member) is { } fieldType &&
                         FindProperty() is { } property)
                     {
@@ -64,6 +63,26 @@
                                                      x => SyntaxFactory.NullableType(x)),
                             "Declare field and property as nullable.",
                             diagnostic);
+                    }
+
+                    static string? MatchEvent(string message)
+                    {
+                        if (Regex.Match(message, "(Non-nullable event '(?<name>[^']+)' is uninitialized|Non-nullable event '(?<name>[^']+)' must contain a non-null value when exiting constructor. Consider declaring the event as nullable.)") is { Success: true } match)
+                        {
+                            return match.Groups["name"].Value;
+                        }
+
+                        return null;
+                    }
+
+                    static string? MatchField(string message)
+                    {
+                        if (Regex.Match(message, "(Non-nullable field '(?<name>[^']+)' is uninitialized|Non-nullable field '(?<name>[^']+)' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.)") is { Success: true } match)
+                        {
+                            return match.Groups["name"].Value;
+                        }
+
+                        return null;
                     }
 
                     TypeSyntax? FindFieldType(MemberDeclarationSyntax candidate)
