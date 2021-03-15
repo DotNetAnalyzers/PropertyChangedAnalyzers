@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro" Version="4.0.62-alpha" />
-    <PackageReference Include="Gu.Wpf.Reactive" Version="4.3.0" />
+    <PackageReference Include="Gu.Wpf.Reactive" Version="5.0.1" />
     <PackageReference Include="MvvmCross" Version="7.1.2" />
     <PackageReference Include="MvvmLight" Version="5.4.1.1" />
     <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
