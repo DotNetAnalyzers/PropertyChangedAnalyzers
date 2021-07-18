@@ -1,5 +1,6 @@
 ﻿namespace ValidCode
 {
+    using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -38,6 +39,40 @@
                 if (!Set(ref samePropertyNameOnUnrelatedInstance, value)) return;
 
                 Settings.Default.SamePropertyNameOnUnrelatedInstance = value;
+            }
+        }
+
+        record DifferentClass
+        {
+            public int sameExpressionWithDifferentMeaning;
+        }
+
+        private int sameExpressionWithDifferentMeaning;
+        public int SameExpressionWithDifferentMeaning
+        {
+            get => sameExpressionWithDifferentMeaning;
+            set
+            {
+                if (!Set(ref sameExpressionWithDifferentMeaning, value)) return;
+
+                _ = new DifferentClass { sameExpressionWithDifferentMeaning = value };
+                _ = new DifferentClass() with { sameExpressionWithDifferentMeaning = value };
+
+                {
+                    int sameExpressionWithDifferentMeaning;
+                    sameExpressionWithDifferentMeaning = value;
+                }
+
+                _ = new Action<int>(sameExpressionWithDifferentMeaning =>
+                {
+                    sameExpressionWithDifferentMeaning = value;
+                });
+
+                LocalFunction(42);
+                void LocalFunction(int sameExpressionWithDifferentMeaning)
+                {
+                    sameExpressionWithDifferentMeaning = value;
+                }
             }
         }
     }

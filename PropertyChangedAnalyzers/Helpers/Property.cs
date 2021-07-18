@@ -108,7 +108,7 @@
 
             if (declaration.TryGetSetter(out var setter))
             {
-                if (Setter.AssignsValueToBackingField(setter) is { } assignment)
+                if (Setter.AssignsValueToBackingField(setter, semanticModel, cancellationToken) is { } assignment)
                 {
                     return PropertyChanged.InvokesPropertyChangedFor(assignment, property, semanticModel, cancellationToken) == AnalysisResult.No;
                 }

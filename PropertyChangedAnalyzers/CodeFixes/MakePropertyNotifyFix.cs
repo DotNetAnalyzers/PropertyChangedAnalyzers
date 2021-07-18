@@ -69,7 +69,7 @@
                                 _ = editor.FormatNode(propertyDeclaration!);
                             }
                         }
-                        else if (FindSimpleAssignment(propertyDeclaration) is { } assignment)
+                        else if (FindSimpleAssignment(propertyDeclaration, semanticModel, context.CancellationToken) is { } assignment)
                         {
                             context.RegisterCodeFix(
                                 trySetMethod.DisplaySignature(),
@@ -127,7 +127,7 @@
                                 _ = editor.FormatNode(propertyDeclaration!);
                             }
                         }
-                        else if (FindSimpleAssignment(propertyDeclaration) is { } assignment)
+                        else if (FindSimpleAssignment(propertyDeclaration, semanticModel, context.CancellationToken) is { } assignment)
                         {
                             context.RegisterCodeFix(
                                 NotifyWhenValueChanges,
@@ -198,11 +198,14 @@
             }
         }
 
-        private static AssignmentExpressionSyntax? FindSimpleAssignment(PropertyDeclarationSyntax property)
+        private static AssignmentExpressionSyntax? FindSimpleAssignment(
+            PropertyDeclarationSyntax property,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken)
         {
             return property.TryGetSetter(out var setter) &&
                    IsSimple(setter)
-                   ? Setter.AssignsValueToBackingField(setter)
+                   ? Setter.AssignsValueToBackingField(setter, semanticModel, cancellationToken)
                    : null;
 
             static bool IsSimple(AccessorDeclarationSyntax localSetter)
