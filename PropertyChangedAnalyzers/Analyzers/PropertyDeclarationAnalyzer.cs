@@ -82,7 +82,14 @@
                     }
 
                     using var assignmentWalker = AssignmentWalker.Borrow(setter);
-                    if (assignmentWalker.Assignments.TryFirst(x => IsProperty(x.Left) && !x.Parent.IsKind(SyntaxKind.ObjectInitializerExpression), out var recursiveAssignment))
+                    if (assignmentWalker.Assignments.TryFirst(
+                        x =>
+                            IsProperty(x.Left) &&
+                            !x.Parent.IsKind(SyntaxKind.ObjectInitializerExpression)
+                            && SymbolEqualityComparer.Default.Equals(
+                                context.SemanticModel.GetDeclaredSymbolSafe(propertyDeclaration, context.CancellationToken),
+                                context.SemanticModel.GetSymbolSafe(x.Left, context.CancellationToken)),
+                        out var recursiveAssignment))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC015PropertyIsRecursive, recursiveAssignment.Left.GetLocation(), "Setter assigns property, infinite recursion"));
                     }
