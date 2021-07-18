@@ -1069,5 +1069,71 @@ namespace ValidCode
 
             RoslynAssert.Valid(Analyzer, code);
         }
+
+        [Test]
+        public static void SameExpressionWithDifferentMeaning()
+        {
+            var code = @"
+namespace ValidCode
+{
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    record DifferentClass
+    {
+        public int p;
+    }
+
+    public class SomeViewModel : INotifyPropertyChanged
+    {
+        private int p;
+        public int P
+        {
+            get => p;
+            set
+            {
+                if (!Set(ref p, value)) return;
+
+                _ = new DifferentClass { p = value };
+                _ = new DifferentClass() with { p = value };
+
+                {
+                    int p;
+                    p = value;
+                }
+
+                _ = new Action<int>(p =>
+                {
+                    p = value;
+                });
+
+                LocalFunction(42);
+                void LocalFunction(int p)
+                {
+                    p = value;
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool Set<T>(ref T location, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (RuntimeHelpers.Equals(location, value)) return false;
+            location = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
     }
 }

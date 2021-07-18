@@ -108,7 +108,10 @@
             };
         }
 
-        internal static AssignmentExpressionSyntax? AssignsValueToBackingField(AccessorDeclarationSyntax setter)
+        internal static AssignmentExpressionSyntax? AssignsValueToBackingField(
+            AccessorDeclarationSyntax setter,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken)
         {
             if (setter.FirstAncestor<PropertyDeclarationSyntax>() is not { } property || !property.TrySingleReturned(out var backingExpression))
             {
@@ -120,7 +123,10 @@
             foreach (var assignment in walker.Assignments)
             {
                 if (assignment is { Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } } &&
-                    MemberPath.Equals(backingExpression, assignment.Left))
+                    MemberPath.Equals(backingExpression, assignment.Left) &&
+                    SymbolEqualityComparer.Default.Equals(
+                        semanticModel.GetSymbolSafe(backingExpression, cancellationToken),
+                        semanticModel.GetSymbolSafe(assignment.Left, cancellationToken)))
                 {
                     return assignment;
                 }
