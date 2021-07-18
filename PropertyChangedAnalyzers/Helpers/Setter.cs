@@ -110,20 +110,19 @@
 
         internal static AssignmentExpressionSyntax? AssignsValueToBackingField(AccessorDeclarationSyntax setter)
         {
+            if (setter.FirstAncestor<PropertyDeclarationSyntax>() is not { } property || !property.TrySingleReturned(out var backingExpression))
+            {
+                return null;
+            }
+
             using var walker = AssignmentWalker.Borrow(setter);
+
             foreach (var assignment in walker.Assignments)
             {
-                if (assignment is { Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } })
+                if (assignment is { Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } } &&
+                    MemberPath.Equals(backingExpression, assignment.Left))
                 {
-                    switch (assignment.Left)
-                    {
-                        case IdentifierNameSyntax _:
-                        case MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ }:
-                        case MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax _ }:
-                        case MemberAccessExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: IdentifierNameSyntax _ } }:
-                        case MemberAccessExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _ } }:
-                            return assignment;
-                    }
+                    return assignment;
                 }
             }
 

@@ -1018,5 +1018,56 @@ namespace N
 
             RoslynAssert.Valid(Analyzer, Descriptor, code);
         }
+
+        [Test]
+        public static void SettingPropertyOfAnUnrelatedInstance()
+        {
+            var code = @"
+namespace ValidCode
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    internal class Settings
+    {
+        public static Settings Default { get; }
+
+        public string Address { get; set; }
+    }
+
+    public class SomeViewModel : INotifyPropertyChanged
+    {
+        private string address;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public string Address
+        {
+            get => this.address;
+            set
+            {
+                if (!Set(ref this.address, value)) return;
+
+                Settings.Default.Address = value;
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool Set<T>(ref T location, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (RuntimeHelpers.Equals(location, value)) return false;
+            location = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}";
+
+            RoslynAssert.Valid(Analyzer, code);
+        }
     }
 }
