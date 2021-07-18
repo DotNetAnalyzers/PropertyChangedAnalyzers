@@ -551,7 +551,7 @@ namespace ValidCode
         }
 
         [Test]
-        public static void IntPropertiesAssignsFiledReturnsProperty()
+        public static void IntPropertiesAssignsFieldReturnsProperty()
         {
             var code = @"
 namespace ValidCode

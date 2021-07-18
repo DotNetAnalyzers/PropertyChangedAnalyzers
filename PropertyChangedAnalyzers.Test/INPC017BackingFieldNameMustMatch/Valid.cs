@@ -286,7 +286,7 @@ namespace N
         }
 
         [Test]
-        public static void BackingFiledSum()
+        public static void BackingFieldSum()
         {
             var code = @"
 namespace N
