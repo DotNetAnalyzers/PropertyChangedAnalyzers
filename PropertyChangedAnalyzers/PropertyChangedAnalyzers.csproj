@@ -23,11 +23,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.2.3</Version>
+    <Version>4.0.0</Version>
     <Authors>Johan Larsson</Authors>
     <Description>Roslyn analyzers for INotifyPropertyChanged.</Description>
     <PackageTags>INotifyPropertyChanged Roslyn Diagnostic Analyzer DotnetAnalyzers</PackageTags>
     <PackageReleaseNotes>
+      4.0.0
+      BREAKING: For VS2022+ now.
+      BUGFIX: AD0001 -> Could not load file or assembly
       3.2.3
       BUGFIX: Assignments to expressions sharing the same name as the property or backing field no longer trigger INPC002 or INPC015.
       3.2.2
