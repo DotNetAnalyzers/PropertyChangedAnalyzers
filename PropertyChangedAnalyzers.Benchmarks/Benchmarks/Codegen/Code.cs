@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
+﻿namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,9 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
     using System.IO;
     using System.Linq;
     using System.Net;
+
     using Gu.Roslyn.Asserts;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -24,11 +26,13 @@ namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
             MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location),
         };
 
-        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(KnownSymbol).Assembly
-                                                                                                    .GetTypes()
-                                                                                                    .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
-                                                                                                    .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
-                                                                                                    .ToArray();
+        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
+            typeof(KnownSymbol)
+            .Assembly
+            .GetTypes()
+            .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
+            .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+            .ToArray();
 
         public static string ProjectDirectory { get; } = ProjectFile.Find("PropertyChangedAnalyzers.Benchmarks.csproj").DirectoryName;
 

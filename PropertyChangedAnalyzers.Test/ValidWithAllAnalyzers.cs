@@ -11,10 +11,11 @@
 
     public static class ValidWithAllAnalyzers
     {
-        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers = typeof(Descriptors)
+        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
+            typeof(Descriptors)
             .Assembly
             .GetTypes()
-            .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
+            .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
             .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
             .ToArray();
 
