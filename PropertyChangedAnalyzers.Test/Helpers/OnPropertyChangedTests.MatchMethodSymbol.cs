@@ -267,7 +267,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase).Assembly));
+                    SpecialMetadataReferences.MvvmLight);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("RaisePropertyChanged");
                 var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
