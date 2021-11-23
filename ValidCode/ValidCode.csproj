@@ -1,26 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWpf>true</UseWpf>
     <LangVersion>latest</LangVersion>
     <Nullable>Enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Caliburn.Micro" Version="4.0.62-alpha" />
+    <PackageReference Include="Caliburn.Micro" Version="3.2" />
     <PackageReference Include="Gu.Wpf.Reactive" Version="5.0.1" />
     <PackageReference Include="MvvmCross" Version="8.0.2" />
-    <PackageReference Include="MvvmLight" Version="5.4.1.1" />
+    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="PropertyChangedAnalyzers" Version="4.0.0" PrivateAssets="all" />
     <PackageReference Include="ReflectionAnalyzers" Version="0.3.0" PrivateAssets="all" />
     <PackageReference Include="Stylet" Version="1.3.6" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
 </Project>

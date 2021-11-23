@@ -27,7 +27,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             if (ProjectDirectory.EnumerateFiles(dllName, SearchOption.AllDirectories)
                                 .TryFirst(out var dll))
             {
-                return Assembly.ReflectionOnlyLoadFrom(dll.FullName);
+                return Assembly.LoadFile(dll.FullName);
             }
 
             throw new FileNotFoundException(dllName);

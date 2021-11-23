@@ -11,12 +11,13 @@
         private static readonly CodeFixProvider Fix = new NullableFix();
         private static readonly ExpectedDiagnostic CS8618 = ExpectedDiagnostic.Create("CS8618");
         private static readonly ExpectedDiagnostic CS8625 = ExpectedDiagnostic.Create("CS8625", "Cannot convert null literal to non-nullable reference type.");
-        private static readonly CSharpCompilationOptions CompilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable);
+        private static readonly CSharpCompilationOptions CompilationOptions = new(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable);
 
         [Test]
         public static void DeclareEventNullable()
         {
             var before = @"
+#pragma warning disable CS8612
 namespace N
 {
     using System.ComponentModel;
@@ -50,6 +51,7 @@ namespace N
 }";
 
             var after = @"
+#pragma warning disable CS8612
 namespace N
 {
     using System.ComponentModel;
@@ -88,6 +90,7 @@ namespace N
         public static void DeclareEventNullableWhenConstructor()
         {
             var before = @"
+#pragma warning disable CS8612
 namespace N
 {
     using System.ComponentModel;
@@ -126,6 +129,7 @@ namespace N
 }";
 
             var after = @"
+#pragma warning disable CS8612
 namespace N
 {
     using System.ComponentModel;
