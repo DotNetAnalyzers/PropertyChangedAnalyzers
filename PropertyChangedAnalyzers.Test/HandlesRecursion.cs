@@ -26,7 +26,7 @@
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public static async Task InTrySet(DiagnosticAnalyzer analyzer)
+        public static void InTrySet(DiagnosticAnalyzer analyzer)
         {
             var viewModelBase = @"
 namespace N.Core
@@ -66,11 +66,11 @@ namespace N.Client
         }
     }
 }";
-            await Analyze.GetDiagnosticsAsync(analyzer, new[] { viewModelBase, code }, MetadataReferences.FromAttributes()).ConfigureAwait(false);
+            _ = Analyze.GetDiagnostics(analyzer, new[] { viewModelBase, code });
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public static async Task InOnPropertyChanged(DiagnosticAnalyzer analyzer)
+        public static void InOnPropertyChanged(DiagnosticAnalyzer analyzer)
         {
             var viewModelBaseCode = @"
 namespace N.Core
@@ -118,11 +118,11 @@ namespace N.Client
         }
     }
 }";
-            await Analyze.GetDiagnosticsAsync(analyzer, new[] { viewModelBaseCode, code }, MetadataReferences.FromAttributes()).ConfigureAwait(false);
+            _ = Analyze.GetDiagnostics(analyzer, new[] { viewModelBaseCode, code });
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
-        public static async Task InProperty(DiagnosticAnalyzer analyzer)
+        public static void InProperty(DiagnosticAnalyzer analyzer)
         {
             var fooCode = @"
 namespace N
@@ -267,7 +267,7 @@ namespace N
         }
     }
 }";
-            await Analyze.GetDiagnosticsAsync(analyzer, new[] { fooCode }, MetadataReferences.FromAttributes()).ConfigureAwait(false);
+            _ = Analyze.GetDiagnostics(analyzer, new[] { fooCode });
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]

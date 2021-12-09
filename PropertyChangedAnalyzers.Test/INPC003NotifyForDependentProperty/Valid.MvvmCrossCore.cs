@@ -1,8 +1,6 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
 {
-    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
@@ -10,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
     {
         public static class MvvmCrossCore
         {
-            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.MvvmCross;
+            private static readonly Settings Settings = LibrarySettings.MvvmCross;
 
             [Test]
             public static void SetProperty()
@@ -29,7 +27,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
             [Test]
@@ -49,7 +47,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
             [Test]
@@ -77,7 +75,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
             [Test]
@@ -105,7 +103,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
             [Test]
@@ -138,7 +136,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, settings: Settings);
             }
         }
     }

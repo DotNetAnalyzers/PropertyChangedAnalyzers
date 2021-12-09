@@ -1,8 +1,6 @@
-namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
 {
-    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
@@ -10,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
     {
         public static class PrismBindableBase
         {
-            internal static ImmutableArray<MetadataReference> MetadataReferences { get; } = SpecialMetadataReferences.Prism;
+            internal static Settings MetadataReferences { get; } = LibrarySettings.Prism;
 
             [Test]
             public static void SubclassBindableBaseAddUsing()
@@ -34,7 +32,7 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase and add using.", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase and add using.", settings: MetadataReferences);
             }
 
             [Test]
@@ -57,7 +55,7 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase fully qualified.", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Microsoft.Practices.Prism.Mvvm.BindableBase fully qualified.", settings: MetadataReferences);
             }
 
             [Test]
@@ -90,7 +88,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.", settings: MetadataReferences);
             }
 
             [Test]
@@ -120,7 +118,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.", metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.", settings: MetadataReferences);
             }
         }
     }

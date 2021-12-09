@@ -1,8 +1,6 @@
-namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression
+﻿namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression
 {
-    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
@@ -10,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression
     {
         public static class MvvmCrossCore
         {
-            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.MvvmCross;
+            private static readonly Settings Settings = LibrarySettings.MvvmCross;
 
             [Test]
             public static void SetAffectsCalculatedPropertyExpression()
@@ -60,7 +58,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
             }
 
             [Test]
@@ -111,7 +109,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, metadataReferences: MetadataReferences);
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
             }
         }
     }

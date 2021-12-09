@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -20,7 +20,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.MvvmLight);
+                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.MvvmLight);
             }
 
             [Test]
@@ -35,7 +35,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.CaliburnMicro);
+                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.CaliburnMicro);
             }
 
             [Test]
@@ -50,7 +50,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.Stylet);
+                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Stylet);
             }
 
             [Test]
@@ -65,7 +65,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.MvvmCross);
+                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.MvvmCross);
             }
 
             [Test]
@@ -79,7 +79,7 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: SpecialMetadataReferences.Prism);
+                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Prism);
             }
         }
     }

@@ -23,9 +23,7 @@
                 .ToArray();
 
         private static readonly Solution Solution = CodeFactory.CreateSolution(
-            new FileInfo("C:\\Git\\Gu.Reactive\\Gu.Reactive.sln"),
-            AllAnalyzers,
-            MetadataReferences.FromAttributes());
+            new FileInfo("C:\\Git\\Gu.Reactive\\Gu.Reactive.sln"));
 
         [Ignore("For harvesting test cases only.")]
         [TestCaseSource(nameof(AllAnalyzers))]

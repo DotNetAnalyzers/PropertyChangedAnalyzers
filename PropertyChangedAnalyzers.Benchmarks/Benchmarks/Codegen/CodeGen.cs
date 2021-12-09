@@ -1,22 +1,27 @@
-namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
+﻿namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
+
     using Gu.Roslyn.Asserts;
+
     using Microsoft.CodeAnalysis.Diagnostics;
+
     using NUnit.Framework;
 
     [Explicit("Script")]
     public class CodeGen
     {
-        private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } = typeof(KnownSymbol).Assembly
-                                                                                                    .GetTypes()
-                                                                                                    .Where(typeof(DiagnosticAnalyzer).IsAssignableFrom)
-                                                                                                    .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
-                                                                                                    .ToArray();
+        private static IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers { get; } =
+            typeof(KnownSymbol)
+                .Assembly
+                .GetTypes()
+                .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
+                .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+                .ToArray();
 
         [TestCaseSource(nameof(AllAnalyzers))]
         public void AnalyzersBenchmark(DiagnosticAnalyzer analyzer)

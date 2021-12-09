@@ -1,8 +1,6 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 {
-    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
@@ -10,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     {
         public static class CaliburnMicro
         {
-            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.CaliburnMicro;
+            private static readonly Settings MetadataReferences = LibrarySettings.CaliburnMicro;
 
             [Test]
             public static void Set()
@@ -30,7 +28,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, settings: MetadataReferences);
             }
 
             [Test]
@@ -51,7 +49,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: MetadataReferences);
             }
 
             [TestCase("null")]
@@ -81,7 +79,7 @@ namespace N
     }
 }".AssertReplace(@"nameof(P)", propertyName);
 
-                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, settings: MetadataReferences);
             }
         }
     }

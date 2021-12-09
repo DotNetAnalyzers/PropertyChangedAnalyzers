@@ -11,7 +11,6 @@
         private static readonly CodeFixProvider Fix = new NullableFix();
         private static readonly ExpectedDiagnostic CS8618 = ExpectedDiagnostic.Create("CS8618");
         private static readonly ExpectedDiagnostic CS8625 = ExpectedDiagnostic.Create("CS8625", "Cannot convert null literal to non-nullable reference type.");
-        private static readonly CSharpCompilationOptions CompilationOptions = new(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable);
 
         [Test]
         public static void DeclareEventNullable()
@@ -83,7 +82,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions, fixTitle: "Declare PropertyChanged as nullable.");
+            RoslynAssert.CodeFix(Fix, CS8618, before, after, fixTitle: "Declare PropertyChanged as nullable.");
         }
 
         [Test]
@@ -166,7 +165,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions);
+            RoslynAssert.CodeFix(Fix, CS8618, before, after);
         }
 
         [Test]
@@ -239,7 +238,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8625, before, after, compilationOptions: CompilationOptions, fixTitle: "Declare propertyName as nullable.");
+            RoslynAssert.CodeFix(Fix, CS8625, before, after, fixTitle: "Declare propertyName as nullable.");
         }
 
         [Test]
@@ -312,7 +311,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8618, before, after, compilationOptions: CompilationOptions, fixTitle: "Declare field p and property P as nullable.");
+            RoslynAssert.CodeFix(Fix, CS8618, before, after, fixTitle: "Declare field p and property P as nullable.");
         }
 
         [Test]
@@ -352,7 +351,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Fix, CS8618, new[] { before }, compilationOptions: CompilationOptions);
+            RoslynAssert.NoFix(Fix, CS8618, new[] { before });
         }
     }
 }

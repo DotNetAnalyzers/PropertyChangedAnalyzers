@@ -1,8 +1,6 @@
-namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
 {
-    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 
@@ -10,7 +8,7 @@ namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
     {
         public static class MvvmLight
         {
-            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.MvvmLight;
+            private static readonly Settings MetadataReferences = LibrarySettings.MvvmLight;
 
             [Test]
             public static void SetAffectsCalculatedProperty()
@@ -37,7 +35,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: MetadataReferences);
             }
 
             [Test]
@@ -65,7 +63,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: MetadataReferences);
             }
 
             [Test]
@@ -96,7 +94,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: MetadataReferences);
             }
 
             [Test]
@@ -127,7 +125,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: MetadataReferences);
             }
 
             [Test]
@@ -184,7 +182,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: MetadataReferences);
             }
 
             [Test]
@@ -214,7 +212,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: MetadataReferences);
             }
         }
     }

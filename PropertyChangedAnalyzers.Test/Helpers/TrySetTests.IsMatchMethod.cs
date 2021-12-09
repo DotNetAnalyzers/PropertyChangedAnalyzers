@@ -29,7 +29,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, SpecialMetadataReferences.Stylet);
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, LibrarySettings.Stylet.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("SetAndNotify");
                 var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
@@ -85,7 +85,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    SpecialMetadataReferences.MvvmLight);
+                    LibrarySettings.MvvmLight.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("Set");
                 var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);

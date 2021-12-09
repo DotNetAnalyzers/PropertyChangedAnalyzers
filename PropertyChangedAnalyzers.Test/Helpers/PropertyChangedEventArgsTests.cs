@@ -49,7 +49,7 @@ namespace N
 }".AssertReplace("private static readonly PropertyChangedEventArgs Cached = new PropertyChangedEventArgs(\"P\");", cached);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var argument = syntaxTree.FindInvocation("this.OnPropertyChanged(Cached)").ArgumentList.Arguments[0];
             var findPropertyName = PropertyChangedEventArgs.Match(argument.Expression, semanticModel, CancellationToken.None)?.PropertyName(semanticModel, CancellationToken.None);
@@ -98,7 +98,7 @@ namespace N
         }
     }
 }");
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var argument = syntaxTree.FindInvocation("Invoke(this, args)").ArgumentList.Arguments[1];
             Assert.AreEqual("propertyName", PropertyChangedEventArgs.Match(argument.Expression, semanticModel, CancellationToken.None)?.Argument.ToString());

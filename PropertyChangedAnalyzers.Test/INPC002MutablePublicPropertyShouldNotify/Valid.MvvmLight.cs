@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 {
     using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
     {
         public static class MvvmLight
         {
-            private static readonly ImmutableArray<MetadataReference> MetadataReferences = SpecialMetadataReferences.MvvmLight;
+            private static readonly Settings MetadataReferences = LibrarySettings.MvvmLight;
 
             [Test]
             public static void Set()
@@ -30,7 +30,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, settings: MetadataReferences);
             }
 
             [Test]
@@ -51,7 +51,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, new[] { code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, new[] { code }, settings: MetadataReferences);
             }
 
             [TestCase("null")]
@@ -81,7 +81,7 @@ namespace N
     }
 }".AssertReplace(@"nameof(P)", propertyName);
 
-                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, settings: MetadataReferences);
             }
         }
     }

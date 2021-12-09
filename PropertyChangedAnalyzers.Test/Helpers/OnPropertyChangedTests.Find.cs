@@ -29,7 +29,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -57,7 +57,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -91,7 +91,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -125,7 +125,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -163,7 +163,7 @@ namespace N
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(code);
                 var classDeclaration = code.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -201,7 +201,7 @@ namespace N
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(code);
                 var classDeclaration = code.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -250,7 +250,7 @@ namespace N
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -277,7 +277,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -311,7 +311,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -342,7 +342,7 @@ namespace N
         }
     }
 }".AssertReplace("propertyName ?? string.Empty", expression));
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
@@ -374,7 +374,7 @@ namespace N
         }
     }
 }".AssertReplace("propertyName ?? string.Empty", expression));
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);

@@ -1,16 +1,14 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
 {
-    using System.Collections.Immutable;
+    using System.Linq;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     public static partial class Valid
     {
         public static class ViewModelBaseNotInSource
         {
-            private static readonly ImmutableArray<MetadataReference> MetadataReferences = Gu.Roslyn.Asserts.MetadataReferences.FromAttributes()
-                                                                                             .Add(Gu.Roslyn.Asserts.MetadataReferences.CreateBinary(@"
+            private static readonly Settings Settings = Settings.Default.WithMetadataReferences(x => x.Append(Gu.Roslyn.Asserts.MetadataReferences.CreateBinary(@"
 namespace N.Core
 {
     using System;
@@ -45,7 +43,7 @@ namespace N.Core
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}"));
+}")));
 
             [Test]
             public static void SetProperty()
@@ -64,7 +62,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
             [Test]
@@ -84,7 +82,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
             [Test]
@@ -112,7 +110,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
             [Test]
@@ -140,7 +138,7 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
             [Test]
@@ -162,7 +160,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
             [Test]
@@ -195,7 +193,7 @@ namespace N.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, metadataReferences: MetadataReferences);
+                RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, settings: Settings);
             }
         }
     }
