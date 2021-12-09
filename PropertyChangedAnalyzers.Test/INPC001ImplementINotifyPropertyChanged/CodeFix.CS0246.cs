@@ -1,8 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
     public static partial class CodeFix
@@ -11,12 +9,12 @@
         {
             // ReSharper disable once MemberHidesStaticFromOuterClass
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0246");
-            private static readonly CSharpCompilationOptions NullableEnabled = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable);
 
             [Test]
-            public static void WhenInterfaceOnlyAddUsings()
+            public static void WhenInterfaceOnlyAddUsingsNullableDisable()
             {
                 var before = @"
+#nullable disable
 namespace N
 {
     public class C : ↓INotifyPropertyChanged
@@ -25,6 +23,7 @@ namespace N
 }";
 
                 var after = @"
+#nullable disable
 namespace N
 {
     using System.ComponentModel;
@@ -44,7 +43,7 @@ namespace N
             }
 
             [Test]
-            public static void WhenInterfaceOnlyAddUsingsNullable()
+            public static void WhenInterfaceOnlyAddUsings()
             {
                 var before = @"
 namespace N
@@ -89,9 +88,9 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
@@ -119,9 +118,9 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -146,9 +145,9 @@ namespace N
 {
     public sealed class C : System.ComponentModel.INotifyPropertyChanged
     {
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }

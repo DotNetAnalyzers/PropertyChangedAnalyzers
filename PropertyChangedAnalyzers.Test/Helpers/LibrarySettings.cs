@@ -9,7 +9,9 @@
     {
         private static readonly DirectoryInfo ProjectDirectory = ProjectFile.Find("PropertyChangedAnalyzers.Test.csproj").Directory;
 
-        internal static Settings CaliburnMicro { get; } = Settings.Default.WithMetadataReferences(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase)));
+        internal static Settings CaliburnMicro { get; } = Settings.Default
+                                                                  .WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS1701"))
+                                                                  .WithMetadataReferences(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase)));
 
         internal static Settings Stylet { get; } = Settings.Default.WithMetadataReferences(MetadataReferences.Transitive(LoadUnsigned("Stylet.dll")));
 

@@ -262,9 +262,10 @@ namespace N
         }
 
         [Test]
-        public static void WhenEventOnly()
+        public static void WhenEventOnlyNullableDisabled()
         {
             var before = @"
+#nullable disable
 namespace N
 {
     using System.ComponentModel;
@@ -276,6 +277,7 @@ namespace N
 }";
 
             var after = @"
+#nullable disable
 namespace N
 {
     using System.ComponentModel;
@@ -285,6 +287,38 @@ namespace N
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+        }
+
+        [Test]
+        public static void WhenEventOnly()
+        {
+            var before = @"
+namespace N
+{
+    using System.ComponentModel;
+
+    public class ↓C
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+    }
+}";
+
+            var after = @"
+namespace N
+{
+    using System.ComponentModel;
+
+    public class C : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
