@@ -469,7 +469,7 @@
                 }
             }
 
-            internal EqualState Invert() => new EqualState(
+            internal EqualState Invert() => new(
                 this.condition,
                 this.MemberAndValue,
                 this.IsValueEqualToBacking is { } b ? !b : (bool?)null);

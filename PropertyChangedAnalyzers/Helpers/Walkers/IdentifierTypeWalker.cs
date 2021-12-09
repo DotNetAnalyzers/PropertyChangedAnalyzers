@@ -6,8 +6,8 @@
 
     internal sealed class IdentifierTypeWalker : PooledWalker<IdentifierTypeWalker>
     {
-        private readonly List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-        private readonly List<VariableDeclaratorSyntax> locals = new List<VariableDeclaratorSyntax>();
+        private readonly List<ParameterSyntax> parameters = new();
+        private readonly List<VariableDeclaratorSyntax> locals = new();
 
         public override void VisitParameter(ParameterSyntax node)
         {

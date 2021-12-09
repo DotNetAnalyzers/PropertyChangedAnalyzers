@@ -8,7 +8,7 @@
 
     internal sealed class IdentifierNameWalker : PooledWalker<IdentifierNameWalker>
     {
-        private readonly List<IdentifierNameSyntax> identifierNames = new List<IdentifierNameSyntax>();
+        private readonly List<IdentifierNameSyntax> identifierNames = new();
 
         private IdentifierNameWalker()
         {

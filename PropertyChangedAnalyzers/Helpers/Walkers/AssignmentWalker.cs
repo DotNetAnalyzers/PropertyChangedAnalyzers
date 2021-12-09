@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using Gu.Roslyn.AnalyzerExtensions;
@@ -7,7 +7,7 @@ namespace PropertyChangedAnalyzers
 
     internal sealed class AssignmentWalker : PooledWalker<AssignmentWalker>
     {
-        private readonly List<AssignmentExpressionSyntax> assignments = new List<AssignmentExpressionSyntax>();
+        private readonly List<AssignmentExpressionSyntax> assignments = new();
 
         private AssignmentWalker()
         {

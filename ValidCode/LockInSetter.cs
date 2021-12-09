@@ -7,7 +7,7 @@ namespace ValidCode
 
     public class LockInSetter : INotifyPropertyChanged
     {
-        private readonly object _busyLock = new object();
+        private readonly object _busyLock = new();
         private bool _value;
 
         public event PropertyChangedEventHandler? PropertyChanged;

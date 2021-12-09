@@ -1,11 +1,11 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers
 {
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
 
     internal sealed class SyntaxTokenComparer : IEqualityComparer<SyntaxToken>
     {
-        internal static readonly SyntaxTokenComparer ByValueText = new SyntaxTokenComparer();
+        internal static readonly SyntaxTokenComparer ByValueText = new();
 
         private SyntaxTokenComparer()
         {

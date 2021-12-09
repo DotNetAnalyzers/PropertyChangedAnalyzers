@@ -71,10 +71,10 @@
 
         private sealed class UsedMemberWalker : PooledWalker<UsedMemberWalker>
         {
-            private readonly List<ExpressionSyntax> usedMembers = new List<ExpressionSyntax>();
-            private readonly List<ExpressionSyntax> recursives = new List<ExpressionSyntax>();
-            private readonly HashSet<SyntaxToken> localsAndParameters = new HashSet<SyntaxToken>(SyntaxTokenComparer.ByValueText);
-            private readonly HashSet<SyntaxNode> visited = new HashSet<SyntaxNode>();
+            private readonly List<ExpressionSyntax> usedMembers = new();
+            private readonly List<ExpressionSyntax> recursives = new();
+            private readonly HashSet<SyntaxToken> localsAndParameters = new(SyntaxTokenComparer.ByValueText);
+            private readonly HashSet<SyntaxNode> visited = new();
 
             private SemanticModel semanticModel = null!;
             private CancellationToken cancellationToken;
