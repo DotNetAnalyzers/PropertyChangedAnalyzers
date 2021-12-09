@@ -1,16 +1,14 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static partial class CodeFix
     {
         public static class Method
         {
-            private static readonly DiagnosticAnalyzer Analyzer = new MethodDeclarationAnalyzer();
-            private static readonly CodeFixProvider Fix = new UseCallerMemberNameFix();
+            private static readonly MethodDeclarationAnalyzer Analyzer = new();
+            private static readonly UseCallerMemberNameFix Fix = new();
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
 
             [TestCase("this.PropertyChanged")]

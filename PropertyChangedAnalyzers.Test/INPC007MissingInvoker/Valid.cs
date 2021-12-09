@@ -1,12 +1,11 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvoker
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new EventAnalyzer();
+        private static readonly EventAnalyzer Analyzer = new();
 
         [Test]
         public static void OnPropertyChangedCallerMemberName()

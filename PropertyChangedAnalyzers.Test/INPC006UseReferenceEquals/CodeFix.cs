@@ -2,14 +2,12 @@
 {
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
-        private static readonly CodeFixProvider Fix = new EqualityFix();
+        private static readonly SetAccessorAnalyzer Analyzer = new();
+        private static readonly EqualityFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC006UseReferenceEqualsForReferenceTypes);
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]

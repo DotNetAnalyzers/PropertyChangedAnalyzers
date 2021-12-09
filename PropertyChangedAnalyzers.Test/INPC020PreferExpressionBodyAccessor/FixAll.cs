@@ -1,14 +1,12 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC020PreferExpressionBodyAccessor
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class FixAll
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
-        private static readonly CodeFixProvider Fix = new ExpressionBodyFix();
+        private static readonly PropertyDeclarationAnalyzer Analyzer = new();
+        private static readonly ExpressionBodyFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor);
 
         [Test]

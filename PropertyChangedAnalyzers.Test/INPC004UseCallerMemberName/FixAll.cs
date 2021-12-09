@@ -1,12 +1,11 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class FixAll
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
+        private static readonly ArgumentAnalyzer Analyzer = new();
         private static readonly UseCallerMemberNameFix Fix = new UseCallerMemberNameFix();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
 

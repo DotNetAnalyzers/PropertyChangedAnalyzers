@@ -1,14 +1,11 @@
 ﻿namespace PropertyChangedAnalyzers.Test.NullableFixTests
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using NUnit.Framework;
 
     public static class NullableFixTests
     {
-        private static readonly CodeFixProvider Fix = new NullableFix();
+        private static readonly NullableFix Fix = new();
         private static readonly ExpectedDiagnostic CS8618 = ExpectedDiagnostic.Create("CS8618");
         private static readonly ExpectedDiagnostic CS8625 = ExpectedDiagnostic.Create("CS8625", "Cannot convert null literal to non-nullable reference type.");
 

@@ -1,14 +1,12 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvoker
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new EventAnalyzer();
-        private static readonly CodeFixProvider Fix = new AddOnPropertyChangedFix();
+        private static readonly EventAnalyzer Analyzer = new();
+        private static readonly AddOnPropertyChangedFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC007MissingInvoker);
 
         [Test]

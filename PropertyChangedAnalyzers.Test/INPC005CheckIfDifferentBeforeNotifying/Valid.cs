@@ -3,12 +3,11 @@
     using System.Collections.Generic;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static partial class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
+        private static readonly SetAccessorAnalyzer Analyzer = new();
         private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC005CheckIfDifferentBeforeNotifying;
 
         private static readonly IReadOnlyList<TestCaseData> TestCases = new[]

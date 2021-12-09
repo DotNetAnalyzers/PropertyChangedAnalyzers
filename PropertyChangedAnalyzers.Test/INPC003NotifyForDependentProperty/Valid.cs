@@ -1,12 +1,11 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static partial class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new MutationAnalyzer();
+        private static readonly MutationAnalyzer Analyzer = new();
 
         [TestCase("null")]
         [TestCase("string.Empty")]

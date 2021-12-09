@@ -1,14 +1,12 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtor
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new AssignmentAnalyzer();
-        private static readonly CodeFixProvider Fix = new SetBackingFieldFix();
+        private static readonly AssignmentAnalyzer Analyzer = new();
+        private static readonly SetBackingFieldFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC014SetBackingFieldInConstructor);
 
         private const string ViewModelBase = @"

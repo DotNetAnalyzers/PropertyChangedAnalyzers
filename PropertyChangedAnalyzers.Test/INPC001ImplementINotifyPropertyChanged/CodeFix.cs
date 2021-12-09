@@ -1,14 +1,12 @@
-namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static partial class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ClassDeclarationAnalyzer();
-        private static readonly CodeFixProvider Fix = new ImplementINotifyPropertyChangedFix();
+        private static readonly ClassDeclarationAnalyzer Analyzer = new();
+        private static readonly ImplementINotifyPropertyChangedFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged);
 
         [Test]

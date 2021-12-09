@@ -1,14 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static partial class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
-        private static readonly CodeFixProvider Fix = new RemoveExpressionFix();
+        private static readonly ArgumentAnalyzer Analyzer = new();
+        private static readonly RemoveExpressionFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC012DoNotUseExpression);
 
         [Test]

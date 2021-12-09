@@ -1,14 +1,12 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static partial class CodeFix
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
-        private static readonly CodeFixProvider Fix = new MakePropertyNotifyFix();
+        private static readonly SetAccessorAnalyzer Analyzer = new();
+        private static readonly MakePropertyNotifyFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify);
 
         [Test]

@@ -1,12 +1,11 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC021SetBackingField
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new SetAccessorAnalyzer();
+        private static readonly SetAccessorAnalyzer Analyzer = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC021SetBackingField);
 
         [Test]

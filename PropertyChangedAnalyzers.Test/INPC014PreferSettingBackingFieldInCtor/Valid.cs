@@ -1,12 +1,11 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtor
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new AssignmentAnalyzer();
+        private static readonly AssignmentAnalyzer Analyzer = new();
 
         [Test]
         public static void WhenSettingField()

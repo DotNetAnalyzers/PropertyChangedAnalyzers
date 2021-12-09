@@ -1,12 +1,11 @@
 namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursive
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Diagnostics
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new PropertyDeclarationAnalyzer();
+        private static readonly PropertyDeclarationAnalyzer Analyzer = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC015PropertyIsRecursive);
 
         [Test]

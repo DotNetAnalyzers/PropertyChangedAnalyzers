@@ -1,8 +1,6 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
 {
-    using System.Collections.Immutable;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
     using PropertyChangedAnalyzers.Test.Helpers;
 

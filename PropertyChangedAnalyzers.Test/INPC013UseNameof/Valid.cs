@@ -1,12 +1,11 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC013UseNameof
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new ArgumentAnalyzer();
+        private static readonly ArgumentAnalyzer Analyzer = new();
 
         [Test]
         public static void ArgumentOutOfRangeException()

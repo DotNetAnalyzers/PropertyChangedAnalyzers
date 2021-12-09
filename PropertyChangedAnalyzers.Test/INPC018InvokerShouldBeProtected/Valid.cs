@@ -1,12 +1,11 @@
 namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtected
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class Valid
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new MethodDeclarationAnalyzer();
+        private static readonly MethodDeclarationAnalyzer Analyzer = new();
 
         [Test]
         public static void ProtectedOnPropertyChanged()

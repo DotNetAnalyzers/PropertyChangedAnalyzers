@@ -1,14 +1,12 @@
 namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
 {
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
 
     public static class FixAll
     {
-        private static readonly DiagnosticAnalyzer Analyzer = new MutationAnalyzer();
-        private static readonly CodeFixProvider Fix = new NotifyForDependentPropertyFix();
+        private static readonly MutationAnalyzer Analyzer = new();
+        private static readonly NotifyForDependentPropertyFix Fix = new();
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
 
         [Test]
