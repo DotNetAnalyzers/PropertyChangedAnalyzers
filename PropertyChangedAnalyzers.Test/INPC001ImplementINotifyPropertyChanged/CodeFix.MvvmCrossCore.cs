@@ -126,11 +126,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P { get; set; }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -156,11 +156,11 @@ namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
         public int P { get; set; }
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }

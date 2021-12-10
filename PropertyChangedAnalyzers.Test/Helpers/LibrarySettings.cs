@@ -13,13 +13,21 @@
                                                                   .WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS1701"))
                                                                   .WithMetadataReferences(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase)));
 
-        internal static Settings Stylet { get; } = Settings.Default.WithMetadataReferences(MetadataReferences.Transitive(LoadUnsigned("Stylet.dll")));
+        internal static Settings Stylet { get; } = Settings.Default
+                                                           .WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS1701"))
+                                                           .WithMetadataReferences(MetadataReferences.Transitive(LoadUnsigned("Stylet.dll")));
 
-        internal static Settings MvvmLight { get; } = Settings.Default.WithMetadataReferences(MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase)));
+        internal static Settings MvvmLight { get; } = Settings.Default
+                                                              .WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS1701"))
+                                                              .WithMetadataReferences(MetadataReferences.Transitive(typeof(GalaSoft.MvvmLight.ViewModelBase)));
 
-        internal static Settings MvvmCross { get; } = Settings.Default.WithMetadataReferences(MetadataReferences.Transitive(LoadUnsigned("MvvmCross.dll")));
+        internal static Settings MvvmCross { get; } = Settings.Default
+                                                              .WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS1701"))
+                                                              .WithMetadataReferences(MetadataReferences.Transitive(LoadUnsigned("MvvmCross.dll")));
 
-        internal static Settings Prism { get; } = Settings.Default.WithMetadataReferences(MetadataReferences.Transitive(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase)));
+        internal static Settings Prism { get; } = Settings.Default
+                                                          .WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS1701"))
+                                                          .WithMetadataReferences(MetadataReferences.Transitive(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase)));
 
         internal static Settings Reactive { get; } = Settings.Default
                                                              .WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS1701"))
