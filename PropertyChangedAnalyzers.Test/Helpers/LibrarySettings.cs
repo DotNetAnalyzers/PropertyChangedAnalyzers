@@ -21,6 +21,10 @@
 
         internal static Settings Prism { get; } = Settings.Default.WithMetadataReferences(MetadataReferences.Transitive(typeof(Microsoft.Practices.Prism.Mvvm.BindableBase)));
 
+        internal static Settings Reactive { get; } = Settings.Default
+                                                             .WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS1701"))
+                                                             .WithMetadataReferences(MetadataReferences.Transitive(typeof(Gu.Wpf.Reactive.AsyncCommand)));
+
         // Use this if the dll is not signed
         private static Assembly LoadUnsigned(string dllName)
         {

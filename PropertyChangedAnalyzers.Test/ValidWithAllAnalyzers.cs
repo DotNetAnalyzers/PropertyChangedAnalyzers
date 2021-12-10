@@ -3,11 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Gu.Roslyn.Asserts;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     using NUnit.Framework;
+
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     public static class ValidWithAllAnalyzers
     {
@@ -57,9 +61,9 @@ namespace N.Core
 
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -71,7 +75,7 @@ namespace N.Core
             return true;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -145,7 +149,7 @@ namespace N
         private int p;
         private readonly WithMutableField withMutableField = new WithMutableField();
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int Squared => this.P * this.P;
 
@@ -185,7 +189,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -202,7 +206,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -220,7 +224,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var handler = this.PropertyChanged;
             if (handler != null)
@@ -243,7 +247,7 @@ namespace N
     {
         private Point point;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int X
         {
@@ -279,7 +283,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -297,7 +301,7 @@ namespace N
     {
         private TimeSpan timeSpan;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public long Ticks
         {
@@ -314,7 +318,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -332,7 +336,7 @@ namespace N
     {
         private double speed;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public bool IsSpeed1
         {
@@ -357,7 +361,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -372,11 +376,11 @@ namespace N
 
     public abstract class AbstractWithAbstractProperty : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public abstract int P { get; }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -408,14 +412,14 @@ namespace N
 
     public class ExceptionHandlingRelayCommand : ConditionRelayCommand
     {
-        private Exception _exception;
+        private Exception? _exception;
 
         public ExceptionHandlingRelayCommand(Action action, ICondition condition)
             : base(action, condition)
         {
         }
 
-        public Exception Exception
+        public Exception? Exception
         {
             get => _exception;
 
@@ -436,17 +440,21 @@ namespace N
 }";
             RoslynAssert.Valid(
                 analyzer,
-                viewModelBase,
-                withMutableField,
-                viewModel1,
-                viewModel2,
-                oldStyleOnPropertyChanged,
-                wrappingPoint,
-                wrappingTimeSpan,
-                radioButtonViewModel,
-                abstractWithAbstractProperty,
-                subClassingAbstractWithAbstractProperty,
-                exceptionHandlingRelayCommand);
+                new[]
+                {
+                    viewModelBase,
+                    withMutableField,
+                    viewModel1,
+                    viewModel2,
+                    oldStyleOnPropertyChanged,
+                    wrappingPoint,
+                    wrappingTimeSpan,
+                    radioButtonViewModel,
+                    abstractWithAbstractProperty,
+                    subClassingAbstractWithAbstractProperty,
+                    exceptionHandlingRelayCommand,
+                },
+                settings: LibrarySettings.Reactive);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
@@ -461,9 +469,9 @@ namespace N.Core
 
     public abstract class ViewModelBase<T> : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<U>(ref U field, U value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<U>(ref U field, U value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<U>.Default.Equals(field, value))
             {
@@ -475,7 +483,7 @@ namespace N.Core
             return true;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -537,13 +545,13 @@ namespace N
 
     public class GenericViewModel<T> : INotifyPropertyChanged
     {
-        private T p;
+        private T? p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Text => $""{this.P}  {this.P}"";
 
-        public T P
+        public T? P
         {
 #pragma warning disable INPC020 // Prefer expression body accessor.
             get
@@ -565,7 +573,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
