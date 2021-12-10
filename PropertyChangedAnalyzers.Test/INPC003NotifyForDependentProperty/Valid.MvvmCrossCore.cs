@@ -114,7 +114,7 @@ namespace N
 {
     public abstract class ViewModelBase : MvvmCross.ViewModels.MvxNotifyPropertyChanged
     {
-        protected override bool SetProperty<T>(ref T oldValue, T value,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected override bool SetProperty<T>(ref T oldValue, T value,[System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             return base.SetProperty(ref oldValue, value, propertyName);
         }

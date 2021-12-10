@@ -20,9 +20,9 @@ namespace N.Core
 
     public class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -36,7 +36,7 @@ namespace N.Client
 
     public class C : N.Core.ViewModelBase
     {
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        ↓public event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
 

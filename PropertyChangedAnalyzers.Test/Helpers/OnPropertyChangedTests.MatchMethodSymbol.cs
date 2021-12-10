@@ -21,9 +21,9 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -47,9 +47,9 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var handler = this.PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
@@ -76,7 +76,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -94,7 +94,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var handler = this.PropertyChanged;
             if (handler != null)
@@ -126,7 +126,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -147,7 +147,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -324,9 +324,9 @@ namespace N
             OnPropertyChanged();
         }
         
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
@@ -356,7 +356,7 @@ namespace N
                 }
             }
 
-            [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
+            [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)")]
             [TestCase("protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)")]
             [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
             public static void WhenTrue(string signature)
@@ -372,7 +372,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
         {
@@ -384,7 +384,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, e);
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -397,7 +397,7 @@ namespace N
                 Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
             }
 
-            [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)")]
+            [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)")]
             [TestCase("protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)")]
             [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
             public static void WhenRecursive(string signature)
@@ -412,7 +412,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
         {
@@ -424,7 +424,7 @@ namespace N
              this.OnPropertyChanged(e);
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.OnPropertyChanged(propertyName);
         }

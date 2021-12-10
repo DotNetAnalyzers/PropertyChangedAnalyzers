@@ -17,7 +17,7 @@ namespace N
 
     public struct S : ↓INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
             RoslynAssert.Diagnostics(Analyzer, code);
@@ -31,7 +31,7 @@ namespace N
 {
     public struct S : ↓System.ComponentModel.INotifyPropertyChanged
     {
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
     }
 }";
             RoslynAssert.Diagnostics(Analyzer, code);

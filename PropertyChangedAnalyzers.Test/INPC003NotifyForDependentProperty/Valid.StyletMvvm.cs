@@ -136,7 +136,7 @@ namespace N
 {
     public abstract class ViewModelBase : Stylet.PropertyChangedBase
     {
-        protected override bool SetAndNotify<T>(ref T oldValue, T value,[System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected override bool SetAndNotify<T>(ref T oldValue, T value,[System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             return base.SetAndNotify(ref oldValue, value, propertyName);
         }

@@ -19,7 +19,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        ↓public event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
 
@@ -30,9 +30,9 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -51,7 +51,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        ↓public event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
 
@@ -62,7 +62,7 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
             RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Seal class.");
@@ -79,7 +79,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        ↓public event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
 
@@ -91,9 +91,9 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -112,7 +112,7 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        ↓public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P { get; set; }
     }
@@ -125,11 +125,11 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P { get; set; }
 
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -148,7 +148,7 @@ namespace N
 
     public static class C
     {
-        ↓public static event PropertyChangedEventHandler PropertyChanged;
+        ↓public static event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
 
@@ -159,9 +159,9 @@ namespace N
 
     public static class C
     {
-        public static event PropertyChangedEventHandler PropertyChanged;
+        public static event PropertyChangedEventHandler? PropertyChanged;
 
-        private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
         }
@@ -181,9 +181,9 @@ namespace N.Core
 
     public class ViewModelBase : INotifyPropertyChanged
     {
-        public virtual event PropertyChangedEventHandler PropertyChanged;
+        public virtual event PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -197,7 +197,7 @@ namespace N.Client
 
     public class C : N.Core.ViewModelBase
     {
-        ↓public override event PropertyChangedEventHandler PropertyChanged;
+        ↓public override event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
 
@@ -208,9 +208,9 @@ namespace N.Client
 
     public class C : N.Core.ViewModelBase
     {
-        public override event PropertyChangedEventHandler PropertyChanged;
+        public override event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -235,7 +235,7 @@ namespace N
             this.P1 = p1;
         }
 
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        ↓public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P1 { get; }
 
@@ -254,13 +254,13 @@ namespace N
             this.P1 = p1;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P1 { get; }
 
         public int P2 => this.P1 * this.P1;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -285,7 +285,7 @@ namespace N
             this.P1 = p1;
         }
 
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        ↓public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P1 { get; }
 
@@ -304,7 +304,7 @@ namespace N
             this.P1 = p1;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P1 { get; }
 
@@ -328,7 +328,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -345,7 +345,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -360,7 +360,7 @@ namespace N
 
     public class C2 : INotifyPropertyChanged
     {
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        ↓public event PropertyChangedEventHandler? PropertyChanged;
 
         public ObservableCollection<C1> Items { get; } = new ObservableCollection<C1>
         {
@@ -376,14 +376,14 @@ namespace N
 
     public class C2 : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public ObservableCollection<C1> Items { get; } = new ObservableCollection<C1>
         {
             new C1 { P = 2 },
         };
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -407,7 +407,7 @@ namespace N.Client
     {
         private string p;
 
-        ↓public event PropertyChangedEventHandler PropertyChanged;
+        ↓public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P
         {
@@ -415,7 +415,7 @@ namespace N.Client
             set { this.TrySet(ref this.p, value); }
         }
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -440,7 +440,7 @@ namespace N.Client
     {
         private string p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P
         {
@@ -448,7 +448,7 @@ namespace N.Client
             set { this.TrySet(ref this.p, value); }
         }
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -460,7 +460,7 @@ namespace N.Client
             return true;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

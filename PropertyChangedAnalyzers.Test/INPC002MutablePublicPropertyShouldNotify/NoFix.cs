@@ -1,9 +1,9 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
-    public static partial class NoFix
+    public static class NoFix
     {
         private static readonly SetAccessorAnalyzer Analyzer = new();
         private static readonly MakePropertyNotifyFix Fix = new();
@@ -31,13 +31,14 @@ namespace N
         public static void AutoPropertyExplicitNameHandlesRecursionInInvoker()
         {
             var code = @"
+#pragma warning disable CS0067
 namespace N
 {
     using System.ComponentModel;
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int ↓P { get; set; }
 

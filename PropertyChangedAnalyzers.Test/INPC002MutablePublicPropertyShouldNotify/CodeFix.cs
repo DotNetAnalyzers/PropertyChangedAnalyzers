@@ -831,7 +831,7 @@ namespace N
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null!)
+        protected bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null!)
         {
             if (!RuntimeHelpers.Equals(field, value)) return false;
             field = value;
@@ -839,7 +839,7 @@ namespace N
             return true;
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null!)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -891,7 +891,7 @@ namespace N
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null!)
+        protected bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null!)
         {
             if (!RuntimeHelpers.Equals(field, value)) return false;
             field = value;
@@ -899,7 +899,7 @@ namespace N
             return true;
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null!)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -940,7 +940,7 @@ namespace N
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null!)
+        protected bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null!)
         {
             if (!RuntimeHelpers.Equals(field, value)) return false;
             field = value;
@@ -948,7 +948,7 @@ namespace N
             return true;
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null!)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

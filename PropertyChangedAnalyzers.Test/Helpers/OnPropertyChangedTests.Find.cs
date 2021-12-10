@@ -21,9 +21,9 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -33,7 +33,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -48,9 +48,9 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var handler = this.PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
@@ -61,7 +61,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -76,7 +76,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P { get; set; }
 
@@ -85,7 +85,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, e);
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -95,7 +95,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -110,7 +110,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P { get; set; }
 
@@ -119,7 +119,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, e);
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -129,7 +129,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -143,9 +143,9 @@ namespace N
 
     public class ViewModelBase : INotifyPropertyChanged
     {
-        public virtual event PropertyChangedEventHandler PropertyChanged;
+        public virtual event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -159,7 +159,7 @@ namespace N
 
     public class C : N.ViewModelBase
     {
-        public override event PropertyChangedEventHandler PropertyChanged;
+        public override event PropertyChangedEventHandler? PropertyChanged;
     }
 }");
 
@@ -167,7 +167,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(code);
                 var classDeclaration = code.FindClassDeclaration("ViewModel");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.ViewModelBase.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+                Assert.AreEqual("N.ViewModelBase.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -181,9 +181,9 @@ namespace N
 
     public class ViewModelBase : INotifyPropertyChanged
     {
-        public virtual event PropertyChangedEventHandler PropertyChanged;
+        public virtual event PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -197,7 +197,7 @@ namespace N
 
     public class C : N.ViewModelBase
     {
-        public override event PropertyChangedEventHandler PropertyChanged;
+        public override event PropertyChangedEventHandler? PropertyChanged;
     }
 }");
 
@@ -221,7 +221,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -238,7 +238,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var handler = this.PropertyChanged;
             if (handler != null)
@@ -254,7 +254,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -269,9 +269,9 @@ namespace N
 
     public static class C
     {
-        public static event PropertyChangedEventHandler PropertyChanged;
+        public static event PropertyChangedEventHandler? PropertyChanged;
 
-        private static void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private static void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
         }
@@ -281,7 +281,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [Test]
@@ -296,7 +296,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P { get; set; }
 
@@ -305,7 +305,7 @@ namespace N
             this.OnPropertyChanged(e);
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.OnPropertyChanged(propertyName);
         }
@@ -334,9 +334,9 @@ namespace N
     {
         private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> Cache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, Cache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
         }
@@ -346,7 +346,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
 
             [TestCase("propertyName ?? string.Empty")]
@@ -365,9 +365,9 @@ namespace N
     {
         private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> Cache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var e = Cache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name));
             this.PropertyChanged?.Invoke(this, e);
@@ -378,7 +378,7 @@ namespace N
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var classDeclaration = syntaxTree.FindClassDeclaration("C");
                 var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
             }
         }
     }
