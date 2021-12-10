@@ -21,13 +21,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private int p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -67,13 +67,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private int p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -119,13 +119,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private int p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get => this.p2;
             set
@@ -164,13 +164,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private int p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get => this.p2;
             set
@@ -219,13 +219,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private int p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -268,13 +268,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private int p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -322,7 +322,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p3;
+        private int p3;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -330,7 +330,7 @@ namespace N
 
         public string P2 => $""Hello {this.p3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set
@@ -374,7 +374,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p3;
+        private int p3;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -382,7 +382,7 @@ namespace N
 
         public string P2 => $""Hello {this.p3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set
@@ -431,7 +431,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p3;
+        private int p3;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -439,7 +439,7 @@ namespace N
 
         public string P2 => $""Hello {this.p3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set
@@ -481,7 +481,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p3;
+        private int p3;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -489,7 +489,7 @@ namespace N
 
         public string P2 => $""Hello {this.p3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set

@@ -68,6 +68,8 @@ namespace N.Core
         public static void Check(string type, string expression)
         {
             var code = @"
+#nullable disable
+#pragma warning disable CS8019, CS8616
 namespace N
 {
     using System;
@@ -78,7 +80,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int P
         {
@@ -93,7 +95,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -108,6 +110,8 @@ namespace N
         public static void IfNotEqualsReturnElseAssignAndOnPropertyChanged(string type, string expression)
         {
             var code = @"
+#nullable disable
+#pragma warning disable CS8019, CS8616
 namespace N
 {
     using System;
@@ -118,7 +122,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int P
         {
@@ -135,7 +139,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -150,6 +154,8 @@ namespace N
         public static void IfNotEqualsAssignReturnElseOnPropertyChanged(string type, string expression)
         {
             var code = @"
+#nullable disable
+#pragma warning disable CS8019, CS8616
 namespace N
 {
     using System;
@@ -160,7 +166,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int P
         {
@@ -177,7 +183,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -393,11 +399,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set

@@ -318,6 +318,7 @@ namespace N
             set
             {
                 this.p = value;
+#pragma warning disable CS8602
                 ↓this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.P)));
             }
         }
@@ -351,6 +352,7 @@ namespace N
                 }
 
                 this.p = value;
+#pragma warning disable CS8602
                 this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.P)));
             }
         }
@@ -380,6 +382,7 @@ namespace N
             set
             {
                 p = value;
+#pragma warning disable CS8602
                 ↓PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
             }
         }
@@ -408,6 +411,7 @@ namespace N
                 }
 
                 p = value;
+#pragma warning disable CS8602
                 PropertyChanged.Invoke(null, new PropertyChangedEventArgs(nameof(P)));
             }
         }
@@ -442,6 +446,7 @@ namespace N
             set
             {
                 _p = value;
+#pragma warning disable CS8602
                 ↓PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
@@ -475,6 +480,7 @@ namespace N
                 }
 
                 _p = value;
+#pragma warning disable CS8602
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
@@ -510,6 +516,7 @@ namespace N
             set
             {
                 this.p = value;
+#pragma warning disable CS8602
                 ↓this.PropertyChanged.Invoke(this, ValuePropertyChangedEventArgs);
             }
         }
@@ -544,6 +551,7 @@ namespace N
                 }
 
                 this.p = value;
+#pragma warning disable CS8602
                 this.PropertyChanged.Invoke(this, ValuePropertyChangedEventArgs);
             }
         }
@@ -578,6 +586,7 @@ namespace N
             set
             {
                 this.p = value;
+#pragma warning disable CS8602
                 ↓this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
@@ -611,6 +620,7 @@ namespace N
                 }
 
                 this.p = value;
+#pragma warning disable CS8602
                 this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(P)));
             }
         }
@@ -640,6 +650,7 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private readonly C1 c1 = new C1();
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
@@ -667,6 +678,7 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private readonly C1 c1 = new C1();
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
@@ -707,11 +719,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private int p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public int P
         {
             get => this.p;
             set
@@ -750,11 +762,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private int p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public int P
         {
             get => this.p;
             set => this.TrySet(ref this.p, value);
@@ -796,13 +808,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private int p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get => this.p2;
             set
@@ -841,13 +853,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private int p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get => this.p2;
             set
@@ -891,11 +903,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private int p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public int P
         {
             get => this.p;
             set
@@ -932,11 +944,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private int p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public int P
         {
             get => this.p;
             set => this.TrySet(ref this.p, value, nameof(this.P));
@@ -975,11 +987,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string _p;
+        private int _p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public int P
         {
             get => _p;
             set
@@ -1016,11 +1028,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string _p;
+        private int _p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public int P
         {
             get => _p;
             set => TrySet(ref _p, value, nameof(P));
