@@ -9,9 +9,11 @@
 namespace N
 {
     using System;
+
     class UnqualifiedUnderscoreFields
     {
         private readonly int _f;
+
         UnqualifiedUnderscoreFields()
         {
             _f = 1;
@@ -20,7 +22,7 @@ namespace N
             M();
         }
 
-        public event Action E;
+        public event Action? E;
 
         public int P { get; }
 
@@ -35,9 +37,11 @@ namespace N
 namespace N
 {
     using System;
+
     class QualifiedUnderscoreFields
     {
         private readonly int _f;
+
         QualifiedUnderscoreFields()
         {
             this._f = 1;
@@ -46,7 +50,7 @@ namespace N
             M();
         }
 
-        public event Action E;
+        public event Action? E;
 
         public int P { get; }
 
@@ -61,9 +65,11 @@ namespace N
 namespace N
 {
     using System;
+
     class UnqualifiedUnprefixedFields
     {
         private readonly int f;
+
         UnqualifiedUnprefixedFields()
         {
             f = 1;
@@ -72,7 +78,7 @@ namespace N
             M();
         }
 
-        public event Action E;
+        public event Action? E;
 
         public int P { get; }
 
@@ -87,9 +93,11 @@ namespace N
 namespace N
 {
     using System;
+
     class QualifiedUnprefixedFields
     {
         private readonly int f;
+
         QualifiedUnprefixedFields()
         {
             this.f = 1;
@@ -98,7 +106,7 @@ namespace N
             M();
         }
 
-        public event Action E;
+        public event Action? E;
 
         public int P { get; }
 
