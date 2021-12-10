@@ -1,7 +1,10 @@
-namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
 {
     using Gu.Roslyn.Asserts;
+
     using NUnit.Framework;
+
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     public static partial class Valid
     {
@@ -18,13 +21,12 @@ namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -59,13 +61,12 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -101,7 +102,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -114,7 +115,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -140,7 +141,8 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private int p;
-        public event PropertyChangedEventHandler PropertyChanged;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -173,9 +175,10 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private static readonly PropertyChangedEventArgs PPropertyChangedArgs = new PropertyChangedEventArgs(nameof(P));
+
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -210,7 +213,7 @@ namespace N
     {
         private TimeSpan timeSpan;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public long Ticks
         {
@@ -227,7 +230,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -249,14 +252,14 @@ namespace N
 
     public class ExceptionHandlingRelayCommand : ConditionRelayCommand
     {
-        private Exception _exception;
+        private Exception? _exception;
 
         public ExceptionHandlingRelayCommand(Action action, ICondition condition)
             : base(action, condition)
         {
         }
 
-        public Exception Exception
+        public Exception? Exception
         {
             get => _exception;
 
@@ -274,7 +277,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Reactive);
         }
     }
 }
