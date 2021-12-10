@@ -97,7 +97,7 @@ namespace N
         }
     }
 }");
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var property = syntaxTree.FindPropertyDeclaration(code);
             Assert.AreEqual(expected, Property.IsLazy(property, semanticModel, CancellationToken.None));

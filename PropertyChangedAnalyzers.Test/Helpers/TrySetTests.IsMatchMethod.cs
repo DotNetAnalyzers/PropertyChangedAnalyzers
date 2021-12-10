@@ -1,6 +1,5 @@
 ﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
-    using System.Linq;
     using System.Threading;
     using Gu.Roslyn.AnalyzerExtensions;
     using Gu.Roslyn.Asserts;
@@ -128,7 +127,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes());
+                    Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
@@ -186,7 +185,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes());
+                    Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
@@ -211,7 +210,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
+                    LibrarySettings.CaliburnMicro.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("Set");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
@@ -236,7 +235,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
+                    LibrarySettings.CaliburnMicro.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
@@ -276,7 +275,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes());
+                    Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
@@ -311,7 +310,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes());
+                    Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
                 var method = semanticModel.GetDeclaredSymbol(methodDeclaration);

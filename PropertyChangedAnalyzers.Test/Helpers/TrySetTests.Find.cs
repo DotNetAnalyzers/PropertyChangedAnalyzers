@@ -1,6 +1,5 @@
 ﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
-    using System.Linq;
     using System.Threading;
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.CSharp;
@@ -46,7 +45,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes());
+                    Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
@@ -104,7 +103,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes());
+                    Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ObservableObject");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
@@ -129,7 +128,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
+                    LibrarySettings.CaliburnMicro.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
@@ -154,7 +153,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes().Concat(MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly)));
+                    LibrarySettings.CaliburnMicro.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
@@ -194,7 +193,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes());
+                    Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
@@ -229,7 +228,7 @@ namespace N
                 var compilation = CSharpCompilation.Create(
                     "test",
                     new[] { syntaxTree },
-                    MetadataReferences.FromAttributes());
+                    Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
                 var type = semanticModel.GetDeclaredSymbol(typeDeclaration);

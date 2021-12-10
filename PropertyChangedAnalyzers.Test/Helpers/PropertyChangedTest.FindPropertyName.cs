@@ -269,7 +269,7 @@ namespace N
         }
     }
 }".AssertReplace("propertyName ?? string.Empty", expression));
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var invocation = syntaxTree.FindInvocation("this.OnPropertyChanged();");
                 var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);

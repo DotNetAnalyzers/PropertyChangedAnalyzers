@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -58,7 +58,7 @@ namespace PropertyChangedAnalyzers.Test.Helpers
             this.P10 = 2;
         }
     }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var propertyDeclaration = syntaxTree.FindPropertyDeclaration(propertyName);
                 var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration);
@@ -117,7 +117,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var propertyDeclaration = syntaxTree.FindPropertyDeclaration(propertyName);
                 var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration);
@@ -148,7 +148,7 @@ namespace N
 }".AssertReplace("this.P = 1", assignCode);
 
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var propertyDeclaration = syntaxTree.FindPropertyDeclaration("P");
                 var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration);

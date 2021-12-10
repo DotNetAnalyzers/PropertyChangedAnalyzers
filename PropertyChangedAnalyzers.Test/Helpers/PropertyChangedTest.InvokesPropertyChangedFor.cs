@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers
 {
     using System.Threading;
     using Gu.Roslyn.Asserts;
@@ -104,7 +104,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var node = syntaxTree.Find<ExpressionSyntax>(signature);
                 var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration(propertyName));
@@ -159,7 +159,7 @@ namespace N
 }".AssertReplace("this.TrySet(ref this.p, value)", trySetCode);
 
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var node = syntaxTree.FindArgument("ref this.p");
                 var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("P"));
@@ -213,7 +213,7 @@ namespace N
 }".AssertReplace("this.TrySet(ref this.p, value, nameof(P))", trySetCode);
 
                 var syntaxTree = CSharpSyntaxTree.ParseText(code);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var node = syntaxTree.FindArgument("ref this.p");
                 var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("P"));
@@ -314,7 +314,7 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, MetadataReferences.FromAttributes());
+                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
                 var semanticModel = compilation.GetSemanticModel(syntaxTree);
                 var node = syntaxTree.Find<ExpressionSyntax>(signature);
                 var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration(propertyName));
