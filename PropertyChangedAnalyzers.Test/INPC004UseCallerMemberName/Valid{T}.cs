@@ -1,8 +1,9 @@
-namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName
+﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis.Diagnostics;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     [TestFixture(typeof(ArgumentAnalyzer))]
     [TestFixture(typeof(MethodDeclarationAnalyzer))]
@@ -23,7 +24,6 @@ namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -175,11 +175,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string text;
+        private string? text;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string Text
+        public string? Text
         {
             get
             {
@@ -331,9 +331,9 @@ namespace N
 
     internal class CellTemplateColumn : DataGridTemplateColumn
     {
-        private BindingBase binding;
+        private BindingBase? binding;
 
-        public BindingBase Binding
+        public BindingBase? Binding
         {
             get
             {
@@ -351,25 +351,25 @@ namespace N
             }
         }
 
-        public override BindingBase ClipboardContentBinding
+        public override BindingBase? ClipboardContentBinding
         {
-            get { return base.ClipboardContentBinding ?? this.Binding; }
+            get { return base.ClipboardContentBinding ?? this.binding; }
             set { base.ClipboardContentBinding = value; }
         }
 
-        protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
+        protected override FrameworkElement? GenerateEditingElement(DataGridCell cell, object dataItem)
         {
             return this.LoadTemplateContent(true, dataItem, cell);
         }
 
-        protected override FrameworkElement GenerateElement(DataGridCell cell, object dataItem)
+        protected override FrameworkElement? GenerateElement(DataGridCell cell, object dataItem)
         {
             return this.LoadTemplateContent(false, dataItem, cell);
         }
 
-        private DataTemplate ChooseCellTemplate(bool isEditing)
+        private DataTemplate? ChooseCellTemplate(bool isEditing)
         {
-            DataTemplate template = null;
+            DataTemplate? template = null;
             if (isEditing)
             {
                 template = this.CellEditingTemplate;
@@ -383,9 +383,9 @@ namespace N
             return template;
         }
 
-        private DataTemplateSelector ChooseCellTemplateSelector(bool isEditing)
+        private DataTemplateSelector? ChooseCellTemplateSelector(bool isEditing)
         {
-            DataTemplateSelector templateSelector = null;
+            DataTemplateSelector? templateSelector = null;
             if (isEditing)
             {
                 templateSelector = this.CellEditingTemplateSelector;
@@ -400,7 +400,7 @@ namespace N
         }
 
         [SuppressMessage(""ReSharper"", ""UnusedParameter.Local"")]
-        private FrameworkElement LoadTemplateContent(bool isEditing, object dataItem, DataGridCell cell)
+        private FrameworkElement? LoadTemplateContent(bool isEditing, object dataItem, DataGridCell cell)
         {
             var template = this.ChooseCellTemplate(isEditing);
             var templateSelector = this.ChooseCellTemplateSelector(isEditing);
@@ -473,14 +473,14 @@ namespace N
 
     public class ExceptionHandlingRelayCommand : ConditionRelayCommand
     {
-        private Exception _exception;
+        private Exception? _exception;
 
         public ExceptionHandlingRelayCommand(Action action, ICondition condition)
             : base(action, condition)
         {
         }
 
-        public Exception Exception
+        public Exception? Exception
         {
             get => _exception;
 
@@ -498,7 +498,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Reactive);
         }
     }
 }

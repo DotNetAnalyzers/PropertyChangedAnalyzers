@@ -165,11 +165,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -188,11 +188,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
