@@ -145,6 +145,7 @@ namespace N
             {
                 // maybe this should notify?
                 var code = @"
+#pragma warning disable CS0067
 namespace N
 {
     using System.ComponentModel;

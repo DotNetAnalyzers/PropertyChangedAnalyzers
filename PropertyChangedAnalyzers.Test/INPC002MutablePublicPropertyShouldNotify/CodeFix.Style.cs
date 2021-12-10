@@ -17,16 +17,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string ↓P { get; set; }
+        public int ↓P { get; set; }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -49,18 +49,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P { get => this.p; set => this.TrySet(ref this.p, value); }
+        public int P { get => this.p; set => this.TrySet(ref this.p, value); }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -89,16 +89,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string ↓P { get; set; }
+        public string? ↓P { get; set; }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -121,18 +121,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string _p;
+        private string? _p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P { get => _p; set => TrySet(ref _p, value); }
+        public string? P { get => _p; set => TrySet(ref _p, value); }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -161,16 +161,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string ↓P { get; set; }
+        public string? ↓P { get; set; }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -193,18 +193,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string _p;
+        private string? _p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P { get => this._p; set => TrySet(ref this._p, value); }
+        public string? P { get => this._p; set => TrySet(ref this._p, value); }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -233,16 +233,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string ↓P { get; set; }
+        public string? ↓P { get; set; }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -265,18 +265,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P { get => p; set => TrySet(ref p, value); }
+        public string? P { get => p; set => TrySet(ref p, value); }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -305,16 +305,16 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string ↓P { get; set; }
+        public string? ↓P { get; set; }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -337,18 +337,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P { get => this.p; set => TrySet(ref this.p, value); }
+        public string? P { get => this.p; set => TrySet(ref this.p, value); }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
