@@ -98,7 +98,6 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private static readonly int Two = 2;
         private int _p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -125,7 +124,6 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private static readonly int Two = 2;
         private int _p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -959,8 +957,8 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -974,7 +972,7 @@ namespace N
             }
         }
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -994,7 +992,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -1032,8 +1030,8 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -1047,7 +1045,7 @@ namespace N
             }
         }
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -1068,7 +1066,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -1785,13 +1783,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string CapsName => this.p.ToUpper();
+        public string? CapsName => this.p?.ToUpper();
 
-        public string P
+        public string? P
         {
             get
             {
@@ -1825,13 +1823,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string CapsName => this.p.ToUpper();
+        public string? CapsName => this.p?.ToUpper();
 
-        public string P
+        public string? P
         {
             get
             {
@@ -2793,9 +2791,9 @@ namespace N.Client
 
     public class C : N.Core.ViewModelBase
     {
-        private string text;
+        private string? text;
 
-        public string Text => this.text;
+        public string? Text => this.text;
 
         public void Update(string text)
         {
@@ -2812,9 +2810,9 @@ namespace N.Client
 
     public class C : N.Core.ViewModelBase
     {
-        private string text;
+        private string? text;
 
-        public string Text => this.text;
+        public string? Text => this.text;
 
         public void Update(string text)
         {
@@ -2839,7 +2837,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public C()
         {
@@ -2848,7 +2846,7 @@ namespace N
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -2866,7 +2864,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public C()
         {
@@ -2879,7 +2877,7 @@ namespace N
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -2903,7 +2901,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public C()
         {
@@ -2915,7 +2913,7 @@ namespace N
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -2933,7 +2931,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public C()
         {
@@ -2946,7 +2944,7 @@ namespace N
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -2969,7 +2967,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public C()
         {
@@ -2978,7 +2976,7 @@ namespace N
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -2995,7 +2993,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public C()
         {
@@ -3008,7 +3006,7 @@ namespace N
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -3031,7 +3029,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public C()
         {
@@ -3043,7 +3041,7 @@ namespace N
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -3060,7 +3058,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public C()
         {
@@ -3073,7 +3071,7 @@ namespace N
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -3096,14 +3094,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private int p = 1;
         private int getCount;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public int GetCount => this.getCount;
 
-        public string P
+        public int P
         {
             get
             {
@@ -3127,14 +3125,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private int p = 1;
         private int getCount;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public int GetCount => this.getCount;
 
-        public string P
+        public int P
         {
             get
             {

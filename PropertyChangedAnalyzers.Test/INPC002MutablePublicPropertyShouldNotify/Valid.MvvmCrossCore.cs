@@ -52,7 +52,7 @@ namespace N
                 RoslynAssert.Valid(Analyzer, code, settings: Settings);
             }
 
-            [TestCase("(string)null")]
+            [TestCase("(string?)null")]
             [TestCase("string.Empty")]
             [TestCase(@"""P""")]
             [TestCase(@"nameof(P)")]
