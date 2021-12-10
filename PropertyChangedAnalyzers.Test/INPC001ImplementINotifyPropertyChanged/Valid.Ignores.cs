@@ -149,9 +149,9 @@ namespace N
 {
     using System.ComponentModel;
 
-    public class KaxamlInfo
+    public class C
     {
-        public static event PropertyChangedEventHandler PropertyChanged;
+        public static event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
 
@@ -189,7 +189,7 @@ namespace N
             Current = null;
         }
 
-        public object Current { get; private set; }
+        public object? Current { get; private set; }
     }
 }";
                 RoslynAssert.Valid(Analyzer, code);
@@ -276,7 +276,9 @@ namespace N
 
     public class C
     {
-        public event EventHandler E;
+        public event EventHandler? E;
+
+        private void M() => this.E?.Invoke(this, EventArgs.Empty);
     }
 }";
                 RoslynAssert.Valid(Analyzer, code);
@@ -350,7 +352,7 @@ namespace N
     [AttributeUsage(AttributeTargets.Class)]
     public class TestAttribute : Attribute
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }";
                 RoslynAssert.Valid(Analyzer, code);
@@ -370,16 +372,16 @@ namespace N
     [SuppressMessage(""ReSharper"", ""MemberCanBePrivate.Global"", Justification = ""Used from xaml"")]
     public class DialogButtonTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate OKTemplate { get; set; }
+        public DataTemplate? OKTemplate { get; set; }
 
-        public DataTemplate CancelTemplate { get; set; }
+        public DataTemplate? CancelTemplate { get; set; }
 
-        public DataTemplate YesTemplate { get; set; }
+        public DataTemplate? YesTemplate { get; set; }
 
-        public DataTemplate NoTemplate { get; set; }
+        public DataTemplate? NoTemplate { get; set; }
 
         /// <inheritdoc />
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
             var result = item as MessageBoxResult?;
             if (!result.HasValue)
@@ -412,7 +414,6 @@ namespace N
             [Test]
             public static void WhenBaseHasPropertyChangedEventButNoInterface()
             {
-                //// ReSharper disable once HeuristicUnreachableCode
                 var code = @"
 namespace N
 {
@@ -441,7 +442,7 @@ namespace N
     [DataContract]
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public C(int p)
         {
@@ -451,7 +452,7 @@ namespace N
         [DataMember]
         public int P { get; private set; }
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
