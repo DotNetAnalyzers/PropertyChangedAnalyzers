@@ -123,7 +123,7 @@ namespace N.Client
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void InProperty(DiagnosticAnalyzer analyzer)
         {
-            var fooCode = @"
+            var code = @"
 namespace N
 {
     using System;
@@ -266,13 +266,15 @@ namespace N
         }
     }
 }";
-            _ = Analyze.GetDiagnostics(analyzer, new[] { fooCode });
+
+            _ = Analyze.GetDiagnostics(analyzer, code);
         }
 
         [TestCaseSource(nameof(AllAnalyzers))]
         public static void Repro(DiagnosticAnalyzer analyzer)
         {
             var code = @"
+#nullable disable
 namespace N
 {
     using System;
