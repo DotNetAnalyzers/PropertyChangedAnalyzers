@@ -25,6 +25,9 @@
                                                              .WithCompilationOptions(x => x.WithSuppressedDiagnostics("CS1701"))
                                                              .WithMetadataReferences(MetadataReferences.Transitive(typeof(Gu.Wpf.Reactive.AsyncCommand)));
 
+        internal static Settings Roslyn { get; } = Settings.Default
+                                                           .WithMetadataReferences(MetadataReferences.Transitive(typeof(Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider)));
+
         // Use this if the dll is not signed
         private static Assembly LoadUnsigned(string dllName)
         {

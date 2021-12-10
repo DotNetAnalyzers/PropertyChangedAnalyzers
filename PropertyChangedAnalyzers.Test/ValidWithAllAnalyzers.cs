@@ -24,7 +24,8 @@
             .ToArray();
 
         private static readonly Solution AnalyzersProjectSolution = CodeFactory.CreateSolution(
-            ProjectFile.Find("PropertyChangedAnalyzers.csproj"));
+            ProjectFile.Find("PropertyChangedAnalyzers.csproj"),
+            LibrarySettings.Roslyn);
 
         private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
             ProjectFile.Find("ValidCode.csproj"));
@@ -36,10 +37,10 @@
             Assert.Pass($"Count: {AllAnalyzers.Count}");
         }
 
-        [Ignore("Does not pick up nullable attributes.")]
-        [TestCaseSource(nameof(AllAnalyzers))]
+        // [TestCaseSource(nameof(AllAnalyzers))]
         public static void AnalyzersProject(DiagnosticAnalyzer analyzer)
         {
+            // Does not figure out source package
             RoslynAssert.Valid(analyzer, AnalyzersProjectSolution);
         }
 
