@@ -18,9 +18,9 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get => this.p;
             set
@@ -37,9 +37,9 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get => this.p;
             set
@@ -67,9 +67,9 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get => this.p;
             set
@@ -86,9 +86,9 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get => this.p;
             set => this.SetProperty(ref this.p, value);
@@ -107,9 +107,9 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get => this.p;
             set
@@ -126,9 +126,9 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get => this.p;
             set => this.SetProperty(ref this.p, value);
@@ -147,11 +147,11 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -168,11 +168,11 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -197,11 +197,11 @@ namespace N
 {
     internal class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p2;
+        private int p2;
 
         internal string P1 => $""Hello {this.p2}"";
 
-        internal string P2
+        internal int P2
         {
             get { return this.p2; }
             set
@@ -218,11 +218,11 @@ namespace N
 {
     internal class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p2;
+        private int p2;
 
         internal string P1 => $""Hello {this.p2}"";
 
-        internal string P2
+        internal int P2
         {
             get { return this.p2; }
             set
@@ -247,11 +247,11 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -271,11 +271,11 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -300,13 +300,13 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p3;
+        private int p3;
 
         public string P1 => $""Hello {this.p3}"";
 
         public string P2 => $""Hej {this.p3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set
@@ -327,13 +327,13 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p3;
+        private int p3;
 
         public string P1 => $""Hello {this.p3}"";
 
         public string P2 => $""Hej {this.p3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set
@@ -359,13 +359,13 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p3;
+        private int p3;
 
         public string P1 => $""Hello {this.p3}"";
 
         public string P2 => $""Hej {this.p3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set
@@ -383,13 +383,13 @@ namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
     {
-        private string p3;
+        private int p3;
 
         public string P1 => $""Hello {this.p3}"";
 
         public string P2 => $""Hej {this.p3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set

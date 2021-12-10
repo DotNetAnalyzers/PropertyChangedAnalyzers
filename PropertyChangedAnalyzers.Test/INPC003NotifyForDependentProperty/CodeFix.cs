@@ -350,14 +350,14 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         internal string FullName => $""{this.FirstName} {this.LastName}"";
 
-        internal string FirstName
+        internal string? FirstName
         {
             get
             {
@@ -376,7 +376,7 @@ namespace N
             }
         }
 
-        internal string LastName
+        internal string? LastName
         {
             get
             {
@@ -411,14 +411,14 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         internal string FullName => $""{this.FirstName} {this.LastName}"";
 
-        internal string FirstName
+        internal string? FirstName
         {
             get
             {
@@ -438,7 +438,7 @@ namespace N
             }
         }
 
-        internal string LastName
+        internal string? LastName
         {
             get
             {
@@ -1524,14 +1524,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string FullName => $""{this.firstName} {this.lastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -1550,7 +1550,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -1585,14 +1585,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string FullName => $""{this.firstName} {this.lastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -1612,7 +1612,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -1653,14 +1653,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string FullName => string.Format(""{0} {1}"", this.firstName, this.lastName);
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -1679,7 +1679,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -1714,14 +1714,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string FullName => string.Format(""{0} {1}"", this.firstName, this.lastName);
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -1741,7 +1741,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -1871,13 +1871,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string CapsName => this.p?.ToUpper();
+        public string? CapsName => this.p?.ToUpper();
 
-        public string P
+        public string? P
         {
             get
             {
@@ -1911,13 +1911,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string CapsName => this.p?.ToUpper();
+        public string? CapsName => this.p?.ToUpper();
 
-        public string P
+        public string? P
         {
             get
             {
@@ -1975,14 +1975,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public Person Person => new Person(this.firstName, this.lastName);
+        public Person Person => new Person(this.firstName ?? string.Empty, this.lastName ?? string.Empty);
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -2001,7 +2001,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -2036,14 +2036,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public Person Person => new Person(this.firstName, this.lastName);
+        public Person Person => new Person(this.firstName ?? string.Empty, this.lastName ?? string.Empty);
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -2063,7 +2063,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -2105,14 +2105,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
-        private string p3;
+        private string? p2;
+        private string? p3;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string[] P1 => new[] { this.p2, this.p3 };
+        public string?[] P1 => new[] { this.p2, this.p3 };
 
-        public string P2
+        public string? P2
         {
             get
             {
@@ -2131,7 +2131,7 @@ namespace N
             }
         }
 
-        public string P3
+        public string? P3
         {
             get
             {
@@ -2166,14 +2166,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
-        private string p3;
+        private string? p2;
+        private string? p3;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string[] P1 => new[] { this.p2, this.p3 };
+        public string?[] P1 => new[] { this.p2, this.p3 };
 
-        public string P2
+        public string? P2
         {
             get
             {
@@ -2193,7 +2193,7 @@ namespace N
             }
         }
 
-        public string P3
+        public string? P3
         {
             get
             {
