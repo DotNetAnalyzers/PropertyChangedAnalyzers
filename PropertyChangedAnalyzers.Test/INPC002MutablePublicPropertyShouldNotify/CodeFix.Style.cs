@@ -377,22 +377,22 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string ↓P
+        public string? ↓P
         {
             get => this.p;
             set => this.p = value;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -415,22 +415,22 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get => this.p;
             set => this.TrySet(ref this.p, value);
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {

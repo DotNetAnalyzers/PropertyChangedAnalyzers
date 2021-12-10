@@ -1,7 +1,10 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 {
     using Gu.Roslyn.Asserts;
+
     using NUnit.Framework;
+
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     public static partial class CodeFix
     {
@@ -24,7 +27,7 @@ namespace N
         {
         }
 
-        public Exception ↓Exception { get; protected set; }
+        public Exception? ↓Exception { get; protected set; }
     }
 }";
 
@@ -37,14 +40,14 @@ namespace N
 
     public class ExceptionHandlingRelayCommand : ConditionRelayCommand
     {
-        private Exception exception;
+        private Exception? exception;
 
         public ExceptionHandlingRelayCommand(Action action, ICondition condition)
             : base(action, condition)
         {
         }
 
-        public Exception Exception
+        public Exception? Exception
         {
             get => this.exception;
             protected set
@@ -61,8 +64,8 @@ namespace N
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.", settings: LibrarySettings.Reactive);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.", settings: LibrarySettings.Reactive);
             }
 
             [Test]
@@ -77,14 +80,14 @@ namespace N
 
     public class ExceptionHandlingRelayCommand : ConditionRelayCommand
     {
-        private Exception _exception;
+        private Exception? _exception;
 
         public ExceptionHandlingRelayCommand(Action action, ICondition condition)
             : base(action, condition)
         {
         }
 
-        public Exception ↓Exception
+        public Exception? ↓Exception
         {
             get => _exception;
 
@@ -105,14 +108,14 @@ namespace N
 
     public class ExceptionHandlingRelayCommand : ConditionRelayCommand
     {
-        private Exception _exception;
+        private Exception? _exception;
 
         public ExceptionHandlingRelayCommand(Action action, ICondition condition)
             : base(action, condition)
         {
         }
 
-        public Exception Exception
+        public Exception? Exception
         {
             get => _exception;
 
@@ -130,8 +133,8 @@ namespace N
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify when value changes.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify when value changes.", settings: LibrarySettings.Reactive);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify when value changes.", settings: LibrarySettings.Reactive);
             }
 
             [Test]
@@ -146,14 +149,14 @@ namespace N
 
     public class ExceptionHandlingRelayCommand : ConditionRelayCommand
     {
-        private Exception _exception;
+        private Exception? _exception;
 
         public ExceptionHandlingRelayCommand(Action action, ICondition condition)
             : base(action, condition)
         {
         }
 
-        public Exception ↓Exception
+        public Exception? ↓Exception
         {
             get => _exception;
 
@@ -174,14 +177,14 @@ namespace N
 
     public class ExceptionHandlingRelayCommand : ConditionRelayCommand
     {
-        private Exception _exception;
+        private Exception? _exception;
 
         public ExceptionHandlingRelayCommand(Action action, ICondition condition)
             : base(action, condition)
         {
         }
 
-        public Exception Exception
+        public Exception? Exception
         {
             get => _exception;
 
@@ -194,8 +197,8 @@ namespace N
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify.");
+                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify.", settings: LibrarySettings.Reactive);
+                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Notify.", settings: LibrarySettings.Reactive);
             }
         }
     }

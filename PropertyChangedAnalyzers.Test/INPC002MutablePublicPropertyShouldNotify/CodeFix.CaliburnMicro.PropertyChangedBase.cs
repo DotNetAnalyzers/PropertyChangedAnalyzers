@@ -233,9 +233,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p;
+        private int p;
 
-        public string ↓P
+        public int ↓P
         {
             get { return this.p; }
             set { this.p = value; }
@@ -248,9 +248,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get { return this.p; }
             set { this.Set(ref this.p, value); }
@@ -269,9 +269,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p;
+        private string? p;
 
-        public string ↓P
+        public string? ↓P
         {
             get => this.p;
             set => this.p = value;
@@ -284,9 +284,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p;
+        private string? p;
 
-        public string P
+        public string? P
         {
             get => this.p;
             set => this.Set(ref this.p, value);
@@ -305,9 +305,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p;
+        private int p;
 
-        public string ↓P { get => this.p; set => this.p = value; }
+        public int ↓P { get => this.p; set => this.p = value; }
     }
 }";
 
@@ -316,9 +316,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p;
+        private int p;
 
-        public string P { get => this.p; set => this.Set(ref this.p, value); }
+        public int P { get => this.p; set => this.Set(ref this.p, value); }
     }
 }";
                 RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Set(ref oldValue, newValue)", settings: Settings);
@@ -333,9 +333,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _p;
+        private int _p;
 
-        public string ↓P
+        public int ↓P
         {
             get { return _p; }
             set { _p = value; }
@@ -348,9 +348,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _p;
+        private int _p;
 
-        public string P
+        public int P
         {
             get { return _p; }
             set { Set(ref _p, value); }
@@ -369,9 +369,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _p;
+        private int _p;
 
-        public string ↓P
+        public int ↓P
         {
             get => _p;
             set => _p = value;
@@ -384,9 +384,9 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string _p;
+        private int _p;
 
-        public string P
+        public int P
         {
             get => _p;
             set => Set(ref _p, value);

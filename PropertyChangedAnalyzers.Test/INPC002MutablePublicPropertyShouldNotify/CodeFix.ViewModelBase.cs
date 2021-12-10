@@ -16,9 +16,9 @@ namespace N.Core
 
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -30,7 +30,7 @@ namespace N.Core
             return true;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -46,9 +46,9 @@ namespace N
 
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -60,7 +60,7 @@ namespace N
             return true;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -264,9 +264,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p;
+        private int p;
 
-        public string ↓P
+        public int ↓P
         {
             get { return this.p; }
             set { this.p = value; }
@@ -279,9 +279,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get { return this.p; }
             set { this.TrySet(ref this.p, value); }
@@ -300,9 +300,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p;
+        private int p;
 
-        public string ↓P
+        public int ↓P
         {
             get => this.p;
             set => this.p = value;
@@ -315,9 +315,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get => this.p;
             set => this.TrySet(ref this.p, value);
@@ -336,9 +336,9 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private string _p;
+        private int _p;
 
-        public string ↓P
+        public int ↓P
         {
             get { return _p; }
             set { _p = value; }
@@ -351,9 +351,9 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private string _p;
+        private int _p;
 
-        public string P
+        public int P
         {
             get { return _p; }
             set { TrySet(ref _p, value); }
@@ -372,9 +372,9 @@ namespace N
 {
     public class C : N.ViewModelBase
     {
-        private string _p;
+        private int _p;
 
-        public string ↓P
+        public int ↓P
         {
             get => _p;
             set => _p = value;
@@ -387,9 +387,9 @@ namespace N
 {
     public class C : N.ViewModelBase
     {
-        private string _p;
+        private int _p;
 
-        public string P
+        public int P
         {
             get => _p;
             set => TrySet(ref _p, value);
@@ -412,14 +412,14 @@ namespace N.Core
 
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             return this.TrySet(ref field, value, propertyName);
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -474,9 +474,9 @@ namespace N.Core
 
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -488,7 +488,7 @@ namespace N.Core
             return true;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -531,6 +531,7 @@ namespace N
 }";
 
                 var viewModelBaseCode = @"
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -752,7 +753,7 @@ namespace N
 
     public class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {

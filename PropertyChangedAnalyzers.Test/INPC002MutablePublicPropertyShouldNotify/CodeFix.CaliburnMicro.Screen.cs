@@ -207,9 +207,9 @@ namespace N
 {
     public class C : Caliburn.Micro.Screen
     {
-        private string p;
+        private int p;
 
-        public string ↓P
+        public int ↓P
         {
             get { return this.p; }
             set { this.p = value; }
@@ -222,9 +222,9 @@ namespace N
 {
     public class C : Caliburn.Micro.Screen
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get { return this.p; }
             set { this.Set(ref this.p, value); }
@@ -243,9 +243,9 @@ namespace N
 {
     public class C : Caliburn.Micro.Screen
     {
-        private string p;
+        private int p;
 
-        public string ↓P
+        public int ↓P
         {
             get => this.p;
             set => this.p = value;
@@ -258,9 +258,9 @@ namespace N
 {
     public class C : Caliburn.Micro.Screen
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get => this.p;
             set => this.Set(ref this.p, value);
@@ -279,9 +279,9 @@ namespace N
 {
     public class C : Caliburn.Micro.Screen
     {
-        private string _p;
+        private int _p;
 
-        public string ↓P
+        public int ↓P
         {
             get { return _p; }
             set { _p = value; }
@@ -294,9 +294,9 @@ namespace N
 {
     public class C : Caliburn.Micro.Screen
     {
-        private string _p;
+        private int _p;
 
-        public string P
+        public int P
         {
             get { return _p; }
             set { Set(ref _p, value); }
@@ -315,9 +315,9 @@ namespace N
 {
     public class C : Caliburn.Micro.Screen
     {
-        private string _p;
+        private int _p;
 
-        public string ↓P
+        public int ↓P
         {
             get => _p;
             set => _p = value;
@@ -330,9 +330,9 @@ namespace N
 {
     public class C : Caliburn.Micro.Screen
     {
-        private string _p;
+        private int _p;
 
-        public string P
+        public int P
         {
             get => _p;
             set => Set(ref _p, value);

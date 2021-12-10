@@ -15,7 +15,7 @@ namespace N.Core
 
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             return base.Set(ref field, value, propertyName);
         }
@@ -29,7 +29,7 @@ namespace N
 
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
     {
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             return base.Set(ref field, value, propertyName);
         }
@@ -237,9 +237,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p;
+        private int p;
 
-        public string ↓P
+        public int ↓P
         {
             get { return this.p; }
             set { this.p = value; }
@@ -252,9 +252,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get { return this.p; }
             set { this.TrySet(ref this.p, value); }
@@ -273,9 +273,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p;
+        private int p;
 
-        public string ↓P
+        public int ↓P
         {
             get => this.p;
             set => this.p = value;
@@ -288,9 +288,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p;
+        private int p;
 
-        public string P
+        public int P
         {
             get => this.p;
             set => this.TrySet(ref this.p, value);
@@ -309,9 +309,9 @@ namespace N
 {
     public class C : N.ViewModelBase
     {
-        private string _p;
+        private int _p;
 
-        public string ↓P
+        public int ↓P
         {
             get { return _p; }
             set { _p = value; }
@@ -324,9 +324,9 @@ namespace N
 {
     public class C : N.ViewModelBase
     {
-        private string _p;
+        private int _p;
 
-        public string P
+        public int P
         {
             get { return _p; }
             set { TrySet(ref _p, value); }
@@ -345,9 +345,9 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private string _p;
+        private int _p;
 
-        public string ↓P
+        public int ↓P
         {
             get => _p;
             set => _p = value;
@@ -360,9 +360,9 @@ namespace N
 {
     public class C : ViewModelBase
     {
-        private string _p;
+        private int _p;
 
-        public string P
+        public int P
         {
             get => _p;
             set => TrySet(ref _p, value);
@@ -385,14 +385,14 @@ namespace N.Core
 
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             return this.TrySet(ref field, value, propertyName);
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

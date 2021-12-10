@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -10,7 +10,7 @@ namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
             [TestCase("int")]
             [TestCase("int?")]
             [TestCase("Nullable<int>")]
-            [TestCase("string")]
+            [TestCase("string?")]
             [TestCase("StringComparison")]
             public static void OpEqualsFor(string typeCode)
             {
@@ -22,7 +22,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int ↓P { get; set; }
 
@@ -43,7 +43,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int P
         {
@@ -87,9 +87,9 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType ↓P { get; set; }
+        public ReferenceType? ↓P { get; set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -105,11 +105,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get => this.p;
             set
@@ -156,7 +156,7 @@ namespace N
             return this.P == other.P;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is EquatableStruct && this.Equals((EquatableStruct)obj);
@@ -175,7 +175,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public EquatableStruct ↓P { get; set; }
 
@@ -195,7 +195,7 @@ namespace N
     {
         private EquatableStruct p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public EquatableStruct P
         {
@@ -245,7 +245,7 @@ namespace N
             return this.P == other.P;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is EquatableStruct && this.Equals((EquatableStruct)obj);
@@ -264,7 +264,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public EquatableStruct? ↓P { get; set; }
 
@@ -284,7 +284,7 @@ namespace N
     {
         private EquatableStruct? p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public EquatableStruct? P
         {
@@ -344,7 +344,7 @@ namespace N
             return this.P == other.P;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is EquatableStruct && this.Equals((EquatableStruct)obj);
@@ -363,7 +363,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public EquatableStruct ↓P { get; set; }
 
@@ -383,7 +383,7 @@ namespace N
     {
         private EquatableStruct p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public EquatableStruct P
         {
@@ -442,7 +442,7 @@ namespace N
             return this.P == other.P;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is EquatableStruct && this.Equals((EquatableStruct)obj);
@@ -461,7 +461,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public EquatableStruct? ↓P { get; set; }
 
@@ -481,7 +481,7 @@ namespace N
     {
         private EquatableStruct? p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public EquatableStruct? P
         {
@@ -531,7 +531,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public NotEquatableStruct ↓P { get; set; }
 
@@ -551,7 +551,7 @@ namespace N
     {
         private NotEquatableStruct p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public NotEquatableStruct P
         {
@@ -601,7 +601,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public NotEquatableStruct? ↓P { get; set; }
 
@@ -621,7 +621,7 @@ namespace N
     {
         private NotEquatableStruct? p;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public NotEquatableStruct? P
         {
