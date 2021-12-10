@@ -39,6 +39,8 @@
         public static void Check(string type, string expression)
         {
             var code = @"
+#nullable disable
+#pragma warning disable CS8019
 namespace N
 {
     using System;
@@ -49,7 +51,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int P
         {
@@ -66,7 +68,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -81,6 +83,8 @@ namespace N
         public static void NegatedCheck(string type, string expression)
         {
             var code = @"
+#nullable disable
+#pragma warning disable CS8019
 namespace N
 {
     using System;
@@ -91,7 +95,7 @@ namespace N
     {
         private int p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int P
         {
@@ -106,7 +110,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -292,7 +296,6 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -430,18 +433,17 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private int p;
         private int misses;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public int P
         {
             get => this.p;
             set
@@ -604,11 +606,10 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
-
     public class C : System.ComponentModel.INotifyPropertyChanged
     {
-        private readonly object _gate = new object();
+        private readonly object _gate = new();
+
         private int _p;
 
         public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;

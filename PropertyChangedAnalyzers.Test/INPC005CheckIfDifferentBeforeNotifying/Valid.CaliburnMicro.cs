@@ -18,11 +18,11 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -46,11 +46,11 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
@@ -74,13 +74,13 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p3;
+        private int p3;
 
         public string P1 => $""Hello {this.P3}"";
 
         public string P2 => $""Hej {this.P3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set
@@ -105,13 +105,13 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p3;
+        private int p3;
 
         public string P1 => $""Hello {this.P3}"";
 
         public string P2 => $""Hej {this.P3}"";
 
-        public string P3
+        public int P3
         {
             get { return this.p3; }
             set
@@ -136,12 +136,12 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public string FullName => $""{this.FirstName} {this.LastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -161,7 +161,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -193,11 +193,11 @@ namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
     {
-        private string p2;
+        private int p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public int P2
         {
             get { return this.p2; }
             set
