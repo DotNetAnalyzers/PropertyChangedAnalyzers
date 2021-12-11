@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CA1056 // Uri properties should not be strings
+#pragma warning disable CA1307 // Specify StringComparison for clarity
 namespace PropertyChangedAnalyzers.Test
 {
     using System;
@@ -70,10 +71,7 @@ namespace PropertyChangedAnalyzers.Test
         public static void Title(DescriptorInfo descriptorInfo)
         {
             var expected = $"## {descriptorInfo.Descriptor.Title}";
-            var actual = descriptorInfo.DocumentationFile.AllLines
-                                       .Skip(1)
-                                       .First()
-                                       .Replace("`", string.Empty);
+            var actual = descriptorInfo.DocumentationFile.AllLines[1].Replace("`", string.Empty);
             Assert.AreEqual(expected, actual);
         }
 
@@ -318,7 +316,7 @@ Or put this at the top of the file to disable all instances.
 
             public string Name { get; }
 
-            public string Uri => "https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master" + this.Name.Substring(SolutionDirectory.FullName.Length)
+            public string Uri => "https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/blob/master" + this.Name[SolutionDirectory.FullName.Length..]
                                                                                                              .Replace("\\", "/");
 
             public static CodeFile Find(Type type)
