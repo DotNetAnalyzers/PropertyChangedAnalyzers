@@ -16,7 +16,6 @@
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -59,9 +58,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class C
     {
         private int p;
@@ -110,7 +106,7 @@ namespace N
 
     public class C2 : C1
     {
-        public int P
+        public override int P
         {
             get => base.P;
             set => base.P = value;
@@ -132,7 +128,7 @@ namespace N
 
     public class C : IReadOnlyList<int>
     {
-        private readonly List<int> ints;
+        private readonly List<int> ints = new();
         
         public int Count => ints.Count;
 
