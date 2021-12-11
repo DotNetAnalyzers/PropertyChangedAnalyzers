@@ -29,6 +29,7 @@
         private static void Handle(SyntaxNodeAnalysisContext context)
         {
             if (!context.IsExcludedFromAnalysis() &&
+                context.ContainingSymbol is { } &&
                 context.Node is ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } argument)
             {
                 if (NameContext.Create(argument, context.SemanticModel, context.CancellationToken) is { Name: { } name, Expression: { } expression, Target: { ContainingSymbol: IMethodSymbol targetMethod } target })
