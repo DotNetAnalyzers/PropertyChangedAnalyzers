@@ -41,6 +41,8 @@ namespace N
         public static void Check(string expressionBefore, string expressionAfter)
         {
             var before = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -51,7 +53,7 @@ namespace N
     {
         private ReferenceType p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ReferenceType P
         {
@@ -68,7 +70,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -76,6 +78,8 @@ namespace N
 }".AssertReplace("Equals(value, this.p)", expressionBefore);
 
             var after = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -86,7 +90,7 @@ namespace N
     {
         private ReferenceType p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ReferenceType P
         {
@@ -103,7 +107,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -118,6 +122,8 @@ namespace N
         public static void CheckNegated(string expressionBefore, string expressionAfter)
         {
             var before = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -128,7 +134,7 @@ namespace N
     {
         private ReferenceType p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ReferenceType P
         {
@@ -143,7 +149,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -151,6 +157,8 @@ namespace N
 }".AssertReplace("Equals(value, this.p)", expressionBefore);
 
             var after = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -161,7 +169,7 @@ namespace N
     {
         private ReferenceType p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ReferenceType P
         {
@@ -176,7 +184,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -198,10 +206,11 @@ namespace N
     public class C<T> : INotifyPropertyChanged
         where T : class
     {
-        private T p;
+        private T? p;
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public T P
+        public T? P
         {
             get { return this.p; }
             set
@@ -232,10 +241,11 @@ namespace N
     public class C<T> : INotifyPropertyChanged
         where T : class
     {
-        private T p;
+        private T? p;
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public T P
+        public T? P
         {
             get { return this.p; }
             set
@@ -271,11 +281,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -305,11 +315,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -345,11 +355,11 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        internal ReferenceType P
+        internal ReferenceType? P
         {
             get { return this.p; }
             set
@@ -379,11 +389,11 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        internal ReferenceType P
+        internal ReferenceType? P
         {
             get { return this.p; }
             set
@@ -419,11 +429,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -451,11 +461,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set

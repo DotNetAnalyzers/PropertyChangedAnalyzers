@@ -40,6 +40,8 @@ namespace N
         public static void Check(string type, string expression)
         {
             var code = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -50,7 +52,7 @@ namespace N
     {
         private ReferenceType p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ReferenceType P
         {
@@ -82,6 +84,8 @@ namespace N
         public static void CheckNegated(string type, string expression)
         {
             var code = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -92,7 +96,7 @@ namespace N
     {
         private ReferenceType p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ReferenceType P
         {
@@ -125,7 +129,6 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -155,15 +158,14 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -190,7 +192,6 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -226,7 +227,6 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -368,10 +368,11 @@ namespace N
 
     public class C<T> : INotifyPropertyChanged
     {
-        private T p;
+        private T? p;
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public T P
+        public T? P
         {
             get { return this.p; }
             set
