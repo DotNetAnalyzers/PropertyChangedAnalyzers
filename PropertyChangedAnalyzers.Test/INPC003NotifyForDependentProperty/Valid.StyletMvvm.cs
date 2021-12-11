@@ -18,9 +18,9 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string p;
+        private string? p;
 
-        public string P
+        public string? P
         {
             get { return this.p; }
             set { this.SetAndNotify(ref this.p, value); }
@@ -38,9 +38,9 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string p;
+        private string? p;
 
-        public string P
+        public string? P
         {
             get => this.p;
             set => this.SetAndNotify(ref this.p, value);
@@ -58,11 +58,11 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -86,11 +86,11 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
             set => this.SetAndNotify(ref this.p2, value, string.Empty);
@@ -108,11 +108,11 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello{this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set

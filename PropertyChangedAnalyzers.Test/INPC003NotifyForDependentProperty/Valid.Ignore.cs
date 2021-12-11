@@ -104,14 +104,15 @@ namespace N
             throw new NotImplementedException();
         }
 
-        public event EventHandler CanExecuteChanged;
+#pragma warning disable CS0067
+        public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             throw new NotImplementedException();
         }
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
             throw new NotImplementedException();
         }
@@ -126,7 +127,7 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private bool p;
-        private DelegateCommand command;
+        private DelegateCommand? command;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -184,14 +185,15 @@ namespace N
             throw new NotImplementedException();
         }
 
-        public event EventHandler CanExecuteChanged;
+#pragma warning disable CS0067
+        public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             throw new NotImplementedException();
         }
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
             throw new NotImplementedException();
         }
@@ -205,8 +207,8 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
+        private DelegateCommand? p1;
         private bool p2;
-        private DelegateCommand p1;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -259,14 +261,15 @@ namespace N
             throw new NotImplementedException();
         }
 
-        public event EventHandler CanExecuteChanged;
+#pragma warning disable CS0067
+        public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             throw new NotImplementedException();
         }
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
             throw new NotImplementedException();
         }
@@ -281,11 +284,11 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private bool p;
-        private DelegateCommand pCommand;
+        private DelegateCommand? command;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public DelegateCommand PCommand => this.pCommand ?? (this.pCommand = new DelegateCommand(param => this.P = true));
+        public DelegateCommand Command => this.command ?? (this.command = new DelegateCommand(param => this.P = true));
 
         public bool P
         {
@@ -453,11 +456,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get
             {
@@ -491,7 +494,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

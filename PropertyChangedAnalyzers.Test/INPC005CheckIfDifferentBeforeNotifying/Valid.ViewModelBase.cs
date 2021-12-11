@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -52,11 +52,11 @@ namespace N
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -80,11 +80,11 @@ namespace N
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -108,13 +108,13 @@ namespace N
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p3;
+        private string? p3;
 
         public string P1 => $""Hello {this.P3}"";
 
         public string P2 => $""Hej {this.P3}"";
 
-        public string P3
+        public string? P3
         {
             get { return this.p3; }
             set
@@ -139,13 +139,13 @@ namespace N
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p3;
+        private string? p3;
 
         public string P1 => $""Hello {this.P3}"";
 
         public string P2 => $""Hej {this.P3}"";
 
-        public string P3
+        public string? P3
         {
             get { return this.p3; }
             set
@@ -170,12 +170,12 @@ namespace N
 {
     public class C : N.Core.ViewModelBase
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public string FullName => $""{this.FirstName} {this.LastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -195,7 +195,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -227,11 +227,11 @@ namespace N
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set

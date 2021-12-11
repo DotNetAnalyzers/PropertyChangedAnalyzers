@@ -43,6 +43,8 @@ namespace N
         public static void Check(string type, string expression)
         {
             var code = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -53,7 +55,7 @@ namespace N
     {
         private ReferenceType p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ReferenceType P
         {
@@ -70,7 +72,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -85,6 +87,8 @@ namespace N
         public static void CheckNegated(string type, string expression)
         {
             var code = @"
+#pragma warning disable CS8019
+#nullable disable
 namespace N
 {
     using System;
@@ -95,7 +99,7 @@ namespace N
     {
         private ReferenceType p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ReferenceType P
         {
@@ -110,7 +114,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -159,15 +163,14 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -195,7 +198,6 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -231,7 +233,6 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -379,27 +380,26 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
-        private ReferenceType foo;
+        private ReferenceType? f;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType ReferenceType
+        public ReferenceType? ReferenceType
         {
-            get { return this.foo; }
+            get { return this.f; }
             set
             {
-                if (System.Collections.Generic.EqualityComparer<ReferenceType>.Default.Equals(value, this.foo))
+                if (System.Collections.Generic.EqualityComparer<ReferenceType>.Default.Equals(value, this.f))
                 {
                     return;
                 }
 
-                this.foo = value;
+                this.f = value;
                 this.OnPropertyChanged();
             }
         }
@@ -428,24 +428,23 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
-        private ReferenceType foo;
+        private ReferenceType? f;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType ReferenceType
+        public ReferenceType? ReferenceType
         {
-            get { return this.foo; }
+            get { return this.f; }
             set
             {
-                if (!System.Collections.Generic.EqualityComparer<ReferenceType>.Default.Equals(value, this.foo))
+                if (!System.Collections.Generic.EqualityComparer<ReferenceType>.Default.Equals(value, this.f))
                 {
-                    this.foo = value;
+                    this.f = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -471,11 +470,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get => this.p;
             set
@@ -511,11 +510,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get => this.p;
             set

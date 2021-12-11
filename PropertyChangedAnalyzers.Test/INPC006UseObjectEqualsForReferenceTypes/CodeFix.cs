@@ -43,11 +43,11 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -78,11 +78,11 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -119,11 +119,11 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get => this.p;
             set
@@ -152,11 +152,11 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get => this.p;
             set
@@ -190,11 +190,11 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -224,11 +224,11 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -264,11 +264,11 @@ namespace N
 
     internal class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        internal ReferenceType P
+        internal ReferenceType? P
         {
             get { return this.p; }
             set
@@ -298,11 +298,11 @@ namespace N
 
     internal class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        internal ReferenceType P
+        internal ReferenceType? P
         {
             get { return this.p; }
             set
@@ -338,11 +338,11 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
@@ -370,11 +370,11 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
+        private ReferenceType? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get { return this.p; }
             set
