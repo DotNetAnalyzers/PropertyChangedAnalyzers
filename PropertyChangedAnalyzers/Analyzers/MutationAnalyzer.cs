@@ -131,7 +131,7 @@
                             continue;
                         }
 
-                        var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>(PropertyNameKey, property.Name), });
+                        var properties = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string?>(PropertyNameKey, property.Name), });
                         context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC003NotifyForDependentProperty, context.Node.GetLocation(), properties, property.Name));
                     }
                 }

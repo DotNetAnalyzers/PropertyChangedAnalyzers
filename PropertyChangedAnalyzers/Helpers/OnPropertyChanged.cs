@@ -121,7 +121,7 @@
             }
 
             // not using known symbol here as both jetbrains & mvvm cross defines a NotifyPropertyChangedInvocatorAttribute
-            if (method.GetAttributes().TryFirst(x => x.AttributeClass.Name == "NotifyPropertyChangedInvocatorAttribute", out _))
+            if (method.GetAttributes().TryFirst(x => x.AttributeClass?.Name == "NotifyPropertyChangedInvocatorAttribute", out _))
             {
                 return AnalysisResult.Yes;
             }

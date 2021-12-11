@@ -47,7 +47,7 @@
                                         $"Notify that property {propertyName} changes.",
                                         async (editor, cancellationToken) =>
                                         {
-                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName!, cancellationToken)
                                                                                          .ConfigureAwait(false);
                                             editor.ReplaceNode(
                                                 expressionStatement,
@@ -67,7 +67,7 @@
                                         $"Notify that property {propertyName} changes.",
                                         async (editor, cancellationToken) =>
                                         {
-                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName!, cancellationToken)
                                                                                          .ConfigureAwait(false);
                                             _ = editor.ReplaceNode(
                                                 setter,
@@ -84,7 +84,7 @@
                                         $"Notify that property {propertyName} changes.",
                                         async (editor, cancellationToken) =>
                                         {
-                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName!, cancellationToken)
                                                                                          .ConfigureAwait(false);
                                             editor.AddOnPropertyChanged(ifTrySet, onPropertyChangedStatement);
                                         },
@@ -98,7 +98,7 @@
                                         $"Notify that property {propertyName} changes.",
                                         async (editor, cancellationToken) =>
                                         {
-                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                            var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName!, cancellationToken)
                                                                                          .ConfigureAwait(false);
                                             editor.AddOnPropertyChangedAfter(ifNotTrySetReturn, onPropertyChangedStatement);
                                         },
@@ -113,7 +113,7 @@
                                 $"Notify that property {propertyName} changes.",
                                 async (editor, cancellationToken) =>
                                 {
-                                    var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName, cancellationToken)
+                                    var onPropertyChangedStatement = await editor.OnPropertyChangedInvocationStatementAsync(onPropertyChangedMethod, propertyName!, cancellationToken)
                                                                                  .ConfigureAwait(false);
                                     editor.AddOnPropertyChanged(expression, onPropertyChangedStatement);
                                 },

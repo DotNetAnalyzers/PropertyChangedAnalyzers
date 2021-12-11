@@ -20,7 +20,7 @@
         internal static bool Uses(ExpressionSyntax assigned, ExpressionSyntax returned, SyntaxNodeAnalysisContext context, PooledSet<SyntaxNode>? visited = null)
         {
             using var assignedPath = MemberPath.PathWalker.Borrow(assigned);
-            var containingType = context.ContainingSymbol.ContainingType;
+            var containingType = context.ContainingSymbol!.ContainingType;
             if (UsedMemberWalker.Uses(returned, assignedPath, Search.TopLevel, containingType, context.SemanticModel, context.CancellationToken))
             {
                 return true;
@@ -45,7 +45,7 @@
 
         internal static bool Uses(SyntaxNode scope, MemberPath.PathWalker memberPath, SyntaxNodeAnalysisContext context)
         {
-            return UsedMemberWalker.Uses(scope, memberPath, Search.Recursive, context.ContainingSymbol.ContainingType, context.SemanticModel, context.CancellationToken);
+            return UsedMemberWalker.Uses(scope, memberPath, Search.Recursive, context.ContainingSymbol!.ContainingType, context.SemanticModel, context.CancellationToken);
         }
 
         private static bool Equals(MemberPath.PathWalker xWalker, MemberPath.PathWalker yWalker)

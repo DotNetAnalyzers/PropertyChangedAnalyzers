@@ -258,7 +258,7 @@
                                 invocation.GetLocation()));
                     }
 
-                    IPropertySymbol ContainingProperty() => (IPropertySymbol)((IMethodSymbol)context.ContainingSymbol).AssociatedSymbol!;
+                    IPropertySymbol ContainingProperty() => (IPropertySymbol)((IMethodSymbol)context.ContainingSymbol!).AssociatedSymbol!;
                 }
 
                 bool ShouldUseObjectReferenceEquals(ExpressionSyntax x, ExpressionSyntax y)
