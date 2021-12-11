@@ -8,7 +8,9 @@
     {
         public static class ViewModelBaseNotInSource
         {
-            private static readonly Settings Settings = Settings.Default.WithMetadataReferences(x => x.Append(Gu.Roslyn.Asserts.MetadataReferences.CreateBinary(@"
+            private static readonly Settings Settings = Settings.Default.WithMetadataReferences(
+                x => x.Append(
+                    BinaryReference.Compile(@"
 namespace N.Core
 {
     using System;
