@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC020PreferExpressionBodyAccessor
+﻿namespace PropertyChangedAnalyzers.Test.INPC020PreferExpressionBodyAccessor
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -23,11 +23,11 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get => this.p;
 
@@ -62,11 +62,11 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get => this.p;
 
@@ -103,11 +103,11 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get => this.p;
 
@@ -142,11 +142,11 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get => this.p;
 
@@ -182,13 +182,13 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p}"";
 
-        public string P
+        public string? P
         {
             ↓get
             {
@@ -220,13 +220,13 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p}"";
 
-        public string P
+        public string? P
         {
             get => this.p;
 

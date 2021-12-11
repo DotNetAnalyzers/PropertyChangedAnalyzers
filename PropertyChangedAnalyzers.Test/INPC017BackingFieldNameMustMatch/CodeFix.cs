@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatch
+﻿namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatch
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -21,7 +21,7 @@ namespace N
 {
     public class C
     {
-        private int wrong;
+        private int wrong = 1;
 
         public int P => this.↓wrong;
     }
@@ -32,7 +32,7 @@ namespace N
 {
     public class C
     {
-        private int p;
+        private int p = 1;
 
         public int P => this.p;
     }
@@ -52,7 +52,7 @@ namespace N
 {
     public class C
     {
-        private int _wrong;
+        private int _wrong = 1;
 
         public int P => ↓_wrong;
     }
@@ -63,7 +63,7 @@ namespace N
 {
     public class C
     {
-        private int _p;
+        private int _p = 1;
 
         public int P => _p;
     }
@@ -83,7 +83,7 @@ namespace N
 {
     public class C
     {
-        private int wrong;
+        private int wrong = 1;
 
         public int P
         {
@@ -96,7 +96,7 @@ namespace N
 {
     public class C
     {
-        private int p;
+        private int p = 1;
 
         public int P
         {
@@ -120,7 +120,7 @@ namespace N
 {
     public class C
     {
-        private int wrong;
+        private int wrong = 1;
 
         public int P
         {
@@ -134,7 +134,7 @@ namespace N
 {
     public class C
     {
-        private int p;
+        private int p = 1;
 
         public int P
         {
@@ -158,7 +158,7 @@ namespace N
 {
     public class C
     {
-        private int _wrong;
+        private int _wrong = 1;
 
         public int P
         {
@@ -171,7 +171,7 @@ namespace N
 {
     public class C
     {
-        private int _p;
+        private int _p = 1;
 
         public int P
         {

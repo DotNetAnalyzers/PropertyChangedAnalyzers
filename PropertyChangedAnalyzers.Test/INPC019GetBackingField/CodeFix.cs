@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC019GetBackingField
+﻿namespace PropertyChangedAnalyzers.Test.INPC019GetBackingField
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -17,9 +17,9 @@ namespace N
 {
     public sealed class C
     {
-        private string p;
+        private string? p;
 
-        public string P
+        public string? P
         {
             get => ↓""abc"";
             set => this.p = value;
@@ -31,9 +31,9 @@ namespace N
 {
     public sealed class C
     {
-        private string p;
+        private string? p;
 
-        public string P
+        public string? P
         {
             get => this.p;
             set => this.p = value;
@@ -55,13 +55,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get => ↓""abc"";
 
@@ -92,13 +92,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
 
@@ -136,13 +136,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string @default;
+        private string? @default;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.@default}"";
 
-        public string Default
+        public string? Default
         {
             get => ↓""abc"";
 
@@ -173,13 +173,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string @default;
+        private string? @default;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.@default}"";
 
-        public string Default
+        public string? Default
         {
             get => this.@default;
 
@@ -218,14 +218,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
         private int p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get => ↓""abc"";
 
@@ -272,14 +272,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
         private int p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
 
@@ -330,13 +330,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get
             {
@@ -371,13 +371,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get
             {

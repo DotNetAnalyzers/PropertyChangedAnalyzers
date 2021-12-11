@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtected
+﻿namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtected
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -14,7 +14,6 @@ namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtected
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -37,7 +36,6 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public sealed class C : INotifyPropertyChanged
     {

@@ -16,7 +16,6 @@
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -61,7 +60,7 @@ namespace N
 {
     public class C
     {
-        private int p;
+        private int p = 1;
 
         public int P => this.p;
     }
@@ -78,7 +77,7 @@ namespace N
 {
     public class C
     {
-        private int @default;
+        private int @default = 1;
 
         public int Default => this.@default;
     }
@@ -260,24 +259,24 @@ namespace N
 {
     public class C<T> : I
     {
-        private T p;
+        private T? p;
 
-        public T P
+        public T? P
         {
             get => this.p;
             set => this.p = value;
         }
 
-        object I.P
+        object? I.P
         {
             get => this.p;
-            set => this.P = (T)value;
+            set => this.P = (T?)value;
         }
     }
 
     interface I
     {
-        object P { get; set; }
+        object? P { get; set; }
     }
 }";
 
@@ -294,7 +293,7 @@ namespace N
 
     public class C
     {
-        private int[] ints;
+        private int[] ints = new int[1];
 
         public int Sum => this.ints.Sum();
     }
@@ -311,7 +310,7 @@ namespace N
 {
     public class C
     {
-        private string text;
+        private string text = string.Empty;
 
         public int TextLength => this.text.Length;
     }
@@ -332,8 +331,8 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int f1;
-        private int f2;
+        private int f1 = 1;
+        private int f2 = 2;
         private E p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -445,9 +444,9 @@ namespace N
 {
     public class C
     {
-        private string inpcEnabled;
+        private string? inpcEnabled;
 
-        public string INPCEnabled
+        public string? INPCEnabled
         {
             get => this.inpcEnabled;
             set => this.inpcEnabled = value;
@@ -466,9 +465,9 @@ namespace N
 {
     public class C
     {
-        private string _inpcEnabled;
+        private string? _inpcEnabled;
 
-        public string INPCEnabled
+        public string? INPCEnabled
         {
             get => _inpcEnabled;
             set => _inpcEnabled = value;

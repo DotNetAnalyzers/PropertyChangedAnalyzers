@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC019GetBackingField
+﻿namespace PropertyChangedAnalyzers.Test.INPC019GetBackingField
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -20,13 +20,13 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
 
@@ -62,14 +62,14 @@ namespace ValidCode.TrySet
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
         private int p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
 
@@ -117,13 +117,13 @@ namespace N
 
     public sealed class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get
             {

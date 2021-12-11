@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdate
+﻿namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdate
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -53,7 +53,6 @@ namespace N.Core
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -97,7 +96,6 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -143,11 +141,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -170,11 +168,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -201,11 +199,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -228,11 +226,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set

@@ -12,6 +12,7 @@
         public static void ExpressionBodyNotAssigning()
         {
             var code = @"
+#pragma warning disable CS0649
 namespace N
 {
     using System.ComponentModel;
@@ -19,13 +20,13 @@ namespace N
 
     public class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
             ↓set
@@ -55,6 +56,7 @@ namespace N
         public static void TrySetExpressionBody()
         {
             var code = @"
+#pragma warning disable CS0649
 namespace ValidCode.TrySet
 {
     using System.Collections.Generic;
@@ -63,14 +65,14 @@ namespace ValidCode.TrySet
 
     public class ExpressionBodies : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
         private int p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
 
@@ -115,6 +117,7 @@ namespace ValidCode.TrySet
         public static void StatementBody()
         {
             var code = @"
+#pragma warning disable CS0649, CS8618
 namespace N
 {
     using System.ComponentModel;
