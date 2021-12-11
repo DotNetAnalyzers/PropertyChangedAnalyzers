@@ -34,6 +34,7 @@ namespace N
         public static void Message()
         {
             var before = @"
+#pragma warning disable CS0169
 namespace N
 {
     using System;
@@ -70,6 +71,7 @@ namespace N
 }";
 
             var after = @"
+#pragma warning disable CS0169
 namespace N
 {
     using System;
@@ -111,6 +113,7 @@ namespace N
         public static void Check(string expressionBefore, string expressionAfter)
         {
             var before = @"
+#pragma warning disable CS0169
 namespace N
 {
     using System;
@@ -119,12 +122,12 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
-        private ReferenceType f;
+        private ReferenceType? p;
+        private ReferenceType? f;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get => this.p;
             set
@@ -147,6 +150,7 @@ namespace N
 }".AssertReplace("ReferenceEquals(value, ↓this.f)", expressionBefore);
 
             var after = @"
+#pragma warning disable CS0169
 namespace N
 {
     using System;
@@ -155,12 +159,12 @@ namespace N
 
     public class C: INotifyPropertyChanged
     {
-        private ReferenceType p;
-        private ReferenceType f;
+        private ReferenceType? p;
+        private ReferenceType? f;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ReferenceType P
+        public ReferenceType? P
         {
             get => this.p;
             set
