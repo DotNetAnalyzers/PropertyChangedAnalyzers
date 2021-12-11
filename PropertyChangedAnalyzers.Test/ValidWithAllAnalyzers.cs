@@ -37,10 +37,10 @@
             Assert.Pass($"Count: {AllAnalyzers.Count}");
         }
 
-        // [TestCaseSource(nameof(AllAnalyzers))]
+        [TestCaseSource(nameof(AllAnalyzers))]
         public static void AnalyzersProject(DiagnosticAnalyzer analyzer)
         {
-            // Does not figure out source package
+            Assert.Inconclusive("Does not figure out source package");
             RoslynAssert.Valid(analyzer, AnalyzersProjectSolution);
         }
 
