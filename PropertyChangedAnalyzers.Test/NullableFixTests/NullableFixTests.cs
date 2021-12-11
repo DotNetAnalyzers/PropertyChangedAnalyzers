@@ -86,7 +86,6 @@ namespace N
         public static void DeclareEventNullableWhenConstructor()
         {
             var before = @"
-#pragma warning disable CS8612
 namespace N
 {
     using System.ComponentModel;
@@ -100,7 +99,7 @@ namespace N
             this.p = p;
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int P
         {
@@ -125,7 +124,6 @@ namespace N
 }";
 
             var after = @"
-#pragma warning disable CS8612
 namespace N
 {
     using System.ComponentModel;

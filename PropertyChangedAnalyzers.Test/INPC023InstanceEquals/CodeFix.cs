@@ -15,7 +15,7 @@
         public static void WhenNullable(string type, string expected)
         {
             var before = @"
-#nullable enable
+#pragma warning disable CS8618
 namespace N
 {
     using System.ComponentModel;
@@ -50,7 +50,7 @@ namespace N
 }".AssertReplace("int?", type);
 
             var after = @"
-#nullable enable
+#pragma warning disable CS8618
 namespace N
 {
     using System.ComponentModel;
@@ -94,7 +94,7 @@ namespace N
         public static void Negated(string type, string expected)
         {
             var before = @"
-#nullable enable
+#pragma warning disable CS8618
 namespace N
 {
     using System.ComponentModel;
@@ -127,7 +127,7 @@ namespace N
 }".AssertReplace("int?", type);
 
             var after = @"
-#nullable enable
+#pragma warning disable CS8618
 namespace N
 {
     using System.ComponentModel;
