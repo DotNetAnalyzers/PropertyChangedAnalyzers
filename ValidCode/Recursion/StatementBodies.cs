@@ -2,7 +2,6 @@
 #pragma warning disable INPC007, INPC015, INPC020, CS0067
 namespace ValidCode.Recursion
 {
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 

@@ -1,23 +1,22 @@
-﻿// ReSharper disable All
-#pragma warning disable IDE1006 // Naming Styles
+﻿#nullable disable
 namespace ValidCode
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public sealed class WithEventDeclaration : INotifyPropertyChanged
+    public sealed class WithEventDeclarationNullableDisabled : INotifyPropertyChanged
     {
-        private string? name;
+        private string name;
 
-        public event PropertyChangedEventHandler? PropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged
         {
             add => this.propertyChanged += value;
             remove => this.propertyChanged -= value;
         }
 
-        private event PropertyChangedEventHandler? propertyChanged;
+        private event PropertyChangedEventHandler propertyChanged;
 
-        public string? Name
+        public string Name
         {
             get => this.name;
 
@@ -33,7 +32,7 @@ namespace ValidCode
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.propertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

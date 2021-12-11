@@ -31,7 +31,7 @@ namespace ValidCode.Interfaces
         {
             get => this.Value;
 #pragma warning disable CS8601 // Possible null reference assignment.
-            set => this.Value = (T)value;
+            set => this.Value = (T?)value;
 #pragma warning restore CS8601 // Possible null reference assignment.
         }
 
