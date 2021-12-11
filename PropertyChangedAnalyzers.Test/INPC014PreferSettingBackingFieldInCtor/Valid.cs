@@ -247,7 +247,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -256,7 +256,7 @@ namespace N
             this.PropertyChanged += (_, __) => this.P = p;
         }
 
-        public string P
+        public string? P
         {
             get => this.p;
             private set
@@ -291,18 +291,18 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public C(string p)
         {
-            void OnChanged(object _, PropertyChangedEventArgs __) => this.P = p;
+            void OnChanged(object? _, PropertyChangedEventArgs __) => this.P = p;
 
             this.PropertyChanged += OnChanged;
         }
 
-        public string P
+        public string? P
         {
             get => this.p;
             private set

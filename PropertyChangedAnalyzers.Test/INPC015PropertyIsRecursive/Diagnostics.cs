@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursive
+﻿namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursive
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -67,7 +67,7 @@ namespace N
 {
     public class C
     {
-        private int p;
+        private int p = 1;
 
         public int P
         {
@@ -88,7 +88,7 @@ namespace N
 {
     public class C
     {
-        private int p;
+        private int p = 1;
 
         public int P
         {

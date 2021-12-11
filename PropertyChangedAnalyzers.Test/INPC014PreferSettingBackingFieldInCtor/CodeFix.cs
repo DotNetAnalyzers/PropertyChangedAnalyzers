@@ -237,6 +237,7 @@ namespace N
 
         public C(int value)
         {
+#pragma warning disable CS0219
             var p = 1;
             ↓this.P = value;
         }
@@ -258,6 +259,7 @@ namespace N
 
         public C(int value)
         {
+#pragma warning disable CS0219
             var p = 1;
             this.p = value;
         }
