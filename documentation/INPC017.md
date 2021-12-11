@@ -1,5 +1,5 @@
 # INPC017
-## Backing field name must match.
+## Backing field name must match
 
 | Topic    | Value
 | :--      | :--
@@ -30,21 +30,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC017 // Backing field name must match.
+#pragma warning disable INPC017 // Backing field name must match
 Code violating the rule here
-#pragma warning restore INPC017 // Backing field name must match.
+#pragma warning restore INPC017 // Backing field name must match
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC017 // Backing field name must match.
+#pragma warning disable INPC017 // Backing field name must match
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC017:Backing field name must match.", 
+    "INPC017:Backing field name must match", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

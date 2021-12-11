@@ -1,5 +1,5 @@
 # INPC021
-## Setter should set backing field.
+## Setter should set backing field
 
 | Topic    | Value
 | :--      | :--
@@ -47,21 +47,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC021 // Setter should set backing field.
+#pragma warning disable INPC021 // Setter should set backing field
 Code violating the rule here
-#pragma warning restore INPC021 // Setter should set backing field.
+#pragma warning restore INPC021 // Setter should set backing field
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC021 // Setter should set backing field.
+#pragma warning disable INPC021 // Setter should set backing field
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC021:Setter should set backing field.", 
+    "INPC021:Setter should set backing field", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

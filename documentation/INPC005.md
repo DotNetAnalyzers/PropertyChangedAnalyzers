@@ -1,5 +1,5 @@
 # INPC005
-## Check if value is different before notifying.
+## Check if value is different before notifying
 
 | Topic    | Value
 | :--      | :--
@@ -30,21 +30,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC005 // Check if value is different before notifying.
+#pragma warning disable INPC005 // Check if value is different before notifying
 Code violating the rule here
-#pragma warning restore INPC005 // Check if value is different before notifying.
+#pragma warning restore INPC005 // Check if value is different before notifying
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC005 // Check if value is different before notifying.
+#pragma warning disable INPC005 // Check if value is different before notifying
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC005:Check if value is different before notifying.", 
+    "INPC005:Check if value is different before notifying", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

@@ -1,5 +1,5 @@
 # INPC024
-## ReferenceEquals is always false for value types.
+## ReferenceEquals is always false for value types
 
 | Topic    | Value
 | :--      | :--
@@ -65,21 +65,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC024 // ReferenceEquals is always false for value types.
+#pragma warning disable INPC024 // ReferenceEquals is always false for value types
 Code violating the rule here
-#pragma warning restore INPC024 // ReferenceEquals is always false for value types.
+#pragma warning restore INPC024 // ReferenceEquals is always false for value types
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC024 // ReferenceEquals is always false for value types.
+#pragma warning disable INPC024 // ReferenceEquals is always false for value types
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC024:ReferenceEquals is always false for value types.", 
+    "INPC024:ReferenceEquals is always false for value types", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

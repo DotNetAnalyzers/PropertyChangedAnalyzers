@@ -1,5 +1,5 @@
 # INPC003
-## Notify when property changes.
+## Notify when property changes
 
 | Topic    | Value
 | :--      | :--
@@ -148,21 +148,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC003 // Notify when property changes.
+#pragma warning disable INPC003 // Notify when property changes
 Code violating the rule here
-#pragma warning restore INPC003 // Notify when property changes.
+#pragma warning restore INPC003 // Notify when property changes
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC003 // Notify when property changes.
+#pragma warning disable INPC003 // Notify when property changes
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC003:Notify when property changes.", 
+    "INPC003:Notify when property changes", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

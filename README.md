@@ -15,31 +15,31 @@ Roslyn analyzers for `INotifyPropertyChanged`.
 
 | Id       | Title
 | :--      | :--
-| [INPC001](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC001.md)| The class has mutable properties and should implement INotifyPropertyChanged.
-| [INPC002](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC002.md)| Mutable public property should notify.
-| [INPC003](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC003.md)| Notify when property changes.
+| [INPC001](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC001.md)| The class has mutable properties and should implement INotifyPropertyChanged
+| [INPC002](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC002.md)| Mutable public property should notify
+| [INPC003](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC003.md)| Notify when property changes
 | [INPC004](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC004.md)| Use [CallerMemberName]
-| [INPC005](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC005.md)| Check if value is different before notifying.
-| [INPC006_a](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006_a.md)| Check if value is different using ReferenceEquals before notifying.
-| [INPC006_b](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006_b.md)| Check if value is different using object.Equals before notifying.
-| [INPC007](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC007.md)| The class has PropertyChangedEvent but no invoker.
+| [INPC005](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC005.md)| Check if value is different before notifying
+| [INPC006_a](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006_a.md)| Check if value is different using ReferenceEquals before notifying
+| [INPC006_b](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC006_b.md)| Check if value is different using object.Equals before notifying
+| [INPC007](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC007.md)| The class has PropertyChangedEvent but no invoker
 | [INPC008](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC008.md)| Struct must not implement INotifyPropertyChanged
-| [INPC009](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC009.md)| Don't raise PropertyChanged for missing property.
-| [INPC010](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC010.md)| The property gets and sets a different backing member.
-| [INPC011](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC011.md)| Don't shadow PropertyChanged event.
-| [INPC012](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC012.md)| Don't use expression for raising PropertyChanged.
-| [INPC013](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC013.md)| Use nameof.
-| [INPC014](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC014.md)| Prefer setting backing field in constructor.
-| [INPC015](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC015.md)| Property is recursive.
-| [INPC016](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC016.md)| Notify after update.
-| [INPC017](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC017.md)| Backing field name must match.
-| [INPC018](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC018.md)| PropertyChanged invoker should be protected when the class is not sealed.
-| [INPC019](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC019.md)| Getter should return backing field.
-| [INPC020](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC020.md)| Prefer expression body accessor.
-| [INPC021](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC021.md)| Setter should set backing field.
-| [INPC022](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC022.md)| Comparison should be with backing field.
-| [INPC023](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC023.md)| Don't use instance equals in setter.
-| [INPC024](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC024.md)| ReferenceEquals is always false for value types.
+| [INPC009](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC009.md)| Don't raise PropertyChanged for missing property
+| [INPC010](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC010.md)| The property gets and sets a different backing member
+| [INPC011](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC011.md)| Don't shadow PropertyChanged event
+| [INPC012](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC012.md)| Don't use expression for raising PropertyChanged
+| [INPC013](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC013.md)| Use nameof
+| [INPC014](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC014.md)| Prefer setting backing field in constructor
+| [INPC015](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC015.md)| Property is recursive
+| [INPC016](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC016.md)| Notify after update
+| [INPC017](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC017.md)| Backing field name must match
+| [INPC018](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC018.md)| PropertyChanged invoker should be protected when the class is not sealed
+| [INPC019](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC019.md)| Getter should return backing field
+| [INPC020](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC020.md)| Prefer expression body accessor
+| [INPC021](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC021.md)| Setter should set backing field
+| [INPC022](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC022.md)| Comparison should be with backing field
+| [INPC023](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC023.md)| Don't use instance equals in setter
+| [INPC024](https://github.com/DotNetAnalyzers/PropertyChangedAnalyzers/tree/master/documentation/INPC024.md)| ReferenceEquals is always false for value types
 
 ## Using PropertyChangedAnalyzers
 

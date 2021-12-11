@@ -1,5 +1,5 @@
 # INPC009
-## Don't raise PropertyChanged for missing property.
+## Don't raise PropertyChanged for missing property
 
 | Topic    | Value
 | :--      | :--
@@ -32,21 +32,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC009 // Don't raise PropertyChanged for missing property.
+#pragma warning disable INPC009 // Don't raise PropertyChanged for missing property
 Code violating the rule here
-#pragma warning restore INPC009 // Don't raise PropertyChanged for missing property.
+#pragma warning restore INPC009 // Don't raise PropertyChanged for missing property
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC009 // Don't raise PropertyChanged for missing property.
+#pragma warning disable INPC009 // Don't raise PropertyChanged for missing property
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC009:Don't raise PropertyChanged for missing property.", 
+    "INPC009:Don't raise PropertyChanged for missing property", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

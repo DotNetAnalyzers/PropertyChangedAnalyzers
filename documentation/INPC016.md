@@ -1,5 +1,5 @@
 # INPC016
-## Notify after update.
+## Notify after update
 
 | Topic    | Value
 | :--      | :--
@@ -30,21 +30,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC016 // Notify after update.
+#pragma warning disable INPC016 // Notify after update
 Code violating the rule here
-#pragma warning restore INPC016 // Notify after update.
+#pragma warning restore INPC016 // Notify after update
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC016 // Notify after update.
+#pragma warning disable INPC016 // Notify after update
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC016:Notify after update.", 
+    "INPC016:Notify after update", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

@@ -1,5 +1,5 @@
 ﻿# INPC022
-## Comparison should be with backing field.
+## Comparison should be with backing field
 
 | Topic    | Value
 | :--      | :--
@@ -48,21 +48,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC022 // Comparison should be with backing field.
+#pragma warning disable INPC022 // Comparison should be with backing field
 Code violating the rule here
-#pragma warning restore INPC022 // Comparison should be with backing field.
+#pragma warning restore INPC022 // Comparison should be with backing field
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC022 // Comparison should be with backing field.
+#pragma warning disable INPC022 // Comparison should be with backing field
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC022:Comparison should be with backing field.", 
+    "INPC022:Comparison should be with backing field", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

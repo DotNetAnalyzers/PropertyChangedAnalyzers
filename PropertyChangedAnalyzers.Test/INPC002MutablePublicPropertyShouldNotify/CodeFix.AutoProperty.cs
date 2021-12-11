@@ -62,7 +62,7 @@ namespace N
         }
     }
 }";
-                var expectedDiagnostic = ExpectedDiagnostic.WithMessage("Property 'P' should notify when value changes.");
+                var expectedDiagnostic = ExpectedDiagnostic.WithMessage("Property 'P' should notify when value changes");
                 RoslynAssert.CodeFix(Analyzer, Fix, expectedDiagnostic, before, after, fixTitle: "Notify when value changes.");
             }
 

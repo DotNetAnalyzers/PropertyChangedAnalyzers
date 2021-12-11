@@ -1,5 +1,5 @@
 # INPC010
-## The property gets and sets a different backing member.
+## The property gets and sets a different backing member
 
 | Topic    | Value
 | :--      | :--
@@ -30,21 +30,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC010 // The property gets and sets a different backing member.
+#pragma warning disable INPC010 // The property gets and sets a different backing member
 Code violating the rule here
-#pragma warning restore INPC010 // The property gets and sets a different backing member.
+#pragma warning restore INPC010 // The property gets and sets a different backing member
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC010 // The property gets and sets a different backing member.
+#pragma warning disable INPC010 // The property gets and sets a different backing member
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC010:The property gets and sets a different backing member.", 
+    "INPC010:The property gets and sets a different backing member", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

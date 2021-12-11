@@ -1,5 +1,5 @@
 ﻿# INPC023
-## Don't use instance equals in setter.
+## Don't use instance equals in setter
 
 | Topic    | Value
 | :--      | :--
@@ -65,21 +65,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC023 // Don't use instance equals in setter.
+#pragma warning disable INPC023 // Don't use instance equals in setter
 Code violating the rule here
-#pragma warning restore INPC023 // Don't use instance equals in setter.
+#pragma warning restore INPC023 // Don't use instance equals in setter
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC023 // Don't use instance equals in setter.
+#pragma warning disable INPC023 // Don't use instance equals in setter
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC023:Don't use instance equals in setter.", 
+    "INPC023:Don't use instance equals in setter", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

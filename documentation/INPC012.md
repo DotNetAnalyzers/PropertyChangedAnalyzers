@@ -1,5 +1,5 @@
 # INPC012
-## Don't use expression for raising PropertyChanged.
+## Don't use expression for raising PropertyChanged
 
 | Topic    | Value
 | :--      | :--
@@ -30,21 +30,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC012 // Don't use expression for raising PropertyChanged.
+#pragma warning disable INPC012 // Don't use expression for raising PropertyChanged
 Code violating the rule here
-#pragma warning restore INPC012 // Don't use expression for raising PropertyChanged.
+#pragma warning restore INPC012 // Don't use expression for raising PropertyChanged
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC012 // Don't use expression for raising PropertyChanged.
+#pragma warning disable INPC012 // Don't use expression for raising PropertyChanged
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC012:Don't use expression for raising PropertyChanged.", 
+    "INPC012:Don't use expression for raising PropertyChanged", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

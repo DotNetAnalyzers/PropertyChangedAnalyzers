@@ -1,5 +1,5 @@
 # INPC014
-## Prefer setting backing field in constructor.
+## Prefer setting backing field in constructor
 
 | Topic    | Value
 | :--      | :--
@@ -34,21 +34,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC014 // Prefer setting backing field in constructor.
+#pragma warning disable INPC014 // Prefer setting backing field in constructor
 Code violating the rule here
-#pragma warning restore INPC014 // Prefer setting backing field in constructor.
+#pragma warning restore INPC014 // Prefer setting backing field in constructor
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC014 // Prefer setting backing field in constructor.
+#pragma warning disable INPC014 // Prefer setting backing field in constructor
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC014:Prefer setting backing field in constructor.", 
+    "INPC014:Prefer setting backing field in constructor", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

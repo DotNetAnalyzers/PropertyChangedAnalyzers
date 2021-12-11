@@ -1,5 +1,5 @@
 # INPC002
-## Mutable public property should notify.
+## Mutable public property should notify
 
 | Topic    | Value
 | :--      | :--
@@ -107,21 +107,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC002 // Mutable public property should notify.
+#pragma warning disable INPC002 // Mutable public property should notify
 Code violating the rule here
-#pragma warning restore INPC002 // Mutable public property should notify.
+#pragma warning restore INPC002 // Mutable public property should notify
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC002 // Mutable public property should notify.
+#pragma warning disable INPC002 // Mutable public property should notify
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC002:Mutable public property should notify.", 
+    "INPC002:Mutable public property should notify", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

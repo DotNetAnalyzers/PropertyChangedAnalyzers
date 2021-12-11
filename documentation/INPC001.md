@@ -1,5 +1,5 @@
 # INPC001
-## The class has mutable properties and should implement INotifyPropertyChanged.
+## The class has mutable properties and should implement INotifyPropertyChanged
 
 | Topic    | Value
 | :--      | :--
@@ -33,21 +33,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC001 // The class has mutable properties and should implement INotifyPropertyChanged.
+#pragma warning disable INPC001 // The class has mutable properties and should implement INotifyPropertyChanged
 Code violating the rule here
-#pragma warning restore INPC001 // The class has mutable properties and should implement INotifyPropertyChanged.
+#pragma warning restore INPC001 // The class has mutable properties and should implement INotifyPropertyChanged
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC001 // The class has mutable properties and should implement INotifyPropertyChanged.
+#pragma warning disable INPC001 // The class has mutable properties and should implement INotifyPropertyChanged
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC001:The class has mutable properties and should implement INotifyPropertyChanged.", 
+    "INPC001:The class has mutable properties and should implement INotifyPropertyChanged", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

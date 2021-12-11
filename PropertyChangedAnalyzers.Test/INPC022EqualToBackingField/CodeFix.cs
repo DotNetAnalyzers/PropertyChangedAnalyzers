@@ -106,7 +106,7 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Comparison should be with backing field."), before, after, fixTitle: "Use: this.p");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Comparison should be with backing field"), before, after, fixTitle: "Use: this.p");
         }
 
         [TestCaseSource(nameof(TestCases))]

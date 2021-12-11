@@ -1,5 +1,5 @@
 # INPC015
-## Property is recursive.
+## Property is recursive
 
 | Topic    | Value
 | :--      | :--
@@ -33,21 +33,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC015 // Property is recursive.
+#pragma warning disable INPC015 // Property is recursive
 Code violating the rule here
-#pragma warning restore INPC015 // Property is recursive.
+#pragma warning restore INPC015 // Property is recursive
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC015 // Property is recursive.
+#pragma warning disable INPC015 // Property is recursive
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC015:Property is recursive.", 
+    "INPC015:Property is recursive", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->

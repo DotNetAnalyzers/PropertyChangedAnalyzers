@@ -50,7 +50,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member."), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member"), code);
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member."), code);
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member"), code);
         }
 
         [Test]

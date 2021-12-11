@@ -4,34 +4,34 @@
 
     internal static class Descriptors
     {
-        internal static readonly DiagnosticDescriptor INPC001ImplementINotifyPropertyChanged = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC001ImplementINotifyPropertyChanged = Create(
             id: "INPC001",
-            title: "The class has mutable properties and should implement INotifyPropertyChanged.",
+            title: "The class has mutable properties and should implement INotifyPropertyChanged",
             messageFormat: "{0}",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "The class has mutable properties and should implement INotifyPropertyChanged.");
 
-        internal static readonly DiagnosticDescriptor INPC002MutablePublicPropertyShouldNotify = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC002MutablePublicPropertyShouldNotify = Create(
             id: "INPC002",
-            title: "Mutable public property should notify.",
-            messageFormat: "Property '{0}' should notify when value changes.",
+            title: "Mutable public property should notify",
+            messageFormat: "Property '{0}' should notify when value changes",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "All mutable public properties should notify when their value changes.");
 
-        internal static readonly DiagnosticDescriptor INPC003NotifyForDependentProperty = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC003NotifyForDependentProperty = Create(
             id: "INPC003",
-            title: "Notify when property changes.",
-            messageFormat: "Notify that property '{0}' changes.",
+            title: "Notify when property changes",
+            messageFormat: "Notify that property '{0}' changes",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Notify when property changes.");
 
-        internal static readonly DiagnosticDescriptor INPC004UseCallerMemberName = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC004UseCallerMemberName = Create(
             id: "INPC004",
             title: "Use [CallerMemberName]",
             messageFormat: "Use [CallerMemberName]",
@@ -40,43 +40,43 @@
             isEnabledByDefault: true,
             description: "Use [CallerMemberName]");
 
-        internal static readonly DiagnosticDescriptor INPC005CheckIfDifferentBeforeNotifying = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC005CheckIfDifferentBeforeNotifying = Create(
             id: "INPC005",
-            title: "Check if value is different before notifying.",
-            messageFormat: "Check if value is different before notifying.",
+            title: "Check if value is different before notifying",
+            messageFormat: "Check if value is different before notifying",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Check if value is different before notifying.");
 
-        internal static readonly DiagnosticDescriptor INPC006UseObjectEqualsForReferenceTypes = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC006UseObjectEqualsForReferenceTypes = Create(
             id: "INPC006_b",
-            title: "Check if value is different using object.Equals before notifying.",
-            messageFormat: "Check if value is different using object.Equals before notifying.",
+            title: "Check if value is different using object.Equals before notifying",
+            messageFormat: "Check if value is different using object.Equals before notifying",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Hidden,
             isEnabledByDefault: false,
             description: "Check if value is different using object.Equals before notifying.");
 
-        internal static readonly DiagnosticDescriptor INPC006UseReferenceEqualsForReferenceTypes = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC006UseReferenceEqualsForReferenceTypes = Create(
             id: "INPC006_a",
-            title: "Check if value is different using ReferenceEquals before notifying.",
-            messageFormat: "Check if value is different using ReferenceEquals before notifying.",
+            title: "Check if value is different using ReferenceEquals before notifying",
+            messageFormat: "Check if value is different using ReferenceEquals before notifying",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Hidden,
             isEnabledByDefault: true,
             description: "Check if value is different using ReferenceEquals before notifying.");
 
-        internal static readonly DiagnosticDescriptor INPC007MissingInvoker = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC007MissingInvoker = Create(
             id: "INPC007",
-            title: "The class has PropertyChangedEvent but no invoker.",
-            messageFormat: "The class has PropertyChangedEvent but no invoker.",
+            title: "The class has PropertyChangedEvent but no invoker",
+            messageFormat: "The class has PropertyChangedEvent but no invoker",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "The class has PropertyChangedEvent but no invoker.");
 
-        internal static readonly DiagnosticDescriptor INPC008StructMustNotNotify = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC008StructMustNotNotify = Create(
             id: "INPC008",
             title: "Struct must not implement INotifyPropertyChanged",
             messageFormat: "Struct '{0}' implements INotifyPropertyChanged",
@@ -85,91 +85,91 @@
             isEnabledByDefault: true,
             description: "Struct must not implement INotifyPropertyChanged");
 
-        internal static readonly DiagnosticDescriptor INPC009NotifiesForMissingProperty = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC009NotifiesForMissingProperty = Create(
             id: "INPC009",
-            title: "Don't raise PropertyChanged for missing property.",
-            messageFormat: "Don't raise PropertyChanged for missing property.",
+            title: "Don't raise PropertyChanged for missing property",
+            messageFormat: "Don't raise PropertyChanged for missing property",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Don't raise PropertyChanged for missing property.");
 
-        internal static readonly DiagnosticDescriptor INPC010GetAndSetSame = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC010GetAndSetSame = Create(
             id: "INPC010",
-            title: "The property gets and sets a different backing member.",
-            messageFormat: "The property gets and sets a different backing member.",
+            title: "The property gets and sets a different backing member",
+            messageFormat: "The property gets and sets a different backing member",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "The property gets and sets a different backing member.");
 
-        internal static readonly DiagnosticDescriptor INPC011DoNotShadow = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC011DoNotShadow = Create(
             id: "INPC011",
-            title: "Don't shadow PropertyChanged event.",
-            messageFormat: "Don't shadow PropertyChanged event.",
+            title: "Don't shadow PropertyChanged event",
+            messageFormat: "Don't shadow PropertyChanged event",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "Don't shadow PropertyChanged event.");
 
-        internal static readonly DiagnosticDescriptor INPC012DoNotUseExpression = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC012DoNotUseExpression = Create(
             id: "INPC012",
-            title: "Don't use expression for raising PropertyChanged.",
-            messageFormat: "Don't use expression for raising PropertyChanged.",
+            title: "Don't use expression for raising PropertyChanged",
+            messageFormat: "Don't use expression for raising PropertyChanged",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Don't use expression for raising PropertyChanged.");
 
-        internal static readonly DiagnosticDescriptor INPC013UseNameof = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC013UseNameof = Create(
             id: "INPC013",
-            title: "Use nameof.",
-            messageFormat: "Use nameof.",
+            title: "Use nameof",
+            messageFormat: "Use nameof",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Use nameof.");
 
-        internal static readonly DiagnosticDescriptor INPC014SetBackingFieldInConstructor = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC014SetBackingFieldInConstructor = Create(
             id: "INPC014",
-            title: "Prefer setting backing field in constructor.",
-            messageFormat: "Prefer setting backing field in constructor.",
+            title: "Prefer setting backing field in constructor",
+            messageFormat: "Prefer setting backing field in constructor",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
             description: "Prefer setting backing field in constructor.");
 
-        internal static readonly DiagnosticDescriptor INPC015PropertyIsRecursive = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC015PropertyIsRecursive = Create(
             id: "INPC015",
-            title: "Property is recursive.",
-            messageFormat: "Property is recursive {0}.",
+            title: "Property is recursive",
+            messageFormat: "Property is recursive {0}",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Property is recursive.");
 
-        internal static readonly DiagnosticDescriptor INPC016NotifyAfterMutation = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC016NotifyAfterMutation = Create(
             id: "INPC016",
-            title: "Notify after update.",
-            messageFormat: "Notify after updating the backing field.",
+            title: "Notify after update",
+            messageFormat: "Notify after updating the backing field",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Notify after updating the backing field.");
 
-        internal static readonly DiagnosticDescriptor INPC017BackingFieldNameMisMatch = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC017BackingFieldNameMisMatch = Create(
             id: "INPC017",
-            title: "Backing field name must match.",
-            messageFormat: "Backing field name must match.",
+            title: "Backing field name must match",
+            messageFormat: "Backing field name must match",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Backing field name must match.");
 
-        internal static readonly DiagnosticDescriptor INPC018InvokerShouldBeProtected = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC018InvokerShouldBeProtected = Create(
             id: "INPC018",
-            title: "PropertyChanged invoker should be protected when the class is not sealed.",
-            messageFormat: "PropertyChanged invoker should be protected when the class is not sealed.",
+            title: "PropertyChanged invoker should be protected when the class is not sealed",
+            messageFormat: "PropertyChanged invoker should be protected when the class is not sealed",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
@@ -177,53 +177,53 @@
 
         internal static readonly DiagnosticDescriptor INPC019GetBackingField = Create(
             id: "INPC019",
-            title: "Getter should return backing field.",
-            messageFormat: "Getter should return backing field.",
+            title: "Getter should return backing field",
+            messageFormat: "Getter should return backing field",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
             description: "Getter should return backing field.");
 
-        internal static readonly DiagnosticDescriptor INPC020PreferExpressionBodyAccessor = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC020PreferExpressionBodyAccessor = Create(
             id: "INPC020",
-            title: "Prefer expression body accessor.",
-            messageFormat: "Prefer expression body accessor.",
+            title: "Prefer expression body accessor",
+            messageFormat: "Prefer expression body accessor",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
             description: "Prefer expression body accessor.");
 
-        internal static readonly DiagnosticDescriptor INPC021SetBackingField = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC021SetBackingField = Create(
             id: "INPC021",
-            title: "Setter should set backing field.",
-            messageFormat: "Setter should set backing field.",
+            title: "Setter should set backing field",
+            messageFormat: "Setter should set backing field",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Setter should set backing field.");
 
-        internal static readonly DiagnosticDescriptor INPC022EqualToBackingField = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC022EqualToBackingField = Create(
             id: "INPC022",
-            title: "Comparison should be with backing field.",
-            messageFormat: "Comparison should be with backing field.",
+            title: "Comparison should be with backing field",
+            messageFormat: "Comparison should be with backing field",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Comparison should be with backing field.");
 
-        internal static readonly DiagnosticDescriptor INPC023InstanceEquals = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC023InstanceEquals = Create(
             id: "INPC023",
-            title: "Don't use instance equals in setter.",
-            messageFormat: "Instance equals could throw NullReferenceException.",
+            title: "Don't use instance equals in setter",
+            messageFormat: "Instance equals could throw NullReferenceException",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: "Instance equals could throw NullReferenceException.");
 
-        internal static readonly DiagnosticDescriptor INPC024ReferenceEqualsValueType = Descriptors.Create(
+        internal static readonly DiagnosticDescriptor INPC024ReferenceEqualsValueType = Create(
             id: "INPC024",
-            title: "ReferenceEquals is always false for value types.",
-            messageFormat: "ReferenceEquals is always false for value types.",
+            title: "ReferenceEquals is always false for value types",
+            messageFormat: "ReferenceEquals is always false for value types",
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,

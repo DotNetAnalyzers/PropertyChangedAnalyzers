@@ -1,5 +1,5 @@
 # INPC018
-## PropertyChanged invoker should be protected when the class is not sealed.
+## PropertyChanged invoker should be protected when the class is not sealed
 
 | Topic    | Value
 | :--      | :--
@@ -31,21 +31,21 @@ Configure the severity per project, for more info see [MSDN](https://msdn.micros
 
 ### Via #pragma directive.
 ```C#
-#pragma warning disable INPC018 // PropertyChanged invoker should be protected when the class is not sealed.
+#pragma warning disable INPC018 // PropertyChanged invoker should be protected when the class is not sealed
 Code violating the rule here
-#pragma warning restore INPC018 // PropertyChanged invoker should be protected when the class is not sealed.
+#pragma warning restore INPC018 // PropertyChanged invoker should be protected when the class is not sealed
 ```
 
 Or put this at the top of the file to disable all instances.
 ```C#
-#pragma warning disable INPC018 // PropertyChanged invoker should be protected when the class is not sealed.
+#pragma warning disable INPC018 // PropertyChanged invoker should be protected when the class is not sealed
 ```
 
 ### Via attribute `[SuppressMessage]`.
 
 ```C#
 [System.Diagnostics.CodeAnalysis.SuppressMessage("PropertyChangedAnalyzers.PropertyChanged", 
-    "INPC018:PropertyChanged invoker should be protected when the class is not sealed.", 
+    "INPC018:PropertyChanged invoker should be protected when the class is not sealed", 
     Justification = "Reason...")]
 ```
 <!-- end generated config severity -->
