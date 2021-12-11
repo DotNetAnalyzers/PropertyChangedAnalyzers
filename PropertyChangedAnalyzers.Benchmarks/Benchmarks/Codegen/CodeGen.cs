@@ -1,4 +1,5 @@
-﻿namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
+﻿#pragma warning disable CA1305 // Specify IFormatProvider
+namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
 {
     using System;
     using System.Collections.Generic;
