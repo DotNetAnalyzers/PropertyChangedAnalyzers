@@ -16,7 +16,6 @@
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -111,9 +110,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class C
     {
         private int p;
@@ -379,24 +375,24 @@ namespace N
 {
     public class C<T> : I
     {
-        private T p;
+        private T? p;
 
-        public T P
+        public T? P
         {
             get => this.p;
             set => this.p = value;
         }
 
-        object I.P
+        object? I.P
         {
             get => this.p;
-            set => this.P = (T)value;
+            set => this.P = (T?)value;
         }
     }
 
     interface I
     {
-        object P { get; set; }
+        object? P { get; set; }
     }
 }";
 
@@ -508,7 +504,6 @@ namespace ValidCode
 namespace ValidCode
 {
     using System.ComponentModel;
-    using System.Globalization;
     using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
@@ -556,7 +551,6 @@ namespace ValidCode
 namespace ValidCode
 {
     using System.ComponentModel;
-    using System.Globalization;
     using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
@@ -648,6 +642,8 @@ namespace ValidCode
         public static void Issue102()
         {
             var code = @"
+#nullable disable
+#pragma warning disable CS0649
 namespace ValidCode.Repros
 {
     using System;
@@ -668,7 +664,7 @@ namespace ValidCode.Repros
         private T source;
         private bool disposed;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public T Source
         {
@@ -711,7 +707,7 @@ namespace ValidCode.Repros
             set => this.Source = (T)value;
         }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -751,6 +747,7 @@ namespace ValidCode.Repros
         public static void TrySet()
         {
             var code = @"
+#pragma warning disable CS0169
 namespace N
 {
     using System.Collections.Generic;

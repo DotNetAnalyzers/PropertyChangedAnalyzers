@@ -19,7 +19,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int f1;
+        private int f1 = 1;
         private int f2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -64,7 +64,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int f1;
+        private int f1 = 1;
         private int f2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -102,6 +102,7 @@ namespace N
         public static void DifferentFieldsExpressionBodies()
         {
             var code = @"
+#pragma warning disable CS0067
 namespace N
 {
     using System.ComponentModel;
@@ -136,7 +137,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int f1;
+        private int f1 = 1;
         private int f2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -181,7 +182,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int f1;
+        private int f1 = 1;
         private int f2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -225,7 +226,7 @@ namespace N
 
     internal class C : INotifyPropertyChanged
     {
-        private int f1;
+        private int f1 = 1;
         private int f2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
