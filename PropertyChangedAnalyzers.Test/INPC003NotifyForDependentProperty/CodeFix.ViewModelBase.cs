@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -45,12 +45,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public string FullName => $""{this.FirstName} {this.LastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -69,7 +69,7 @@ namespace N.Client
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -96,12 +96,12 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public string FullName => $""{this.FirstName} {this.LastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -121,7 +121,7 @@ namespace N.Client
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -154,13 +154,13 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P11 => $""Hello {this.P2}"";
 
         public string P12 => $""Hej {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -181,13 +181,13 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P11 => $""Hello {this.P2}"";
 
         public string P12 => $""Hej {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -215,13 +215,13 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P11 => $""Hello {this.P2}"";
 
         public string P12 => $""Hej {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -240,13 +240,13 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P11 => $""Hello {this.P2}"";
 
         public string P12 => $""Hej {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -272,11 +272,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set { this.TrySet(↓ref this.p2, value); }
@@ -289,11 +289,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -318,14 +318,14 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1
         {
             get => $""Hello {this.P2}"";
         }
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set { this.TrySet(↓ref this.p2, value); }
@@ -338,14 +338,14 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1
         {
             get => $""Hello {this.P2}"";
         }
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -370,11 +370,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
             set => this.TrySet(↓ref this.p2, value);
@@ -387,11 +387,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
             set
@@ -416,11 +416,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -438,11 +438,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -467,13 +467,13 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P11 => $""Hello {this.P2}"";
 
         public string P12 => $""Hej {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -492,13 +492,13 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P11 => $""Hello {this.P2}"";
 
         public string P12 => $""Hej {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -524,13 +524,13 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P11 => $""Hello {this.P2}"";
 
         public string P12 => $""Hej {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -547,13 +547,13 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p2;
+        private string? p2;
 
         public string P11 => $""Hello {this.P2}"";
 
         public string P12 => $""Hej {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set

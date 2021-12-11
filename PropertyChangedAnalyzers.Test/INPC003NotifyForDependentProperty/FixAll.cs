@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -18,14 +18,14 @@ using System.Runtime.CompilerServices;
 
 public class C : INotifyPropertyChanged
 {
-    private string firstName;
-    private string lastName;
+    private string? firstName;
+    private string? lastName;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public string FullName => $""{this.FirstName} {this.LastName}"";
 
-    public string FirstName
+    public string? FirstName
     {
         get => this.firstName;
         set
@@ -40,7 +40,7 @@ public class C : INotifyPropertyChanged
         }
     }
 
-    public string LastName
+    public string? LastName
     {
         get => this.lastName;
         set
@@ -67,14 +67,14 @@ using System.Runtime.CompilerServices;
 
 public class C : INotifyPropertyChanged
 {
-    private string firstName;
-    private string lastName;
+    private string? firstName;
+    private string? lastName;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public string FullName => $""{this.FirstName} {this.LastName}"";
 
-    public string FirstName
+    public string? FirstName
     {
         get => this.firstName;
         set
@@ -90,7 +90,7 @@ public class C : INotifyPropertyChanged
         }
     }
 
-    public string LastName
+    public string? LastName
     {
         get => this.lastName;
         set

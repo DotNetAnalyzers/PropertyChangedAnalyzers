@@ -2,6 +2,7 @@
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
+    using PropertyChangedAnalyzers.Test.Helpers;
 
     public static partial class Valid
     {
@@ -18,7 +19,6 @@
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -37,7 +37,7 @@ namespace N
             }
         }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged(string? propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -58,14 +58,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string FullName => $""{this.FirstName} {this.LastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -85,7 +85,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -126,14 +126,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string FullName => $""{this.FirstName} {this.LastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -153,7 +153,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -248,14 +248,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string FullName => $""{this.FirstName} {this.LastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -275,7 +275,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -321,14 +321,14 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string FullName => $""{this.FirstName} {this.LastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -348,7 +348,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -445,7 +445,6 @@ namespace N
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -453,14 +452,14 @@ namespace N
         private static readonly PropertyChangedEventArgs LastNameArgs = new PropertyChangedEventArgs(nameof(LastName));
         private static readonly PropertyChangedEventArgs FullNameArgs = new PropertyChangedEventArgs(nameof(FullName));
 
-        private string firstName;
-        private string lastName;
+        private string? firstName;
+        private string? lastName;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string FullName => $""{this.FirstName} {this.LastName}"";
 
-        public string FirstName
+        public string? FirstName
         {
             get
             {
@@ -480,7 +479,7 @@ namespace N
             }
         }
 
-        public string LastName
+        public string? LastName
         {
             get
             {
@@ -521,11 +520,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get
             {
@@ -570,11 +569,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void UpdateName(string p)
         {
@@ -604,11 +603,11 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private readonly object gate = new object();
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void Update(string p)
         {
@@ -641,7 +640,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public C()
         {
@@ -654,7 +653,7 @@ namespace N
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -678,7 +677,7 @@ namespace N
     using System.ComponentModel;
     public class C : INotifyPropertyChanged
     {
-        private Dictionary<int, int> map;
+        private Dictionary<int, int> map = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -714,7 +713,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string p = ""abc"";
 
         public void M(int a)
         {
@@ -990,7 +989,6 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private int p;
         private readonly Nested nested = new Nested();
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -1077,14 +1075,14 @@ namespace N
 
     public class ExceptionHandlingRelayCommand : ConditionRelayCommand
     {
-        private Exception _exception;
+        private Exception? _exception;
 
         public ExceptionHandlingRelayCommand(Action action, ICondition condition)
             : base(action, condition)
         {
         }
 
-        public Exception Exception
+        public Exception? Exception
         {
             get => _exception;
 
@@ -1102,7 +1100,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Reactive);
         }
 
         [Test]
