@@ -65,7 +65,7 @@ namespace N
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Seal class.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Seal class.", settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
         }
 
         [Test]
@@ -312,7 +312,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Seal class.");
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Seal class.", settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
         }
 
         [Test]
@@ -405,11 +405,11 @@ namespace N.Client
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         ↓public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get { return this.p; }
             set { this.TrySet(ref this.p, value); }
@@ -438,11 +438,11 @@ namespace N.Client
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get { return this.p; }
             set { this.TrySet(ref this.p, value); }

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingProperty
 {
     using Gu.Roslyn.Asserts;
     using Microsoft.CodeAnalysis;
@@ -26,7 +26,6 @@ namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingProperty
 namespace N
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     public class C : INotifyPropertyChanged
     {
@@ -380,7 +379,7 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.HasPropertyChanged(""SomeProperty""))
             {
@@ -557,6 +556,7 @@ namespace N
         public static void WhenNotAnInvoker()
         {
             var code = @"
+#pragma warning disable CS0067
 namespace N
 {
     using System.ComponentModel;
@@ -604,7 +604,7 @@ namespace N
     using System.ComponentModel;
     public class C : INotifyPropertyChanged
     {
-        private Dictionary<int, int> map;
+        private Dictionary<int, int> map = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

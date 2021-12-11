@@ -1,6 +1,7 @@
 ﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvoker
 {
     using Gu.Roslyn.Asserts;
+
     using NUnit.Framework;
 
     public static class Valid
@@ -18,11 +19,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get
             {
@@ -62,11 +63,11 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get
             {
@@ -126,7 +127,7 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, viewModelBaseCode, code);
+            RoslynAssert.Valid(Analyzer, new[] { viewModelBaseCode, code }, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
         }
 
         [Test]
@@ -208,7 +209,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
+            RoslynAssert.Valid(Analyzer, code, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
         }
 
         [Test]
@@ -380,7 +381,7 @@ namespace ValidCode
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, Cache.GetOrAdd(propertyName, name => new PropertyChangedEventArgs(name)));
+            this.PropertyChanged?.Invoke(this, Cache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
         }
     }
 }";
@@ -406,7 +407,7 @@ namespace ValidCode
 
         protected void OnPropertyChanged([CallerMemberName]string? propertyName = null)
         {
-            var args = _propertyChangedCache.GetOrAdd(propertyName, name => new PropertyChangedEventArgs(propertyName));
+            var args = _propertyChangedCache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(propertyName));
 
             PropertyChanged?.Invoke(this, args);
         }

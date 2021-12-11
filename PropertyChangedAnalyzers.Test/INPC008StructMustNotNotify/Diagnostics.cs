@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotify
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -11,6 +11,7 @@ namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotify
         public static void WhenNotifying()
         {
             var code = @"
+#pragma warning disable CS0067
 namespace N
 {
     using System.ComponentModel;
@@ -27,6 +28,7 @@ namespace N
         public static void WhenNotifyingFullyQualified()
         {
             var code = @"
+#pragma warning disable CS0067
 namespace N
 {
     public struct S : ↓System.ComponentModel.INotifyPropertyChanged
