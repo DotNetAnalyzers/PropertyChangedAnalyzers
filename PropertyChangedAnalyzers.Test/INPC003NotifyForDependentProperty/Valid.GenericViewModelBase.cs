@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -20,9 +20,9 @@ namespace N.Core
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        protected virtual bool TrySet<TValue>(ref TValue field, TValue value, [CallerMemberName] string? propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(field, value))
+            if (EqualityComparer<TValue>.Default.Equals(field, value))
             {
                 return false;
             }
@@ -32,7 +32,7 @@ namespace N.Core
             return true;
         }
 
-        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+        protected virtual void OnPropertyChanged<TValue>(Expression<Func<TValue>> property)
         {
             this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
         }
@@ -52,9 +52,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
     {
-        private string p;
+        private string? p;
 
-        public string P
+        public string? P
         {
             get { return this.p; }
             set { this.TrySet(ref this.p, value); }
@@ -102,9 +102,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase
     {
-        private string p;
+        private string? p;
 
-        public string P
+        public string? P
         {
             get { return this.p; }
             set { this.TrySet(ref this.p, value); }
@@ -122,9 +122,9 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
     {
-        private string p;
+        private string? p;
 
-        public string P
+        public string? P
         {
             get => this.p;
             set => this.TrySet(ref this.p, value);
@@ -142,11 +142,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -170,11 +170,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -198,11 +198,11 @@ namespace N
 {
     public class C : N.Core.ViewModelBase<int>
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get => this.p2;
             set => this.TrySet(ref this.p2, value, string.Empty);
@@ -220,11 +220,11 @@ namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello{this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set

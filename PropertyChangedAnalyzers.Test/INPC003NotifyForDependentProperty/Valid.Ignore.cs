@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -23,14 +23,15 @@ namespace N
             throw new NotImplementedException();
         }
 
-        public event EventHandler CanExecuteChanged;
+#pragma warning disable CS0067
+        public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             throw new NotImplementedException();
         }
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
             throw new NotImplementedException();
         }
@@ -45,7 +46,7 @@ namespace N
     public class C : INotifyPropertyChanged
     {
         private bool p;
-        private DelegateCommand command;
+        private DelegateCommand? command;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -354,11 +355,11 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string? p;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P => this.p;
+        public string? P => this.p;
 
         public C Create(string p)
         {
@@ -417,7 +418,7 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p;
+        private string p = ""abc"";
         private int getCount;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -518,12 +519,12 @@ namespace N
 
     public sealed class C : INotifyPropertyChanged, IDisposable
     {
-        private string p;
+        private string? p;
         private bool disposed;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string P
+        public string? P
         {
             get
             {
