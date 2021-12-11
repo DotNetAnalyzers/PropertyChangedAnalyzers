@@ -48,7 +48,8 @@
             if (!context.IsExcludedFromAnalysis() &&
                 !IsInIgnoredScope(context) &&
                 context.Node is PostfixUnaryExpressionSyntax { Operand: { } operand } postfix &&
-                AssignedExpression(context.ContainingSymbol.ContainingType, operand) is { } backing)
+                context is { ContainingSymbol: { ContainingType: { } containingType } } &&
+                AssignedExpression(containingType, operand) is { } backing)
             {
                 Handle(postfix, backing, context);
             }
@@ -59,7 +60,8 @@
             if (!context.IsExcludedFromAnalysis() &&
                 !IsInIgnoredScope(context) &&
                 context.Node is PrefixUnaryExpressionSyntax { Operand: { } operand } prefix &&
-                AssignedExpression(context.ContainingSymbol.ContainingType, operand) is { } backing)
+                context is { ContainingSymbol: { ContainingType: { } containingType } } &&
+                AssignedExpression(containingType, operand) is { } backing)
             {
                 Handle(prefix, backing, context);
             }
@@ -70,7 +72,8 @@
             if (!context.IsExcludedFromAnalysis() &&
                 !IsInIgnoredScope(context) &&
                 context.Node is AssignmentExpressionSyntax { Left: { } left } assignment &&
-                AssignedExpression(context.ContainingSymbol.ContainingType, left) is { } backing)
+                context is { ContainingSymbol: { ContainingType: { } containingType } } &&
+                AssignedExpression(containingType, left) is { } backing)
             {
                 Handle(assignment, backing, context);
             }
@@ -82,7 +85,8 @@
                 !IsInIgnoredScope(context) &&
                 context.Node is ArgumentSyntax { Expression: { } expression } argument &&
                 argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
-                AssignedExpression(context.ContainingSymbol.ContainingType, expression) is { } backing)
+                context is { ContainingSymbol: { ContainingType: { } containingType } } &&
+                AssignedExpression(containingType, expression) is { } backing)
             {
                 Handle(argument.Expression, backing, context);
             }
@@ -90,7 +94,7 @@
 
         private static void Handle(ExpressionSyntax mutation, ExpressionSyntax backing, SyntaxNodeAnalysisContext context)
         {
-            if (context.ContainingSymbol.ContainingType is { } containingType &&
+            if (context is { ContainingSymbol: { ContainingType: { } containingType } } &&
                 containingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) &&
                 mutation.TryFirstAncestorOrSelf<TypeDeclarationSyntax>(out var typeDeclaration))
             {
