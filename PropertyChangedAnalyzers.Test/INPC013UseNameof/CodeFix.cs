@@ -255,11 +255,11 @@ namespace N
 
     public static class C
     {
-        private static string p;
+        private static string? p;
 
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+        public static event EventHandler<PropertyChangedEventArgs>? StaticPropertyChanged;
 
-        public static string P
+        public static string? P
         {
             get => p;
             set
@@ -284,11 +284,11 @@ namespace N
 
     public static class C
     {
-        private static string p;
+        private static string? p;
 
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+        public static event EventHandler<PropertyChangedEventArgs>? StaticPropertyChanged;
 
-        public static string P
+        public static string? P
         {
             get => p;
             set
@@ -317,11 +317,11 @@ namespace N
 
     public class C
     {
-        private static string p;
+        private static string? p;
 
         public static event PropertyChangedEventHandler? PropertyChanged;
 
-        public static string P
+        public static string? P
         {
             get => p;
             set
@@ -345,11 +345,11 @@ namespace N
 
     public class C
     {
-        private static string p;
+        private static string? p;
 
         public static event PropertyChangedEventHandler? PropertyChanged;
 
-        public static string P
+        public static string? P
         {
             get => p;
             set
@@ -378,11 +378,11 @@ namespace N
 
     public class C
     {
-        private static string p;
+        private static string? p;
 
         public static event PropertyChangedEventHandler? PropertyChanged;
 
-        public static string P
+        public static string? P
         {
             get => p;
             set
@@ -411,11 +411,11 @@ namespace N
 
     public class C
     {
-        private static string p;
+        private static string? p;
 
         public static event PropertyChangedEventHandler? PropertyChanged;
 
-        public static string P
+        public static string? P
         {
             get => p;
             set

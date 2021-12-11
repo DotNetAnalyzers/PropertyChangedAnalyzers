@@ -18,11 +18,11 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -41,11 +41,11 @@ namespace N
 {
     public class C : Stylet.PropertyChangedBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.p2}"";
 
-        public string P2
+        public string? P2
         {
             get { return this.p2; }
             set
@@ -69,11 +69,11 @@ namespace N
 {
     internal class C : Stylet.PropertyChangedBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.p2}"";
 
-        internal string P2
+        internal string? P2
         {
             get { return this.p2; }
             set
@@ -92,11 +92,11 @@ namespace N
 {
     internal class C : Stylet.PropertyChangedBase
     {
-        private string p2;
+        private string? p2;
 
         public string P1 => $""Hello {this.p2}"";
 
-        internal string P2
+        internal string? P2
         {
             get { return this.p2; }
             set

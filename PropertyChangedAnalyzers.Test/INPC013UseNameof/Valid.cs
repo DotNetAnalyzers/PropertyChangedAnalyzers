@@ -39,7 +39,7 @@ namespace N
     [System.Diagnostics.DebuggerDisplay(""{P}"")]
     public class C
     {
-        public string P { get; }
+        public int P { get; }
     }
 }";
             RoslynAssert.Valid(Analyzer, code);
@@ -51,8 +51,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
-
     public class C
     {
         public void M1()
@@ -74,8 +72,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
-
     public class C
     {
         public void M1()
@@ -95,8 +91,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System;
-
     public class C
     {
         public void M1()

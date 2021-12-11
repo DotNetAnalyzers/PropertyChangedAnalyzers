@@ -58,9 +58,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class C
     {
         private int p;
@@ -82,9 +79,6 @@ namespace N
             var code = @"
 namespace N
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     public class C
     {
         private int p;

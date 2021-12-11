@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC011DoNotShadow
+﻿namespace PropertyChangedAnalyzers.Test.INPC011DoNotShadow
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -72,6 +72,7 @@ namespace N.Core
 }";
 
             var code = @"
+#pragma warning disable CS0067
 namespace N
 {
     using System.ComponentModel;

@@ -1,4 +1,4 @@
-namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression
+﻿namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression
 {
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
@@ -418,13 +418,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello { this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get
             {
@@ -466,13 +466,13 @@ namespace N
 
     public class C : INotifyPropertyChanged
     {
-        private string p2;
+        private string? p2;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string P1 => $""Hello { this.P2}"";
 
-        public string P2
+        public string? P2
         {
             get
             {
