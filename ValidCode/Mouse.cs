@@ -1,4 +1,4 @@
-// ReSharper disable All
+﻿// ReSharper disable All
 namespace ValidCode
 {
     using System;
@@ -33,9 +33,9 @@ namespace ValidCode
         }
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool GetCursorPos(out Point lpPoint);
+        private static extern bool GetCursorPos(out Point lpPoint);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool SetCursorPos(int x, int y);
+        private static extern bool SetCursorPos(int x, int y);
     }
 }

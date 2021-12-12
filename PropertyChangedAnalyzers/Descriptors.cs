@@ -38,7 +38,7 @@
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Use [CallerMemberName]");
+            description: "Use [CallerMemberName].");
 
         internal static readonly DiagnosticDescriptor INPC005CheckIfDifferentBeforeNotifying = Create(
             id: "INPC005",
@@ -83,7 +83,7 @@
             category: AnalyzerCategory.PropertyChanged,
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
-            description: "Struct must not implement INotifyPropertyChanged");
+            description: "Struct must not implement INotifyPropertyChanged.");
 
         internal static readonly DiagnosticDescriptor INPC009NotifiesForMissingProperty = Create(
             id: "INPC009",

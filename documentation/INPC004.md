@@ -12,7 +12,7 @@
 
 ## Description
 
-Use [CallerMemberName]
+Use [CallerMemberName].
 
 ## Motivation
 

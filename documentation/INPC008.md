@@ -11,7 +11,7 @@
 
 ## Description
 
-Struct must not implement INotifyPropertyChanged
+Struct must not implement INotifyPropertyChanged.
 
 ## Motivation
 
