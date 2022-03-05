@@ -30,7 +30,7 @@
     <PackageReleaseNotes>
       4.0.0
       BREAKING: For VS2022+ now.
-      BUGFIX: AD0001 -> Could not load file or assembly
+      BUGFIX: AD0001 -&gt; Could not load file or assembly
       3.2.3
       BUGFIX: Assignments to expressions sharing the same name as the property or backing field no longer trigger INPC002 or INPC015.
       3.2.2
@@ -67,12 +67,12 @@
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" />
     <PackageReference Include="ReflectionAnalyzers" Version="0.3.1" PrivateAssets="all" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.66" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[6.0.0]" />
-    <PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.97" PrivateAssets="all" />    
+    <PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.160" PrivateAssets="all" />    
   </ItemGroup>
 
   <ItemGroup>
