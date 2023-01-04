@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro" Version="3.2" />
     <PackageReference Include="Gu.Wpf.Reactive" Version="5.0.1" />
-    <PackageReference Include="MvvmCross" Version="9.0.2" />
+    <PackageReference Include="MvvmCross" Version="9.0.3" />
     <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="PropertyChangedAnalyzers" Version="4.0.0" PrivateAssets="all" />
