@@ -1,40 +1,39 @@
 ﻿// ReSharper disable All
 #pragma warning disable INPC007, INPC015, CS0067
-namespace ValidCode.Recursion
+namespace ValidCode.Recursion;
+
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class ExpressionBodies : INotifyPropertyChanged
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private string? name;
+    private int value;
 
-    public sealed class ExpressionBodies : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public string Greeting => this.Greeting;
+
+    public string? Name
     {
-        private string? name;
-        private int value;
+        get => this.Name;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string Greeting => this.Greeting;
-
-        public string? Name
+        set
         {
-            get => this.Name;
-
-            set
+            if (this.TrySet(ref this.name, value))
             {
-                if (this.TrySet(ref this.name, value))
-                {
-                    this.OnPropertyChanged(nameof(this.Greeting));
-                }
+                this.OnPropertyChanged(nameof(this.Greeting));
             }
         }
-
-        public int Value
-        {
-            get => this.Value;
-            set => this.TrySet(ref this.value, value);
-        }
-
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.OnPropertyChanged(propertyName);
-
-        private bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null) => this.TrySet(ref field, value, propertyName);
     }
+
+    public int Value
+    {
+        get => this.Value;
+        set => this.TrySet(ref this.value, value);
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.OnPropertyChanged(propertyName);
+
+    private bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null) => this.TrySet(ref field, value, propertyName);
 }

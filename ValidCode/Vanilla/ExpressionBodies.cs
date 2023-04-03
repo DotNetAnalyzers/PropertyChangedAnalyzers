@@ -1,34 +1,33 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Vanilla
+namespace ValidCode.Vanilla;
+
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class ExpressionBodies : INotifyPropertyChanged
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private string? name;
 
-    public sealed class ExpressionBodies : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public string Greeting => $"Hello {this.name}";
+
+    public string? Name
     {
-        private string? name;
+        get => this.name;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string Greeting => $"Hello {this.name}";
-
-        public string? Name
+        set
         {
-            get => this.name;
-
-            set
+            if (value == this.name)
             {
-                if (value == this.name)
-                {
-                    return;
-                }
-
-                this.name = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
+                return;
             }
-        }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.name = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.Greeting));
+        }
     }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

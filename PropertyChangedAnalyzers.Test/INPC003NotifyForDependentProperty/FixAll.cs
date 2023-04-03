@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class FixAll
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly MutationAnalyzer Analyzer = new();
+    private static readonly NotifyForDependentPropertyFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
 
-    public static class FixAll
+    [Test]
+    public static void WhenUsingPropertiesExpressionBody()
     {
-        private static readonly MutationAnalyzer Analyzer = new();
-        private static readonly NotifyForDependentPropertyFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
-
-        [Test]
-        public static void WhenUsingPropertiesExpressionBody()
-        {
-            var before = @"
+        var before = @"
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -61,7 +61,7 @@ public class C : INotifyPropertyChanged
     }
 }";
 
-            var after = @"
+        var after = @"
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -112,13 +112,13 @@ public class C : INotifyPropertyChanged
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenTwoCalculatedProperties()
-        {
-            var before = @"
+    [Test]
+    public static void WhenTwoCalculatedProperties()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -160,7 +160,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -204,13 +204,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void SimpleLambda()
-        {
-            var before = @"
+    [Test]
+    public static void SimpleLambda()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -239,7 +239,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -272,13 +272,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ParenthesizedLambda()
-        {
-            var before = @"
+    [Test]
+    public static void ParenthesizedLambda()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -306,7 +306,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -338,13 +338,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AddOneAfterOtherFieldAssignment()
-        {
-            var before = @"
+    [Test]
+    public static void AddOneAfterOtherFieldAssignment()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -389,7 +389,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -435,13 +435,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AddTwoAfterOtherFieldAssignment()
-        {
-            var before = @"
+    [Test]
+    public static void AddTwoAfterOtherFieldAssignment()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -485,7 +485,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -531,13 +531,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AddOneAfterOtherFieldAssignmentBeforeExplicitReturn()
-        {
-            var before = @"
+    [Test]
+    public static void AddOneAfterOtherFieldAssignmentBeforeExplicitReturn()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -583,105 +583,7 @@ namespace N
     }
 }";
 
-            var after = @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class C : INotifyPropertyChanged
-    {
-        private int p3;
-        private int f;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public int P1 => this.f * this.p3;
-
-        public int P2 => this.f + this.p3;
-
-        public int P3
-        {
-            get
-            {
-                return this.p3;
-            }
-
-            set
-            {
-                if (value == this.p3)
-                {
-                    return;
-                }
-
-                this.p3 = value;
-                this.f = value * 2;
-                this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.P1));
-                this.OnPropertyChanged(nameof(this.P2));
-                return;
-            }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
-
-        [Test]
-        public static void AddTwoAfterOtherFieldAssignmentBeforeExplicitReturn()
-        {
-            var before = @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class C : INotifyPropertyChanged
-    {
-        private int p3;
-        private int f;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public int P1 => this.f * this.p3;
-
-        public int P2 => this.f + this.p3;
-
-        public int P3
-        {
-            get
-            {
-                return this.p3;
-            }
-
-            set
-            {
-                if (value == this.p3)
-                {
-                    return;
-                }
-
-                ↓this.p3 = value;
-                ↓this.f = value * 2;
-                this.OnPropertyChanged();
-                return;
-            }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
-
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -728,7 +630,104 @@ namespace N
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
+
+    [Test]
+    public static void AddTwoAfterOtherFieldAssignmentBeforeExplicitReturn()
+    {
+        var before = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p3;
+        private int f;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int P1 => this.f * this.p3;
+
+        public int P2 => this.f + this.p3;
+
+        public int P3
+        {
+            get
+            {
+                return this.p3;
+            }
+
+            set
+            {
+                if (value == this.p3)
+                {
+                    return;
+                }
+
+                ↓this.p3 = value;
+                ↓this.f = value * 2;
+                this.OnPropertyChanged();
+                return;
+            }
         }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+        var after = @"
+namespace N
+{
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
+    public class C : INotifyPropertyChanged
+    {
+        private int p3;
+        private int f;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int P1 => this.f * this.p3;
+
+        public int P2 => this.f + this.p3;
+
+        public int P3
+        {
+            get
+            {
+                return this.p3;
+            }
+
+            set
+            {
+                if (value == this.p3)
+                {
+                    return;
+                }
+
+                this.p3 = value;
+                this.f = value * 2;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.P1));
+                this.OnPropertyChanged(nameof(this.P2));
+                return;
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}";
+
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

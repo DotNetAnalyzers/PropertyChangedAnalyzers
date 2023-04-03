@@ -1,17 +1,17 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursive
+﻿namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursive;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly PropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC015PropertyIsRecursive);
 
-    public static class Diagnostics
+    [Test]
+    public static void ExpressionBody()
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC015PropertyIsRecursive);
-
-        [Test]
-        public static void ExpressionBody()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     public class C
@@ -20,13 +20,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void GetterStatementBody()
-        {
-            var code = @"
+    [Test]
+    public static void GetterStatementBody()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -38,13 +38,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void GetterExpressionBody()
-        {
-            var code = @"
+    [Test]
+    public static void GetterExpressionBody()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -56,13 +56,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void SetterStatementBody()
-        {
-            var code = @"
+    [Test]
+    public static void SetterStatementBody()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -77,13 +77,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void SetterExpressionBody()
-        {
-            var code = @"
+    [Test]
+    public static void SetterExpressionBody()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -98,7 +98,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

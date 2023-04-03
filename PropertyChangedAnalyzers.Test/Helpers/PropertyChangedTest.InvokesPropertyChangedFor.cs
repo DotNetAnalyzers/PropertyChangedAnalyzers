@@ -1,21 +1,21 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
-{
-    using System.Threading;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
 
-    public static partial class PropertyChangedTest
+using System.Threading;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using NUnit.Framework;
+
+public static partial class PropertyChangedTest
+{
+    public static class InvokesPropertyChangedFor
     {
-        public static class InvokesPropertyChangedFor
+        [TestCase("_p1 = value", "P1")]
+        [TestCase("_p2 = value", "P2")]
+        public static void Assignment(string signature, string propertyName)
         {
-            [TestCase("_p1 = value", "P1")]
-            [TestCase("_p2 = value", "P2")]
-            public static void Assignment(string signature, string propertyName)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System;
@@ -104,23 +104,23 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var node = syntaxTree.Find<ExpressionSyntax>(signature);
-                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration(propertyName));
-                Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var node = syntaxTree.Find<ExpressionSyntax>(signature);
+            var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration(propertyName));
+            Assert.AreEqual(AnalysisResult.Yes, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
+        }
 
-            [TestCase("this.TrySet(ref this.p, value)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, \"P\")", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, nameof(this.P))", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, nameof(P))", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, null)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, string.Empty)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, \"Wrong\")", AnalysisResult.No)]
-            public static void TrySetCallerMemberName(string trySetCode, AnalysisResult expected)
-            {
-                var code = @"
+        [TestCase("this.TrySet(ref this.p, value)", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, \"P\")", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, nameof(this.P))", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, nameof(P))", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, null)", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, string.Empty)", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, \"Wrong\")", AnalysisResult.No)]
+        public static void TrySetCallerMemberName(string trySetCode, AnalysisResult expected)
+        {
+            var code = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -158,23 +158,23 @@ namespace N
     }
 }".AssertReplace("this.TrySet(ref this.p, value)", trySetCode);
 
-                var syntaxTree = CSharpSyntaxTree.ParseText(code);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var node = syntaxTree.FindArgument("ref this.p");
-                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("P"));
-                Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node.Expression, property, semanticModel, CancellationToken.None));
-            }
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var node = syntaxTree.FindArgument("ref this.p");
+            var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("P"));
+            Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node.Expression, property, semanticModel, CancellationToken.None));
+        }
 
-            [TestCase("this.TrySet(ref this.p, value, \"P\")", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, nameof(P))", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, nameof(this.P))", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, null)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, string.Empty)", AnalysisResult.Yes)]
-            [TestCase("this.TrySet(ref this.p, value, \"Wrong\")", AnalysisResult.No)]
-            public static void TrySet(string trySetCode, AnalysisResult expected)
-            {
-                var code = @"
+        [TestCase("this.TrySet(ref this.p, value, \"P\")", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, nameof(P))", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, nameof(this.P))", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, null)", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, string.Empty)", AnalysisResult.Yes)]
+        [TestCase("this.TrySet(ref this.p, value, \"Wrong\")", AnalysisResult.No)]
+        public static void TrySet(string trySetCode, AnalysisResult expected)
+        {
+            var code = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -212,21 +212,21 @@ namespace N
     }
 }".AssertReplace("this.TrySet(ref this.p, value, nameof(P))", trySetCode);
 
-                var syntaxTree = CSharpSyntaxTree.ParseText(code);
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var node = syntaxTree.FindArgument("ref this.p");
-                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("P"));
-                Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node.Expression, property, semanticModel, CancellationToken.None));
-            }
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var node = syntaxTree.FindArgument("ref this.p");
+            var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration("P"));
+            Assert.AreEqual(expected, PropertyChanged.InvokesPropertyChangedFor(node.Expression, property, semanticModel, CancellationToken.None));
+        }
 
-            [TestCase("_p1 = value", "P1")]
-            [TestCase("_p2 = value", "P2")]
-            [TestCase("TrySet(ref _p3, value);", "P3")]
-            public static void WhenRecursive(string signature, string propertyName)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [TestCase("_p1 = value", "P1")]
+        [TestCase("_p2 = value", "P2")]
+        [TestCase("TrySet(ref _p3, value);", "P3")]
+        public static void WhenRecursive(string signature, string propertyName)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System;
@@ -314,12 +314,11 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var node = syntaxTree.Find<ExpressionSyntax>(signature);
-                var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration(propertyName));
-                Assert.AreEqual(AnalysisResult.No, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var node = syntaxTree.Find<ExpressionSyntax>(signature);
+            var property = semanticModel.GetDeclaredSymbol(syntaxTree.FindPropertyDeclaration(propertyName));
+            Assert.AreEqual(AnalysisResult.No, PropertyChanged.InvokesPropertyChangedFor(node, property, semanticModel, CancellationToken.None));
         }
     }
 }

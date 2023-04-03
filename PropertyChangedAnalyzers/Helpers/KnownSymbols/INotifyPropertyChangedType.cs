@@ -1,15 +1,14 @@
-﻿namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class INotifyPropertyChangedType : QualifiedType
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal readonly QualifiedEvent PropertyChanged;
 
-    internal class INotifyPropertyChangedType : QualifiedType
+    internal INotifyPropertyChangedType()
+        : base("System.ComponentModel.INotifyPropertyChanged")
     {
-        internal readonly QualifiedEvent PropertyChanged;
-
-        internal INotifyPropertyChangedType()
-            : base("System.ComponentModel.INotifyPropertyChanged")
-        {
-            this.PropertyChanged = new QualifiedEvent(this, nameof(this.PropertyChanged));
-        }
+        this.PropertyChanged = new QualifiedEvent(this, nameof(this.PropertyChanged));
     }
 }

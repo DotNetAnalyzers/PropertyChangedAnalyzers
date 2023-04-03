@@ -1,20 +1,20 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC023InstanceEquals
+﻿namespace PropertyChangedAnalyzers.Test.INPC023InstanceEquals;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly EqualityFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC023InstanceEquals);
 
-    public static class CodeFix
+    [TestCase("int?", "value == this.p")]
+    [TestCase("string", "value == this.p")]
+    [TestCase("string?", "value == this.p")]
+    public static void WhenNullable(string type, string expected)
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly EqualityFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC023InstanceEquals);
-
-        [TestCase("int?", "value == this.p")]
-        [TestCase("string", "value == this.p")]
-        [TestCase("string?", "value == this.p")]
-        public static void WhenNullable(string type, string expected)
-        {
-            var before = @"
+        var before = @"
 #pragma warning disable CS8618
 namespace N
 {
@@ -49,7 +49,7 @@ namespace N
     }
 }".AssertReplace("int?", type);
 
-            var after = @"
+        var after = @"
 #pragma warning disable CS8618
 namespace N
 {
@@ -83,17 +83,17 @@ namespace N
         }
     }
 }".AssertReplace("int?", type)
-  .AssertReplace("value == this.p", expected);
+.AssertReplace("value == this.p", expected);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("int?", "value != this.p")]
-        [TestCase("string", "value != this.p")]
-        [TestCase("string?", "value != this.p")]
-        public static void Negated(string type, string expected)
-        {
-            var before = @"
+    [TestCase("int?", "value != this.p")]
+    [TestCase("string", "value != this.p")]
+    [TestCase("string?", "value != this.p")]
+    public static void Negated(string type, string expected)
+    {
+        var before = @"
 #pragma warning disable CS8618
 namespace N
 {
@@ -126,7 +126,7 @@ namespace N
     }
 }".AssertReplace("int?", type);
 
-            var after = @"
+        var after = @"
 #pragma warning disable CS8618
 namespace N
 {
@@ -158,9 +158,8 @@ namespace N
         }
     }
 }".AssertReplace("int?", type)
-  .AssertReplace("value != this.p", expected);
+.AssertReplace("value != this.p", expected);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

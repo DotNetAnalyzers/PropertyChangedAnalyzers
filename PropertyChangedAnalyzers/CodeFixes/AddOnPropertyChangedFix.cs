@@ -1,72 +1,71 @@
-﻿namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers;
+
+using System.Collections.Immutable;
+using System.Composition;
+using System.Threading;
+using System.Threading.Tasks;
+using Gu.Roslyn.CodeFixExtensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddOnPropertyChangedFix))]
+[Shared]
+internal class AddOnPropertyChangedFix : DocumentEditorCodeFixProvider
 {
-    using System.Collections.Immutable;
-    using System.Composition;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Gu.Roslyn.CodeFixExtensions;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC007MissingInvoker.Id);
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddOnPropertyChangedFix))]
-    [Shared]
-    internal class AddOnPropertyChangedFix : DocumentEditorCodeFixProvider
+    protected override DocumentEditorFixAllProvider FixAllProvider() => DocumentEditorFixAllProvider.Project;
+
+    protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC007MissingInvoker.Id);
+        var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                               .ConfigureAwait(false);
 
-        protected override DocumentEditorFixAllProvider FixAllProvider() => DocumentEditorFixAllProvider.Project;
-
-        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
+        foreach (var diagnostic in context.Diagnostics)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                                   .ConfigureAwait(false);
-
-            foreach (var diagnostic in context.Diagnostics)
+            if (syntaxRoot is { } &&
+                syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration))
             {
-                if (syntaxRoot is { } &&
-                    syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ClassDeclarationSyntax? classDeclaration))
-                {
-                    context.RegisterCodeFix(
-                        "Add OnPropertyChanged()",
-                        (editor, cancellationToken) => editor.AddOnPropertyChangedMethodAsync(
-                            classDeclaration,
-                            editor.SemanticModel.GetNullableContext(classDeclaration.SpanStart).AnnotationsEnabled(),
-                            cancellationToken),
-                        "Add OnPropertyChanged()",
-                        diagnostic);
+                context.RegisterCodeFix(
+                    "Add OnPropertyChanged()",
+                    (editor, cancellationToken) => editor.AddOnPropertyChangedMethodAsync(
+                        classDeclaration,
+                        editor.SemanticModel.GetNullableContext(classDeclaration.SpanStart).AnnotationsEnabled(),
+                        cancellationToken),
+                    "Add OnPropertyChanged()",
+                    diagnostic);
 
-                    if (!classDeclaration.Modifiers.Any(SyntaxKind.AbstractKeyword) &&
-                        !classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword))
+                if (!classDeclaration.Modifiers.Any(SyntaxKind.AbstractKeyword) &&
+                    !classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword))
+                {
+                    var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+                    if (semanticModel is { } &&
+                        ShouldSeal(classDeclaration, semanticModel, context.CancellationToken))
                     {
-                        var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-                        if (semanticModel is { } &&
-                            ShouldSeal(classDeclaration, semanticModel, context.CancellationToken))
-                        {
-                            context.RegisterCodeFix(
-                                "Seal class.",
-                                (editor, _) => editor.Seal(classDeclaration),
-                                "Seal class.",
-                                diagnostic);
-                        }
+                        context.RegisterCodeFix(
+                            "Seal class.",
+                            (editor, _) => editor.Seal(classDeclaration),
+                            "Seal class.",
+                            diagnostic);
                     }
                 }
             }
         }
+    }
 
-        private static bool ShouldSeal(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+    private static bool ShouldSeal(ClassDeclarationSyntax classDeclaration, SemanticModel semanticModel, CancellationToken cancellationToken)
+    {
+        foreach (var member in classDeclaration.Members)
         {
-            foreach (var member in classDeclaration.Members)
+            if (member is PropertyDeclarationSyntax property &&
+                Property.ShouldNotify(property, semanticModel, cancellationToken))
             {
-                if (member is PropertyDeclarationSyntax property &&
-                    Property.ShouldNotify(property, semanticModel, cancellationToken))
-                {
-                    return false;
-                }
+                return false;
             }
-
-            return true;
         }
+
+        return true;
     }
 }

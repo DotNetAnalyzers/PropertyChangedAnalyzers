@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.NullableFixTests
+﻿namespace PropertyChangedAnalyzers.Test.NullableFixTests;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class NullableFixTests
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly NullableFix Fix = new();
+    private static readonly ExpectedDiagnostic CS8618 = ExpectedDiagnostic.Create("CS8618");
+    private static readonly ExpectedDiagnostic CS8625 = ExpectedDiagnostic.Create("CS8625", "Cannot convert null literal to non-nullable reference type.");
 
-    public static class NullableFixTests
+    [Test]
+    public static void DeclareEventNullable()
     {
-        private static readonly NullableFix Fix = new();
-        private static readonly ExpectedDiagnostic CS8618 = ExpectedDiagnostic.Create("CS8618");
-        private static readonly ExpectedDiagnostic CS8625 = ExpectedDiagnostic.Create("CS8625", "Cannot convert null literal to non-nullable reference type.");
-
-        [Test]
-        public static void DeclareEventNullable()
-        {
-            var before = @"
+        var before = @"
 #pragma warning disable CS8612
 namespace N
 {
@@ -46,7 +46,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 #pragma warning disable CS8612
 namespace N
 {
@@ -79,13 +79,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8618, before, after, fixTitle: "Declare PropertyChanged as nullable.");
-        }
+        RoslynAssert.CodeFix(Fix, CS8618, before, after, fixTitle: "Declare PropertyChanged as nullable.");
+    }
 
-        [Test]
-        public static void DeclareEventNullableWhenConstructor()
-        {
-            var before = @"
+    [Test]
+    public static void DeclareEventNullableWhenConstructor()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -123,7 +123,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -160,13 +160,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8618, before, after);
-        }
+        RoslynAssert.CodeFix(Fix, CS8618, before, after);
+    }
 
-        [Test]
-        public static void DeclareDefaultParameterNullable()
-        {
-            var before = @"
+    [Test]
+    public static void DeclareDefaultParameterNullable()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -200,7 +200,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -233,13 +233,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8625, before, after, fixTitle: "Declare propertyName as nullable.");
-        }
+        RoslynAssert.CodeFix(Fix, CS8625, before, after, fixTitle: "Declare propertyName as nullable.");
+    }
 
-        [Test]
-        public static void DeclareFieldAndPropertyNullable()
-        {
-            var before = @"
+    [Test]
+    public static void DeclareFieldAndPropertyNullable()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -273,7 +273,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -306,13 +306,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Fix, CS8618, before, after, fixTitle: "Declare field p and property P as nullable.");
-        }
+        RoslynAssert.CodeFix(Fix, CS8618, before, after, fixTitle: "Declare field p and property P as nullable.");
+    }
 
-        [Test]
-        public static void OpenGenericFieldAndPropertyNullableNoFix()
-        {
-            var before = @"
+    [Test]
+    public static void OpenGenericFieldAndPropertyNullableNoFix()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -346,7 +346,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Fix, CS8618, new[] { before });
-        }
+        RoslynAssert.NoFix(Fix, CS8618, new[] { before });
     }
 }

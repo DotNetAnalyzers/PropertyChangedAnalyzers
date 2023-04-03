@@ -1,16 +1,16 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged;
 
-    public static partial class Valid
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class Valid
+{
+    public static class Ignores
     {
-        public static class Ignores
+        [Test]
+        public static void Struct()
         {
-            [Test]
-            public static void Struct()
-            {
-                var code = @"
+            var code = @"
 namespace N
 {
     public struct S
@@ -18,13 +18,13 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void GetOnly()
-            {
-                var code = @"
+        [Test]
+        public static void GetOnly()
+        {
+            var code = @"
 namespace N
 {
     public class C
@@ -33,13 +33,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void GetPrivateSetNeverAssigned()
-            {
-                var code = @"
+        [Test]
+        public static void GetPrivateSetNeverAssigned()
+        {
+            var code = @"
 namespace N
 {
     public class C
@@ -53,13 +53,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void GetPrivateSetAssignedInConstructorOnly()
-            {
-                var code = @"
+        [Test]
+        public static void GetPrivateSetAssignedInConstructorOnly()
+        {
+            var code = @"
 namespace N
 {
     public class C
@@ -73,13 +73,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void ExpressionBody()
-            {
-                var code = @"
+        [Test]
+        public static void ExpressionBody()
+        {
+            var code = @"
 namespace N
 {
     public class C
@@ -88,13 +88,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void CalculatedBody()
-            {
-                var code = @"
+        [Test]
+        public static void CalculatedBody()
+        {
+            var code = @"
 namespace N
 {
     public class C
@@ -106,13 +106,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void Abstract()
-            {
-                var code = @"
+        [Test]
+        public static void Abstract()
+        {
+            var code = @"
 namespace N
 {
     public abstract class C
@@ -121,14 +121,14 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void Static()
-            {
-                // maybe this should notify?
-                var code = @"
+        [Test]
+        public static void Static()
+        {
+            // maybe this should notify?
+            var code = @"
 namespace N
 {
     public class C
@@ -137,14 +137,14 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void StaticEvent()
-            {
-                // maybe this should notify?
-                var code = @"
+        [Test]
+        public static void StaticEvent()
+        {
+            // maybe this should notify?
+            var code = @"
 #pragma warning disable CS0067
 namespace N
 {
@@ -156,13 +156,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void Enumerator()
-            {
-                var code = @"
+        [Test]
+        public static void Enumerator()
+        {
+            var code = @"
 namespace N
 {
     using System.Collections;
@@ -193,13 +193,13 @@ namespace N
         public object? Current { get; private set; }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void GenericEnumerator()
-            {
-                var code = @"
+        [Test]
+        public static void GenericEnumerator()
+        {
+            var code = @"
 namespace N
 {
     using System.Collections;
@@ -237,13 +237,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void DependencyProperty()
-            {
-                var code = @"
+        [Test]
+        public static void DependencyProperty()
+        {
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -264,13 +264,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void Event()
-            {
-                var code = @"
+        [Test]
+        public static void Event()
+        {
+            var code = @"
 namespace N
 {
     using System;
@@ -282,13 +282,13 @@ namespace N
         private void M() => this.E?.Invoke(this, EventArgs.Empty);
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void MarkupExtension()
-            {
-                var code = @"
+        [Test]
+        public static void MarkupExtension()
+        {
+            var code = @"
 namespace N
 {
     using System;
@@ -339,13 +339,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void Attribute()
-            {
-                var code = @"
+        [Test]
+        public static void Attribute()
+        {
+            var code = @"
 namespace N
 {
     using System;
@@ -356,13 +356,13 @@ namespace N
         public string? Name { get; set; }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void DataTemplateSelector()
-            {
-                var code = @"
+        [Test]
+        public static void DataTemplateSelector()
+        {
+            var code = @"
 namespace N
 {
     using System;
@@ -408,14 +408,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Ignore("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D")]
-            [Test]
-            public static void WhenBaseHasPropertyChangedEventButNoInterface()
-            {
-                var code = @"
+        [Ignore("Not sure if there is a clean way. Not common enough for special casing. Maybe ask for a fix on uservoice :D")]
+        [Test]
+        public static void WhenBaseHasPropertyChangedEventButNoInterface()
+        {
+            var code = @"
 namespace N
 {
     using System.Windows.Input;
@@ -426,15 +426,15 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [TestCase("P = p;")]
-            [TestCase("P++;")]
-            [TestCase("P--;")]
-            public static void PrivateSetterOnlyAssignedInCtor(string expression)
-            {
-                var code = @"
+        [TestCase("P = p;")]
+        [TestCase("P++;")]
+        [TestCase("P--;")]
+        public static void PrivateSetterOnlyAssignedInCtor(string expression)
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -460,8 +460,7 @@ namespace N
     }
 }".AssertReplace("P = p;", expression);
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

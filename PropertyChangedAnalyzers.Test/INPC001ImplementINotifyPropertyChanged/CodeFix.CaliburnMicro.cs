@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged;
 
-    public static partial class CodeFix
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class CodeFix
+{
+    public static class CaliburnMicro
     {
-        public static class CaliburnMicro
+        private static readonly Settings Settings = LibrarySettings.CaliburnMicro;
+
+        [Test]
+        public static void SubclassPropertyChangedBaseAddUsing()
         {
-            private static readonly Settings Settings = LibrarySettings.CaliburnMicro;
-
-            [Test]
-            public static void SubclassPropertyChangedBaseAddUsing()
-            {
-                var before = @"
+            var before = @"
 #nullable disable
 namespace N
 {
@@ -23,7 +23,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 #nullable disable
 namespace N
 {
@@ -34,13 +34,13 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase and add using.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase and add using.", settings: Settings);
+        }
 
-            [Test]
-            public static void SubclassPropertyChangedBaseAddUsingNullableDisabled()
-            {
-                var before = @"
+        [Test]
+        public static void SubclassPropertyChangedBaseAddUsingNullableDisabled()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -49,7 +49,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using Caliburn.Micro;
@@ -59,13 +59,13 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase and add using.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase and add using.", settings: Settings);
+        }
 
-            [Test]
-            public static void SubclassPropertyChangedBaseFullyQualified()
-            {
-                var before = @"
+        [Test]
+        public static void SubclassPropertyChangedBaseFullyQualified()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -74,7 +74,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -82,13 +82,13 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase fully qualified.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass Caliburn.Micro.PropertyChangedBase fully qualified.", settings: Settings);
+        }
 
-            [Test]
-            public static void ImplementINotifyPropertyChangedAddUsingsNullableDisabled()
-            {
-                var before = @"
+        [Test]
+        public static void ImplementINotifyPropertyChangedAddUsingsNullableDisabled()
+        {
+            var before = @"
 #nullable disable
 namespace N
 {
@@ -98,7 +98,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 #nullable disable
 namespace N
 {
@@ -117,13 +117,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.", settings: Settings);
+        }
 
-            [Test]
-            public static void ImplementINotifyPropertyChangedAddUsings()
-            {
-                var before = @"
+        [Test]
+        public static void ImplementINotifyPropertyChangedAddUsings()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -132,7 +132,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -150,13 +150,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.", settings: Settings);
+        }
 
-            [Test]
-            public static void ImplementINotifyPropertyChangedFullyQualifiedNullableDisabled()
-            {
-                var before = @"
+        [Test]
+        public static void ImplementINotifyPropertyChangedFullyQualifiedNullableDisabled()
+        {
+            var before = @"
 #nullable disable
 namespace N
 {
@@ -166,7 +166,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 #nullable disable
 namespace N
 {
@@ -182,13 +182,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.", settings: Settings);
+        }
 
-            [Test]
-            public static void ImplementINotifyPropertyChangedFullyQualified()
-            {
-                var before = @"
+        [Test]
+        public static void ImplementINotifyPropertyChangedFullyQualified()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -197,7 +197,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
@@ -212,8 +212,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.", settings: Settings);
         }
     }
 }

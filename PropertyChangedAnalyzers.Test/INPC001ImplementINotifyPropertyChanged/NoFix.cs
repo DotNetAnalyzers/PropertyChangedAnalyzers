@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class NoFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ClassDeclarationAnalyzer Analyzer = new();
+    private static readonly ImplementINotifyPropertyChangedFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged);
 
-    public static class NoFix
+    [Test]
+    [Ignore("Not sure how we want this.")]
+    public static void IgnoresWhenBaseIsMouseGesture()
     {
-        private static readonly ClassDeclarationAnalyzer Analyzer = new();
-        private static readonly ImplementINotifyPropertyChangedFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC001ImplementINotifyPropertyChanged);
-
-        [Test]
-        [Ignore("Not sure how we want this.")]
-        public static void IgnoresWhenBaseIsMouseGesture()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows.Input;
@@ -24,7 +24,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
     }
 }

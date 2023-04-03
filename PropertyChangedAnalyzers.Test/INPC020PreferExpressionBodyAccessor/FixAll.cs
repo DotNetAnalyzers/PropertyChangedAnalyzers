@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC020PreferExpressionBodyAccessor
+﻿namespace PropertyChangedAnalyzers.Test.INPC020PreferExpressionBodyAccessor;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class FixAll
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly PropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly ExpressionBodyFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor);
 
-    public static class FixAll
+    [Test]
+    public static void DependencyProperty()
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly ExpressionBodyFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC020PreferExpressionBodyAccessor);
-
-        [Test]
-        public static void DependencyProperty()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Windows;
@@ -33,7 +33,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Windows;
@@ -55,7 +55,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

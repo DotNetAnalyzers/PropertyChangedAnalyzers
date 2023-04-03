@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class CodeFix
+    public static class StyletMvvm
     {
-        public static class StyletMvvm
-        {
-            private static readonly Settings Settings = LibrarySettings.Stylet;
+        private static readonly Settings Settings = LibrarySettings.Stylet;
 
-            [Test]
-            public static void AutoPropertyToNotifyWhenValueChanges()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyToNotifyWhenValueChanges()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -22,7 +22,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -45,14 +45,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Notify when value changes.", settings: Settings);
+        }
 
-            [Test]
-            public static void AutoPropertyToTrySet()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyToTrySet()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -61,7 +61,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -71,14 +71,14 @@ namespace N
         public int P { get => this.p; set => this.SetAndNotify(ref this.p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void InternalClassInternalPropertyAutoPropertyToTrySet()
-            {
-                var before = @"
+        [Test]
+        public static void InternalClassInternalPropertyAutoPropertyToTrySet()
+        {
+            var before = @"
 namespace N
 {
     internal class C : Stylet.PropertyChangedBase
@@ -87,7 +87,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     internal class C : Stylet.PropertyChangedBase
@@ -97,14 +97,14 @@ namespace N
         internal int P { get => this.p; set => this.SetAndNotify(ref this.p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void AutoPropertyInitializedToSet()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyInitializedToSet()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -113,7 +113,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -123,14 +123,14 @@ namespace N
         public int P { get => this.p; set => this.SetAndNotify(ref this.p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void AutoPropertyVirtualToSet()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyVirtualToSet()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -139,7 +139,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -149,14 +149,14 @@ namespace N
         public virtual int P { get => this.p; set => this.SetAndNotify(ref this.p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void AutoPropertyPrivateSetToSet()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyPrivateSetToSet()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -170,7 +170,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -185,14 +185,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void AutoPropertyToTrySetUnderscoreNames()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyToTrySetUnderscoreNames()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -206,7 +206,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -221,14 +221,14 @@ namespace N
         public int P { get => _p; set => SetAndNotify(ref _p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void WithBackingFieldToSetStatementBody()
-            {
-                var before = @"
+        [Test]
+        public static void WithBackingFieldToSetStatementBody()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -243,7 +243,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -257,14 +257,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void WithBackingFieldToSetExpressionBody()
-            {
-                var before = @"
+        [Test]
+        public static void WithBackingFieldToSetExpressionBody()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -279,7 +279,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -293,14 +293,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
-            {
-                var before = @"
+        [Test]
+        public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -315,7 +315,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -329,14 +329,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void WithBackingFieldToSetUnderscoreNames()
-            {
-                var before = @"
+        [Test]
+        public static void WithBackingFieldToSetUnderscoreNames()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -351,7 +351,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -365,9 +365,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "SetAndNotify(ref field, value)", settings: Settings);
         }
     }
 }

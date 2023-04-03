@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC019GetBackingField
+﻿namespace PropertyChangedAnalyzers.Test.INPC019GetBackingField;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly PropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC019GetBackingField;
 
-    public static class Valid
+    [Test]
+    public static void ExpressionBody()
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC019GetBackingField;
-
-        [Test]
-        public static void ExpressionBody()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -47,13 +47,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void TrySetExpressionBody()
-        {
-            var code = @"
+    [Test]
+    public static void TrySetExpressionBody()
+    {
+        var code = @"
 namespace ValidCode.TrySet
 {
     using System.Collections.Generic;
@@ -103,13 +103,13 @@ namespace ValidCode.TrySet
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void StatementBody()
-        {
-            var code = @"
+    [Test]
+    public static void StatementBody()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -147,13 +147,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void DependencyProperty()
-        {
-            var code = @"
+    [Test]
+    public static void DependencyProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -174,7 +174,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
     }
 }

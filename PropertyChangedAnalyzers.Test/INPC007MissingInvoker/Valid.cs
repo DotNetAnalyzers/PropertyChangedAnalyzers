@@ -1,17 +1,17 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvoker
+﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvoker;
+
+using Gu.Roslyn.Asserts;
+
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
+    private static readonly EventAnalyzer Analyzer = new();
 
-    using NUnit.Framework;
-
-    public static class Valid
+    [Test]
+    public static void OnPropertyChangedCallerMemberName()
     {
-        private static readonly EventAnalyzer Analyzer = new();
-
-        [Test]
-        public static void OnPropertyChangedCallerMemberName()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -49,13 +49,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void OnPropertyChangedCallerMemberNameSealed()
-        {
-            var code = @"
+    [Test]
+    public static void OnPropertyChangedCallerMemberNameSealed()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -93,13 +93,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void OverridingEvent()
-        {
-            var viewModelBaseCode = @"
+    [Test]
+    public static void OverridingEvent()
+    {
+        var viewModelBaseCode = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -116,7 +116,7 @@ namespace N.Core
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N.Client
 {
     using System.ComponentModel;
@@ -127,13 +127,13 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, new[] { viewModelBaseCode, code }, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
-        }
+        RoslynAssert.Valid(Analyzer, new[] { viewModelBaseCode, code }, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
+    }
 
-        [Test]
-        public static void Interface()
-        {
-            var code = @"
+    [Test]
+    public static void Interface()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -144,13 +144,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void InterfaceRepro()
-        {
-            var code = @"
+    [Test]
+    public static void InterfaceRepro()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -183,13 +183,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void SealedWithNoMutableProperties()
-        {
-            var code = @"
+    [Test]
+    public static void SealedWithNoMutableProperties()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -209,13 +209,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
-        }
+        RoslynAssert.Valid(Analyzer, code, settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
+    }
 
-        [Test]
-        public static void WhenCreatingPropertyChangedEventArgsSeparately()
-        {
-            var code = @"
+    [Test]
+    public static void WhenCreatingPropertyChangedEventArgsSeparately()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -255,13 +255,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void StaticWithInvoker()
-        {
-            var code = @"
+    [Test]
+    public static void StaticWithInvoker()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -278,13 +278,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WrappingPoint()
-        {
-            var code = @"
+    [Test]
+    public static void WrappingPoint()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -334,13 +334,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CachingInConcurrentDictionary1()
-        {
-            var code = @"
+    [Test]
+    public static void CachingInConcurrentDictionary1()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.Collections.Concurrent;
@@ -360,13 +360,13 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CachingInConcurrentDictionary2()
-        {
-            var code = @"
+    [Test]
+    public static void CachingInConcurrentDictionary2()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.Collections.Concurrent;
@@ -386,13 +386,13 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CachingInConcurrentDictionaryLocal()
-        {
-            var code = @"
+    [Test]
+    public static void CachingInConcurrentDictionaryLocal()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.Collections.Concurrent;
@@ -414,7 +414,6 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

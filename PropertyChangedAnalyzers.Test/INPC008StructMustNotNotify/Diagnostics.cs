@@ -1,16 +1,16 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotify;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly StructAnalyzer Analyzer = new();
 
-    public static class Diagnostics
+    [Test]
+    public static void WhenNotifying()
     {
-        private static readonly StructAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenNotifying()
-        {
-            var code = @"
+        var code = @"
 #pragma warning disable CS0067
 namespace N
 {
@@ -21,13 +21,13 @@ namespace N
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenNotifyingFullyQualified()
-        {
-            var code = @"
+    [Test]
+    public static void WhenNotifyingFullyQualified()
+    {
+        var code = @"
 #pragma warning disable CS0067
 namespace N
 {
@@ -36,7 +36,6 @@ namespace N
         public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, code);
     }
 }

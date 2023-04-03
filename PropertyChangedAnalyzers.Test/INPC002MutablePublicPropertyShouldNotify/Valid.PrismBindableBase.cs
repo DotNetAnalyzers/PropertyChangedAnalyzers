@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public partial class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public partial class Valid
+    public static class PrismBindableBase
     {
-        public static class PrismBindableBase
-        {
-            private static readonly Settings MetadataReferences = LibrarySettings.Prism;
+        private static readonly Settings MetadataReferences = LibrarySettings.Prism;
 
-            [Test]
-            public static void SetProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -28,13 +28,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, settings: MetadataReferences);
-            }
+            RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void SetPropertyExpressionBodies()
-            {
-                var code = @"
+        [Test]
+        public static void SetPropertyExpressionBodies()
+        {
+            var code = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -49,17 +49,17 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, settings: MetadataReferences);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: MetadataReferences);
+        }
 
-            [TestCase("null")]
-            [TestCase("string.Empty")]
-            [TestCase(@"""P""")]
-            [TestCase(@"nameof(P)")]
-            [TestCase(@"nameof(this.P)")]
-            public static void OnPropertyChanged(string propertyName)
-            {
-                var code = @"
+        [TestCase("null")]
+        [TestCase("string.Empty")]
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
+        public static void OnPropertyChanged(string propertyName)
+        {
+            var code = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -79,8 +79,7 @@ namespace N
     }
 }".AssertReplace(@"nameof(this.P)", propertyName);
 
-                RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, settings: MetadataReferences);
-            }
+            RoslynAssert.Valid(Analyzer, Descriptor, new[] { code }, settings: MetadataReferences);
         }
     }
 }

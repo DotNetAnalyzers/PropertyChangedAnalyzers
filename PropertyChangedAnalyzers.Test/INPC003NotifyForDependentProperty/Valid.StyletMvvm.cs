@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class Valid
+    public static class StyletMvvm
     {
-        public static class StyletMvvm
-        {
-            private static readonly Settings Settings = LibrarySettings.Stylet;
+        private static readonly Settings Settings = LibrarySettings.Stylet;
 
-            [Test]
-            public static void SetProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -27,13 +27,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetPropertyExpressionBodies()
-            {
-                var code = @"
+        [Test]
+        public static void SetPropertyExpressionBodies()
+        {
+            var code = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -47,13 +47,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -75,13 +75,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyStringEmpty()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyStringEmpty()
+        {
+            var code = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -97,13 +97,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpression()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpression()
+        {
+            var code = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -125,13 +125,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void WhenOverriddenSetAndNotify()
-            {
-                var viewModelBase = @"
+        [Test]
+        public static void WhenOverriddenSetAndNotify()
+        {
+            var viewModelBase = @"
 namespace N
 {
     public abstract class ViewModelBase : Stylet.PropertyChangedBase
@@ -143,7 +143,7 @@ namespace N
     }
 }";
 
-                var code = @"
+            var code = @"
 namespace N
 {
     public class C : ViewModelBase
@@ -158,8 +158,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, settings: Settings);
         }
     }
 }

@@ -1,50 +1,49 @@
 ﻿// ReSharper disable All
-namespace ValidCode.TrySet
+namespace ValidCode.TrySet;
+
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class ExpressionBodies : INotifyPropertyChanged
 {
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private string? name;
+    private int value;
 
-    public sealed class ExpressionBodies : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public string Greeting => $"Hello {this.name}";
+
+    public string? Name
     {
-        private string? name;
-        private int value;
+        get => this.name;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string Greeting => $"Hello {this.name}";
-
-        public string? Name
+        set
         {
-            get => this.name;
-
-            set
+            if (this.TrySet(ref this.name, value))
             {
-                if (this.TrySet(ref this.name, value))
-                {
-                    this.OnPropertyChanged(nameof(this.Greeting));
-                }
+                this.OnPropertyChanged(nameof(this.Greeting));
             }
         }
+    }
 
-        public int Value
+    public int Value
+    {
+        get => this.value;
+        set => this.TrySet(ref this.value, value);
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    private bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value))
         {
-            get => this.value;
-            set => this.TrySet(ref this.value, value);
+            return false;
         }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        private bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            this.OnPropertyChanged(propertyName);
-            return true;
-        }
+        field = value;
+        this.OnPropertyChanged(propertyName);
+        return true;
     }
 }

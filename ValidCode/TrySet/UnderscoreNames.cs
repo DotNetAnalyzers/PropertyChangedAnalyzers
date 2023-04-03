@@ -1,50 +1,49 @@
 ﻿// ReSharper disable All
-namespace ValidCode.TrySet
+namespace ValidCode.TrySet;
+
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class UnderscoreNames : INotifyPropertyChanged
 {
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private string? _name;
+    private int _value;
 
-    public sealed class UnderscoreNames : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public string Greeting => $"Hello {_name}";
+
+    public string? Name
     {
-        private string? _name;
-        private int _value;
+        get => _name;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string Greeting => $"Hello {_name}";
-
-        public string? Name
+        set
         {
-            get => _name;
-
-            set
+            if (TrySet(ref _name, value))
             {
-                if (TrySet(ref _name, value))
-                {
-                    OnPropertyChanged(nameof(Greeting));
-                }
+                OnPropertyChanged(nameof(Greeting));
             }
         }
+    }
 
-        public int Value
+    public int Value
+    {
+        get => _value;
+        set => TrySet(ref _value, value);
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    private bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value))
         {
-            get => _value;
-            set => TrySet(ref _value, value);
+            return false;
         }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        private bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
     }
 }

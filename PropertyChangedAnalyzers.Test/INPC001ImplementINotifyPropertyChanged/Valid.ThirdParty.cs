@@ -1,17 +1,17 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged;
 
-    public static partial class Valid
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class Valid
+{
+    public static class ThirdParty
     {
-        public static class ThirdParty
+        [Test]
+        public static void MvvmLight()
         {
-            [Test]
-            public static void MvvmLight()
-            {
-                var code = @"
+            var code = @"
 namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
@@ -20,13 +20,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.MvvmLight);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.MvvmLight);
+        }
 
-            [Test]
-            public static void CaliburnMicro()
-            {
-                var code = @"
+        [Test]
+        public static void CaliburnMicro()
+        {
+            var code = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -35,13 +35,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.CaliburnMicro);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.CaliburnMicro);
+        }
 
-            [Test]
-            public static void Stylet()
-            {
-                var code = @"
+        [Test]
+        public static void Stylet()
+        {
+            var code = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -50,13 +50,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Stylet);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Stylet);
+        }
 
-            [Test]
-            public static void MvvmCross()
-            {
-                var code = @"
+        [Test]
+        public static void MvvmCross()
+        {
+            var code = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -65,13 +65,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.MvvmCross);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.MvvmCross);
+        }
 
-            [Test]
-            public static void SubclassBindableBase()
-            {
-                var code = @"
+        [Test]
+        public static void SubclassBindableBase()
+        {
+            var code = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -79,8 +79,7 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Prism);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Prism);
         }
     }
 }

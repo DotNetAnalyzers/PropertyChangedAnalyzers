@@ -1,15 +1,14 @@
-namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class PropertyChangedEventHandlerType : QualifiedType
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal readonly QualifiedMethod Invoke;
 
-    internal class PropertyChangedEventHandlerType : QualifiedType
+    internal PropertyChangedEventHandlerType()
+        : base("System.ComponentModel.PropertyChangedEventHandler")
     {
-        internal readonly QualifiedMethod Invoke;
-
-        internal PropertyChangedEventHandlerType()
-            : base("System.ComponentModel.PropertyChangedEventHandler")
-        {
-            this.Invoke = new QualifiedMethod(this, nameof(this.Invoke));
-        }
+        this.Invoke = new QualifiedMethod(this, nameof(this.Invoke));
     }
 }

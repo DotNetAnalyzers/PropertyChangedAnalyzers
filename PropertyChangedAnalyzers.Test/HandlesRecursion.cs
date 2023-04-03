@@ -1,33 +1,33 @@
-﻿namespace PropertyChangedAnalyzers.Test
+﻿namespace PropertyChangedAnalyzers.Test;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.Diagnostics;
+using NUnit.Framework;
+
+public static class HandlesRecursion
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using NUnit.Framework;
+    private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
+        typeof(Descriptors)
+        .Assembly
+        .GetTypes()
+        .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
+        .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+        .ToArray();
 
-    public static class HandlesRecursion
+    [Test]
+    public static void NotEmpty()
     {
-        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
-            typeof(Descriptors)
-            .Assembly
-            .GetTypes()
-            .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
-            .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
-            .ToArray();
+        CollectionAssert.IsNotEmpty(AllAnalyzers);
+        Assert.Pass($"Count: {AllAnalyzers.Count}");
+    }
 
-        [Test]
-        public static void NotEmpty()
-        {
-            CollectionAssert.IsNotEmpty(AllAnalyzers);
-            Assert.Pass($"Count: {AllAnalyzers.Count}");
-        }
-
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public static void InTrySet(DiagnosticAnalyzer analyzer)
-        {
-            var viewModelBase = @"
+    [TestCaseSource(nameof(AllAnalyzers))]
+    public static void InTrySet(DiagnosticAnalyzer analyzer)
+    {
+        var viewModelBase = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -49,7 +49,7 @@ namespace N.Core
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -65,13 +65,13 @@ namespace N.Client
         }
     }
 }";
-            _ = Analyze.GetDiagnostics(analyzer, new[] { viewModelBase, code });
-        }
+        _ = Analyze.GetDiagnostics(analyzer, new[] { viewModelBase, code });
+    }
 
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public static void InOnPropertyChanged(DiagnosticAnalyzer analyzer)
-        {
-            var viewModelBaseCode = @"
+    [TestCaseSource(nameof(AllAnalyzers))]
+    public static void InOnPropertyChanged(DiagnosticAnalyzer analyzer)
+    {
+        var viewModelBaseCode = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -88,7 +88,7 @@ namespace N.Core
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -117,13 +117,13 @@ namespace N.Client
         }
     }
 }";
-            _ = Analyze.GetDiagnostics(analyzer, new[] { viewModelBaseCode, code });
-        }
+        _ = Analyze.GetDiagnostics(analyzer, new[] { viewModelBaseCode, code });
+    }
 
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public static void InProperty(DiagnosticAnalyzer analyzer)
-        {
-            var code = @"
+    [TestCaseSource(nameof(AllAnalyzers))]
+    public static void InProperty(DiagnosticAnalyzer analyzer)
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -267,13 +267,13 @@ namespace N
     }
 }";
 
-            _ = Analyze.GetDiagnostics(analyzer, code);
-        }
+        _ = Analyze.GetDiagnostics(analyzer, code);
+    }
 
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public static void Repro(DiagnosticAnalyzer analyzer)
-        {
-            var code = @"
+    [TestCaseSource(nameof(AllAnalyzers))]
+    public static void Repro(DiagnosticAnalyzer analyzer)
+    {
+        var code = @"
 #nullable disable
 namespace N
 {
@@ -311,7 +311,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(analyzer, code);
-        }
+        RoslynAssert.Valid(analyzer, code);
     }
 }

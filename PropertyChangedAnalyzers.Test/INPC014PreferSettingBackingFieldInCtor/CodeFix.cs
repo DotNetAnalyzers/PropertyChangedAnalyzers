@@ -1,15 +1,15 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtor
+﻿namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtor;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AssignmentAnalyzer Analyzer = new();
+    private static readonly SetBackingFieldFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC014SetBackingFieldInConstructor);
 
-    public static class CodeFix
-    {
-        private static readonly AssignmentAnalyzer Analyzer = new();
-        private static readonly SetBackingFieldFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC014SetBackingFieldInConstructor);
-
-        private const string ViewModelBase = @"
+    private const string ViewModelBase = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -39,10 +39,10 @@ namespace N.Core
     }
 }";
 
-        [Test]
-        public static void SimplePropertyWithBackingFieldStatementBodySetter()
-        {
-            var before = @"
+    [Test]
+    public static void SimplePropertyWithBackingFieldStatementBodySetter()
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -65,7 +65,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -87,13 +87,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void SimplePropertyWithBackingFieldExpressionBodySetter()
-        {
-            var before = @"
+    [Test]
+    public static void SimplePropertyWithBackingFieldExpressionBodySetter()
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -113,7 +113,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -132,13 +132,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void SimplePropertyWithBackingFieldExpressionBodySetterKeyword()
-        {
-            var before = @"
+    [Test]
+    public static void SimplePropertyWithBackingFieldExpressionBodySetterKeyword()
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -158,7 +158,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -177,13 +177,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void SimplePropertyWithBackingFieldExpressionBodySetterCollisionParameter()
-        {
-            var before = @"
+    [Test]
+    public static void SimplePropertyWithBackingFieldExpressionBodySetterCollisionParameter()
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -203,7 +203,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -222,13 +222,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void SimplePropertyWithBackingFieldExpressionBodySetterCollisionLocal()
-        {
-            var before = @"
+    [Test]
+    public static void SimplePropertyWithBackingFieldExpressionBodySetterCollisionLocal()
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -250,7 +250,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -271,13 +271,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void SimplePropertyWithBackingFieldUnderscoreNames()
-        {
-            var before = @"
+    [Test]
+    public static void SimplePropertyWithBackingFieldUnderscoreNames()
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -300,7 +300,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -322,20 +322,20 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("value == this.p")]
-        [TestCase("this.p == value")]
-        [TestCase("Equals(this.p, value)")]
-        [TestCase("Equals(value, this.p)")]
-        [TestCase("ReferenceEquals(this.p, value)")]
-        [TestCase("ReferenceEquals(value, this.p)")]
-        [TestCase("value.Equals(this.p)")]
-        [TestCase("this.p.Equals(value)")]
-        public static void NotifyingProperty(string equals)
-        {
-            var before = @"
+    [TestCase("value == this.p")]
+    [TestCase("this.p == value")]
+    [TestCase("Equals(this.p, value)")]
+    [TestCase("Equals(value, this.p)")]
+    [TestCase("ReferenceEquals(this.p, value)")]
+    [TestCase("ReferenceEquals(value, this.p)")]
+    [TestCase("value.Equals(this.p)")]
+    [TestCase("this.p.Equals(value)")]
+    public static void NotifyingProperty(string equals)
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -376,7 +376,7 @@ namespace N
     }
 }".AssertReplace("value == this.p", equals);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -416,13 +416,13 @@ namespace N
         }
     }
 }".AssertReplace("value == this.p", equals);
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenSettingFieldUsingTrySet()
-        {
-            var before = @"
+    [Test]
+    public static void WhenSettingFieldUsingTrySet()
+    {
+        var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -441,7 +441,7 @@ namespace N.Client
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -460,13 +460,13 @@ namespace N.Client
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
+    }
 
-        [Test]
-        public static void WhenSettingFieldUsingTrySetAndNotifyForOther()
-        {
-            var before = @"
+    [Test]
+    public static void WhenSettingFieldUsingTrySetAndNotifyForOther()
+    {
+        var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -493,7 +493,7 @@ namespace N.Client
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -520,13 +520,13 @@ namespace N.Client
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
+    }
 
-        [Test]
-        public static void WhenShadowingParameter()
-        {
-            var before = @"
+    [Test]
+    public static void WhenShadowingParameter()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -564,7 +564,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -602,13 +602,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
+    }
 
-        [Test]
-        public static void WhenShadowingLocal()
-        {
-            var before = @"
+    [Test]
+    public static void WhenShadowingLocal()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -647,7 +647,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -686,13 +686,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
+    }
 
-        [Test]
-        public static void WhenShadowingLocalKeyword()
-        {
-            var before = @"
+    [Test]
+    public static void WhenShadowingLocalKeyword()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -731,7 +731,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -770,7 +770,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBase, before }, after);
     }
 }

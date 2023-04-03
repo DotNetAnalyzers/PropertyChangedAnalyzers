@@ -1,13 +1,13 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify;
 
-    public static partial class CodeFix
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
+{
+    public static class ViewModelBase
     {
-        public static class ViewModelBase
-        {
-            private const string ViewModelBaseCode = @"
+        private const string ViewModelBaseCode = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace N.Core
     }
 }";
 
-            private const string ViewModelBaseUnderscore = @"
+        private const string ViewModelBaseUnderscore = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -67,10 +67,10 @@ namespace N
     }
 }";
 
-            [Test]
-            public static void AutoPropertyToNotifyWhenValueChanges()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyToNotifyWhenValueChanges()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -79,7 +79,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -102,14 +102,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "Notify when value changes.");
+        }
 
-            [Test]
-            public static void AutoPropertyToTrySet()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyToTrySet()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -118,7 +118,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -128,14 +128,14 @@ namespace N.Client
         public int P { get => this.p; set => this.TrySet(ref this.p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void AutoPropertyInitializedToSet()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyInitializedToSet()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -144,7 +144,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -154,14 +154,14 @@ namespace N.Client
         public int P { get => this.p; set => this.TrySet(ref this.p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void AutoPropertyVirtualToSet()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyVirtualToSet()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -170,7 +170,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -180,14 +180,14 @@ namespace N.Client
         public virtual int P { get => this.p; set => this.TrySet(ref this.p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void AutoPropertyPrivateSetToSet()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyPrivateSetToSet()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -201,7 +201,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -216,14 +216,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void AutoPropertyToTrySetUnderscoreNames()
-            {
-                var before = @"
+        [Test]
+        public static void AutoPropertyToTrySetUnderscoreNames()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -237,7 +237,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -252,14 +252,14 @@ namespace N.Client
         public int P { get => _p; set => TrySet(ref _p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void WithBackingFieldToSetStatementBody()
-            {
-                var before = @"
+        [Test]
+        public static void WithBackingFieldToSetStatementBody()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -274,7 +274,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -288,14 +288,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void WithBackingFieldToSetExpressionBody()
-            {
-                var before = @"
+        [Test]
+        public static void WithBackingFieldToSetExpressionBody()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -310,7 +310,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -324,14 +324,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
-            {
-                var before = @"
+        [Test]
+        public static void WithBackingFieldToSetUnderscoreNamesStatementBody()
+        {
+            var before = @"
 namespace N
 {
     public class C : ViewModelBase
@@ -346,7 +346,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : ViewModelBase
@@ -360,14 +360,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void WithBackingFieldToSetUnderscoreNamesExpressionBody()
-            {
-                var before = @"
+        [Test]
+        public static void WithBackingFieldToSetUnderscoreNamesExpressionBody()
+        {
+            var before = @"
 namespace N
 {
     public class C : N.ViewModelBase
@@ -382,7 +382,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : N.ViewModelBase
@@ -396,14 +396,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseUnderscore, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void AutoPropertyWhenRecursionInTrySet()
-            {
-                var viewModelBaseCode = @"
+        [Test]
+        public static void AutoPropertyWhenRecursionInTrySet()
+        {
+            var viewModelBaseCode = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -426,7 +426,7 @@ namespace N.Core
     }
 }";
 
-                var before = @"
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -435,7 +435,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -458,14 +458,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
+        }
 
-            [Test]
-            public static void AutoPropertyWhenNullCoalescingInTrySet()
-            {
-                var viewModelBaseCode = @"
+        [Test]
+        public static void AutoPropertyWhenNullCoalescingInTrySet()
+        {
+            var viewModelBaseCode = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -495,7 +495,7 @@ namespace N.Core
     }
 }";
 
-                var before = @"
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -504,7 +504,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -514,14 +514,14 @@ namespace N.Client
         public int P { get => this.p; set => this.TrySet(ref this.p, value); }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "TrySet(ref field, value)");
+        }
 
-            [Test]
-            public static void UglyViewModelBase()
-            {
-                var c1 = @"
+        [Test]
+        public static void UglyViewModelBase()
+        {
+            var c1 = @"
 namespace N
 {
     public class C1
@@ -530,7 +530,7 @@ namespace N
     }
 }";
 
-                var viewModelBaseCode = @"
+            var viewModelBaseCode = @"
 #nullable disable
 using System;
 using System.Collections.Generic;
@@ -696,7 +696,7 @@ namespace MVVM
         #endregion // IDisposable Members
     }
 }";
-                var before = @"
+            var before = @"
 namespace N
 {
     using MVVM;
@@ -713,7 +713,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using MVVM;
@@ -739,14 +739,14 @@ namespace N
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, c1, before }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, c1, before }, after, fixTitle: "Notify when value changes.");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, c1, before }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, c1, before }, after, fixTitle: "Notify when value changes.");
+        }
 
-            [Test]
-            public static void ViewModelBaseWithPropertyChangedEventArgsParameter()
-            {
-                var viewModelBase = @"
+        [Test]
+        public static void ViewModelBaseWithPropertyChangedEventArgsParameter()
+        {
+            var viewModelBase = @"
 namespace N
 {
     using System.ComponentModel;
@@ -761,7 +761,7 @@ namespace N
         }
     }
 }";
-                var before = @"
+            var before = @"
 namespace N
 {
     public class C : ViewModelBase
@@ -770,7 +770,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : ViewModelBase
@@ -794,9 +794,8 @@ namespace N
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after, fixTitle: "Notify when value changes.");
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after, fixTitle: "Notify when value changes.");
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after, fixTitle: "Notify when value changes.");
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after, fixTitle: "Notify when value changes.");
         }
     }
 }

@@ -1,16 +1,16 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying;
+
+using System.Collections.Generic;
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class NoFix
 {
-    using System.Collections.Generic;
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly CheckIfDifferentBeforeNotifyFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying);
 
-    public static class NoFix
-    {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly CheckIfDifferentBeforeNotifyFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC005CheckIfDifferentBeforeNotifying);
-
-        private const string ViewModelBaseCode = @"
+    private const string ViewModelBaseCode = @"
 namespace N.Core
 {
     using System;
@@ -47,27 +47,27 @@ namespace N.Core
     }
 }";
 
-        private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
-        {
-            new TestCaseData("string", "Equals(value, this.p)"),
-            new TestCaseData("string", "Equals(this.p, value)"),
-            new TestCaseData("string", "Equals(value, p)"),
-            new TestCaseData("string", "Equals(value, P)"),
-            new TestCaseData("string", "Equals(P, value)"),
-            new TestCaseData("string", "Nullable.Equals(value, this.p)"),
-            new TestCaseData("int?",   "Nullable.Equals(value, this.p)"),
-            new TestCaseData("string", "value.Equals(this.p)"),
-            new TestCaseData("string", "value.Equals(p)"),
-            new TestCaseData("string", "this.p.Equals(value)"),
-            new TestCaseData("string", "p.Equals(value)"),
-            new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
-            new TestCaseData("string", "ReferenceEquals(value, this.p)"),
-        };
+    private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
+    {
+        new TestCaseData("string", "Equals(value, this.p)"),
+        new TestCaseData("string", "Equals(this.p, value)"),
+        new TestCaseData("string", "Equals(value, p)"),
+        new TestCaseData("string", "Equals(value, P)"),
+        new TestCaseData("string", "Equals(P, value)"),
+        new TestCaseData("string", "Nullable.Equals(value, this.p)"),
+        new TestCaseData("int?",   "Nullable.Equals(value, this.p)"),
+        new TestCaseData("string", "value.Equals(this.p)"),
+        new TestCaseData("string", "value.Equals(p)"),
+        new TestCaseData("string", "this.p.Equals(value)"),
+        new TestCaseData("string", "p.Equals(value)"),
+        new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
+        new TestCaseData("string", "ReferenceEquals(value, this.p)"),
+    };
 
-        [TestCaseSource(nameof(TestCases))]
-        public static void Check(string type, string expression)
-        {
-            var code = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void Check(string type, string expression)
+    {
+        var code = @"
 #nullable disable
 #pragma warning disable CS8019, CS8616
 namespace N
@@ -103,13 +103,13 @@ namespace N
 }".AssertReplace("Equals(value, this.p)", expression)
 .AssertReplace("int", type);
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [TestCaseSource(nameof(TestCases))]
-        public static void IfNotEqualsReturnElseAssignAndOnPropertyChanged(string type, string expression)
-        {
-            var code = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void IfNotEqualsReturnElseAssignAndOnPropertyChanged(string type, string expression)
+    {
+        var code = @"
 #nullable disable
 #pragma warning disable CS8019, CS8616
 namespace N
@@ -147,13 +147,13 @@ namespace N
 }".AssertReplace("Equals(value, this.p)", expression)
 .AssertReplace("int", type);
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [TestCaseSource(nameof(TestCases))]
-        public static void IfNotEqualsAssignReturnElseOnPropertyChanged(string type, string expression)
-        {
-            var code = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void IfNotEqualsAssignReturnElseOnPropertyChanged(string type, string expression)
+    {
+        var code = @"
 #nullable disable
 #pragma warning disable CS8019, CS8616
 namespace N
@@ -191,13 +191,13 @@ namespace N
 }".AssertReplace("Equals(value, this.p)", expression)
 .AssertReplace("int", type);
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void IfOperatorNotEqualsReturn()
-        {
-            var code = @"
+    [Test]
+    public static void IfOperatorNotEqualsReturn()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -231,14 +231,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [Ignore("#87")]
-        [Test]
-        public static void OperatorEqualsNoAssignReturn()
-        {
-            var code = @"
+    [Ignore("#87")]
+    [Test]
+    public static void OperatorEqualsNoAssignReturn()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -272,14 +272,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [Ignore("Don't think this is the correct warning here.")]
-        [Test]
-        public static void IfOperatorEqualsAssignThenOnPropertyChanged()
-        {
-            var code = @"
+    [Ignore("Don't think this is the correct warning here.")]
+    [Test]
+    public static void IfOperatorEqualsAssignThenOnPropertyChanged()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -312,13 +312,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void IfOperatorEqualsAssignAndNotify()
-        {
-            var code = @"
+    [Test]
+    public static void IfOperatorEqualsAssignAndNotify()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -350,13 +350,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void OperatorEquals()
-        {
-            var code = @"
+    [Test]
+    public static void OperatorEquals()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -388,13 +388,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void InsideIfNegatedTrySet()
-        {
-            var code = @"
+    [Test]
+    public static void InsideIfNegatedTrySet()
+    {
+        var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -417,13 +417,13 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
+    }
 
-        [Test]
-        public static void IfNotTrySetBlockOnPropertyChanged()
-        {
-            var code = @"
+    [Test]
+    public static void IfNotTrySetBlockOnPropertyChanged()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -466,13 +466,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
+    }
 
-        [Test]
-        public static void IfNotTrySetOnPropertyChanged()
-        {
-            var code = @"
+    [Test]
+    public static void IfNotTrySetOnPropertyChanged()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -513,13 +513,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
+    }
 
-        [Test]
-        public static void IfTrySetElseOnPropertyChanged()
-        {
-            var code = @"
+    [Test]
+    public static void IfTrySetElseOnPropertyChanged()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -565,7 +565,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseCode, code });
     }
 }

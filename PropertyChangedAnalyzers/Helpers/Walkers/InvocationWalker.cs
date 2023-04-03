@@ -1,31 +1,30 @@
-namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers;
+
+using System.Collections.Generic;
+using Gu.Roslyn.AnalyzerExtensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+internal sealed class InvocationWalker : PooledWalker<InvocationWalker>
 {
-    using System.Collections.Generic;
-    using Gu.Roslyn.AnalyzerExtensions;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    private readonly List<InvocationExpressionSyntax> invocations = new();
 
-    internal sealed class InvocationWalker : PooledWalker<InvocationWalker>
+    private InvocationWalker()
     {
-        private readonly List<InvocationExpressionSyntax> invocations = new List<InvocationExpressionSyntax>();
+    }
 
-        private InvocationWalker()
-        {
-        }
+    internal IReadOnlyList<InvocationExpressionSyntax> Invocations => this.invocations;
 
-        internal IReadOnlyList<InvocationExpressionSyntax> Invocations => this.invocations;
+    public override void VisitInvocationExpression(InvocationExpressionSyntax node)
+    {
+        this.invocations.Add(node);
+        base.VisitInvocationExpression(node);
+    }
 
-        public override void VisitInvocationExpression(InvocationExpressionSyntax node)
-        {
-            this.invocations.Add(node);
-            base.VisitInvocationExpression(node);
-        }
+    internal static InvocationWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new InvocationWalker());
 
-        internal static InvocationWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new InvocationWalker());
-
-        protected override void Clear()
-        {
-            this.invocations.Clear();
-        }
+    protected override void Clear()
+    {
+        this.invocations.Clear();
     }
 }

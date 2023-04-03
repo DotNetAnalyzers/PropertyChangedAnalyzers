@@ -1,14 +1,14 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdate
+﻿namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdate;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC016NotifyAfterMutation);
 
-    public static class Diagnostics
-    {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC016NotifyAfterMutation);
-
-        private const string ViewModelBaseCode = @"
+    private const string ViewModelBaseCode = @"
 namespace N.Core
 {
     using System;
@@ -45,10 +45,10 @@ namespace N.Core
     }
 }";
 
-        [Test]
-        public static void OnPropertyChangedBeforeAssign()
-        {
-            var code = @"
+    [Test]
+    public static void OnPropertyChangedBeforeAssign()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -82,13 +82,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void OnPropertyChangedPropertyChangedEventArgsBeforeAssign()
-        {
-            var code = @"
+    [Test]
+    public static void OnPropertyChangedPropertyChangedEventArgsBeforeAssign()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -121,13 +121,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void PropertyChangedInvokeBeforeAssign()
-        {
-            var code = @"
+    [Test]
+    public static void PropertyChangedInvokeBeforeAssign()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -160,14 +160,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [TestCase("this.TrySet(ref this.p2, value)")]
-        [TestCase("_ = this.TrySet(ref this.p2, value)")]
-        public static void BeforeTrySet(string trySet)
-        {
-            var code = @"
+    [TestCase("this.TrySet(ref this.p2, value)")]
+    [TestCase("_ = this.TrySet(ref this.p2, value)")]
+    public static void BeforeTrySet(string trySet)
+    {
+        var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -188,7 +188,6 @@ namespace N.Client
     }
 }".AssertReplace("this.TrySet(ref this.p2, value)", trySet);
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, ViewModelBaseCode, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, ViewModelBaseCode, code);
     }
 }

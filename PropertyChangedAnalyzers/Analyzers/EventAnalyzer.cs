@@ -1,63 +1,62 @@
-﻿namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers;
+
+using System.Collections.Immutable;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+internal class EventAnalyzer : DiagnosticAnalyzer
 {
-    using System.Collections.Immutable;
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+        Descriptors.INPC007MissingInvoker,
+        Descriptors.INPC011DoNotShadow);
 
-    using Gu.Roslyn.AnalyzerExtensions;
-
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.Diagnostics;
-
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class EventAnalyzer : DiagnosticAnalyzer
+    public override void Initialize(AnalysisContext context)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            Descriptors.INPC007MissingInvoker,
-            Descriptors.INPC011DoNotShadow);
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+        context.EnableConcurrentExecution();
+        context.RegisterSyntaxNodeAction(c => Handle(c), SyntaxKind.EventFieldDeclaration, SyntaxKind.EventDeclaration);
+    }
 
-        public override void Initialize(AnalysisContext context)
+    private static void Handle(SyntaxNodeAnalysisContext context)
+    {
+        if (!context.IsExcludedFromAnalysis() &&
+            context.ContainingSymbol is IEventSymbol eventSymbol &&
+            eventSymbol.Type == KnownSymbol.PropertyChangedEventHandler)
         {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(c => Handle(c), SyntaxKind.EventFieldDeclaration, SyntaxKind.EventDeclaration);
+            if (Shadows())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC011DoNotShadow, context.Node.GetLocation()));
+            }
+
+            if (MissingInvoker())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC007MissingInvoker, context.Node.GetLocation()));
+            }
         }
 
-        private static void Handle(SyntaxNodeAnalysisContext context)
+        bool Shadows()
         {
-            if (!context.IsExcludedFromAnalysis() &&
-                context.ContainingSymbol is IEventSymbol eventSymbol &&
-                eventSymbol.Type == KnownSymbol.PropertyChangedEventHandler)
-            {
-                if (Shadows())
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC011DoNotShadow, context.Node.GetLocation()));
-                }
+            return eventSymbol is { ContainingType: { BaseType: { } baseType }, IsStatic: false, IsOverride: false } &&
+                   baseType.TryFindEventRecursive(eventSymbol.Name, out _);
+        }
 
-                if (MissingInvoker())
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC007MissingInvoker, context.Node.GetLocation()));
-                }
+        bool MissingInvoker()
+        {
+            if (eventSymbol is { IsStatic: false, ContainingType: { TypeKind: TypeKind.Class } } &&
+                eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
+                OnPropertyChanged.Find(eventSymbol, context.SemanticModel, context.CancellationToken) is null)
+            {
+                return !eventSymbol.ContainingType.IsSealed ||
+                       eventSymbol.ContainingType.GetMembers().TryFirstOfType(x => x.SetMethod != null, out IPropertySymbol _);
             }
 
-            bool Shadows()
-            {
-                return eventSymbol is { ContainingType: { BaseType: { } baseType }, IsStatic: false, IsOverride: false } &&
-                       baseType.TryFindEventRecursive(eventSymbol.Name, out _);
-            }
-
-            bool MissingInvoker()
-            {
-                if (eventSymbol is { IsStatic: false, ContainingType: { TypeKind: TypeKind.Class } } &&
-                    eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
-                    OnPropertyChanged.Find(eventSymbol, context.SemanticModel, context.CancellationToken) is null)
-                {
-                    return !eventSymbol.ContainingType.IsSealed ||
-                           eventSymbol.ContainingType.GetMembers().TryFirstOfType(x => x.SetMethod != null, out IPropertySymbol _);
-                }
-
-                return eventSymbol.IsStatic &&
-                       OnPropertyChanged.Find(eventSymbol, context.SemanticModel, context.CancellationToken) is null;
-            }
+            return eventSymbol.IsStatic &&
+                   OnPropertyChanged.Find(eventSymbol, context.SemanticModel, context.CancellationToken) is null;
         }
     }
 }

@@ -1,17 +1,17 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC021SetBackingField
+﻿namespace PropertyChangedAnalyzers.Test.INPC021SetBackingField;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC021SetBackingField);
 
-    public static class Diagnostics
+    [Test]
+    public static void ExpressionBodyNotAssigning()
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC021SetBackingField);
-
-        [Test]
-        public static void ExpressionBodyNotAssigning()
-        {
-            var code = @"
+        var code = @"
 #pragma warning disable CS0649
 namespace N
 {
@@ -49,13 +49,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void TrySetExpressionBody()
-        {
-            var code = @"
+    [Test]
+    public static void TrySetExpressionBody()
+    {
+        var code = @"
 #pragma warning disable CS0649
 namespace ValidCode.TrySet
 {
@@ -110,13 +110,13 @@ namespace ValidCode.TrySet
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void StatementBody()
-        {
-            var code = @"
+    [Test]
+    public static void StatementBody()
+    {
+        var code = @"
 #pragma warning disable CS0649, CS8618
 namespace N
 {
@@ -158,7 +158,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
     }
 }

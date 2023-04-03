@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class CodeFix
+    public static class CaliburnMicro
     {
-        public static class CaliburnMicro
-        {
-            private static readonly Settings Settings = LibrarySettings.CaliburnMicro;
+        private static readonly Settings Settings = LibrarySettings.CaliburnMicro;
 
-            [Test]
-            public static void SetAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -30,7 +30,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -52,14 +52,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
+        {
+            var before = @"
 namespace N
 {
     internal class C : Caliburn.Micro.PropertyChangedBase
@@ -76,7 +76,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     internal class C : Caliburn.Micro.PropertyChangedBase
@@ -98,14 +98,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
+        {
+            var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -125,7 +125,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -150,14 +150,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetExpressionBodiesAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetExpressionBodiesAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -174,7 +174,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -196,14 +196,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyEmptyIf()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyEmptyIf()
+        {
+            var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -225,7 +225,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -247,14 +247,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -279,7 +279,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -304,14 +304,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedPropertyMissingBraces()
+        {
+            var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -334,7 +334,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -359,14 +359,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void NotifyOfPropertyChangeAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void NotifyOfPropertyChangeAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -417,7 +417,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -468,14 +468,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -502,7 +502,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -529,14 +529,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
-            {
-                var before = @"
+        [Test]
+        public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
+        {
+            var before = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -561,7 +561,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -586,9 +586,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
         }
     }
 }

@@ -1,19 +1,18 @@
 ﻿// ReSharper disable All
-namespace ValidCode
+namespace ValidCode;
+
+using System.Collections.Concurrent;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class CachingInConcurrentDictionary : INotifyPropertyChanged
 {
-    using System.Collections.Concurrent;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> Cache = new();
 
-    public class CachingInConcurrentDictionary : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        private static readonly ConcurrentDictionary<string, PropertyChangedEventArgs> Cache = new ConcurrentDictionary<string, PropertyChangedEventArgs>();
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, Cache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
-        }
+        this.PropertyChanged?.Invoke(this, Cache.GetOrAdd(propertyName ?? string.Empty, name => new PropertyChangedEventArgs(name)));
     }
 }

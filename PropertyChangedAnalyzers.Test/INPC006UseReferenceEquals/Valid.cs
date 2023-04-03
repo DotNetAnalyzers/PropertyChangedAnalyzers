@@ -1,34 +1,34 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEquals
+﻿namespace PropertyChangedAnalyzers.Test.INPC006UseReferenceEquals;
+
+using System.Collections.Generic;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using System.Collections.Generic;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
 
-    public static class Valid
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC006UseReferenceEqualsForReferenceTypes;
+
+    private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
+        new TestCaseData("ReferenceType", "ReferenceEquals(value, this.p)"),
+        new TestCaseData("ReferenceType", "ReferenceEquals(this.p, value)"),
+        new TestCaseData("ReferenceType", "ReferenceEquals(value, p)"),
+        new TestCaseData("ReferenceType", "ReferenceEquals(value, P)"),
+        new TestCaseData("ReferenceType", "ReferenceEquals(P, value)"),
+        new TestCaseData("int?",          "Nullable.Equals(value, this.p)"),
+        new TestCaseData("string",        "value.Equals(this.p)"),
+        new TestCaseData("string",        "value.Equals(p)"),
+        new TestCaseData("string",        "this.p.Equals(value)"),
+        new TestCaseData("string",        "p.Equals(value)"),
+        new TestCaseData("string",        "string.Equals(value, this.p, StringComparison.OrdinalIgnoreCase)"),
+        new TestCaseData("string",        "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
+        new TestCaseData("string",        "ReferenceEquals(value, this.p)"),
+    };
 
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC006UseReferenceEqualsForReferenceTypes;
-
-        private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
-        {
-            new TestCaseData("ReferenceType", "ReferenceEquals(value, this.p)"),
-            new TestCaseData("ReferenceType", "ReferenceEquals(this.p, value)"),
-            new TestCaseData("ReferenceType", "ReferenceEquals(value, p)"),
-            new TestCaseData("ReferenceType", "ReferenceEquals(value, P)"),
-            new TestCaseData("ReferenceType", "ReferenceEquals(P, value)"),
-            new TestCaseData("int?",          "Nullable.Equals(value, this.p)"),
-            new TestCaseData("string",        "value.Equals(this.p)"),
-            new TestCaseData("string",        "value.Equals(p)"),
-            new TestCaseData("string",        "this.p.Equals(value)"),
-            new TestCaseData("string",        "p.Equals(value)"),
-            new TestCaseData("string",        "string.Equals(value, this.p, StringComparison.OrdinalIgnoreCase)"),
-            new TestCaseData("string",        "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
-            new TestCaseData("string",        "ReferenceEquals(value, this.p)"),
-        };
-
-        private const string ReferenceType = @"
+    private const string ReferenceType = @"
 namespace N
 {
     public class ReferenceType
@@ -36,10 +36,10 @@ namespace N
     }
 }";
 
-        [TestCaseSource(nameof(TestCases))]
-        public static void Check(string type, string expression)
-        {
-            var code = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void Check(string type, string expression)
+    {
+        var code = @"
 #pragma warning disable CS8019
 #nullable disable
 namespace N
@@ -75,15 +75,15 @@ namespace N
         }
     }
 }".AssertReplace("Equals(value, this.p)", expression)
-  .AssertReplace("ReferenceType", type);
+.AssertReplace("ReferenceType", type);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, ReferenceType, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, ReferenceType, code);
+    }
 
-        [TestCaseSource(nameof(TestCases))]
-        public static void CheckNegated(string type, string expression)
-        {
-            var code = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void CheckNegated(string type, string expression)
+    {
+        var code = @"
 #pragma warning disable CS8019
 #nullable disable
 namespace N
@@ -117,15 +117,15 @@ namespace N
         }
     }
 }".AssertReplace("Equals(value, this.p)", expression)
-  .AssertReplace("ReferenceType", type);
+.AssertReplace("ReferenceType", type);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, ReferenceType, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, ReferenceType, code);
+    }
 
-        [Test]
-        public static void SimpleProperty()
-        {
-            var code = @"
+    [Test]
+    public static void SimpleProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -148,13 +148,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void CallsRaisePropertyChangedWithEventArgsIfReturn()
-        {
-            var code = @"
+    [Test]
+    public static void CallsRaisePropertyChangedWithEventArgsIfReturn()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -182,13 +182,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, ReferenceType, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, ReferenceType, code);
+    }
 
-        [Test]
-        public static void CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
-        {
-            var code = @"
+    [Test]
+    public static void CallsRaisePropertyChangedWithEventArgsIfReturnUseProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -217,13 +217,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void CallsRaisePropertyChangedWithEventArgsIfBody()
-        {
-            var code = @"
+    [Test]
+    public static void CallsRaisePropertyChangedWithEventArgsIfBody()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -254,13 +254,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void CallsRaisePropertyChangedCallerMemberName()
-        {
-            var code = @"
+    [Test]
+    public static void CallsRaisePropertyChangedCallerMemberName()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -290,13 +290,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void Invokes()
-        {
-            var code = @"
+    [Test]
+    public static void Invokes()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -322,13 +322,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void InvokesCached()
-        {
-            var code = @"
+    [Test]
+    public static void InvokesCached()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -355,13 +355,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void IgnoreGeneric()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreGeneric()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -388,7 +388,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
     }
 }

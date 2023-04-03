@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class Valid
+    public static class PrismBindableBase
     {
-        public static class PrismBindableBase
-        {
-            private static readonly Settings Settings = LibrarySettings.Prism;
+        private static readonly Settings Settings = LibrarySettings.Prism;
 
-            [Test]
-            public static void SetProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -27,13 +27,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetPropertyExpressionBodies()
-            {
-                var code = @"
+        [Test]
+        public static void SetPropertyExpressionBodies()
+        {
+            var code = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -47,13 +47,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyNameOf()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyNameOf()
+        {
+            var code = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -75,13 +75,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpression()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpression()
+        {
+            var code = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -103,8 +103,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
         }
     }
 }

@@ -1,16 +1,16 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC013UseNameof
+﻿namespace PropertyChangedAnalyzers.Test.INPC013UseNameof;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ArgumentAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void ArgumentOutOfRangeException()
     {
-        private static readonly ArgumentAnalyzer Analyzer = new();
-
-        [Test]
-        public static void ArgumentOutOfRangeException()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System;
@@ -27,13 +27,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresDebuggerDisplay()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresDebuggerDisplay()
+    {
+        var code = @"
 namespace N
 {
     [System.Diagnostics.DebuggerDisplay(""{P}"")]
@@ -42,13 +42,13 @@ namespace N
         public int P { get; }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresTypeName()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresTypeName()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -63,13 +63,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresVariableDeclaredAfter()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoresVariableDeclaredAfter()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -82,13 +82,13 @@ namespace N
         public string M2(string s) => string.Empty;
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreNamespaceName()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreNamespaceName()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -103,14 +103,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("\"Number\"")]
-        [TestCase("nameof(Number)")]
-        public static void IgnoreDependencyProperty(string expression)
-        {
-            var code = @"
+    [TestCase("\"Number\"")]
+    [TestCase("nameof(Number)")]
+    public static void IgnoreDependencyProperty(string expression)
+    {
+        var code = @"
 namespace N
 {
     using System.Windows;
@@ -132,14 +132,14 @@ namespace N
     }
 }".AssertReplace("\"Number\"", expression);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("\"value\"")]
-        [TestCase("nameof(value)")]
-        public static void IgnoreArgumentException(string expression)
-        {
-            var code = @"
+    [TestCase("\"value\"")]
+    [TestCase("nameof(value)")]
+    public static void IgnoreArgumentException(string expression)
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -156,13 +156,13 @@ namespace N
     }
 }".AssertReplace("\"value\"", expression);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreArbitraryInvocation1()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreArbitraryInvocation1()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -180,13 +180,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreArbitraryInvocation2()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreArbitraryInvocation2()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -199,13 +199,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreStringFormat()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreStringFormat()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -222,7 +222,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

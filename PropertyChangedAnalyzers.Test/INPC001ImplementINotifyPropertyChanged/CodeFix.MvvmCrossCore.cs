@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class CodeFix
+    public static class MvvmCrossCore
     {
-        public static class MvvmCrossCore
-        {
-            private static readonly Settings Settings = LibrarySettings.MvvmCross;
+        private static readonly Settings Settings = LibrarySettings.MvvmCross;
 
-            [Test]
-            public static void SubclassMvxNotifyPropertyChangedAddUsing()
-            {
-                var before = @"
+        [Test]
+        public static void SubclassMvxNotifyPropertyChangedAddUsing()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -22,7 +22,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using MvvmCross.ViewModels;
@@ -32,13 +32,13 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged and add using.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged and add using.", settings: Settings);
+        }
 
-            [Test]
-            public static void SubclassMvxNotifyPropertyChangedFullyQualified()
-            {
-                var before = @"
+        [Test]
+        public static void SubclassMvxNotifyPropertyChangedFullyQualified()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -47,7 +47,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -55,13 +55,13 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged fully qualified.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxNotifyPropertyChanged fully qualified.", settings: Settings);
+        }
 
-            [Test]
-            public static void SubclassMvxViewModelAddUsing()
-            {
-                var before = @"
+        [Test]
+        public static void SubclassMvxViewModelAddUsing()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -70,7 +70,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using MvvmCross.ViewModels;
@@ -80,13 +80,13 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel and add using.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel and add using.", settings: Settings);
+        }
 
-            [Test]
-            public static void SubclassMvxViewModelFullyQualified()
-            {
-                var before = @"
+        [Test]
+        public static void SubclassMvxViewModelFullyQualified()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -95,7 +95,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxViewModel
@@ -103,13 +103,13 @@ namespace N
         public int P { get; set; }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel fully qualified.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Subclass MvvmCross.ViewModels.MvxViewModel fully qualified.", settings: Settings);
+        }
 
-            [Test]
-            public static void ImplementINotifyPropertyChangedAddUsings()
-            {
-                var before = @"
+        [Test]
+        public static void ImplementINotifyPropertyChangedAddUsings()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -118,7 +118,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -136,13 +136,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.", settings: Settings);
+        }
 
-            [Test]
-            public static void ImplementINotifyPropertyChangedFullyQualified()
-            {
-                var before = @"
+        [Test]
+        public static void ImplementINotifyPropertyChangedFullyQualified()
+        {
+            var before = @"
 namespace N
 {
     public class ↓C
@@ -151,7 +151,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
@@ -166,8 +166,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.", settings: Settings);
         }
     }
 }

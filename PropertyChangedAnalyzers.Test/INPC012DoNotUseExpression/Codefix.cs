@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression
+﻿namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ArgumentAnalyzer Analyzer = new();
+    private static readonly RemoveExpressionFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC012DoNotUseExpression);
 
-    public static partial class CodeFix
+    [Test]
+    public static void ExpressionInvokerToCallerMemberName()
     {
-        private static readonly ArgumentAnalyzer Analyzer = new();
-        private static readonly RemoveExpressionFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC012DoNotUseExpression);
-
-        [Test]
-        public static void ExpressionInvokerToCallerMemberName()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System;
@@ -57,7 +57,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -102,13 +102,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ExpressionInvokerCalculatedCallerMemberName()
-        {
-            var before = @"
+    [Test]
+    public static void ExpressionInvokerCalculatedCallerMemberName()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -156,7 +156,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -204,13 +204,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ExpressionInvokerCalculatedCallerMemberNameUnderscore()
-        {
-            var before = @"
+    [Test]
+    public static void ExpressionInvokerCalculatedCallerMemberNameUnderscore()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -258,7 +258,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -306,13 +306,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ExpressionInvokerToCallerMemberNameInternalClassInternalProperty()
-        {
-            var before = @"
+    [Test]
+    public static void ExpressionInvokerToCallerMemberNameInternalClassInternalProperty()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -357,7 +357,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -402,13 +402,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ExpressionInvokerToCallerMemberNameCalculatedProperty()
-        {
-            var before = @"
+    [Test]
+    public static void ExpressionInvokerToCallerMemberNameCalculatedProperty()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -456,7 +456,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -504,13 +504,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ExpressionInvokerToNameOf()
-        {
-            var before = @"
+    [Test]
+    public static void ExpressionInvokerToNameOf()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -554,7 +554,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -598,7 +598,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

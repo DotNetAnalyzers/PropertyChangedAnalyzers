@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class CodeFix
+    public static class PrismBindableBase
     {
-        public static class PrismBindableBase
-        {
-            private static readonly Settings Settings = LibrarySettings.Prism;
+        private static readonly Settings Settings = LibrarySettings.Prism;
 
-            [Test]
-            public static void NoCheckAddIfReturn()
-            {
-                var before = @"
+        [Test]
+        public static void NoCheckAddIfReturn()
+        {
+            var before = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -32,7 +32,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -55,14 +55,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Check that value is different before notifying.", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Check that value is different before notifying.", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Check that value is different before notifying.", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Check that value is different before notifying.", settings: Settings);
+        }
 
-            [Test]
-            public static void NoCheckToUseTrySet()
-            {
-                var before = @"
+        [Test]
+        public static void NoCheckToUseTrySet()
+        {
+            var before = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -81,7 +81,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -95,14 +95,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void NoCheckExpressionToUseTrySet()
-            {
-                var before = @"
+        [Test]
+        public static void NoCheckExpressionToUseTrySet()
+        {
+            var before = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -121,7 +121,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -135,14 +135,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "SetProperty(ref storage, value)", settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -163,7 +163,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -185,14 +185,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
+        {
+            var before = @"
 namespace N
 {
     internal class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -213,7 +213,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     internal class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -235,14 +235,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyEmptyIf()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyEmptyIf()
+        {
+            var before = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -266,7 +266,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -288,14 +288,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -322,7 +322,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -347,14 +347,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedPropertyMissingBraces()
+        {
+            var before = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -378,7 +378,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Microsoft.Practices.Prism.Mvvm.BindableBase
@@ -403,9 +403,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
         }
     }
 }

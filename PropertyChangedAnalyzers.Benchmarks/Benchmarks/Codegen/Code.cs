@@ -1,16 +1,15 @@
-﻿namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks
+﻿namespace PropertyChangedAnalyzers.Benchmarks.Benchmarks;
+
+using System.IO;
+using Gu.Roslyn.Asserts;
+
+using Microsoft.CodeAnalysis;
+
+public static class Code
 {
-    using System.IO;
-    using Gu.Roslyn.Asserts;
+    public static string ProjectDirectory { get; } = ProjectFile.Find("PropertyChangedAnalyzers.Benchmarks.csproj").DirectoryName;
 
-    using Microsoft.CodeAnalysis;
+    public static string BenchmarksDirectory { get; } = Path.Combine(ProjectDirectory, "Benchmarks");
 
-    public static class Code
-    {
-        public static string ProjectDirectory { get; } = ProjectFile.Find("PropertyChangedAnalyzers.Benchmarks.csproj").DirectoryName;
-
-        public static string BenchmarksDirectory { get; } = Path.Combine(ProjectDirectory, "Benchmarks");
-
-        public static Solution ValidCodeProject { get; } = CodeFactory.CreateSolution(ProjectFile.Find("ValidCode.csproj"));
-    }
+    public static Solution ValidCodeProject { get; } = CodeFactory.CreateSolution(ProjectFile.Find("ValidCode.csproj"));
 }

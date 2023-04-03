@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class NoFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly MakePropertyNotifyFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify);
 
-    public static class NoFix
+    [Test]
+    [Ignore("Not sure how we want this.")]
+    public static void NoFixWhenBaseHasInternalOnPropertyChanged()
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly MakePropertyNotifyFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify);
-
-        [Test]
-        [Ignore("Not sure how we want this.")]
-        public static void NoFixWhenBaseHasInternalOnPropertyChanged()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.Windows.Input;
@@ -24,13 +24,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void AutoPropertyExplicitNameHandlesRecursionInInvoker()
-        {
-            var code = @"
+    [Test]
+    public static void AutoPropertyExplicitNameHandlesRecursionInInvoker()
+    {
+        var code = @"
 #pragma warning disable CS0067
 namespace N
 {
@@ -49,7 +49,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.NoFix(Analyzer, Fix, ExpectedDiagnostic, code);
     }
 }

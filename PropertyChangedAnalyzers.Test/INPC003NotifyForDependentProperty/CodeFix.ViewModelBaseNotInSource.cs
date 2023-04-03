@@ -1,17 +1,17 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
+
+using System.Linq;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
 {
-    using System.Linq;
-
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-
-    public static partial class CodeFix
+    public static class ViewModelBaseNotInSource
     {
-        public static class ViewModelBaseNotInSource
-        {
-            private static readonly Settings Settings =
-                Settings.Default.WithMetadataReferences(
-                    x => x.Append(BinaryReference.Compile(@"
+        private static readonly Settings Settings =
+            Settings.Default.WithMetadataReferences(
+                x => x.Append(BinaryReference.Compile(@"
 namespace N.Core
 {
     using System;
@@ -48,10 +48,10 @@ namespace N.Core
     }
 }")));
 
-            [Test]
-            public static void AssignedAffectsCalculatedPropertyOnPropertyChanged()
-            {
-                var before = @"
+        [Test]
+        public static void AssignedAffectsCalculatedPropertyOnPropertyChanged()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -102,7 +102,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -153,14 +153,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -187,7 +187,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -214,14 +214,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
-            {
-                var before = @"
+        [Test]
+        public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -246,7 +246,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -271,14 +271,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -295,7 +295,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -317,14 +317,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -344,7 +344,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -369,14 +369,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetExpressionBodiesAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetExpressionBodiesAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -393,7 +393,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -415,14 +415,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyEmptyIf()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyEmptyIf()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -444,7 +444,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -466,14 +466,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedProperty()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -498,7 +498,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -523,14 +523,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedPropertyMissingBraces()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -553,7 +553,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -578,9 +578,8 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
         }
     }
 }

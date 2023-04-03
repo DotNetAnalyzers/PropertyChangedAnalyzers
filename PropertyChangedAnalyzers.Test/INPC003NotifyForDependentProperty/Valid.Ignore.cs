@@ -1,16 +1,16 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
 
-    public static partial class Valid
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class Valid
+{
+    public static class Ignore
     {
-        public static class Ignore
+        [Test]
+        public static void Lazy1()
         {
-            [Test]
-            public static void Lazy1()
-            {
-                var delegateCommand = @"
+            var delegateCommand = @"
 namespace N
 {
     using System;
@@ -37,7 +37,7 @@ namespace N
         }
     }
 }";
-                var code = @"
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -85,13 +85,13 @@ namespace N
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }";
-                RoslynAssert.Valid(Analyzer, delegateCommand, code);
-            }
+            RoslynAssert.Valid(Analyzer, delegateCommand, code);
+        }
 
-            [Test]
-            public static void Lazy2()
-            {
-                var delegateCommand = @"
+        [Test]
+        public static void Lazy2()
+        {
+            var delegateCommand = @"
 namespace N
 {
     using System;
@@ -118,7 +118,7 @@ namespace N
         }
     }
 }";
-                var code = @"
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -166,13 +166,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, delegateCommand, code);
-            }
+            RoslynAssert.Valid(Analyzer, delegateCommand, code);
+        }
 
-            [Test]
-            public static void LazyNullCoalesce()
-            {
-                var delegateCommand = @"
+        [Test]
+        public static void LazyNullCoalesce()
+        {
+            var delegateCommand = @"
 namespace N
 {
     using System;
@@ -199,7 +199,7 @@ namespace N
         }
     }
 }";
-                var code = @"
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -242,13 +242,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, delegateCommand, code);
-            }
+            RoslynAssert.Valid(Analyzer, delegateCommand, code);
+        }
 
-            [Test]
-            public static void LazyNullCoalesceExpressionBody()
-            {
-                var delegateCommand = @"
+        [Test]
+        public static void LazyNullCoalesceExpressionBody()
+        {
+            var delegateCommand = @"
 namespace N
 {
     using System;
@@ -275,7 +275,7 @@ namespace N
         }
     }
 }";
-                var code = @"
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -312,13 +312,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, delegateCommand, code);
-            }
+            RoslynAssert.Valid(Analyzer, delegateCommand, code);
+        }
 
-            [Test]
-            public static void InCtor()
-            {
-                var code = @"
+        [Test]
+        public static void InCtor()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -344,13 +344,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void InInitializer()
-            {
-                var code = @"
+        [Test]
+        public static void InInitializer()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -376,13 +376,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test(Description = "We let INPC002 nag about this.")]
-            public static void SimplePropertyWithBackingField()
-            {
-                var code = @"
+        [Test(Description = "We let INPC002 nag about this.")]
+        public static void SimplePropertyWithBackingField()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -407,13 +407,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void AssigningFieldsInGetter()
-            {
-                var code = @"
+        [Test]
+        public static void AssigningFieldsInGetter()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -442,13 +442,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void LazyGetter()
-            {
-                var code = @"
+        [Test]
+        public static void LazyGetter()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -480,13 +480,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void LazyGetterExpressionBody()
-            {
-                var code = @"
+        [Test]
+        public static void LazyGetterExpressionBody()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -507,13 +507,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void DisposeMethod()
-            {
-                var code = @"
+        [Test]
+        public static void DisposeMethod()
+        {
+            var code = @"
 namespace N
 {
     using System;
@@ -561,13 +561,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void Recursive()
-            {
-                var code = @"
+        [Test]
+        public static void Recursive()
+        {
+            var code = @"
 namespace N
 {
     using System;
@@ -610,8 +610,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

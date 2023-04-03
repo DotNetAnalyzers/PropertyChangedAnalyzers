@@ -1,37 +1,36 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Vanilla
+namespace ValidCode.Vanilla;
+
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class UnderscoreNames : INotifyPropertyChanged
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private string? _name;
 
-    public sealed class UnderscoreNames : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public string Greeting => $"Hello {_name}";
+
+    public string? Name
     {
-        private string? _name;
+        get => _name;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string Greeting => $"Hello {_name}";
-
-        public string? Name
+        set
         {
-            get => _name;
-
-            set
+            if (value == _name)
             {
-                if (value == _name)
-                {
-                    return;
-                }
-
-                _name = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Greeting));
+                return;
             }
-        }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            _name = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Greeting));
         }
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

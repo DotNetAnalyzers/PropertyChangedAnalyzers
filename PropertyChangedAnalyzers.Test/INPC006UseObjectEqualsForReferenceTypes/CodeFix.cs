@@ -1,29 +1,29 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypes
+﻿namespace PropertyChangedAnalyzers.Test.INPC006UseObjectEqualsForReferenceTypes;
+
+using System.Collections.Generic;
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using System.Collections.Generic;
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly EqualityFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC006UseObjectEqualsForReferenceTypes);
 
-    public static class CodeFix
+    private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly EqualityFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC006UseObjectEqualsForReferenceTypes);
+        new TestCaseData("object.ReferenceEquals(value, this.p)",        "Equals(value, this.p)"),
+        new TestCaseData("Object.ReferenceEquals(value, this.p)",        "Equals(value, this.p)"),
+        new TestCaseData("System.Object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
+        new TestCaseData("ReferenceEquals(value, this.p)",               "Equals(value, this.p)"),
+        new TestCaseData("ReferenceEquals(this.p, value)",               "Equals(this.p, value)"),
+        new TestCaseData("ReferenceEquals(value, p)",                    "Equals(value, p)"),
+        new TestCaseData("ReferenceEquals(value, P)",                    "Equals(value, P)"),
+        new TestCaseData("ReferenceEquals(value, this.P)",               "Equals(value, this.P)"),
+        new TestCaseData("ReferenceEquals(value, this.p)",               "Equals(value, this.p)"),
+    };
 
-        private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
-        {
-            new TestCaseData("object.ReferenceEquals(value, this.p)",        "Equals(value, this.p)"),
-            new TestCaseData("Object.ReferenceEquals(value, this.p)",        "Equals(value, this.p)"),
-            new TestCaseData("System.Object.ReferenceEquals(value, this.p)", "Equals(value, this.p)"),
-            new TestCaseData("ReferenceEquals(value, this.p)",               "Equals(value, this.p)"),
-            new TestCaseData("ReferenceEquals(this.p, value)",               "Equals(this.p, value)"),
-            new TestCaseData("ReferenceEquals(value, p)",                    "Equals(value, p)"),
-            new TestCaseData("ReferenceEquals(value, P)",                    "Equals(value, P)"),
-            new TestCaseData("ReferenceEquals(value, this.P)",               "Equals(value, this.P)"),
-            new TestCaseData("ReferenceEquals(value, this.p)",               "Equals(value, this.p)"),
-        };
-
-        private const string ReferenceType = @"
+    private const string ReferenceType = @"
 namespace N
 {
     public class ReferenceType
@@ -31,10 +31,10 @@ namespace N
     }
 }";
 
-        [TestCaseSource(nameof(TestCases))]
-        public static void Check(string expressionBefore, string expressionAfter)
-        {
-            var before = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void Check(string expressionBefore, string expressionAfter)
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -69,7 +69,7 @@ namespace N
     }
 }".AssertReplace("ReferenceEquals(value, this.p)", expressionBefore);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -103,14 +103,14 @@ namespace N
         }
     }
 }".AssertReplace("Equals(value, this.p)", expressionAfter);
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+    }
 
-        [TestCaseSource(nameof(TestCases))]
-        public static void CheckNegated(string expressionBefore, string expressionAfter)
-        {
-            var before = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void CheckNegated(string expressionBefore, string expressionAfter)
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -143,7 +143,7 @@ namespace N
     }
 }".AssertReplace("ReferenceEquals(value, this.p)", expressionBefore);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -176,13 +176,13 @@ namespace N
     }
 }".AssertReplace("Equals(value, this.p)", expressionAfter);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+    }
 
-        [Test]
-        public static void OperatorEquals()
-        {
-            var before = @"
+    [Test]
+    public static void OperatorEquals()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -216,7 +216,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -249,14 +249,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+    }
 
-        [Test]
-        public static void OperatorEqualsInternalClassInternalProperty()
-        {
-            var before = @"
+    [Test]
+    public static void OperatorEqualsInternalClassInternalProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -290,7 +290,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -323,14 +323,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+    }
 
-        [Test]
-        public static void OperatorNotEquals()
-        {
-            var before = @"
+    [Test]
+    public static void OperatorNotEquals()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -362,7 +362,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -393,7 +393,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
     }
 }

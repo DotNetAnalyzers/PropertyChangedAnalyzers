@@ -1,23 +1,23 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC002MutablePublicPropertyShouldNotify;
 
-    public static partial class Valid
+    [TestCase("null")]
+    [TestCase("string.Empty")]
+    [TestCase(@"""P""")]
+    [TestCase(@"nameof(P)")]
+    [TestCase(@"nameof(this.P)")]
+    public static void CallsOnPropertyChanged(string propertyName)
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC002MutablePublicPropertyShouldNotify;
-
-        [TestCase("null")]
-        [TestCase("string.Empty")]
-        [TestCase(@"""P""")]
-        [TestCase(@"nameof(P)")]
-        [TestCase(@"nameof(this.P)")]
-        public static void CallsOnPropertyChanged(string propertyName)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -46,13 +46,13 @@ namespace N
     }
 }".AssertReplace(@"nameof(P)", propertyName);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
-        {
-            var code = @"
+    [Test]
+    public static void CallsOnPropertyChangedCopyLocalNullCheckInvoke()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -91,13 +91,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void CallsOnPropertyChangedExpressionBody()
-        {
-            var code = @"
+    [Test]
+    public static void CallsOnPropertyChangedExpressionBody()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -123,13 +123,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void ExpressionInvoker()
-        {
-            var code = @"
+    [Test]
+    public static void ExpressionInvoker()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -174,18 +174,18 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [TestCase("null")]
-        [TestCase("string.Empty")]
-        [TestCase(@"""""")]
-        [TestCase(@"""P""")]
-        [TestCase(@"nameof(P)")]
-        [TestCase(@"nameof(this.P)")]
-        public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
-        {
-            var code = @"
+    [TestCase("null")]
+    [TestCase("string.Empty")]
+    [TestCase(@"""""")]
+    [TestCase(@"""P""")]
+    [TestCase(@"nameof(P)")]
+    [TestCase(@"nameof(this.P)")]
+    public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -214,13 +214,13 @@ namespace N
     }
 }".AssertReplace(@"nameof(P)", propertyName);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void CallsOnPropertyChangedWithCachedEventArgs()
-        {
-            var code = @"
+    [Test]
+    public static void CallsOnPropertyChangedWithCachedEventArgs()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -250,13 +250,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void CallsRaisePropertyChangedCallerMemberName()
-        {
-            var code = @"
+    [Test]
+    public static void CallsRaisePropertyChangedCallerMemberName()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -286,13 +286,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void CallsChainedOnPropertyChanged()
-        {
-            var code = @"
+    [Test]
+    public static void CallsChainedOnPropertyChanged()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -335,13 +335,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void CallsChainedOnPropertyChangedInBase()
-        {
-            var viewModelBase = @"
+    [Test]
+    public static void CallsChainedOnPropertyChangedInBase()
+    {
+        var viewModelBase = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -363,7 +363,7 @@ namespace N.Core
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -390,13 +390,13 @@ namespace N.Client
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, code);
+    }
 
-        [Test]
-        public static void CallsChainedOnPropertyChangedInGenericBase()
-        {
-            var viewModelBaseOfT = @"
+    [Test]
+    public static void CallsChainedOnPropertyChangedInGenericBase()
+    {
+        var viewModelBaseOfT = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -418,7 +418,7 @@ namespace N.Core
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N.Client
 {
     public class C<T> : N.Core.ViewModelBase<T>
@@ -446,13 +446,13 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBaseOfT, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, viewModelBaseOfT, code);
+    }
 
-        [Test]
-        public static void WhenCreatingPropertyChangedEventArgsSeparately()
-        {
-            var code = @"
+    [Test]
+    public static void WhenCreatingPropertyChangedEventArgsSeparately()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -492,18 +492,18 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("null")]
-        [TestCase("string.Empty")]
-        [TestCase(@"""""")]
-        [TestCase(@"""P""")]
-        [TestCase(@"nameof(P)")]
-        [TestCase(@"nameof(this.P)")]
-        public static void Invokes(string propertyName)
-        {
-            var code = @"
+    [TestCase("null")]
+    [TestCase("string.Empty")]
+    [TestCase(@"""""")]
+    [TestCase(@"""P""")]
+    [TestCase(@"nameof(P)")]
+    [TestCase(@"nameof(this.P)")]
+    public static void Invokes(string propertyName)
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -530,13 +530,13 @@ namespace N
     }
 }".AssertReplace(@"nameof(this.P))", propertyName);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void InvokesCached()
-        {
-            var code = @"
+    [Test]
+    public static void InvokesCached()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -563,13 +563,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void WhenSettingNestedField()
-        {
-            var c1 = @"
+    [Test]
+    public static void WhenSettingNestedField()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -577,7 +577,7 @@ namespace N
         public int P;
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -609,13 +609,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, c1, code);
-        }
+        RoslynAssert.Valid(Analyzer, c1, code);
+    }
 
-        [Test]
-        public static void WrappingPoint()
-        {
-            var code = @"
+    [Test]
+    public static void WrappingPoint()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -665,13 +665,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void TimeSpanTicks()
-        {
-            var code = @"
+    [Test]
+    public static void TimeSpanTicks()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -706,13 +706,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ExceptionHandlingRelayCommand()
-        {
-            var code = @"
+    [Test]
+    public static void ExceptionHandlingRelayCommand()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -746,13 +746,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code, settings: LibrarySettings.Reactive);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code, settings: LibrarySettings.Reactive);
+    }
 
-        [Test]
-        public static void EventDeclaration()
-        {
-            var code = @"
+    [Test]
+    public static void EventDeclaration()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -793,13 +793,13 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IntAndStringPropertyReturnFieldInGetter()
-        {
-            var code = @"
+    [Test]
+    public static void IntAndStringPropertyReturnFieldInGetter()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -842,13 +842,13 @@ namespace ValidCode
 }
 ";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IntAndStringPropertyReturnPropertyInGetter()
-        {
-            var code = @"
+    [Test]
+    public static void IntAndStringPropertyReturnPropertyInGetter()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -891,13 +891,13 @@ namespace ValidCode
 }
 ";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IntPropertiesReturnFieldInGetter()
-        {
-            var code = @"
+    [Test]
+    public static void IntPropertiesReturnFieldInGetter()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -938,13 +938,13 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void IntPropertiesReturnPropertyInGetter()
-        {
-            var code = @"
+    [Test]
+    public static void IntPropertiesReturnPropertyInGetter()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -985,13 +985,13 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void BindableFalse()
-        {
-            var code = @"
+    [Test]
+    public static void BindableFalse()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1010,13 +1010,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void SettingPropertyOfAnUnrelatedInstance()
-        {
-            var code = @"
+    [Test]
+    public static void SettingPropertyOfAnUnrelatedInstance()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -1061,13 +1061,13 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void SameExpressionWithDifferentMeaning()
-        {
-            var code = @"
+    [Test]
+    public static void SameExpressionWithDifferentMeaning()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System;
@@ -1127,7 +1127,6 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

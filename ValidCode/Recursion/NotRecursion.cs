@@ -1,57 +1,56 @@
-﻿namespace ValidCode.Recursion
+﻿namespace ValidCode.Recursion;
+
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class NotRecursion : INotifyPropertyChanged
 {
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    public class NotRecursion : INotifyPropertyChanged
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+    protected bool Set<T>(ref T location, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (RuntimeHelpers.Equals(location, value)) return false;
+        location = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
 
-        protected bool Set<T>(ref T location, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (RuntimeHelpers.Equals(location, value)) return false;
-            location = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
+    record DifferentClass
+    {
+        public int P;
+    }
 
-        record DifferentClass
+    private int p;
+    public int P
+    {
+        get => p;
+        set
         {
-            public int P;
-        }
+            if (!Set(ref p, value)) return;
 
-        private int p;
-        public int P
-        {
-            get => p;
-            set
+            _ = new DifferentClass { P = value };
+            _ = new DifferentClass() with { P = value };
+
             {
-                if (!Set(ref p, value)) return;
+                int P;
+                P = value;
+            }
 
-                _ = new DifferentClass { P = value };
-                _ = new DifferentClass() with { P = value };
+            _ = new Action<int>(P =>
+            {
+                P = value;
+            });
 
-                {
-                    int P;
-                    P = value;
-                }
-
-                _ = new Action<int>(P =>
-                {
-                    P = value;
-                });
-
-                LocalFunction(42);
-                void LocalFunction(int P)
-                {
-                    P = value;
-                }
+            LocalFunction(42);
+            void LocalFunction(int P)
+            {
+                P = value;
             }
         }
     }

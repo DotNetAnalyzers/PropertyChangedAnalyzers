@@ -1,27 +1,27 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
+
+using System.Threading;
+
+using Gu.Roslyn.Asserts;
+
+using Microsoft.CodeAnalysis.CSharp;
+
+using NUnit.Framework;
+
+public partial class PropertyTests
 {
-    using System.Threading;
-
-    using Gu.Roslyn.Asserts;
-
-    using Microsoft.CodeAnalysis.CSharp;
-
-    using NUnit.Framework;
-
-    public partial class PropertyTests
+    [TestCase("P1", false)]
+    [TestCase("P2", false)]
+    [TestCase("P3", false)]
+    [TestCase("P4", false)]
+    [TestCase("Lazy1", true)]
+    [TestCase("Lazy2", true)]
+    [TestCase("Lazy3", true)]
+    [TestCase("Lazy4", true)]
+    [TestCase("Lazy5", true)]
+    public static void IsLazy(string code, bool expected)
     {
-        [TestCase("P1", false)]
-        [TestCase("P2", false)]
-        [TestCase("P3", false)]
-        [TestCase("P4", false)]
-        [TestCase("Lazy1", true)]
-        [TestCase("Lazy2", true)]
-        [TestCase("Lazy3", true)]
-        [TestCase("Lazy4", true)]
-        [TestCase("Lazy5", true)]
-        public static void IsLazy(string code, bool expected)
-        {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+        var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System;
@@ -97,10 +97,9 @@ namespace N
         }
     }
 }");
-            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var property = syntaxTree.FindPropertyDeclaration(code);
-            Assert.AreEqual(expected, Property.IsLazy(property, semanticModel, CancellationToken.None));
-        }
+        var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+        var semanticModel = compilation.GetSemanticModel(syntaxTree);
+        var property = syntaxTree.FindPropertyDeclaration(code);
+        Assert.AreEqual(expected, Property.IsLazy(property, semanticModel, CancellationToken.None));
     }
 }

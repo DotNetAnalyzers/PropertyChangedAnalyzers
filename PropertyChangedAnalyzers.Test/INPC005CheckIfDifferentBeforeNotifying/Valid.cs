@@ -1,44 +1,44 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying;
+
+using System.Collections.Generic;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static partial class Valid
 {
-    using System.Collections.Generic;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC005CheckIfDifferentBeforeNotifying;
 
-    public static partial class Valid
+    private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC005CheckIfDifferentBeforeNotifying;
+        new TestCaseData("string", "Equals(value, this.p)"),
+        new TestCaseData("string", "Equals(this.p, value)"),
+        new TestCaseData("string", "Equals(value, p)"),
+        new TestCaseData("string", "Equals(value, P)"),
+        new TestCaseData("string", "Equals(P, value)"),
+        new TestCaseData("string", "object.Equals(P, value)"),
+        new TestCaseData("string", "Object.Equals(P, value)"),
+        new TestCaseData("string", "System.Object.Equals(P, value)"),
+        new TestCaseData("string", "Nullable.Equals(value, this.p)"),
+        new TestCaseData("int?",   "Nullable.Equals(value, this.p)"),
+        new TestCaseData("int?",   "System.Nullable.Equals(value, this.p)"),
+        new TestCaseData("string", "value.Equals(this.p)"),
+        new TestCaseData("string", "value.Equals(p)"),
+        new TestCaseData("string", "this.p.Equals(value)"),
+        new TestCaseData("string", "p.Equals(value)"),
+        new TestCaseData("string", "string.Equals(value, this.p, StringComparison.OrdinalIgnoreCase)"),
+        new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
+        new TestCaseData("string", "ReferenceEquals(value, this.p)"),
+        new TestCaseData("string", "object.ReferenceEquals(value, this.p)"),
+        new TestCaseData("string", "Object.ReferenceEquals(value, this.p)"),
+        new TestCaseData("string", "System.Object.ReferenceEquals(value, this.p)"),
+    };
 
-        private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
-        {
-            new TestCaseData("string", "Equals(value, this.p)"),
-            new TestCaseData("string", "Equals(this.p, value)"),
-            new TestCaseData("string", "Equals(value, p)"),
-            new TestCaseData("string", "Equals(value, P)"),
-            new TestCaseData("string", "Equals(P, value)"),
-            new TestCaseData("string", "object.Equals(P, value)"),
-            new TestCaseData("string", "Object.Equals(P, value)"),
-            new TestCaseData("string", "System.Object.Equals(P, value)"),
-            new TestCaseData("string", "Nullable.Equals(value, this.p)"),
-            new TestCaseData("int?",   "Nullable.Equals(value, this.p)"),
-            new TestCaseData("int?",   "System.Nullable.Equals(value, this.p)"),
-            new TestCaseData("string", "value.Equals(this.p)"),
-            new TestCaseData("string", "value.Equals(p)"),
-            new TestCaseData("string", "this.p.Equals(value)"),
-            new TestCaseData("string", "p.Equals(value)"),
-            new TestCaseData("string", "string.Equals(value, this.p, StringComparison.OrdinalIgnoreCase)"),
-            new TestCaseData("string", "System.Collections.Generic.EqualityComparer<string>.Default.Equals(value, this.p)"),
-            new TestCaseData("string", "ReferenceEquals(value, this.p)"),
-            new TestCaseData("string", "object.ReferenceEquals(value, this.p)"),
-            new TestCaseData("string", "Object.ReferenceEquals(value, this.p)"),
-            new TestCaseData("string", "System.Object.ReferenceEquals(value, this.p)"),
-        };
-
-        [TestCaseSource(nameof(TestCases))]
-        public static void Check(string type, string expression)
-        {
-            var code = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void Check(string type, string expression)
+    {
+        var code = @"
 #nullable disable
 #pragma warning disable CS8019
 namespace N
@@ -74,15 +74,15 @@ namespace N
         }
     }
 }".AssertReplace("Equals(value, this.p)", expression)
-  .AssertReplace("int", type);
+.AssertReplace("int", type);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [TestCaseSource(nameof(TestCases))]
-        public static void NegatedCheck(string type, string expression)
-        {
-            var code = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void NegatedCheck(string type, string expression)
+    {
+        var code = @"
 #nullable disable
 #pragma warning disable CS8019
 namespace N
@@ -116,15 +116,15 @@ namespace N
         }
     }
 }".AssertReplace("Equals(value, this.p)", expression)
-  .AssertReplace("int", type);
+.AssertReplace("int", type);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void SimplePropertyBlockBodies()
-        {
-            var code = @"
+    [Test]
+    public static void SimplePropertyBlockBodies()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -148,13 +148,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void SimplePropertyExpressionBodies()
-        {
-            var code = @"
+    [Test]
+    public static void SimplePropertyExpressionBodies()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -178,13 +178,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void IfValueEqualsFieldReturnElseAssignAndNotify()
-        {
-            var code = @"
+    [Test]
+    public static void IfValueEqualsFieldReturnElseAssignAndNotify()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -214,13 +214,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IfValueEqualsPropertyReturnElseAssignAndNotify()
-        {
-            var code = @"
+    [Test]
+    public static void IfValueEqualsPropertyReturnElseAssignAndNotify()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -249,13 +249,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IfValueNotEqualsFieldAssignAndNotifyCallerMemberName()
-        {
-            var code = @"
+    [Test]
+    public static void IfValueNotEqualsFieldAssignAndNotifyCallerMemberName()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -286,13 +286,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IfValueNotEqualsFieldAssignAndNotifyPropertyChangedEventArgs()
-        {
-            var code = @"
+    [Test]
+    public static void IfValueNotEqualsFieldAssignAndNotifyPropertyChangedEventArgs()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -322,13 +322,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CallsRaisePropertyChangedCallerMemberName()
-        {
-            var code = @"
+    [Test]
+    public static void CallsRaisePropertyChangedCallerMemberName()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -357,13 +357,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void Invokes()
-        {
-            var code = @"
+    [Test]
+    public static void Invokes()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -389,13 +389,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void InvokesCached()
-        {
-            var code = @"
+    [Test]
+    public static void InvokesCached()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -424,13 +424,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CheckSideEffectReturn()
-        {
-            var code = @"
+    [Test]
+    public static void CheckSideEffectReturn()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -465,13 +465,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WithCheckAndThrowBefore()
-        {
-            var code = @"
+    [Test]
+    public static void WithCheckAndThrowBefore()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -509,14 +509,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("if (Math.Abs(value - this.p) < 1e-6)")]
-        [TestCase("if (Math.Abs(this.p - value) < 1e-6)")]
-        public static void WithCheckAndThrowBefore(string expression)
-        {
-            var code = @"
+    [TestCase("if (Math.Abs(value - this.p) < 1e-6)")]
+    [TestCase("if (Math.Abs(this.p - value) < 1e-6)")]
+    public static void WithCheckAndThrowBefore(string expression)
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -549,13 +549,13 @@ namespace N
     }
 }".AssertReplace("if (Math.Abs(value - this.p) < 1e-6)", expression);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CheckInLock()
-        {
-            var code = @"
+    [Test]
+    public static void CheckInLock()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -597,13 +597,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CheckLockCheck()
-        {
-            var code = @"
+    [Test]
+    public static void CheckLockCheck()
+    {
+        var code = @"
 namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
@@ -644,13 +644,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenSettingNestedField()
-        {
-            var c2 = @"
+    [Test]
+    public static void WhenSettingNestedField()
+    {
+        var c2 = @"
 namespace N
 {
     public class C1
@@ -658,7 +658,7 @@ namespace N
         public int F;
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -690,13 +690,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, c2, code);
-        }
+        RoslynAssert.Valid(Analyzer, c2, code);
+    }
 
-        [Test]
-        public static void WrappingPoint()
-        {
-            var code = @"
+    [Test]
+    public static void WrappingPoint()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -745,13 +745,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void TimeSpanTicks()
-        {
-            var code = @"
+    [Test]
+    public static void TimeSpanTicks()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -786,7 +786,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

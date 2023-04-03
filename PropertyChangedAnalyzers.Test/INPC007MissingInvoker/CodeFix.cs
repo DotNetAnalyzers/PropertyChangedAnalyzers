@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvoker
+﻿namespace PropertyChangedAnalyzers.Test.INPC007MissingInvoker;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly EventAnalyzer Analyzer = new();
+    private static readonly AddOnPropertyChangedFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC007MissingInvoker);
 
-    public static class CodeFix
+    [Test]
+    public static void EventOnlyAddInvoker()
     {
-        private static readonly EventAnalyzer Analyzer = new();
-        private static readonly AddOnPropertyChangedFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC007MissingInvoker);
-
-        [Test]
-        public static void EventOnlyAddInvoker()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -23,7 +23,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -38,13 +38,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Add OnPropertyChanged()");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Add OnPropertyChanged()");
+    }
 
-        [Test]
-        public static void EventOnlyMakeSealed()
-        {
-            var before = @"
+    [Test]
+    public static void EventOnlyMakeSealed()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -55,7 +55,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -65,13 +65,13 @@ namespace N
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Seal class.", settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Seal class.", settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
+    }
 
-        [Test]
-        public static void EventOnlyWithUsing()
-        {
-            var before = @"
+    [Test]
+    public static void EventOnlyWithUsing()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -83,7 +83,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -99,13 +99,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Add OnPropertyChanged()");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Add OnPropertyChanged()");
+    }
 
-        [Test]
-        public static void EventOnlySealed()
-        {
-            var before = @"
+    [Test]
+    public static void EventOnlySealed()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -118,7 +118,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -135,13 +135,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void EventOnlyStatic()
-        {
-            var before = @"
+    [Test]
+    public static void EventOnlyStatic()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -152,7 +152,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -167,13 +167,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void OverridingEvent()
-        {
-            var viewModelBaseCode = @"
+    [Test]
+    public static void OverridingEvent()
+    {
+        var viewModelBaseCode = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -190,7 +190,7 @@ namespace N.Core
     }
 }";
 
-            var before = @"
+        var before = @"
 namespace N.Client
 {
     using System.ComponentModel;
@@ -201,7 +201,7 @@ namespace N.Client
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N.Client
 {
     using System.ComponentModel;
@@ -217,13 +217,13 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "Add OnPropertyChanged()");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after, fixTitle: "Add OnPropertyChanged()");
+    }
 
-        [Test]
-        public static void WithNoMutablePropertiesAddInvoker()
-        {
-            var before = @"
+    [Test]
+    public static void WithNoMutablePropertiesAddInvoker()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -242,7 +242,7 @@ namespace N
         public int P2 => this.P1 * this.P1;
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -267,13 +267,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Add OnPropertyChanged()");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Add OnPropertyChanged()");
+    }
 
-        [Test]
-        public static void WithNoMutablePropertiesSeal()
-        {
-            var before = @"
+    [Test]
+    public static void WithNoMutablePropertiesSeal()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -292,7 +292,7 @@ namespace N
         public int P2 => this.P1 * this.P1;
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -312,13 +312,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Seal class.", settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Seal class.", settings: Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.Warnings));
+    }
 
-        [Test]
-        public static void UsesCorrectStyleIssue107()
-        {
-            var c1 = @"
+    [Test]
+    public static void UsesCorrectStyleIssue107()
+    {
+        var c1 = @"
 namespace N
 {
     using System.ComponentModel;
@@ -352,7 +352,7 @@ namespace N
     }
 }";
 
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.Collections.ObjectModel;
@@ -368,7 +368,7 @@ namespace N
         };
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Collections.ObjectModel;
@@ -390,13 +390,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Add OnPropertyChanged()");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after, fixTitle: "Add OnPropertyChanged()");
+    }
 
-        [Test]
-        public static void TrySetOnly()
-        {
-            var before = @"
+    [Test]
+    public static void TrySetOnly()
+    {
+        var before = @"
 namespace N.Client
 {
     using System.Collections.Generic;
@@ -429,7 +429,7 @@ namespace N.Client
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N.Client
 {
     using System.Collections.Generic;
@@ -467,7 +467,6 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Add OnPropertyChanged()");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Add OnPropertyChanged()");
     }
 }

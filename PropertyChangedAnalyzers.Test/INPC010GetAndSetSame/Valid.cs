@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSame
+﻿namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSame;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC010GetAndSetSame;
 
-    public static class Valid
+    [Test]
+    public static void NotifyingProperty()
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC010GetAndSetSame;
-
-        [Test]
-        public static void NotifyingProperty()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -49,13 +49,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void WithBackingFieldStatementBodies()
-        {
-            var code = @"
+    [Test]
+    public static void WithBackingFieldStatementBodies()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -70,13 +70,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void WithBackingFieldStatementBodiesAssigningTwice()
-        {
-            var code = @"
+    [Test]
+    public static void WithBackingFieldStatementBodiesAssigningTwice()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -95,13 +95,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void WithBackingFieldExpressionBodies()
-        {
-            var code = @"
+    [Test]
+    public static void WithBackingFieldExpressionBodies()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -116,13 +116,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void NestedField()
-        {
-            var c1 = @"
+    [Test]
+    public static void NestedField()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -130,7 +130,7 @@ namespace N
         public int p;
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -163,13 +163,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, c1, code);
-        }
+        RoslynAssert.Valid(Analyzer, c1, code);
+    }
 
-        [Test]
-        public static void NestedProperties()
-        {
-            var c1 = @"
+    [Test]
+    public static void NestedProperties()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -178,7 +178,7 @@ namespace N
         public int P2 { get; set; }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -211,13 +211,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, c1, code);
-        }
+        RoslynAssert.Valid(Analyzer, c1, code);
+    }
 
-        [Test]
-        public static void TimeSpanTicks()
-        {
-            var code = @"
+    [Test]
+    public static void TimeSpanTicks()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -252,13 +252,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WrappingPoint()
-        {
-            var code = @"
+    [Test]
+    public static void WrappingPoint()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -308,14 +308,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("get => Math.Abs(this.speed - 1) < 1E-2;")]
-        [TestCase("get => Math.Abs(this.Speed - 1) < 1E-2;")]
-        public static void IsSpeed1(string getter)
-        {
-            var code = @"
+    [TestCase("get => Math.Abs(this.speed - 1) < 1E-2;")]
+    [TestCase("get => Math.Abs(this.Speed - 1) < 1E-2;")]
+    public static void IsSpeed1(string getter)
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -358,13 +358,13 @@ namespace N
     }
 }".AssertReplace("get => Math.Abs(this.speed - 1) < 1E-2;", getter);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ExplicitImplementationWithCast()
-        {
-            var code = @"
+    [Test]
+    public static void ExplicitImplementationWithCast()
+    {
+        var code = @"
 namespace N
 {
     public class C<T> : I
@@ -390,13 +390,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IntAndStringPropertyReturnFieldInGetter()
-        {
-            var code = @"
+    [Test]
+    public static void IntAndStringPropertyReturnFieldInGetter()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -439,13 +439,13 @@ namespace ValidCode
 }
 ";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IntAndStringPropertyReturnPropertyInGetter()
-        {
-            var code = @"
+    [Test]
+    public static void IntAndStringPropertyReturnPropertyInGetter()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -488,13 +488,13 @@ namespace ValidCode
 }
 ";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IntPropertiesAssignsPropertyReturnField()
-        {
-            var code = @"
+    [Test]
+    public static void IntPropertiesAssignsPropertyReturnField()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -535,13 +535,13 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void IntPropertiesAssignsFieldReturnsProperty()
-        {
-            var code = @"
+    [Test]
+    public static void IntPropertiesAssignsFieldReturnsProperty()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -582,13 +582,13 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void IntPropertiesReturnPropertyInGetter()
-        {
-            var code = @"
+    [Test]
+    public static void IntPropertiesReturnPropertyInGetter()
+    {
+        var code = @"
 namespace ValidCode
 {
     using System.ComponentModel;
@@ -629,13 +629,13 @@ namespace ValidCode
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void Issue102()
-        {
-            var code = @"
+    [Test]
+    public static void Issue102()
+    {
+        var code = @"
 #nullable disable
 #pragma warning disable CS0649
 namespace ValidCode.Repros
@@ -734,13 +734,13 @@ namespace ValidCode.Repros
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void TrySet()
-        {
-            var code = @"
+    [Test]
+    public static void TrySet()
+    {
+        var code = @"
 #pragma warning disable CS0169
 namespace N
 {
@@ -780,7 +780,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
     }
 }

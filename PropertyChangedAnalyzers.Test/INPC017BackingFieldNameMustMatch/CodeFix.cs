@@ -1,22 +1,22 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatch
+﻿namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatch;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly PropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly RenameFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC017BackingFieldNameMisMatch);
 
-    public static class CodeFix
+    [TestCase("wrong")]
+    [TestCase("valuE")]
+    [TestCase("valuee")]
+    [TestCase("alue")]
+    [TestCase("vvalue")]
+    public static void ExpressionBody(string fieldName)
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly RenameFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC017BackingFieldNameMisMatch);
-
-        [TestCase("wrong")]
-        [TestCase("valuE")]
-        [TestCase("valuee")]
-        [TestCase("alue")]
-        [TestCase("vvalue")]
-        public static void ExpressionBody(string fieldName)
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     public class C
@@ -27,7 +27,7 @@ namespace N
     }
 }".AssertReplace("wrong", fieldName);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -37,17 +37,17 @@ namespace N
         public int P => this.p;
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("_wrong")]
-        [TestCase("_valuE")]
-        [TestCase("_pe")]
-        [TestCase("_alue")]
-        [TestCase("_vvalue")]
-        public static void ExpressionBodyUnderscore(string fieldName)
-        {
-            var before = @"
+    [TestCase("_wrong")]
+    [TestCase("_valuE")]
+    [TestCase("_pe")]
+    [TestCase("_alue")]
+    [TestCase("_vvalue")]
+    public static void ExpressionBodyUnderscore(string fieldName)
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -58,7 +58,7 @@ namespace N
     }
 }".AssertReplace("_wrong", fieldName);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -68,17 +68,17 @@ namespace N
         public int P => _p;
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("wrong")]
-        [TestCase("valuE")]
-        [TestCase("valuee")]
-        [TestCase("alue")]
-        [TestCase("vvalue")]
-        public static void ExpressionBodyGetter(string fieldName)
-        {
-            var before = @"
+    [TestCase("wrong")]
+    [TestCase("valuE")]
+    [TestCase("valuee")]
+    [TestCase("alue")]
+    [TestCase("vvalue")]
+    public static void ExpressionBodyGetter(string fieldName)
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -91,7 +91,7 @@ namespace N
         }
     }
 }".AssertReplace("wrong", fieldName);
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -105,17 +105,17 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("wrong")]
-        [TestCase("valuE")]
-        [TestCase("valuee")]
-        [TestCase("alue")]
-        [TestCase("vvalue")]
-        public static void StatementBodyGetter(string fieldName)
-        {
-            var before = @"
+    [TestCase("wrong")]
+    [TestCase("valuE")]
+    [TestCase("valuee")]
+    [TestCase("alue")]
+    [TestCase("vvalue")]
+    public static void StatementBodyGetter(string fieldName)
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -129,7 +129,7 @@ namespace N
     }
 }".AssertReplace("wrong", fieldName);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -143,17 +143,17 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("_wrong")]
-        [TestCase("_valuE")]
-        [TestCase("_pe")]
-        [TestCase("_alue")]
-        [TestCase("_vvalue")]
-        public static void ExpressionBodyGetterUnderscore(string fieldName)
-        {
-            var before = @"
+    [TestCase("_wrong")]
+    [TestCase("_valuE")]
+    [TestCase("_pe")]
+    [TestCase("_alue")]
+    [TestCase("_vvalue")]
+    public static void ExpressionBodyGetterUnderscore(string fieldName)
+    {
+        var before = @"
 namespace N
 {
     public class C
@@ -166,7 +166,7 @@ namespace N
         }
     }
 }".AssertReplace("_wrong", fieldName);
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C
@@ -180,7 +180,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

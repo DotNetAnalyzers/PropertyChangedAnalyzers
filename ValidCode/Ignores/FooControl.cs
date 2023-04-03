@@ -1,21 +1,20 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Ignores
+namespace ValidCode.Ignores;
+
+using System.Windows;
+using System.Windows.Controls;
+
+public class FooControl : Control
 {
-    using System.Windows;
-    using System.Windows.Controls;
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+        nameof(Value),
+        typeof(int),
+        typeof(FooControl),
+        new PropertyMetadata(default(int)));
 
-    public class FooControl : Control
+    public int Value
     {
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value),
-            typeof(int),
-            typeof(FooControl),
-            new PropertyMetadata(default(int)));
-
-        public int Value
-        {
-            get => (int)this.GetValue(ValueProperty);
-            set => this.SetValue(ValueProperty, value);
-        }
+        get => (int)this.GetValue(ValueProperty);
+        set => this.SetValue(ValueProperty, value);
     }
 }

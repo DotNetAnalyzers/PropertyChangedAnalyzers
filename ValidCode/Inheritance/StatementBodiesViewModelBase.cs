@@ -1,16 +1,15 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Inheritance
+namespace ValidCode.Inheritance;
+
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public abstract class StatementBodiesViewModelBase : INotifyPropertyChanged
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    public abstract class StatementBodiesViewModelBase : INotifyPropertyChanged
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

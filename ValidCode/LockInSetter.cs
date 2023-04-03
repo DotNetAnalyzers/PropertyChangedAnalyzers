@@ -1,44 +1,43 @@
 ﻿// ReSharper disable All
-namespace ValidCode
+namespace ValidCode;
+
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class LockInSetter : INotifyPropertyChanged
 {
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private readonly object _busyLock = new();
+    private bool _value;
 
-    public class LockInSetter : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public bool Value
     {
-        private readonly object _busyLock = new();
-        private bool _value;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public bool Value
+        get => this._value;
+        private set
         {
-            get => this._value;
-            private set
+            lock (this._busyLock)
             {
-                lock (this._busyLock)
+                if (value && this._value)
                 {
-                    if (value && this._value)
-                    {
-                        throw new InvalidOperationException();
-                    }
-
-                    if (value == this._value)
-                    {
-                        return;
-                    }
-
-                    this._value = value;
+                    throw new InvalidOperationException();
                 }
 
-                this.OnPropertyChanged();
-            }
-        }
+                if (value == this._value)
+                {
+                    return;
+                }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                this._value = value;
+            }
+
+            this.OnPropertyChanged();
         }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

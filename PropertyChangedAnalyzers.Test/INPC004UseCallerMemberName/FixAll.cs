@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName
+﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class FixAll
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ArgumentAnalyzer Analyzer = new();
+    private static readonly UseCallerMemberNameFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
 
-    public static class FixAll
+    [Test]
+    public static void FixAllTest()
     {
-        private static readonly ArgumentAnalyzer Analyzer = new();
-        private static readonly UseCallerMemberNameFix Fix = new UseCallerMemberNameFix();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
-
-        [Test]
-        public static void FixAllTest()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -65,7 +65,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -117,13 +117,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void SetAffectsCalculatedPropertyExplicitNameOf()
-        {
-            var viewModelBaseCode = @"
+    [Test]
+    public static void SetAffectsCalculatedPropertyExplicitNameOf()
+    {
+        var viewModelBaseCode = @"
 namespace N.Core
 {
     using System;
@@ -160,7 +160,7 @@ namespace N.Core
     }
 }";
 
-            var before = @"
+        var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -183,7 +183,7 @@ namespace N.Client
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -205,7 +205,6 @@ namespace N.Client
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
     }
 }

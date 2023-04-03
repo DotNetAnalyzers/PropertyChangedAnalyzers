@@ -1,12 +1,11 @@
-namespace PropertyChangedAnalyzers
-{
-    using Gu.Roslyn.AnalyzerExtensions;
+namespace PropertyChangedAnalyzers;
 
-    internal class NullableOfTType : QualifiedType
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class NullableOfTType : QualifiedType
+{
+    internal NullableOfTType()
+        : base("System.Nullable`1")
     {
-        internal NullableOfTType()
-            : base("System.Nullable`1")
-        {
-        }
     }
 }

@@ -1,27 +1,27 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly MutationAnalyzer Analyzer = new();
+    private static readonly NotifyForDependentPropertyFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
 
-    public static partial class CodeFix
+    [TestCase("this.p = p;")]
+    [TestCase("this.p += p;")]
+    [TestCase("this.p -= p;")]
+    [TestCase("this.p *= p;")]
+    [TestCase("this.p /= p;")]
+    [TestCase("this.p %= p;")]
+    [TestCase("this.p++;")]
+    [TestCase("this.p--;")]
+    [TestCase("--this.p;")]
+    [TestCase("++this.p;")]
+    public static void IntFieldUpdatedInMethod(string update)
     {
-        private static readonly MutationAnalyzer Analyzer = new();
-        private static readonly NotifyForDependentPropertyFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC003NotifyForDependentProperty);
-
-        [TestCase("this.p = p;")]
-        [TestCase("this.p += p;")]
-        [TestCase("this.p -= p;")]
-        [TestCase("this.p *= p;")]
-        [TestCase("this.p /= p;")]
-        [TestCase("this.p %= p;")]
-        [TestCase("this.p++;")]
-        [TestCase("this.p--;")]
-        [TestCase("--this.p;")]
-        [TestCase("++this.p;")]
-        public static void IntFieldUpdatedInMethod(string update)
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -47,7 +47,7 @@ namespace N
     }
 }".AssertReplace("this.p = p;", update);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -74,23 +74,23 @@ namespace N
     }
 }".AssertReplace("this.p = p;", update);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("_p = p;")]
-        [TestCase("_p += p;")]
-        [TestCase("_p -= p;")]
-        [TestCase("_p *= p;")]
-        [TestCase("_p /= p;")]
-        [TestCase("_p %= p;")]
-        [TestCase("_p++;")]
-        [TestCase("_p--;")]
-        [TestCase("--_p;")]
-        [TestCase("++_p;")]
-        public static void IntFieldUpdatedInMethodUnderscoreNames(string update)
-        {
-            var before = @"
+    [TestCase("_p = p;")]
+    [TestCase("_p += p;")]
+    [TestCase("_p -= p;")]
+    [TestCase("_p *= p;")]
+    [TestCase("_p /= p;")]
+    [TestCase("_p %= p;")]
+    [TestCase("_p++;")]
+    [TestCase("_p--;")]
+    [TestCase("--_p;")]
+    [TestCase("++_p;")]
+    public static void IntFieldUpdatedInMethodUnderscoreNames(string update)
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -116,7 +116,7 @@ namespace N
     }
 }".AssertReplace("_p = p;", update);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -143,16 +143,16 @@ namespace N
     }
 }".AssertReplace("_p = p;", update);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
+    }
 
-        [TestCase("this.p |= p;")]
-        [TestCase("this.p ^= p;")]
-        [TestCase("this.p &= p;")]
-        public static void BoolFieldUpdatedInMethod(string update)
-        {
-            var before = @"
+    [TestCase("this.p |= p;")]
+    [TestCase("this.p ^= p;")]
+    [TestCase("this.p &= p;")]
+    public static void BoolFieldUpdatedInMethod(string update)
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -178,7 +178,7 @@ namespace N
     }
 }".AssertReplace("this.p = p;", update);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -205,14 +205,14 @@ namespace N
     }
 }".AssertReplace("this.p = p;", update);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingPropertiesExpressionBodyStringInterpolation()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingPropertiesExpressionBodyStringInterpolation()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -273,7 +273,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -335,14 +335,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingPropertiesExpressionBodyStringInterpolationInternalClassInternalProperty()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingPropertiesExpressionBodyStringInterpolationInternalClassInternalProperty()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -403,7 +403,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -465,14 +465,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingPropertiesCopyLocalNullCheckInvoke()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingPropertiesCopyLocalNullCheckInvoke()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -534,7 +534,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -597,14 +597,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingPropertiesExpressionBodyTernarySimple()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingPropertiesExpressionBodyTernarySimple()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -644,7 +644,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -685,14 +685,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingPropertiesExpressionBodyNested()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingPropertiesExpressionBodyNested()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -763,7 +763,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -835,14 +835,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingPropertiesExpressionBodyNestedSimple()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingPropertiesExpressionBodyNestedSimple()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -891,7 +891,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -941,15 +941,15 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("=> CreateP1()")]
-        [TestCase("=> this.CreateP1()")]
-        public static void WhenUsingPropertiesExpressionCallingMethod(string call)
-        {
-            var before = @"
+    [TestCase("=> CreateP1()")]
+    [TestCase("=> this.CreateP1()")]
+    public static void WhenUsingPropertiesExpressionCallingMethod(string call)
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1022,7 +1022,7 @@ namespace N
     }
 }".AssertReplace("=> CreateP1()", call);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1096,14 +1096,14 @@ namespace N
     }
 }".AssertReplace("=> CreateP1()", call);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingPropertiesExpressionBodyTernary()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingPropertiesExpressionBodyTernary()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1164,7 +1164,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1226,14 +1226,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingPropertiesStatementBody()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingPropertiesStatementBody()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1300,7 +1300,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1368,14 +1368,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingPropertiesStatementBodyUnderscoreNames()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingPropertiesStatementBodyUnderscoreNames()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1442,7 +1442,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1509,14 +1509,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
+    }
 
-        [Test]
-        public static void WhenUsingBackingFieldsExpressionBodyStringInterpolation()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingBackingFieldsExpressionBodyStringInterpolation()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1577,7 +1577,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1638,14 +1638,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingBackingFieldsExpressionBodyStringFormat()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingBackingFieldsExpressionBodyStringFormat()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1706,7 +1706,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1767,15 +1767,15 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("this.p")]
-        [TestCase("p")]
-        public static void WhenUsingBackingFieldExpressionBodyStringToUpper(string path)
-        {
-            var before = @"
+    [TestCase("this.p")]
+    [TestCase("p")]
+    public static void WhenUsingBackingFieldExpressionBodyStringToUpper(string path)
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1815,7 +1815,7 @@ namespace N
     }
 }".AssertReplace("this.p", path);
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1856,14 +1856,14 @@ namespace N
     }
 }".AssertReplace("this.p", path);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingBackingFieldExpressionBodyStringElvisToUpper()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingBackingFieldExpressionBodyStringElvisToUpper()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1903,7 +1903,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -1943,14 +1943,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingBackingFieldsExpressionBodyReturningCreatedObject()
-        {
-            var personCode = @"
+    [Test]
+    public static void WhenUsingBackingFieldsExpressionBodyReturningCreatedObject()
+    {
+        var personCode = @"
 namespace N
 {
     public class Person
@@ -1967,7 +1967,7 @@ namespace N
     }
 }";
 
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2028,7 +2028,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2090,14 +2090,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { personCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { personCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { personCode, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { personCode, before }, after);
+    }
 
-        [Test]
-        public static void WhenUsingBackingFieldsExpressionBodyReturningArray()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingBackingFieldsExpressionBodyReturningArray()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2158,7 +2158,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2220,14 +2220,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingBackingFieldsYieldReturning()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingBackingFieldsYieldReturning()
+    {
+        var before = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -2296,7 +2296,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -2366,14 +2366,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingBackingFieldsStatementBody()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingBackingFieldsStatementBody()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2440,7 +2440,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2507,14 +2507,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingBackingFieldsStatementBodyWithSwitch()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingBackingFieldsStatementBodyWithSwitch()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2566,7 +2566,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2618,14 +2618,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenUsingBackingFieldsStatementBodyUnderscoreNames()
-        {
-            var before = @"
+    [Test]
+    public static void WhenUsingBackingFieldsStatementBodyUnderscoreNames()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2692,7 +2692,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2759,14 +2759,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
+    }
 
-        [Test]
-        public static void FieldUpdatedInMethodWithInvokerInBaseClass()
-        {
-            var viewModelBaseCode = @"
+    [Test]
+    public static void FieldUpdatedInMethodWithInvokerInBaseClass()
+    {
+        var viewModelBaseCode = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -2783,7 +2783,7 @@ namespace N.Core
     }
 }";
 
-            var before = @"
+        var before = @"
 namespace N.Client
 {
     using System.ComponentModel;
@@ -2802,7 +2802,7 @@ namespace N.Client
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N.Client
 {
     using System.ComponentModel;
@@ -2821,14 +2821,14 @@ namespace N.Client
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
+    }
 
-        [Test]
-        public static void InSimpleLambdaExpressionBody()
-        {
-            var before = @"
+    [Test]
+    public static void InSimpleLambdaExpressionBody()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -2855,7 +2855,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -2885,14 +2885,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void InSimpleLambdaStatementBody()
-        {
-            var before = @"
+    [Test]
+    public static void InSimpleLambdaStatementBody()
+    {
+        var before = @"
 namespace N
 {
     using System;
@@ -2922,7 +2922,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System;
@@ -2952,14 +2952,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void InParenthesizedLambdaExpressionBody()
-        {
-            var before = @"
+    [Test]
+    public static void InParenthesizedLambdaExpressionBody()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -2985,7 +2985,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3014,14 +3014,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void InParenthesizedLambdaStatementBody()
-        {
-            var before = @"
+    [Test]
+    public static void InParenthesizedLambdaStatementBody()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3050,7 +3050,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3079,14 +3079,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AssigningFieldsInGetter()
-        {
-            var before = @"
+    [Test]
+    public static void AssigningFieldsInGetter()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3117,7 +3117,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3148,15 +3148,15 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("this.c1.P")]
-        [TestCase("c1.P")]
-        public static void WhenAssigningNestedField(string path)
-        {
-            var c1 = @"
+    [TestCase("this.c1.P")]
+    [TestCase("c1.P")]
+    public static void WhenAssigningNestedField(string path)
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -3164,7 +3164,7 @@ namespace N
         public int P;
     }
 }";
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3189,7 +3189,7 @@ namespace N
         }
     }
 }".AssertReplace("this.c1.P", path);
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3216,14 +3216,14 @@ namespace N
     }
 }".AssertReplace("this.c1.P", path);
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+    }
 
-        [Test]
-        public static void WhenAssigningNestedFieldRoot()
-        {
-            var c1 = @"
+    [Test]
+    public static void WhenAssigningNestedFieldRoot()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -3231,7 +3231,7 @@ namespace N
         public int P;
     }
 }";
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3256,7 +3256,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3282,14 +3282,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+    }
 
-        [Test]
-        public static void WhenAssigningRootForNestedField()
-        {
-            var c1 = @"
+    [Test]
+    public static void WhenAssigningRootForNestedField()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -3297,7 +3297,7 @@ namespace N
         public int F;
     }
 }";
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3322,7 +3322,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3348,14 +3348,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { c1, before }, after);
+    }
 
-        [Test]
-        public static void OverriddenProperty()
-        {
-            var viewModelBase = @"
+    [Test]
+    public static void OverriddenProperty()
+    {
+        var viewModelBase = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3373,7 +3373,7 @@ namespace N
         }
     }
 }";
-            var before = @"
+        var before = @"
 namespace N
 {
     public class C : ViewModelBase
@@ -3388,7 +3388,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     public class C : ViewModelBase
@@ -3404,14 +3404,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBase, before }, after);
+    }
 
-        [Test]
-        public static void WhenNotifyingInElseOnly()
-        {
-            var before = @"
+    [Test]
+    public static void WhenNotifyingInElseOnly()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3444,7 +3444,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3478,14 +3478,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [TestCase("this.OnPropertyChanged(nameof(this.P2))")]
-        public static void WhenDependentExpressionBodiedProperties(string expression)
-        {
-            var before = @"
+    [TestCase("this.OnPropertyChanged(nameof(this.P2))")]
+    public static void WhenDependentExpressionBodiedProperties(string expression)
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3523,7 +3523,7 @@ namespace N
         }
     }
 }".AssertReplace("this.OnPropertyChanged(nameof(this.P2))", expression);
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3562,14 +3562,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AddsBeforeExplicitReturn()
-        {
-            var before = @"
+    [Test]
+    public static void AddsBeforeExplicitReturn()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3610,7 +3610,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -3652,8 +3652,7 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursive
+﻿namespace PropertyChangedAnalyzers.Test.INPC015PropertyIsRecursive;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly PropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC015PropertyIsRecursive;
 
-    public static class Valid
+    [Test]
+    public static void NotifyingProperty()
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC015PropertyIsRecursive;
-
-        [Test]
-        public static void NotifyingProperty()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -49,13 +49,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void GetSetBackingFieldExpressionBodies()
-        {
-            var code = @"
+    [Test]
+    public static void GetSetBackingFieldExpressionBodies()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -70,13 +70,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ExpressionBodyReturnBase()
-        {
-            var code = @"
+    [Test]
+    public static void ExpressionBodyReturnBase()
+    {
+        var code = @"
 namespace N
 {
     public class A
@@ -90,13 +90,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ExpressionBodiesGetAndSetBase()
-        {
-            var code = @"
+    [Test]
+    public static void ExpressionBodiesGetAndSetBase()
+    {
+        var code = @"
 namespace N
 {
     public class C1
@@ -114,13 +114,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ExplicitInterfaceImplementation()
-        {
-            var code = @"
+    [Test]
+    public static void ExplicitInterfaceImplementation()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections;
@@ -148,13 +148,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreObjectInitializer()
-        {
-            var withProperties = @"
+    [Test]
+    public static void IgnoreObjectInitializer()
+    {
+        var withProperties = @"
 namespace ValidCode.Wrapping
 {
     public class WithProperties
@@ -163,7 +163,7 @@ namespace ValidCode.Wrapping
         public int P2 { get; set; }
     }
 }";
-            var code = @"
+        var code = @"
 namespace ValidCode.Wrapping
 {
     using System.Collections.Generic;
@@ -218,13 +218,13 @@ namespace ValidCode.Wrapping
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, withProperties, code);
-        }
+        RoslynAssert.Valid(Analyzer, withProperties, code);
+    }
 
-        [Test]
-        public static void SameExpressionWithDifferentMeanings()
-        {
-            var code = @"
+    [Test]
+    public static void SameExpressionWithDifferentMeanings()
+    {
+        var code = @"
 namespace ValidCode.Recursion
 {
     using System;
@@ -285,7 +285,6 @@ namespace ValidCode.Recursion
 }
 ";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

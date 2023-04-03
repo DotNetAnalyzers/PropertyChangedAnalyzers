@@ -1,19 +1,18 @@
-namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class CaliburnMicroPropertyChangedBase : QualifiedType
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal readonly QualifiedMethod Set;
+    internal readonly QualifiedMethod NotifyOfPropertyChange;
+    internal readonly QualifiedMethod NotifyOfPropertyChangeOfT;
 
-    internal class CaliburnMicroPropertyChangedBase : QualifiedType
+    internal CaliburnMicroPropertyChangedBase()
+        : base("Caliburn.Micro.PropertyChangedBase")
     {
-        internal readonly QualifiedMethod Set;
-        internal readonly QualifiedMethod NotifyOfPropertyChange;
-        internal readonly QualifiedMethod NotifyOfPropertyChangeOfT;
-
-        internal CaliburnMicroPropertyChangedBase()
-            : base("Caliburn.Micro.PropertyChangedBase")
-        {
-            this.Set = new QualifiedMethod(this, nameof(this.Set));
-            this.NotifyOfPropertyChange = new QualifiedMethod(this, nameof(this.NotifyOfPropertyChange));
-            this.NotifyOfPropertyChangeOfT = new QualifiedMethod(this, $"{nameof(this.NotifyOfPropertyChange)}`1");
-        }
+        this.Set = new QualifiedMethod(this, nameof(this.Set));
+        this.NotifyOfPropertyChange = new QualifiedMethod(this, nameof(this.NotifyOfPropertyChange));
+        this.NotifyOfPropertyChangeOfT = new QualifiedMethod(this, $"{nameof(this.NotifyOfPropertyChange)}`1");
     }
 }

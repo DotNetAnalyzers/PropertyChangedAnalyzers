@@ -1,20 +1,20 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
-{
-    using System.Threading;
-    using Gu.Roslyn.AnalyzerExtensions;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class TrySetTests
+using System.Threading;
+using Gu.Roslyn.AnalyzerExtensions;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public partial class TrySetTests
+{
+    public static class IsMatchMethod
     {
-        public static class IsMatchMethod
+        [Test]
+        public static void Stylet()
         {
-            [Test]
-            public static void Stylet()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -28,18 +28,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, LibrarySettings.Stylet.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("SetAndNotify");
-                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, LibrarySettings.Stylet.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("SetAndNotify");
+            var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void CaliburnMicro()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void CaliburnMicro()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -53,21 +53,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("Set");
-                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("Set");
+            var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void MvvmLight()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void MvvmLight()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
@@ -81,21 +81,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    LibrarySettings.MvvmLight.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("Set");
-                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                LibrarySettings.MvvmLight.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("Set");
+            var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void CustomImplementation1()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void CustomImplementation1()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.Collections.Generic;
@@ -124,21 +124,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
+            var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+            Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void CustomImplementation2()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void CustomImplementation2()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System;
@@ -182,21 +182,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
+            var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+            Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void OverridingCaliburnMicroPropertyChangedBase()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void OverridingCaliburnMicroPropertyChangedBase()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
@@ -207,21 +207,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    LibrarySettings.CaliburnMicro.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("Set");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                LibrarySettings.CaliburnMicro.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var methodDeclaration = syntaxTree.FindMethodDeclaration("Set");
+            var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+            Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void CallingCaliburnMicroPropertyChangedBase()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void CallingCaliburnMicroPropertyChangedBase()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
@@ -232,21 +232,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    LibrarySettings.CaliburnMicro.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                LibrarySettings.CaliburnMicro.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
+            var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+            Assert.AreEqual(AnalysisResult.Yes, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void Recursive1()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void Recursive1()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -272,21 +272,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.No, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
+            var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+            Assert.AreEqual(AnalysisResult.No, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void Recursive2()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void Recursive2()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -307,15 +307,14 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.No, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var methodDeclaration = syntaxTree.FindMethodDeclaration("TrySet");
+            var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+            Assert.AreEqual(AnalysisResult.No, TrySet.IsMatch(method, semanticModel, CancellationToken.None));
         }
     }
 }

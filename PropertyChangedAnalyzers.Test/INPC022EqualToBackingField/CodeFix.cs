@@ -1,28 +1,28 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC022EqualToBackingField
+﻿namespace PropertyChangedAnalyzers.Test.INPC022EqualToBackingField;
+
+using System.Collections.Generic;
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using System.Collections.Generic;
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly ReplaceExpressionFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC022EqualToBackingField);
 
-    public static class CodeFix
+    private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly ReplaceExpressionFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC022EqualToBackingField);
+        new TestCaseData("object.ReferenceEquals(value, ↓this.f)",        "object.ReferenceEquals(value, this.p)"),
+        new TestCaseData("Object.ReferenceEquals(value, ↓this.f)",        "Object.ReferenceEquals(value, this.p)"),
+        new TestCaseData("System.Object.ReferenceEquals(value, ↓this.f)", "System.Object.ReferenceEquals(value, this.p)"),
+        new TestCaseData("ReferenceEquals(value, ↓this.f)",               "ReferenceEquals(value, this.p)"),
+        new TestCaseData("ReferenceEquals(↓this.f, value)",               "ReferenceEquals(this.p, value)"),
+        new TestCaseData("ReferenceEquals(↓f, value)",                    "ReferenceEquals(this.p, value)"),
+        new TestCaseData("ReferenceEquals(value, ↓f)",                    "ReferenceEquals(value, this.p)"),
+        new TestCaseData("value == ↓f",                                   "value == this.p"),
+    };
 
-        private static readonly IReadOnlyList<TestCaseData> TestCases = new[]
-        {
-            new TestCaseData("object.ReferenceEquals(value, ↓this.f)",        "object.ReferenceEquals(value, this.p)"),
-            new TestCaseData("Object.ReferenceEquals(value, ↓this.f)",        "Object.ReferenceEquals(value, this.p)"),
-            new TestCaseData("System.Object.ReferenceEquals(value, ↓this.f)", "System.Object.ReferenceEquals(value, this.p)"),
-            new TestCaseData("ReferenceEquals(value, ↓this.f)",               "ReferenceEquals(value, this.p)"),
-            new TestCaseData("ReferenceEquals(↓this.f, value)",               "ReferenceEquals(this.p, value)"),
-            new TestCaseData("ReferenceEquals(↓f, value)",                    "ReferenceEquals(this.p, value)"),
-            new TestCaseData("ReferenceEquals(value, ↓f)",                    "ReferenceEquals(value, this.p)"),
-            new TestCaseData("value == ↓f",                                   "value == this.p"),
-        };
-
-        private const string ReferenceType = @"
+    private const string ReferenceType = @"
 namespace N
 {
     public class ReferenceType
@@ -30,10 +30,10 @@ namespace N
     }
 }";
 
-        [Test]
-        public static void Message()
-        {
-            var before = @"
+    [Test]
+    public static void Message()
+    {
+        var before = @"
 #pragma warning disable CS0169
 namespace N
 {
@@ -70,7 +70,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 #pragma warning disable CS0169
 namespace N
 {
@@ -106,13 +106,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Comparison should be with backing field"), before, after, fixTitle: "Use: this.p");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic.WithMessage("Comparison should be with backing field"), before, after, fixTitle: "Use: this.p");
+    }
 
-        [TestCaseSource(nameof(TestCases))]
-        public static void Check(string expressionBefore, string expressionAfter)
-        {
-            var before = @"
+    [TestCaseSource(nameof(TestCases))]
+    public static void Check(string expressionBefore, string expressionAfter)
+    {
+        var before = @"
 #pragma warning disable CS0169
 namespace N
 {
@@ -149,7 +149,7 @@ namespace N
     }
 }".AssertReplace("ReferenceEquals(value, ↓this.f)", expressionBefore);
 
-            var after = @"
+        var after = @"
 #pragma warning disable CS0169
 namespace N
 {
@@ -185,8 +185,7 @@ namespace N
         }
     }
 }".AssertReplace("ReferenceEquals(value, this.p)", expressionAfter);
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ReferenceType, before }, after);
     }
 }

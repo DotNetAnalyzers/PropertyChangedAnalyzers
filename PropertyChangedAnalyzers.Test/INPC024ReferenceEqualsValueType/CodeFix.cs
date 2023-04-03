@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC024ReferenceEqualsValueType
+﻿namespace PropertyChangedAnalyzers.Test.INPC024ReferenceEqualsValueType;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly EqualityFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC024ReferenceEqualsValueType);
 
-    public static class CodeFix
+    [Test]
+    public static void Simple()
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly EqualityFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC024ReferenceEqualsValueType);
-
-        [Test]
-        public static void Simple()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -46,7 +46,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -80,13 +80,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void Negated()
-        {
-            var before = @"
+    [Test]
+    public static void Negated()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -118,7 +118,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -150,7 +150,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

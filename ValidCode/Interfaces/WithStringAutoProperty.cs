@@ -1,39 +1,38 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Interfaces
+namespace ValidCode.Interfaces;
+
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public class WithStringAutoProperty : IValue, INotifyPropertyChanged
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private string? value;
 
-    public class WithStringAutoProperty : IValue, INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public string? Value
     {
-        private string? value;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string? Value
+        get => this.value;
+        set
         {
-            get => this.value;
-            set
+            if (value == this.value)
             {
-                if (value == this.value)
-                {
-                    return;
-                }
-
-                this.value = value;
-                this.OnPropertyChanged();
+                return;
             }
-        }
 
-        object? IValue.Value
-        {
-            get => this.Value;
-            set => this.Value = (string?)value;
+            this.value = value;
+            this.OnPropertyChanged();
         }
+    }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+    object? IValue.Value
+    {
+        get => this.Value;
+        set => this.Value = (string?)value;
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

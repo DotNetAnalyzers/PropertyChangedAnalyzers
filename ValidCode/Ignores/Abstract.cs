@@ -1,8 +1,7 @@
 // ReSharper disable All
-namespace ValidCode.Ignores
+namespace ValidCode.Ignores;
+
+public abstract class Abstract
 {
-    public abstract class Abstract
-    {
-        public abstract int P { get; set; }
-    }
+    public abstract int P { get; set; }
 }

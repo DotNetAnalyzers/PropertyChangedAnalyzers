@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC019GetBackingField
+﻿namespace PropertyChangedAnalyzers.Test.INPC019GetBackingField;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly PropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly ReplaceExpressionFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC019GetBackingField);
 
-    public static class CodeFix
+    [Test]
+    public static void SimpleExpressionBody()
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly ReplaceExpressionFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC019GetBackingField);
-
-        [Test]
-        public static void SimpleExpressionBody()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     public sealed class C
@@ -26,7 +26,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     public sealed class C
@@ -41,13 +41,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void ExpressionBody()
-        {
-            var before = @"
+    [Test]
+    public static void ExpressionBody()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -84,7 +84,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -122,13 +122,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void WhenFieldIsKeyword()
-        {
-            var before = @"
+    [Test]
+    public static void WhenFieldIsKeyword()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -165,7 +165,7 @@ namespace N
         }
     }
 }";
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -203,13 +203,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void TrySetExpressionBody()
-        {
-            var before = @"
+    [Test]
+    public static void TrySetExpressionBody()
+    {
+        var before = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -263,7 +263,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -316,13 +316,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void StatementBody()
-        {
-            var before = @"
+    [Test]
+    public static void StatementBody()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -363,7 +363,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -404,7 +404,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

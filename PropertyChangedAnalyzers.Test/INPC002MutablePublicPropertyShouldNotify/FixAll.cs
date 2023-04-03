@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class FixAll
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly MakePropertyNotifyFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify);
 
-    public static class FixAll
+    [Test]
+    public static void TwoAutoPropertiesCallerMemberName()
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly MakePropertyNotifyFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC002MutablePublicPropertyShouldNotify);
-
-        [Test]
-        public static void TwoAutoPropertiesCallerMemberName()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -39,7 +39,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -93,13 +93,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AutoPropertiesCallerMemberName()
-        {
-            var before = @"
+    [Test]
+    public static void AutoPropertiesCallerMemberName()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -128,7 +128,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -198,13 +198,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AutoPropertiesCallerMemberNameUnderscoreNames()
-        {
-            var before = @"
+    [Test]
+    public static void AutoPropertiesCallerMemberNameUnderscoreNames()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -233,7 +233,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -303,13 +303,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after);
+    }
 
-        [Test]
-        public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying1()
-        {
-            var before = @"
+    [Test]
+    public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying1()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -347,7 +347,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -412,13 +412,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying2()
-        {
-            var before = @"
+    [Test]
+    public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying2()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -456,7 +456,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -521,13 +521,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying3()
-        {
-            var before = @"
+    [Test]
+    public static void AutoPropertiesCallerMemberNameUnderscoreNamesWithExistingNotifying3()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -565,7 +565,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -630,13 +630,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void AutoPropertiesCallerMemberNameUnderscoreNamesTwoClassesInDocument()
-        {
-            var before = @"
+    [Test]
+    public static void AutoPropertiesCallerMemberNameUnderscoreNamesTwoClassesInDocument()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -675,7 +675,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -799,7 +799,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
     }
 }

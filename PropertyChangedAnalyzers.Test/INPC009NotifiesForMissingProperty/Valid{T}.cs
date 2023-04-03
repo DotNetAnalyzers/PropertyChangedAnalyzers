@@ -1,28 +1,28 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingProperty;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using NUnit.Framework;
+
+[TestFixture(typeof(ArgumentAnalyzer))]
+[TestFixture(typeof(InvocationAnalyzer))]
+public static class Valid<T>
+    where T : DiagnosticAnalyzer, new()
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using NUnit.Framework;
+    private static readonly T Analyzer = new();
+    //// ReSharper disable once StaticMemberInGenericType
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC009NotifiesForMissingProperty;
 
-    [TestFixture(typeof(ArgumentAnalyzer))]
-    [TestFixture(typeof(InvocationAnalyzer))]
-    public static class Valid<T>
-        where T : DiagnosticAnalyzer, new()
+    [TestCase("null")]
+    [TestCase("string.Empty")]
+    [TestCase(@"""""")]
+    [TestCase(@"""P""")]
+    [TestCase(@"nameof(P)")]
+    [TestCase(@"nameof(this.P)")]
+    public static void OnPropertyChangedWithEventArgs(string propertyName)
     {
-        private static readonly T Analyzer = new T();
-        //// ReSharper disable once StaticMemberInGenericType
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC009NotifiesForMissingProperty;
-
-        [TestCase("null")]
-        [TestCase("string.Empty")]
-        [TestCase(@"""""")]
-        [TestCase(@"""P""")]
-        [TestCase(@"nameof(P)")]
-        [TestCase(@"nameof(this.P)")]
-        public static void OnPropertyChangedWithEventArgs(string propertyName)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -53,13 +53,13 @@ namespace N
     }
 }".AssertReplace(@"nameof(P)", propertyName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void OnPropertyChangedCallerMemberName()
-        {
-            var code = @"
+    [Test]
+    public static void OnPropertyChangedCallerMemberName()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -89,13 +89,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckInvoke()
-        {
-            var code = @"
+    [Test]
+    public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckInvoke()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -129,13 +129,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckImplicitInvoke()
-        {
-            var code = @"
+    [Test]
+    public static void OnPropertyChangedCallerMemberNameCopyLocalNullCheckImplicitInvoke()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -169,18 +169,18 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("null")]
-        [TestCase("string.Empty")]
-        [TestCase(@"""""")]
-        [TestCase(@"""P""")]
-        [TestCase(@"nameof(P)")]
-        [TestCase(@"nameof(this.P)")]
-        public static void Invokes(string propertyName)
-        {
-            var code = @"
+    [TestCase("null")]
+    [TestCase("string.Empty")]
+    [TestCase(@"""""")]
+    [TestCase(@"""P""")]
+    [TestCase(@"nameof(P)")]
+    [TestCase(@"nameof(this.P)")]
+    public static void Invokes(string propertyName)
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -209,13 +209,13 @@ namespace N
     }
 }".AssertReplace(@"nameof(this.P))", propertyName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void InvokesCached()
-        {
-            var code = @"
+    [Test]
+    public static void InvokesCached()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -242,13 +242,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void OnPropertyChangedInBaseClass()
-        {
-            var viewModelBase = @"
+    [Test]
+    public static void OnPropertyChangedInBaseClass()
+    {
+        var viewModelBase = @"
 namespace N
 {
     using System.ComponentModel;
@@ -261,7 +261,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     public class C : ViewModelBase
@@ -288,13 +288,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, code);
+    }
 
-        [Test]
-        public static void RaisesForIndexer()
-        {
-            var code = @"
+    [Test]
+    public static void RaisesForIndexer()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.ObjectModel;
@@ -318,13 +318,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoresWhenNotInvokingReproIssue122()
-        {
-            var propertyChangedEventArgsExt = @"
+    [Test]
+    public static void IgnoresWhenNotInvokingReproIssue122()
+    {
+        var propertyChangedEventArgsExt = @"
 namespace N
 {
     using System.ComponentModel;
@@ -338,7 +338,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -388,13 +388,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, propertyChangedEventArgsExt, code);
-        }
+        RoslynAssert.Valid(Analyzer, propertyChangedEventArgsExt, code);
+    }
 
-        [Test]
-        public static void RaiseForOtherInstance()
-        {
-            var code = @"
+    [Test]
+    public static void RaiseForOtherInstance()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -437,13 +437,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void RaiseForOtherInstanceOfOtherType()
-        {
-            var c1 = @"
+    [Test]
+    public static void RaiseForOtherInstanceOfOtherType()
+    {
+        var c1 = @"
 namespace N
 {
     using System.ComponentModel;
@@ -478,7 +478,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     internal class C2
@@ -490,13 +490,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, c1, code);
-        }
+        RoslynAssert.Valid(Analyzer, c1, code);
+    }
 
-        [Test]
-        public static void RaiseForOtherInstanceOfOtherTypeWithBaseClass()
-        {
-            var viewModelBase = @"
+    [Test]
+    public static void RaiseForOtherInstanceOfOtherTypeWithBaseClass()
+    {
+        var viewModelBase = @"
 namespace N
 {
     using System.ComponentModel;
@@ -509,7 +509,7 @@ namespace N
     }
 }";
 
-            var c1 = @"
+        var c1 = @"
 namespace N
 {
     public class C1 : ViewModelBase
@@ -537,7 +537,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     internal class C2
@@ -549,13 +549,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, c1, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, viewModelBase, c1, code);
+    }
 
-        [Test]
-        public static void WhenNotAnInvoker()
-        {
-            var code = @"
+    [Test]
+    public static void WhenNotAnInvoker()
+    {
+        var code = @"
 #pragma warning disable CS0067
 namespace N
 {
@@ -589,15 +589,15 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("\"\"")]
-        [TestCase("string.Empty")]
-        [TestCase("null")]
-        public static void NotifyThatAllPropertiesChanges(string arg)
-        {
-            var code = @"
+    [TestCase("\"\"")]
+    [TestCase("string.Empty")]
+    [TestCase("null")]
+    public static void NotifyThatAllPropertiesChanges(string arg)
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -625,13 +625,13 @@ namespace N
     }
 }".AssertReplace("string.Empty", arg);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WithViewModelBase()
-        {
-            var viewModelBase = @"
+    [Test]
+    public static void WithViewModelBase()
+    {
+        var viewModelBase = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -660,7 +660,7 @@ namespace N.Core
         }
     }
 }";
-            var viewModelCode = @"
+        var viewModelCode = @"
 namespace N.Client
 {
     using N.Core;
@@ -706,13 +706,13 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, viewModelBase, viewModelCode);
-        }
+        RoslynAssert.Valid(Analyzer, viewModelBase, viewModelCode);
+    }
 
-        [Test]
-        public static void OverriddenProperty()
-        {
-            var viewModelBase = @"
+    [Test]
+    public static void OverriddenProperty()
+    {
+        var viewModelBase = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -730,7 +730,7 @@ namespace N.Core
         }
     }
 }";
-            var c = @"
+        var c = @"
 namespace N.Client
 {
     using N.Core;
@@ -749,7 +749,6 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, viewModelBase, c);
-        }
+        RoslynAssert.Valid(Analyzer, viewModelBase, c);
     }
 }

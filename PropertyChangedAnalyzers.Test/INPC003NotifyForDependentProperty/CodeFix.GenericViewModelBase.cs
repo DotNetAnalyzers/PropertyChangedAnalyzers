@@ -1,13 +1,13 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
 
-    public static partial class CodeFix
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
+{
+    public static class GenericViewModelBase
     {
-        public static class GenericViewModelBase
-        {
-            private const string ViewModelBaseOfT = @"
+        private const string ViewModelBaseOfT = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -37,10 +37,10 @@ namespace N.Core
     }
 }";
 
-            [Test]
-            public static void AssignedAffectsCalculatedPropertyOnPropertyChanged()
-            {
-                var before = @"
+        [Test]
+        public static void AssignedAffectsCalculatedPropertyOnPropertyChanged()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -91,7 +91,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -142,14 +142,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+        }
 
-            [Test]
-            public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -176,7 +176,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -203,14 +203,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+        }
 
-            [Test]
-            public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
-            {
-                var before = @"
+        [Test]
+        public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -235,7 +235,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -260,14 +260,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -284,7 +284,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -306,14 +306,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -333,7 +333,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -358,14 +358,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+        }
 
-            [Test]
-            public static void SetExpressionBodiesAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetExpressionBodiesAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -382,7 +382,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -404,14 +404,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyEmptyIf()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyEmptyIf()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -433,7 +433,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -455,14 +455,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedProperty()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -487,7 +487,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -512,14 +512,14 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedPropertyMissingBraces()
+        {
+            var before = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -542,7 +542,7 @@ namespace N.Client
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase<int>
@@ -567,9 +567,8 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { ViewModelBaseOfT, before }, after);
         }
     }
 }

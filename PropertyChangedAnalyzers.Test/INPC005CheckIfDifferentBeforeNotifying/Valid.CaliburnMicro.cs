@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class Valid
+    public static class CaliburnMicro
     {
-        public static class CaliburnMicro
-        {
-            private static readonly Settings Settings = LibrarySettings.CaliburnMicro;
+        private static readonly Settings Settings = LibrarySettings.CaliburnMicro;
 
-            [Test]
-            public static void SetAffectsCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -35,13 +35,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyEmptyIf()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyEmptyIf()
+        {
+            var code = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -63,13 +63,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -94,13 +94,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedPropertyMissingBraces()
+        {
+            var code = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -125,13 +125,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void NotifyOfPropertyChangeAffectsCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void NotifyOfPropertyChangeAffectsCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -182,13 +182,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void IfNotSetReturnCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void IfNotSetReturnCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -212,8 +212,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
         }
     }
 }

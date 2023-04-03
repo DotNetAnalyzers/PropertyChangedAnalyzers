@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatch
+﻿namespace PropertyChangedAnalyzers.Test.INPC017BackingFieldNameMustMatch;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly PropertyDeclarationAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC017BackingFieldNameMisMatch;
 
-    public static class Valid
+    [Test]
+    public static void NotifyingProperty()
     {
-        private static readonly PropertyDeclarationAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC017BackingFieldNameMisMatch;
-
-        [Test]
-        public static void NotifyingProperty()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -49,13 +49,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
+    }
 
-        [Test]
-        public static void ExpressionBody()
-        {
-            var code = @"
+    [Test]
+    public static void ExpressionBody()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -66,13 +66,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ExpressionBodyWhenKeyword()
-        {
-            var code = @"
+    [Test]
+    public static void ExpressionBodyWhenKeyword()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -83,13 +83,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WithBackingFieldExpressionBodies()
-        {
-            var code = @"
+    [Test]
+    public static void WithBackingFieldExpressionBodies()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -104,13 +104,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenSettingNestedField()
-        {
-            var c1 = @"
+    [Test]
+    public static void WhenSettingNestedField()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -118,7 +118,7 @@ namespace N
         public int F;
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -151,13 +151,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, c1, code);
-        }
+        RoslynAssert.Valid(Analyzer, c1, code);
+    }
 
-        [Test]
-        public static void TimeSpanTicks()
-        {
-            var code = @"
+    [Test]
+    public static void TimeSpanTicks()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -192,13 +192,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WrappingPoint()
-        {
-            var code = @"
+    [Test]
+    public static void WrappingPoint()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -248,13 +248,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ExplicitImplementationWithCast()
-        {
-            var code = @"
+    [Test]
+    public static void ExplicitImplementationWithCast()
+    {
+        var code = @"
 namespace N
 {
     public class C<T> : I
@@ -280,13 +280,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void BackingFieldSum()
-        {
-            var code = @"
+    [Test]
+    public static void BackingFieldSum()
+    {
+        var code = @"
 namespace N
 {
     using System.Linq;
@@ -299,13 +299,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void TextLength()
-        {
-            var code = @"
+    [Test]
+    public static void TextLength()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -316,13 +316,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void WhenUsingMoreThanOneField()
-        {
-            var code = @"
+    [Test]
+    public static void WhenUsingMoreThanOneField()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -382,13 +382,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void StaticField()
-        {
-            var code = @"
+    [Test]
+    public static void StaticField()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -399,13 +399,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void StaticPropertyAndField()
-        {
-            var code = @"
+    [Test]
+    public static void StaticPropertyAndField()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -416,13 +416,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ConstField()
-        {
-            var code = @"
+    [Test]
+    public static void ConstField()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -433,13 +433,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void SequenceOfUpperCase()
-        {
-            var code = @"
+    [Test]
+    public static void SequenceOfUpperCase()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -454,13 +454,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void SequenceOfUpperCaseUnderscore()
-        {
-            var code = @"
+    [Test]
+    public static void SequenceOfUpperCaseUnderscore()
+    {
+        var code = @"
 namespace N
 {
     public class C
@@ -475,7 +475,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

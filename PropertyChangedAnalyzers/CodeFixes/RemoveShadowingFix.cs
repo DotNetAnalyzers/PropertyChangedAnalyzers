@@ -1,34 +1,33 @@
-﻿namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers;
+
+using System.Collections.Immutable;
+using System.Composition;
+using System.Threading.Tasks;
+using Gu.Roslyn.CodeFixExtensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveShadowingFix))]
+[Shared]
+internal class RemoveShadowingFix : DocumentEditorCodeFixProvider
 {
-    using System.Collections.Immutable;
-    using System.Composition;
-    using System.Threading.Tasks;
-    using Gu.Roslyn.CodeFixExtensions;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC011DoNotShadow.Id);
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveShadowingFix))]
-    [Shared]
-    internal class RemoveShadowingFix : DocumentEditorCodeFixProvider
+    protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(Descriptors.INPC011DoNotShadow.Id);
+        var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                      .ConfigureAwait(false);
 
-        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
+        foreach (var diagnostic in context.Diagnostics)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
-
-            foreach (var diagnostic in context.Diagnostics)
+            if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is MemberDeclarationSyntax eventDeclaration)
             {
-                if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is MemberDeclarationSyntax eventDeclaration)
-                {
-                    context.RegisterCodeFix(
-                        "Remove shadowing event.",
-                        (editor, _) => editor.RemoveNode(eventDeclaration),
-                        nameof(RemoveShadowingFix),
-                        diagnostic);
-                }
+                context.RegisterCodeFix(
+                    "Remove shadowing event.",
+                    (editor, _) => editor.RemoveNode(eventDeclaration),
+                    nameof(RemoveShadowingFix),
+                    diagnostic);
             }
         }
     }

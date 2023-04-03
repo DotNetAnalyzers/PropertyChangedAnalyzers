@@ -1,15 +1,15 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdate
+﻿namespace PropertyChangedAnalyzers.Test.INPC016NotifyAfterUpdate;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC016NotifyAfterMutation;
 
-    public static class Valid
-    {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC016NotifyAfterMutation;
-
-        private const string ViewModelBaseCode = @"
+    private const string ViewModelBaseCode = @"
 namespace N.Core
 {
     using System;
@@ -46,10 +46,10 @@ namespace N.Core
     }
 }";
 
-        [Test]
-        public static void OnPropertyChangedAfterAssign()
-        {
-            var code = @"
+    [Test]
+    public static void OnPropertyChangedAfterAssign()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -86,13 +86,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void PropertyChangedInvokeAfterAssign()
-        {
-            var code = @"
+    [Test]
+    public static void PropertyChangedInvokeAfterAssign()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -129,14 +129,14 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("this.TrySet(ref this.p2, value);")]
-        [TestCase("_ = this.TrySet(ref this.p2, value);")]
-        public static void AfterTrySet(string trySet)
-        {
-            var code = @"
+    [TestCase("this.TrySet(ref this.p2, value);")]
+    [TestCase("_ = this.TrySet(ref this.p2, value);")]
+    public static void AfterTrySet(string trySet)
+    {
+        var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -157,13 +157,13 @@ namespace N.Client
     }
 }".AssertReplace("this.TrySet(ref this.p2, value);", trySet);
 
-            RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
+    }
 
-        [Test]
-        public static void AfterIfTrySetReturn()
-        {
-            var code = @"
+    [Test]
+    public static void AfterIfTrySetReturn()
+    {
+        var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -188,13 +188,13 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
+    }
 
-        [Test]
-        public static void InsideIfTrySetStatement()
-        {
-            var code = @"
+    [Test]
+    public static void InsideIfTrySetStatement()
+    {
+        var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -215,13 +215,13 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+    }
 
-        [Test]
-        public static void InsideIfTrySetBlock()
-        {
-            var code = @"
+    [Test]
+    public static void InsideIfTrySetBlock()
+    {
+        var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -244,7 +244,6 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-        }
+        RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
     }
 }

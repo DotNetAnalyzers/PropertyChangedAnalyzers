@@ -1,31 +1,30 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Ignores
+namespace ValidCode.Ignores;
+
+using System.Collections;
+
+public class Enumerator : IEnumerator
 {
-    using System.Collections;
+    public object? Current { get; private set; }
 
-    public class Enumerator : IEnumerator
+    public bool MoveNext()
     {
-        public object? Current { get; private set; }
-
-        public bool MoveNext()
+        switch (Current)
         {
-            switch (Current)
-            {
-                case int i
-                    when i < 5:
-                    Current = i + 1;
-                    return true;
-                case null:
-                    Current = 0;
-                    return true;
-                default:
-                    return false;
-            }
+            case int i
+                when i < 5:
+                Current = i + 1;
+                return true;
+            case null:
+                Current = 0;
+                return true;
+            default:
+                return false;
         }
+    }
 
-        public void Reset()
-        {
-            Current = null;
-        }
+    public void Reset()
+    {
+        Current = null;
     }
 }

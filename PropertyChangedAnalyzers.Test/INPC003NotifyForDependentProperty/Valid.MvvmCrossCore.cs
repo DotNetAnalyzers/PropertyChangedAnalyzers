@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class Valid
+    public static class MvvmCrossCore
     {
-        public static class MvvmCrossCore
-        {
-            private static readonly Settings Settings = LibrarySettings.MvvmCross;
+        private static readonly Settings Settings = LibrarySettings.MvvmCross;
 
-            [Test]
-            public static void SetProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -27,13 +27,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetPropertyExpressionBodies()
-            {
-                var code = @"
+        [Test]
+        public static void SetPropertyExpressionBodies()
+        {
+            var code = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -47,13 +47,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -75,13 +75,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpression()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpression()
+        {
+            var code = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -103,13 +103,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, code, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, code, settings: Settings);
+        }
 
-            [Test]
-            public static void WhenOverriddenSetProperty()
-            {
-                var viewModelBase = @"
+        [Test]
+        public static void WhenOverriddenSetProperty()
+        {
+            var viewModelBase = @"
 namespace N
 {
     public abstract class ViewModelBase : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -121,7 +121,7 @@ namespace N
     }
 }";
 
-                var code = @"
+            var code = @"
 namespace N
 {
     public class C : ViewModelBase
@@ -136,8 +136,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, settings: Settings);
-            }
+            RoslynAssert.Valid(Analyzer, new[] { viewModelBase, code }, settings: Settings);
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace ValidCode.Interfaces
+﻿namespace ValidCode.Interfaces;
+
+interface IValue
 {
-    interface IValue
-    {
-        object? Value { get; set; }
-    }
+    object? Value { get; set; }
 }

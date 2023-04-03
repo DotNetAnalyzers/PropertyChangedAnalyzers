@@ -1,24 +1,24 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName
+﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class CodeFix
+    public static class Argument
     {
-        public static class Argument
-        {
-            private static readonly ArgumentAnalyzer Analyzer = new();
-            private static readonly UseCallerMemberNameFix Fix = new();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
+        private static readonly ArgumentAnalyzer Analyzer = new();
+        private static readonly UseCallerMemberNameFix Fix = new();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC004UseCallerMemberName);
 
-            [TestCase(@"""P""")]
-            [TestCase(@"nameof(P)")]
-            [TestCase(@"nameof(this.P)")]
-            public static void CallsOnPropertyChangedWithExplicitNameOfCallerWhenParameterIsCallerMemberName(
-                string propertyName)
-            {
-                var before = @"
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
+        public static void CallsOnPropertyChangedWithExplicitNameOfCallerWhenParameterIsCallerMemberName(
+            string propertyName)
+        {
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -56,7 +56,7 @@ namespace N
     }
 }".AssertReplace(@"nameof(P)", propertyName);
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -94,16 +94,16 @@ namespace N
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [TestCase(@"""P""")]
-            [TestCase(@"nameof(P)")]
-            [TestCase(@"nameof(this.P)")]
-            public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
-            {
-                var before = @"
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
+        public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
+        {
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -141,7 +141,7 @@ namespace N
     }
 }".AssertReplace(@"nameof(P)", propertyName);
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -179,14 +179,14 @@ namespace N
     }
 }";
 
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void InternalClassInternalProperty()
-            {
-                var before = @"
+        [Test]
+        public static void InternalClassInternalProperty()
+        {
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -224,7 +224,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -261,14 +261,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void SecondArgument()
-            {
-                var before = @"
+        [Test]
+        public static void SecondArgument()
+        {
+            var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -306,7 +306,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -343,14 +343,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after);
+        }
 
-            [Test]
-            public static void StyletSetAndNotify()
-            {
-                var before = @"
+        [Test]
+        public static void StyletSetAndNotify()
+        {
+            var before = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -365,7 +365,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -379,9 +379,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: LibrarySettings.Stylet);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: LibrarySettings.Stylet);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: LibrarySettings.Stylet);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: LibrarySettings.Stylet);
         }
     }
 }

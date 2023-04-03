@@ -1,19 +1,19 @@
-namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingProperty
+namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingProperty;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-
-    public static partial class Diagnostics
+    public static class Invocation
     {
-        public static class Invocation
-        {
-            private static readonly InvocationAnalyzer Analyzer = new();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty);
+        private static readonly InvocationAnalyzer Analyzer = new();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty);
 
-            [Test]
-            public static void CallsCallerMemberNameFromMethod()
-            {
-                var code = @"
+        [Test]
+        public static void CallsCallerMemberNameFromMethod()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -35,8 +35,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
     }
 }

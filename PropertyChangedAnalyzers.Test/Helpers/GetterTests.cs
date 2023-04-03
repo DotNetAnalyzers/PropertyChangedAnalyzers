@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
-{
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
 
-    public static class GetterTests
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public static class GetterTests
+{
+    [TestCase("P11", "this.p1")]
+    [TestCase("P12", "this.p1")]
+    [TestCase("P1", "this.p1")]
+    [TestCase("P2", "this.p2")]
+    public static void TrySingleReturned(string propertyName, string expected)
     {
-        [TestCase("P11", "this.p1")]
-        [TestCase("P12", "this.p1")]
-        [TestCase("P1", "this.p1")]
-        [TestCase("P2", "this.p2")]
-        public static void TrySingleReturned(string propertyName, string expected)
-        {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
+        var syntaxTree = CSharpSyntaxTree.ParseText(
+            @"
 namespace N
 {
     public class C
@@ -41,8 +41,7 @@ namespace N
         }
     }
 }");
-            var declaration = syntaxTree.FindPropertyDeclaration(propertyName);
-            Assert.AreEqual(expected, Property.FindSingleReturned(declaration).ToString());
-        }
+        var declaration = syntaxTree.FindPropertyDeclaration(propertyName);
+        Assert.AreEqual(expected, Property.FindSingleReturned(declaration).ToString());
     }
 }

@@ -1,59 +1,59 @@
-﻿namespace PropertyChangedAnalyzers.Test
+﻿namespace PropertyChangedAnalyzers.Test;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Gu.Roslyn.Asserts;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+using NUnit.Framework;
+
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static class ValidWithAllAnalyzers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
+        typeof(Descriptors)
+        .Assembly
+        .GetTypes()
+        .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
+        .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
+        .ToArray();
 
-    using Gu.Roslyn.Asserts;
+    private static readonly Solution AnalyzersProjectSolution = CodeFactory.CreateSolution(
+        ProjectFile.Find("PropertyChangedAnalyzers.csproj"),
+        LibrarySettings.Roslyn);
 
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
+        ProjectFile.Find("ValidCode.csproj"));
 
-    using NUnit.Framework;
-
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static class ValidWithAllAnalyzers
+    [Test]
+    public static void NotEmpty()
     {
-        private static readonly IReadOnlyList<DiagnosticAnalyzer> AllAnalyzers =
-            typeof(Descriptors)
-            .Assembly
-            .GetTypes()
-            .Where(t => typeof(DiagnosticAnalyzer).IsAssignableFrom(t) && !t.IsAbstract)
-            .Select(t => (DiagnosticAnalyzer)Activator.CreateInstance(t))
-            .ToArray();
+        CollectionAssert.IsNotEmpty(AllAnalyzers);
+        Assert.Pass($"Count: {AllAnalyzers.Count}");
+    }
 
-        private static readonly Solution AnalyzersProjectSolution = CodeFactory.CreateSolution(
-            ProjectFile.Find("PropertyChangedAnalyzers.csproj"),
-            LibrarySettings.Roslyn);
+    [TestCaseSource(nameof(AllAnalyzers))]
+    public static void AnalyzersProject(DiagnosticAnalyzer analyzer)
+    {
+        Assert.Inconclusive("Does not figure out source package");
+        RoslynAssert.Valid(analyzer, AnalyzersProjectSolution);
+    }
 
-        private static readonly Solution ValidCodeProjectSln = CodeFactory.CreateSolution(
-            ProjectFile.Find("ValidCode.csproj"));
+    [TestCaseSource(nameof(AllAnalyzers))]
+    public static void ValidCodeProject(DiagnosticAnalyzer analyzer)
+    {
+        RoslynAssert.Valid(analyzer, ValidCodeProjectSln);
+    }
 
-        [Test]
-        public static void NotEmpty()
-        {
-            CollectionAssert.IsNotEmpty(AllAnalyzers);
-            Assert.Pass($"Count: {AllAnalyzers.Count}");
-        }
-
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public static void AnalyzersProject(DiagnosticAnalyzer analyzer)
-        {
-            Assert.Inconclusive("Does not figure out source package");
-            RoslynAssert.Valid(analyzer, AnalyzersProjectSolution);
-        }
-
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public static void ValidCodeProject(DiagnosticAnalyzer analyzer)
-        {
-            RoslynAssert.Valid(analyzer, ValidCodeProjectSln);
-        }
-
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public static void SomewhatRealisticSample(DiagnosticAnalyzer analyzer)
-        {
-            var viewModelBase = @"
+    [TestCaseSource(nameof(AllAnalyzers))]
+    public static void SomewhatRealisticSample(DiagnosticAnalyzer analyzer)
+    {
+        var viewModelBase = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -83,7 +83,7 @@ namespace N.Core
     }
 }";
 
-            var withMutableField = @"
+        var withMutableField = @"
 namespace N
 {
     public class WithMutableField
@@ -92,7 +92,7 @@ namespace N
     }
 }";
 
-            var viewModel1 = @"
+        var viewModel1 = @"
 namespace N.Client
 {
     using N.Core;
@@ -139,7 +139,7 @@ namespace N.Client
     }
 }";
 
-            var viewModel2 = @"
+        var viewModel2 = @"
 namespace N
 {
     using System.ComponentModel;
@@ -197,7 +197,7 @@ namespace N
     }
 }";
 
-            var oldStyleOnPropertyChanged = @"
+        var oldStyleOnPropertyChanged = @"
 namespace N
 {
     using System.ComponentModel;
@@ -237,7 +237,7 @@ namespace N
     }
 }";
 
-            var wrappingPoint = @"
+        var wrappingPoint = @"
 namespace N
 {
     using System.ComponentModel;
@@ -291,7 +291,7 @@ namespace N
     }
 }";
 
-            var wrappingTimeSpan = @"
+        var wrappingTimeSpan = @"
 namespace N
 {
     using System;
@@ -326,7 +326,7 @@ namespace N
     }
 }";
 
-            var radioButtonViewModel = @"
+        var radioButtonViewModel = @"
 namespace N
 {
     using System;
@@ -369,7 +369,7 @@ namespace N
     }
 }";
 
-            var abstractWithAbstractProperty = @"
+        var abstractWithAbstractProperty = @"
 namespace N
 {
     using System.ComponentModel;
@@ -387,7 +387,7 @@ namespace N
         }
     }
 }";
-            var subClassingAbstractWithAbstractProperty = @"
+        var subClassingAbstractWithAbstractProperty = @"
 namespace N
 {
     public class SubClassingAbstractWithAbstractProperty : AbstractWithAbstractProperty
@@ -404,7 +404,7 @@ namespace N
     }
 }";
 
-            var exceptionHandlingRelayCommand = @"
+        var exceptionHandlingRelayCommand = @"
 namespace N
 {
     using System;
@@ -439,29 +439,29 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(
-                analyzer,
-                new[]
-                {
-                    viewModelBase,
-                    withMutableField,
-                    viewModel1,
-                    viewModel2,
-                    oldStyleOnPropertyChanged,
-                    wrappingPoint,
-                    wrappingTimeSpan,
-                    radioButtonViewModel,
-                    abstractWithAbstractProperty,
-                    subClassingAbstractWithAbstractProperty,
-                    exceptionHandlingRelayCommand,
-                },
-                settings: LibrarySettings.Reactive);
-        }
+        RoslynAssert.Valid(
+            analyzer,
+            new[]
+            {
+                viewModelBase,
+                withMutableField,
+                viewModel1,
+                viewModel2,
+                oldStyleOnPropertyChanged,
+                wrappingPoint,
+                wrappingTimeSpan,
+                radioButtonViewModel,
+                abstractWithAbstractProperty,
+                subClassingAbstractWithAbstractProperty,
+                exceptionHandlingRelayCommand,
+            },
+            settings: LibrarySettings.Reactive);
+    }
 
-        [TestCaseSource(nameof(AllAnalyzers))]
-        public static void SomewhatRealisticSampleGeneric(DiagnosticAnalyzer analyzer)
-        {
-            var viewModelBaseOf_ = @"
+    [TestCaseSource(nameof(AllAnalyzers))]
+    public static void SomewhatRealisticSampleGeneric(DiagnosticAnalyzer analyzer)
+    {
+        var viewModelBaseOf_ = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -490,7 +490,7 @@ namespace N.Core
         }
     }
 }";
-            var viewModel1 = @"
+        var viewModel1 = @"
 namespace N.Client
 {
     using N.Core;
@@ -537,7 +537,7 @@ namespace N.Client
     }
 }";
 
-            var genericViewModelOfT = @"
+        var genericViewModelOfT = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -580,7 +580,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(analyzer, viewModelBaseOf_, viewModel1, genericViewModelOfT);
-        }
+        RoslynAssert.Valid(analyzer, viewModelBaseOf_, viewModel1, genericViewModelOfT);
     }
 }

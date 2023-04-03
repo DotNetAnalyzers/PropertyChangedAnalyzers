@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged
+﻿namespace PropertyChangedAnalyzers.Test.INPC001ImplementINotifyPropertyChanged;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-
-    public static partial class CodeFix
+    public static class CS0246
     {
-        public static class CS0246
-        {
-            // ReSharper disable once MemberHidesStaticFromOuterClass
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0246");
+        // ReSharper disable once MemberHidesStaticFromOuterClass
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create("CS0246");
 
-            [Test]
-            public static void WhenInterfaceOnlyAddUsingsNullableDisable()
-            {
-                var before = @"
+        [Test]
+        public static void WhenInterfaceOnlyAddUsingsNullableDisable()
+        {
+            var before = @"
 #nullable disable
 namespace N
 {
@@ -22,7 +22,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 #nullable disable
 namespace N
 {
@@ -39,13 +39,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
-            }
+            RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+        }
 
-            [Test]
-            public static void WhenInterfaceOnlyAddUsings()
-            {
-                var before = @"
+        [Test]
+        public static void WhenInterfaceOnlyAddUsings()
+        {
+            var before = @"
 namespace N
 {
     public class C : ↓INotifyPropertyChanged
@@ -53,7 +53,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -69,13 +69,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
-            }
+            RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+        }
 
-            [Test]
-            public static void WhenInterfaceOnlyFullyQualified()
-            {
-                var before = @"
+        [Test]
+        public static void WhenInterfaceOnlyFullyQualified()
+        {
+            var before = @"
 namespace N
 {
     public class C : ↓INotifyPropertyChanged
@@ -83,7 +83,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
@@ -96,13 +96,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-            }
+            RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
+        }
 
-            [Test]
-            public static void WhenInterfaceOnlySealedAddUsings()
-            {
-                var before = @"
+        [Test]
+        public static void WhenInterfaceOnlySealedAddUsings()
+        {
+            var before = @"
 namespace N
 {
     public sealed class C : ↓INotifyPropertyChanged
@@ -110,7 +110,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -126,13 +126,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
-            }
+            RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
+        }
 
-            [Test]
-            public static void WhenInterfaceOnlySealedFullyQualified()
-            {
-                var before = @"
+        [Test]
+        public static void WhenInterfaceOnlySealedFullyQualified()
+        {
+            var before = @"
 namespace N
 {
     public sealed class C : ↓INotifyPropertyChanged
@@ -140,7 +140,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public sealed class C : System.ComponentModel.INotifyPropertyChanged
@@ -153,8 +153,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
-            }
+            RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
     }
 }

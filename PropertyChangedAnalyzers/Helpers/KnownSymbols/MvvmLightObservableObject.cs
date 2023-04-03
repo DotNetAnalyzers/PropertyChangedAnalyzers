@@ -1,19 +1,18 @@
-namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class MvvmLightObservableObject : QualifiedType
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal readonly QualifiedMethod Set;
+    internal readonly QualifiedMethod RaisePropertyChanged;
+    internal readonly QualifiedMethod RaisePropertyChangedOfT;
 
-    internal class MvvmLightObservableObject : QualifiedType
+    internal MvvmLightObservableObject()
+        : base("GalaSoft.MvvmLight.ObservableObject")
     {
-        internal readonly QualifiedMethod Set;
-        internal readonly QualifiedMethod RaisePropertyChanged;
-        internal readonly QualifiedMethod RaisePropertyChangedOfT;
-
-        internal MvvmLightObservableObject()
-            : base("GalaSoft.MvvmLight.ObservableObject")
-        {
-            this.Set = new QualifiedMethod(this, nameof(this.Set));
-            this.RaisePropertyChanged = new QualifiedMethod(this, nameof(this.RaisePropertyChanged));
-            this.RaisePropertyChangedOfT = new QualifiedMethod(this, $"{nameof(this.RaisePropertyChanged)}`1");
-        }
+        this.Set = new QualifiedMethod(this, nameof(this.Set));
+        this.RaisePropertyChanged = new QualifiedMethod(this, nameof(this.RaisePropertyChanged));
+        this.RaisePropertyChangedOfT = new QualifiedMethod(this, $"{nameof(this.RaisePropertyChanged)}`1");
     }
 }

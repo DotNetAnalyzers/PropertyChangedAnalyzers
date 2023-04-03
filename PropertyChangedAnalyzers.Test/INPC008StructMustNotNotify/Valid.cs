@@ -1,23 +1,22 @@
-namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotify
+namespace PropertyChangedAnalyzers.Test.INPC008StructMustNotNotify;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly StructAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void SimpleStruct()
     {
-        private static readonly StructAnalyzer Analyzer = new();
-
-        [Test]
-        public static void SimpleStruct()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     public struct S
     {
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

@@ -1,13 +1,13 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
 
-    public static partial class Valid
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class Valid
+{
+    public static class ViewModelBase
     {
-        public static class ViewModelBase
-        {
-            private const string ViewModelBaseCode = @"
+        private const string ViewModelBaseCode = @"
 namespace N.Core
 {
     using System;
@@ -44,10 +44,10 @@ namespace N.Core
     }
 }";
 
-            [Test]
-            public static void SetProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetProperty()
+        {
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -61,13 +61,13 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetPropertyWhenNullCoalescingInTrySet()
-            {
-                var viewModelBaseCode = @"
+        [Test]
+        public static void SetPropertyWhenNullCoalescingInTrySet()
+        {
+            var viewModelBaseCode = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -97,7 +97,7 @@ namespace N.Core
     }
 }";
 
-                var code = @"
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -111,13 +111,13 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, viewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, viewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetPropertyExpressionBodies()
-            {
-                var code = @"
+        [Test]
+        public static void SetPropertyExpressionBodies()
+        {
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -131,13 +131,13 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExplicitNameOf()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExplicitNameOf()
+        {
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -159,13 +159,13 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyNameOf()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyNameOf()
+        {
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -187,13 +187,13 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyStringEmpty()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyStringEmpty()
+        {
+            var code = @"
 namespace N
 {
     public class C : N.Core.ViewModelBase
@@ -209,13 +209,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpression()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpression()
+        {
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -237,13 +237,13 @@ namespace N.Client
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void WhenOverriddenSet()
-            {
-                var viewModelBase = @"
+        [Test]
+        public static void WhenOverriddenSet()
+        {
+            var viewModelBase = @"
 namespace N.Client
 {
     public abstract class ViewModelBase : N.Core.ViewModelBase
@@ -255,7 +255,7 @@ namespace N.Client
     }
 }";
 
-                var code = @"
+            var code = @"
 namespace N.Client
 {
     public class C : ViewModelBase
@@ -270,8 +270,7 @@ namespace N.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, viewModelBase, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, viewModelBase, code);
         }
     }
 }

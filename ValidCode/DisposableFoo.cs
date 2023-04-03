@@ -1,58 +1,57 @@
-﻿namespace ValidCode
+﻿namespace ValidCode;
+
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class DisposableFoo : INotifyPropertyChanged, IDisposable
 {
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private bool disposed;
+    private string? name;
 
-    public sealed class DisposableFoo : INotifyPropertyChanged, IDisposable
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public string? Name
     {
-        private bool disposed;
-        private string? name;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string? Name
+        get
         {
-            get
-            {
-                this.ThrowIfDisposed();
-                return this.name;
-            }
-
-            set
-            {
-                this.ThrowIfDisposed();
-                if (value == this.name)
-                {
-                    return;
-                }
-
-                this.name = value;
-                this.OnPropertyChanged();
-            }
+            this.ThrowIfDisposed();
+            return this.name;
         }
 
-        public void Dispose()
+        set
         {
-            if (this.disposed)
+            this.ThrowIfDisposed();
+            if (value == this.name)
             {
                 return;
             }
 
-            this.disposed = true;
+            this.name = value;
+            this.OnPropertyChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        if (this.disposed)
+        {
+            return;
         }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        this.disposed = true;
+    }
 
-        private void ThrowIfDisposed()
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private void ThrowIfDisposed()
+    {
+        if (this.disposed)
         {
-            if (this.disposed)
-            {
-                throw new ObjectDisposedException(typeof(DisposableFoo).FullName);
-            }
+            throw new ObjectDisposedException(typeof(DisposableFoo).FullName);
         }
     }
 }

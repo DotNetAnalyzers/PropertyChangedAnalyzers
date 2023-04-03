@@ -1,13 +1,13 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.INPC005CheckIfDifferentBeforeNotifying;
 
-    public static partial class Valid
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class Valid
+{
+    public static class ViewModelBase
     {
-        public static class ViewModelBase
-        {
-            private const string ViewModelBaseCode = @"
+        private const string ViewModelBaseCode = @"
 namespace N.Core
 {
     using System;
@@ -44,10 +44,10 @@ namespace N.Core
     }
 }";
 
-            [Test]
-            public static void SetAffectsCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : N.Core.ViewModelBase
@@ -69,13 +69,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyEmptyIf()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyEmptyIf()
+        {
+            var code = @"
 namespace N
 {
     public class C : N.Core.ViewModelBase
@@ -97,13 +97,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : N.Core.ViewModelBase
@@ -128,13 +128,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
-            {
-                var code = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedPropertyMissingBraces()
+        {
+            var code = @"
 namespace N
 {
     public class C : N.Core.ViewModelBase
@@ -159,13 +159,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void OnPropertyChangedAffectsCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void OnPropertyChangedAffectsCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : N.Core.ViewModelBase
@@ -216,13 +216,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void IfNotSetReturnCalculatedProperty()
-            {
-                var code = @"
+        [Test]
+        public static void IfNotSetReturnCalculatedProperty()
+        {
+            var code = @"
 namespace N
 {
     public class C : N.Core.ViewModelBase
@@ -246,8 +246,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
         }
     }
 }

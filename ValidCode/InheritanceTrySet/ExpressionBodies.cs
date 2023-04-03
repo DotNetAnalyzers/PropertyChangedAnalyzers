@@ -1,30 +1,29 @@
 ﻿// ReSharper disable All
-namespace ValidCode.InheritanceTrySet
+namespace ValidCode.InheritanceTrySet;
+
+public sealed class ExpressionBodies : ExpressionBodiesViewModelBase
 {
-    public sealed class ExpressionBodies : ExpressionBodiesViewModelBase
+    private string? name;
+    private int value;
+
+    public string Greeting => $"Hello {this.name}";
+
+    public string? Name
     {
-        private string? name;
-        private int value;
+        get => this.name;
 
-        public string Greeting => $"Hello {this.name}";
-
-        public string? Name
+        set
         {
-            get => this.name;
-
-            set
+            if (this.TrySet(ref this.name, value))
             {
-                if (this.TrySet(ref this.name, value))
-                {
-                    this.OnPropertyChanged(nameof(this.Greeting));
-                }
+                this.OnPropertyChanged(nameof(this.Greeting));
             }
         }
+    }
 
-        public int Value
-        {
-            get => this.value;
-            set => this.TrySet(ref this.value, value);
-        }
+    public int Value
+    {
+        get => this.value;
+        set => this.TrySet(ref this.value, value);
     }
 }

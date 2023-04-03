@@ -1,47 +1,46 @@
 ﻿// ReSharper disable All
 #pragma warning disable INPC020 // Prefer expression body accessor.
-namespace ValidCode.Vanilla
+namespace ValidCode.Vanilla;
+
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class StatementBodies : INotifyPropertyChanged
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private string? name;
 
-    public sealed class StatementBodies : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public string Greeting
     {
-        private string? name;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string Greeting
+        get
         {
-            get
-            {
-                return $"Hello {this.name}";
-            }
+            return $"Hello {this.name}";
+        }
+    }
+
+    public string? Name
+    {
+        get
+        {
+            return this.name;
         }
 
-        public string? Name
+        set
         {
-            get
+            if (value == this.name)
             {
-                return this.name;
+                return;
             }
 
-            set
-            {
-                if (value == this.name)
-                {
-                    return;
-                }
-
-                this.name = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
-            }
+            this.name = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.Greeting));
         }
+    }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

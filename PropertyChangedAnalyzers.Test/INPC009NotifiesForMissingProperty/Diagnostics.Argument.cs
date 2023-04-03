@@ -1,23 +1,23 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC009NotifiesForMissingProperty;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-
-    public static partial class Diagnostics
+    public static class Argument
     {
-        public static class Argument
-        {
-            private static readonly ArgumentAnalyzer Analyzer = new();
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty);
+        private static readonly ArgumentAnalyzer Analyzer = new();
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty);
 
-            [TestCase(@"↓""Missing""")]
-            [TestCase(@"nameof(↓p)")]
-            [TestCase(@"nameof(this.↓p)")]
-            [TestCase(@"nameof(↓PropertyChanged)")]
-            [TestCase(@"nameof(this.↓PropertyChanged)")]
-            public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
-            {
-                var code = @"
+        [TestCase(@"↓""Missing""")]
+        [TestCase(@"nameof(↓p)")]
+        [TestCase(@"nameof(this.↓p)")]
+        [TestCase(@"nameof(↓PropertyChanged)")]
+        [TestCase(@"nameof(this.↓PropertyChanged)")]
+        public static void CallsOnPropertyChangedWithExplicitNameOfCaller(string propertyName)
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -55,17 +55,17 @@ namespace N
     }
 }".AssertReplace(@"↓""Missing""", propertyName);
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+        }
 
-            [TestCase(@"↓""Missing""")]
-            [TestCase(@"nameof(↓p)")]
-            [TestCase(@"nameof(this.↓p)")]
-            [TestCase(@"nameof(↓PropertyChanged)")]
-            [TestCase(@"nameof(this.↓PropertyChanged)")]
-            public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
-            {
-                var code = @"
+        [TestCase(@"↓""Missing""")]
+        [TestCase(@"nameof(↓p)")]
+        [TestCase(@"nameof(this.↓p)")]
+        [TestCase(@"nameof(↓PropertyChanged)")]
+        [TestCase(@"nameof(this.↓PropertyChanged)")]
+        public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -94,17 +94,17 @@ namespace N
     }
 }".AssertReplace(@"↓""Missing""", propertyName);
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+        }
 
-            [TestCase(@"↓""Missing""")]
-            [TestCase(@"nameof(↓p)")]
-            [TestCase(@"nameof(this.↓p)")]
-            [TestCase(@"nameof(↓PropertyChanged)")]
-            [TestCase(@"nameof(this.↓PropertyChanged)")]
-            public static void Invokes(string propertyName)
-            {
-                var code = @"
+        [TestCase(@"↓""Missing""")]
+        [TestCase(@"nameof(↓p)")]
+        [TestCase(@"nameof(this.↓p)")]
+        [TestCase(@"nameof(↓PropertyChanged)")]
+        [TestCase(@"nameof(this.↓PropertyChanged)")]
+        public static void Invokes(string propertyName)
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -142,13 +142,13 @@ namespace N
     }
 }".AssertReplace(@"↓""Missing""", propertyName);
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+        }
 
-            [Test]
-            public static void InvokesSimple()
-            {
-                var code = @"
+        [Test]
+        public static void InvokesSimple()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -179,19 +179,19 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+        }
 
-            [TestCase("↓p")]
-            [TestCase("this.↓p")]
-            [TestCase("↓PropertyChanged")]
-            [TestCase("this.↓PropertyChanged")]
-            [TestCase("↓M()")]
-            [TestCase("this.↓M()")]
-            [TestCase("string.↓Empty")]
-            public static void ExpressionInvoker(string expression)
-            {
-                var code = @"
+        [TestCase("↓p")]
+        [TestCase("this.↓p")]
+        [TestCase("↓PropertyChanged")]
+        [TestCase("this.↓PropertyChanged")]
+        [TestCase("↓M()")]
+        [TestCase("this.↓M()")]
+        [TestCase("string.↓Empty")]
+        public static void ExpressionInvoker(string expression)
+        {
+            var code = @"
 namespace N
 {
     using System;
@@ -234,13 +234,13 @@ namespace N
     }
 }".AssertReplace("this.↓p", expression);
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+        }
 
-            [Test]
-            public static void PropertyChangedInvokeWithCachedEventArgs()
-            {
-                var code = @"
+        [Test]
+        public static void PropertyChangedInvokeWithCachedEventArgs()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -278,14 +278,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+        }
 
-            [TestCase("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")")]
-            [TestCase("private static PropertyChangedEventArgs CachedArgs { get; } = new PropertyChangedEventArgs(\"Missing\")")]
-            public static void CallsOnPropertyChangedWithCachedEventArgs(string cached)
-            {
-                var code = @"
+        [TestCase("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")")]
+        [TestCase("private static PropertyChangedEventArgs CachedArgs { get; } = new PropertyChangedEventArgs(\"Missing\")")]
+        public static void CallsOnPropertyChangedWithCachedEventArgs(string cached)
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -315,8 +315,7 @@ namespace N
     }
 }".AssertReplace("private static readonly PropertyChangedEventArgs CachedArgs = new PropertyChangedEventArgs(\"Missing\")", cached);
 
-                RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-            }
+            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
         }
     }
 }

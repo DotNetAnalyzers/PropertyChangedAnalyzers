@@ -1,37 +1,36 @@
 ﻿// ReSharper disable All
 #pragma warning disable INPC020 // Prefer expression body accessor.
-namespace ValidCode.Inheritance
-{
-    public sealed class StatementBodies : StatementBodiesViewModelBase
-    {
-        private string? name;
+namespace ValidCode.Inheritance;
 
-        public string Greeting
+public sealed class StatementBodies : StatementBodiesViewModelBase
+{
+    private string? name;
+
+    public string Greeting
+    {
+        get
         {
-            get
-            {
-                return $"Hello {this.name}";
-            }
+            return $"Hello {this.name}";
+        }
+    }
+
+    public string? Name
+    {
+        get
+        {
+            return this.name;
         }
 
-        public string? Name
+        set
         {
-            get
+            if (value == this.name)
             {
-                return this.name;
+                return;
             }
 
-            set
-            {
-                if (value == this.name)
-                {
-                    return;
-                }
-
-                this.name = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChanged(nameof(this.Greeting));
-            }
+            this.name = value;
+            this.OnPropertyChanged();
+            this.OnPropertyChanged(nameof(this.Greeting));
         }
     }
 }

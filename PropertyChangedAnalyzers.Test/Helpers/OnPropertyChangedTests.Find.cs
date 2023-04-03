@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
-{
-    using System.Threading;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
 
-    public static partial class OnPropertyChangedTests
+using System.Threading;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public static partial class OnPropertyChangedTests
+{
+    public static class Find
     {
-        public static class Find
+        [Test]
+        public static void ElvisCallerMemberName()
         {
-            [Test]
-            public static void ElvisCallerMemberName()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -29,18 +29,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindClassDeclaration("C");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var classDeclaration = syntaxTree.FindClassDeclaration("C");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+        }
 
-            [Test]
-            public static void CopyLocalNullCheckCallerMemberName()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void CopyLocalNullCheckCallerMemberName()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -57,18 +57,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindClassDeclaration("C");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var classDeclaration = syntaxTree.FindClassDeclaration("C");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+        }
 
-            [Test]
-            public static void PropertyChangedEventArgsBeforeCallerMemberName()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void PropertyChangedEventArgsBeforeCallerMemberName()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -91,18 +91,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindClassDeclaration("C");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var classDeclaration = syntaxTree.FindClassDeclaration("C");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+        }
 
-            [Test]
-            public static void CallerMemberNameBeforePropertyChangedEventArgs()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void CallerMemberNameBeforePropertyChangedEventArgs()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -125,17 +125,17 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindClassDeclaration("C");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var classDeclaration = syntaxTree.FindClassDeclaration("C");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+        }
 
-            [Test]
-            public static void OverridingEvent()
-            {
-                var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
+        [Test]
+        public static void OverridingEvent()
+        {
+            var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.ComponentModel;
@@ -152,7 +152,7 @@ namespace N
     }
 }");
 
-                var code = CSharpSyntaxTree.ParseText(@"
+            var code = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.ComponentModel;
@@ -163,17 +163,17 @@ namespace N
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(code);
-                var classDeclaration = code.FindClassDeclaration("ViewModel");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.ViewModelBase.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(code);
+            var classDeclaration = code.FindClassDeclaration("ViewModel");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual("N.ViewModelBase.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+        }
 
-            [Test]
-            public static void OverridingEventPrivateInvokerInBase()
-            {
-                var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
+        [Test]
+        public static void OverridingEventPrivateInvokerInBase()
+        {
+            var viewModelBaseCode = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.ComponentModel;
@@ -190,7 +190,7 @@ namespace N
     }
 }");
 
-                var code = CSharpSyntaxTree.ParseText(@"
+            var code = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.ComponentModel;
@@ -201,17 +201,17 @@ namespace N
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(code);
-                var classDeclaration = code.FindClassDeclaration("ViewModel");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(null, OnPropertyChanged.Find(type, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { viewModelBaseCode, code }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(code);
+            var classDeclaration = code.FindClassDeclaration("ViewModel");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual(null, OnPropertyChanged.Find(type, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void WhenCreatingPropertyChangedEventArgsSeparately()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+        [Test]
+        public static void WhenCreatingPropertyChangedEventArgsSeparately()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.ComponentModel;
@@ -250,18 +250,18 @@ namespace N
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindClassDeclaration("C");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var classDeclaration = syntaxTree.FindClassDeclaration("C");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+        }
 
-            [Test]
-            public static void Static()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void Static()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -277,18 +277,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindClassDeclaration("C");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var classDeclaration = syntaxTree.FindClassDeclaration("C");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+        }
 
-            [Test]
-            public static void Recursive()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void Recursive()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -311,19 +311,19 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindClassDeclaration("C");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual(null, OnPropertyChanged.Find(type, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var classDeclaration = syntaxTree.FindClassDeclaration("C");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual(null, OnPropertyChanged.Find(type, semanticModel, CancellationToken.None));
+        }
 
-            [TestCase("propertyName ?? string.Empty")]
-            [TestCase("propertyName")]
-            public static void CachingInConcurrentDictionary(string expression)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [TestCase("propertyName ?? string.Empty")]
+        [TestCase("propertyName")]
+        public static void CachingInConcurrentDictionary(string expression)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.Collections.Concurrent;
@@ -342,19 +342,19 @@ namespace N
         }
     }
 }".AssertReplace("propertyName ?? string.Empty", expression));
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindClassDeclaration("C");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var classDeclaration = syntaxTree.FindClassDeclaration("C");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
+        }
 
-            [TestCase("propertyName ?? string.Empty")]
-            [TestCase("propertyName")]
-            public static void CachingInConcurrentDictionaryLocal(string expression)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [TestCase("propertyName ?? string.Empty")]
+        [TestCase("propertyName")]
+        public static void CachingInConcurrentDictionaryLocal(string expression)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.Collections.Concurrent;
@@ -374,12 +374,11 @@ namespace N
         }
     }
 }".AssertReplace("propertyName ?? string.Empty", expression));
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var classDeclaration = syntaxTree.FindClassDeclaration("C");
-                var type = semanticModel.GetDeclaredSymbol(classDeclaration);
-                Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var classDeclaration = syntaxTree.FindClassDeclaration("C");
+            var type = semanticModel.GetDeclaredSymbol(classDeclaration);
+            Assert.AreEqual("N.C.OnPropertyChanged(string?)", OnPropertyChanged.Find(type, semanticModel, CancellationToken.None).ToString());
         }
     }
 }

@@ -1,12 +1,11 @@
-namespace PropertyChangedAnalyzers
-{
-    using Microsoft.CodeAnalysis;
+namespace PropertyChangedAnalyzers;
 
-    internal static class CallerMemberNameAttribute
+using Microsoft.CodeAnalysis;
+
+internal static class CallerMemberNameAttribute
+{
+    internal static bool IsAvailable(SemanticModel semanticModel)
     {
-        internal static bool IsAvailable(SemanticModel semanticModel)
-        {
-            return semanticModel.Compilation.GetTypeByMetadataName(KnownSymbol.CallerMemberNameAttribute.FullName) != null;
-        }
+        return semanticModel.Compilation.GetTypeByMetadataName(KnownSymbol.CallerMemberNameAttribute.FullName) != null;
     }
 }

@@ -1,29 +1,29 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
-{
-    using System.Threading;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class PropertyChangedTest
+using System.Threading;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public partial class PropertyChangedTest
+{
+    public static class TryGetInvokedPropertyChangedName
     {
-        public static class TryGetInvokedPropertyChangedName
+        [TestCase("this.OnPropertyChanged()")]
+        [TestCase("this.OnPropertyChanged(\"P\")")]
+        [TestCase("this.OnPropertyChanged(nameof(P))")]
+        [TestCase("this.OnPropertyChanged(nameof(this.P))")]
+        [TestCase("this.OnPropertyChanged(() => P)")]
+        [TestCase("this.OnPropertyChanged(() => this.P)")]
+        [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"P\"))")]
+        [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)))")]
+        [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.P)))")]
+        [TestCase("this.OnPropertyChanged(Cached)")]
+        [TestCase("this.OnPropertyChanged(args)")]
+        public static void WhenTrue(string call)
         {
-            [TestCase("this.OnPropertyChanged()")]
-            [TestCase("this.OnPropertyChanged(\"P\")")]
-            [TestCase("this.OnPropertyChanged(nameof(P))")]
-            [TestCase("this.OnPropertyChanged(nameof(this.P))")]
-            [TestCase("this.OnPropertyChanged(() => P)")]
-            [TestCase("this.OnPropertyChanged(() => this.P)")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"P\"))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.P)))")]
-            [TestCase("this.OnPropertyChanged(Cached)")]
-            [TestCase("this.OnPropertyChanged(args)")]
-            public static void WhenTrue(string call)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System;
@@ -85,28 +85,28 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation(call);
-                Assert.AreEqual(call, invocation.ToString());
-                var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
-                Assert.AreEqual("P", findPropertyName?.Name);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation(call);
+            Assert.AreEqual(call, invocation.ToString());
+            var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
+            Assert.AreEqual("P", findPropertyName?.Name);
+        }
 
-            [TestCase("this.OnPropertyChanged()")]
-            [TestCase("this.OnPropertyChanged(\"P\")")]
-            [TestCase("this.OnPropertyChanged(nameof(P))")]
-            [TestCase("this.OnPropertyChanged(nameof(this.P))")]
-            [TestCase("this.OnPropertyChanged(() => P)")]
-            [TestCase("this.OnPropertyChanged(() => this.P)")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"P\"))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)))")]
-            [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.P)))")]
-            [TestCase("this.OnPropertyChanged(Cached)")]
-            public static void WhenRecursive(string call)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [TestCase("this.OnPropertyChanged()")]
+        [TestCase("this.OnPropertyChanged(\"P\")")]
+        [TestCase("this.OnPropertyChanged(nameof(P))")]
+        [TestCase("this.OnPropertyChanged(nameof(this.P))")]
+        [TestCase("this.OnPropertyChanged(() => P)")]
+        [TestCase("this.OnPropertyChanged(() => this.P)")]
+        [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(\"P\"))")]
+        [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(P)))")]
+        [TestCase("this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.P)))")]
+        [TestCase("this.OnPropertyChanged(Cached)")]
+        public static void WhenRecursive(string call)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System;
@@ -164,19 +164,19 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation(call);
-                Assert.AreEqual(call, invocation.ToString());
-                Assert.AreEqual(null, PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation(call);
+            Assert.AreEqual(call, invocation.ToString());
+            Assert.AreEqual(null, PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None));
+        }
 
-            [TestCase("propertyName ?? string.Empty")]
-            [TestCase("propertyName")]
-            public static void WhenCachingInConcurrentDictionary(string expression)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [TestCase("propertyName ?? string.Empty")]
+        [TestCase("propertyName")]
+        public static void WhenCachingInConcurrentDictionary(string expression)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.Collections.Concurrent;
@@ -216,19 +216,19 @@ namespace N
         }
     }
 }".AssertReplace("propertyName ?? string.Empty", expression));
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("this.OnPropertyChanged();");
-                var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
-                Assert.AreEqual("P", findPropertyName?.Name);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("this.OnPropertyChanged();");
+            var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
+            Assert.AreEqual("P", findPropertyName?.Name);
+        }
 
-            [TestCase("propertyName ?? string.Empty")]
-            [TestCase("propertyName")]
-            public static void WhenCachingInConcurrentDictionaryTempLocal(string expression)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [TestCase("propertyName ?? string.Empty")]
+        [TestCase("propertyName")]
+        public static void WhenCachingInConcurrentDictionaryTempLocal(string expression)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.Collections.Concurrent;
@@ -269,12 +269,11 @@ namespace N
         }
     }
 }".AssertReplace("propertyName ?? string.Empty", expression));
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("this.OnPropertyChanged();");
-                var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
-                Assert.AreEqual("P", findPropertyName?.Name);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("this.OnPropertyChanged();");
+            var findPropertyName = PropertyChanged.FindPropertyName(invocation, semanticModel, CancellationToken.None);
+            Assert.AreEqual("P", findPropertyName?.Name);
         }
     }
 }

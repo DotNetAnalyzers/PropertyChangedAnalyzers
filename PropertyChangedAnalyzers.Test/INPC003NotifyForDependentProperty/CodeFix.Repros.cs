@@ -1,17 +1,17 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
 
-    public static partial class CodeFix
-    {
-        [Test]
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class CodeFix
+{
+    [Test]
 #pragma warning disable CA1707 // Identifiers should not contain underscores
-        public static void Vanguard_MVVM_ViewModels_MainWindowViewModel()
+    public static void Vanguard_MVVM_ViewModels_MainWindowViewModel()
 #pragma warning restore CA1707 // Identifiers should not contain underscores
-        {
-            Assert.Inconclusive("Test broke with null");
-            var iChildDataContext = @"
+    {
+        Assert.Inconclusive("Test broke with null");
+        var iChildDataContext = @"
 #nullable disable
 namespace Vanguard_MVVM.ViewModels
 {
@@ -20,7 +20,7 @@ namespace Vanguard_MVVM.ViewModels
         string Title { get; }
     }
 }";
-            var before = @"
+        var before = @"
 #nullable disable
 namespace Vanguard_MVVM.ViewModels
 {
@@ -60,7 +60,7 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            var after = @"
+        var after = @"
 #nullable disable
 namespace Vanguard_MVVM.ViewModels
 {
@@ -101,15 +101,15 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
+    }
 
-        [Test]
+    [Test]
 #pragma warning disable CA1707 // Identifiers should not contain underscores
-        public static void Vanguard_MVVM_ViewModels_MainWindowViewModelCommentedOut()
+    public static void Vanguard_MVVM_ViewModels_MainWindowViewModelCommentedOut()
 #pragma warning restore CA1707 // Identifiers should not contain underscores
-        {
-            var iChildDataContext = @"
+    {
+        var iChildDataContext = @"
 #nullable disable
 namespace Vanguard_MVVM.ViewModels
 {
@@ -118,7 +118,7 @@ namespace Vanguard_MVVM.ViewModels
         string Title { get; }
     }
 }";
-            var before = @"
+        var before = @"
 #nullable disable
 namespace Vanguard_MVVM.ViewModels
 {
@@ -159,7 +159,7 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            var after = @"
+        var after = @"
 #nullable disable
 namespace Vanguard_MVVM.ViewModels
 {
@@ -201,8 +201,7 @@ namespace Vanguard_MVVM.ViewModels
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
-            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
+        RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, iChildDataContext, before }, after);
     }
 }

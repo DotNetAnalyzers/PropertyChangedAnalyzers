@@ -1,15 +1,14 @@
-namespace PropertyChangedAnalyzers
+namespace PropertyChangedAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+internal class NullableType : QualifiedType
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal new readonly QualifiedMethod Equals;
 
-    internal class NullableType : QualifiedType
+    internal NullableType()
+        : base("System.Nullable")
     {
-        internal new readonly QualifiedMethod Equals;
-
-        internal NullableType()
-            : base("System.Nullable")
-        {
-            this.Equals = new QualifiedMethod(this, nameof(this.Equals));
-        }
+        this.Equals = new QualifiedMethod(this, nameof(this.Equals));
     }
 }

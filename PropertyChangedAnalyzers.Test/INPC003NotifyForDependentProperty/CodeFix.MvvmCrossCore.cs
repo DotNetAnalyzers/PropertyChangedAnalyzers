@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty
+﻿namespace PropertyChangedAnalyzers.Test.INPC003NotifyForDependentProperty;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class CodeFix
+    public static class MvvmCrossCore
     {
-        public static class MvvmCrossCore
-        {
-            private static readonly Settings MetadataReferences = LibrarySettings.MvvmCross;
+        private static readonly Settings MetadataReferences = LibrarySettings.MvvmCross;
 
-            [Test]
-            public static void SetAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -30,7 +30,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -52,14 +52,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyInternalClassInternalProperty()
+        {
+            var before = @"
 namespace N
 {
     internal class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -76,7 +76,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     internal class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -98,14 +98,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpressionBodyGetter()
+        {
+            var before = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -125,7 +125,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -150,14 +150,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void SetExpressionBodiesAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetExpressionBodiesAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -174,7 +174,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -196,14 +196,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyEmptyIf()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyEmptyIf()
+        {
+            var before = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -225,7 +225,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -247,14 +247,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -279,7 +279,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -304,14 +304,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void SetAffectsSecondCalculatedPropertyMissingBraces()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsSecondCalculatedPropertyMissingBraces()
+        {
+            var before = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -334,7 +334,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -359,14 +359,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void RaisePropertyChangedAffectsCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void RaisePropertyChangedAffectsCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -417,7 +417,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -468,14 +468,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
-            {
-                var before = @"
+        [Test]
+        public static void IfNotSetReturnSetAffectsSecondCalculatedProperty()
+        {
+            var before = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -502,7 +502,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -529,14 +529,14 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+        }
 
-            [Test]
-            public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
-            {
-                var before = @"
+        [Test]
+        public static void IfNotSetReturnSetAffectsSecondCalculatedPropertyNoBraces()
+        {
+            var before = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -561,7 +561,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : MvvmCross.ViewModels.MvxNotifyPropertyChanged
@@ -586,9 +586,8 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-                RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
+            RoslynAssert.FixAll(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: MetadataReferences);
         }
     }
 }

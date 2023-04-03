@@ -1,26 +1,25 @@
 ﻿// ReSharper disable All
-namespace ValidCode.InheritanceTrySet
+namespace ValidCode.InheritanceTrySet;
+
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public abstract class ExpressionBodiesViewModelBase : INotifyPropertyChanged
 {
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    public abstract class ExpressionBodiesViewModelBase : INotifyPropertyChanged
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        if (EqualityComparer<T>.Default.Equals(field, value))
         {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            this.OnPropertyChanged(propertyName);
-            return true;
+            return false;
         }
+
+        field = value;
+        this.OnPropertyChanged(propertyName);
+        return true;
     }
 }

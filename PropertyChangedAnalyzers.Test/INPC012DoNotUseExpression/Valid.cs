@@ -1,16 +1,16 @@
-namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression
+namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly ArgumentAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void NoBaseClass()
     {
-        private static readonly ArgumentAnalyzer Analyzer = new();
-
-        [Test]
-        public static void NoBaseClass()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -51,13 +51,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CallerMemberName()
-        {
-            var code = @"
+    [Test]
+    public static void CallerMemberName()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -95,13 +95,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void NotInvoker()
-        {
-            var code = @"
+    [Test]
+    public static void NotInvoker()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -155,7 +155,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

@@ -1,20 +1,20 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
-{
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
 
-    public static class MutableAutoPropertyTests
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public static class MutableAutoPropertyTests
+{
+    [TestCase("P1", false)]
+    [TestCase("P2", true)]
+    [TestCase("P3", false)]
+    [TestCase("P4", false)]
+    [TestCase("P5", false)]
+    [TestCase("P6", false)]
+    public static void Match(string propertyName, bool expected)
     {
-        [TestCase("P1", false)]
-        [TestCase("P2", true)]
-        [TestCase("P3", false)]
-        [TestCase("P4", false)]
-        [TestCase("P5", false)]
-        [TestCase("P6", false)]
-        public static void Match(string propertyName, bool expected)
-        {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
+        var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System;
@@ -55,8 +55,7 @@ namespace N
         }
     }
 }");
-            var property = syntaxTree.FindPropertyDeclaration(propertyName);
-            Assert.AreEqual(expected, MutableAutoProperty.Match(property) is { });
-        }
+        var property = syntaxTree.FindPropertyDeclaration(propertyName);
+        Assert.AreEqual(expected, MutableAutoProperty.Match(property) is { });
     }
 }

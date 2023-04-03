@@ -1,16 +1,16 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtor
+﻿namespace PropertyChangedAnalyzers.Test.INPC014PreferSettingBackingFieldInCtor;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly AssignmentAnalyzer Analyzer = new();
 
-    public static class Valid
+    [Test]
+    public static void WhenSettingField()
     {
-        private static readonly AssignmentAnalyzer Analyzer = new();
-
-        [Test]
-        public static void WhenSettingField()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -50,13 +50,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void AutoProperty()
-        {
-            var code = @"
+    [Test]
+    public static void AutoProperty()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -81,13 +81,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreWhenValidationThrows()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreWhenValidationThrows()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -130,13 +130,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreWhenValidationCall()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreWhenValidationCall()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -188,13 +188,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreWhenSideEffect()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreWhenSideEffect()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -233,14 +233,14 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("(_, __) => this.P = p;")]
-        [TestCase("delegate { this.P = p; };")]
-        public static void SettingNotifyingPropertyInLambda(string lambda)
-        {
-            var code = @"
+    [TestCase("(_, __) => this.P = p;")]
+    [TestCase("delegate { this.P = p; };")]
+    public static void SettingNotifyingPropertyInLambda(string lambda)
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -278,13 +278,13 @@ namespace N
     }
 }".AssertReplace("(_, __) => this.P = p;", lambda);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void SettingNotifyingPropertyInLocalFunction()
-        {
-            var code = @"
+    [Test]
+    public static void SettingNotifyingPropertyInLocalFunction()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -324,7 +324,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
     }
 }

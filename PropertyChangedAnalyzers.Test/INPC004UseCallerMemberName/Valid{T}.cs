@@ -1,26 +1,26 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName
+﻿namespace PropertyChangedAnalyzers.Test.INPC004UseCallerMemberName;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.Diagnostics;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+[TestFixture(typeof(ArgumentAnalyzer))]
+[TestFixture(typeof(MethodDeclarationAnalyzer))]
+public static class Valid<T>
+    where T : DiagnosticAnalyzer, new()
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
+    private static readonly T Analyzer = new();
 
-    [TestFixture(typeof(ArgumentAnalyzer))]
-    [TestFixture(typeof(MethodDeclarationAnalyzer))]
-    public static class Valid<T>
-        where T : DiagnosticAnalyzer, new()
+    [TestCase("null")]
+    [TestCase("string.Empty")]
+    [TestCase(@"""""")]
+    [TestCase(@"""P""")]
+    [TestCase(@"nameof(P)")]
+    [TestCase(@"nameof(this.P)")]
+    public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
     {
-        private static readonly T Analyzer = new T();
-
-        [TestCase("null")]
-        [TestCase("string.Empty")]
-        [TestCase(@"""""")]
-        [TestCase(@"""P""")]
-        [TestCase(@"nameof(P)")]
-        [TestCase(@"nameof(this.P)")]
-        public static void CallsRaisePropertyChangedWithEventArgs(string propertyName)
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -51,13 +51,13 @@ namespace N
     }
 }".AssertReplace(@"nameof(P)", propertyName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void CallsRaisePropertyChangedCallerMemberName()
-        {
-            var code = @"
+    [Test]
+    public static void CallsRaisePropertyChangedCallerMemberName()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -87,18 +87,18 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [TestCase("null")]
-        [TestCase("string.Empty")]
-        [TestCase(@"""""")]
-        [TestCase(@"""P""")]
-        [TestCase(@"nameof(P)")]
-        [TestCase(@"nameof(this.P)")]
-        public static void Invokes(string propertyName)
-        {
-            var code = @"
+    [TestCase("null")]
+    [TestCase("string.Empty")]
+    [TestCase(@"""""")]
+    [TestCase(@"""P""")]
+    [TestCase(@"nameof(P)")]
+    [TestCase(@"nameof(this.P)")]
+    public static void Invokes(string propertyName)
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -128,13 +128,13 @@ namespace N
     }
 }".AssertReplace(@"nameof(this.P))", propertyName);
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void InvokesCached()
-        {
-            var code = @"
+    [Test]
+    public static void InvokesCached()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -161,13 +161,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void UpdateMethod()
-        {
-            var code = @"
+    [Test]
+    public static void UpdateMethod()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -210,13 +210,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreWhenRaiseForOtherInstance()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreWhenRaiseForOtherInstance()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -259,13 +259,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void IgnoreWhenRaiseForOtherInstanceOfOtherType()
-        {
-            var c1 = @"
+    [Test]
+    public static void IgnoreWhenRaiseForOtherInstanceOfOtherType()
+    {
+        var c1 = @"
 namespace N
 {
     using System.ComponentModel;
@@ -303,7 +303,7 @@ namespace N
     }
 }";
 
-            var code = @"
+        var code = @"
 namespace N
 {
     public class C
@@ -315,13 +315,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, c1, code);
-        }
+        RoslynAssert.Valid(Analyzer, c1, code);
+    }
 
-        [Test]
-        public static void IgnoreWhenCallingFrameworkBaseClass()
-        {
-            var code = @"
+    [Test]
+    public static void IgnoreWhenCallingFrameworkBaseClass()
+    {
+        var code = @"
 namespace N
 {
     using System.Diagnostics.CodeAnalysis;
@@ -417,13 +417,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void TimeSpanTicks()
-        {
-            var code = @"
+    [Test]
+    public static void TimeSpanTicks()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -458,13 +458,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code);
-        }
+        RoslynAssert.Valid(Analyzer, code);
+    }
 
-        [Test]
-        public static void ExceptionHandlingRelayCommand()
-        {
-            var code = @"
+    [Test]
+    public static void ExceptionHandlingRelayCommand()
+    {
+        var code = @"
 namespace N
 {
     using System;
@@ -498,7 +498,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Reactive);
-        }
+        RoslynAssert.Valid(Analyzer, code, settings: LibrarySettings.Reactive);
     }
 }

@@ -1,20 +1,20 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
-{
-    using System.Threading;
-    using Gu.Roslyn.AnalyzerExtensions;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
 
-    public static class SetterTests
+using System.Threading;
+using Gu.Roslyn.AnalyzerExtensions;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public static class SetterTests
+{
+    public static class FindBackingField
     {
-        public static class FindBackingField
+        [TestCase("P1", "p1")]
+        [TestCase("P2", "p2")]
+        public static void FindBackingFieldWhenTwo(string propertyName, string fieldName)
         {
-            [TestCase("P1", "p1")]
-            [TestCase("P2", "p2")]
-            public static void FindBackingFieldWhenTwo(string propertyName, string fieldName)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     public class C
@@ -35,18 +35,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var property = syntaxTree.FindPropertyDeclaration(propertyName);
-                Assert.AreEqual(true, property.TryGetSetter(out var setter));
-                Assert.AreEqual(fieldName, Setter.FindBackingField(setter, semanticModel, CancellationToken.None)?.Name);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var property = syntaxTree.FindPropertyDeclaration(propertyName);
+            Assert.AreEqual(true, property.TryGetSetter(out var setter));
+            Assert.AreEqual(fieldName, Setter.FindBackingField(setter, semanticModel, CancellationToken.None)?.Name);
+        }
 
-            [Test]
-            public static void FindBackingFieldSimple()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void FindBackingFieldSimple()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public class C
@@ -60,18 +60,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var property = syntaxTree.FindPropertyDeclaration("P");
-                Assert.AreEqual(true, property.TryGetSetter(out var setter));
-                Assert.AreEqual("p", Setter.FindBackingField(setter, semanticModel, CancellationToken.None).Name);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var property = syntaxTree.FindPropertyDeclaration("P");
+            Assert.AreEqual(true, property.TryGetSetter(out var setter));
+            Assert.AreEqual("p", Setter.FindBackingField(setter, semanticModel, CancellationToken.None).Name);
+        }
 
-            [Test]
-            public static void FindBackingFieldTrySet()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void FindBackingFieldTrySet()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -107,18 +107,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var property = syntaxTree.FindPropertyDeclaration("P");
-                Assert.AreEqual(true, property.TryGetSetter(out var setter));
-                Assert.AreEqual("p", Setter.FindBackingField(setter, semanticModel, CancellationToken.None).Name);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var property = syntaxTree.FindPropertyDeclaration("P");
+            Assert.AreEqual(true, property.TryGetSetter(out var setter));
+            Assert.AreEqual("p", Setter.FindBackingField(setter, semanticModel, CancellationToken.None).Name);
+        }
 
-            [Test]
-            public static void RecursiveTrySet()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void RecursiveTrySet()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -152,12 +152,11 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var property = syntaxTree.FindPropertyDeclaration("P");
-                Assert.AreEqual(true, property.TryGetSetter(out var setter));
-                Assert.AreEqual(null, Setter.FindBackingField(setter, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var property = syntaxTree.FindPropertyDeclaration("P");
+            Assert.AreEqual(true, property.TryGetSetter(out var setter));
+            Assert.AreEqual(null, Setter.FindBackingField(setter, semanticModel, CancellationToken.None));
         }
     }
 }

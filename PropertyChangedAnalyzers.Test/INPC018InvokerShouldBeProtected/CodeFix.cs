@@ -1,18 +1,18 @@
-namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtected
+namespace PropertyChangedAnalyzers.Test.INPC018InvokerShouldBeProtected;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly MethodDeclarationAnalyzer Analyzer = new();
+    private static readonly MakeProtectedFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC018InvokerShouldBeProtected);
 
-    public static class CodeFix
+    [Test]
+    public static void ProtectedPropertyName()
     {
-        private static readonly MethodDeclarationAnalyzer Analyzer = new();
-        private static readonly MakeProtectedFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC018InvokerShouldBeProtected);
-
-        [Test]
-        public static void ProtectedPropertyName()
-        {
-            var before = @"
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -29,7 +29,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -45,13 +45,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Change to: protected.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Change to: protected.");
+    }
 
-        [Test]
-        public static void ProtectedPropertyChangedEventArgs()
-        {
-            var before = @"
+    [Test]
+    public static void ProtectedPropertyChangedEventArgs()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -68,7 +68,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -84,13 +84,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after);
+    }
 
-        [Test]
-        public static void MissingAccessModifier()
-        {
-            var before = @"
+    [Test]
+    public static void MissingAccessModifier()
+    {
+        var before = @"
 namespace N
 {
     using System.ComponentModel;
@@ -107,7 +107,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.ComponentModel;
@@ -123,13 +123,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Make protected.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Make protected.");
+    }
 
-        [Test]
-        public static void TrySetExplicitPrivate()
-        {
-            var before = @"
+    [Test]
+    public static void TrySetExplicitPrivate()
+    {
+        var before = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -159,7 +159,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -189,13 +189,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Change to: protected.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Change to: protected.");
+    }
 
-        [Test]
-        public static void TrySetImplicitPrivate()
-        {
-            var before = @"
+    [Test]
+    public static void TrySetImplicitPrivate()
+    {
+        var before = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -225,7 +225,7 @@ namespace N
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -255,7 +255,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Make protected.");
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, fixTitle: "Make protected.");
     }
 }

@@ -1,53 +1,52 @@
-﻿namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers;
+
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Gu.Roslyn.AnalyzerExtensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+internal sealed class ReturnExpressionsWalker : PooledWalker<ReturnExpressionsWalker>
 {
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using Gu.Roslyn.AnalyzerExtensions;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    private readonly List<ExpressionSyntax> returnValues = new();
 
-    internal sealed class ReturnExpressionsWalker : PooledWalker<ReturnExpressionsWalker>
+    private ReturnExpressionsWalker()
     {
-        private readonly List<ExpressionSyntax> returnValues = new List<ExpressionSyntax>();
+    }
 
-        private ReturnExpressionsWalker()
+    internal IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
+
+    public override void VisitReturnStatement(ReturnStatementSyntax node)
+    {
+        if (node.Expression is { })
         {
+            this.returnValues.Add(node.Expression);
         }
 
-        internal IReadOnlyList<ExpressionSyntax> ReturnValues => this.returnValues;
+        base.VisitReturnStatement(node);
+    }
 
-        public override void VisitReturnStatement(ReturnStatementSyntax node)
+    public override void VisitArrowExpressionClause(ArrowExpressionClauseSyntax node)
+    {
+        if (!node.TryFirstAncestor<ConstructorDeclarationSyntax>(out _))
         {
-            if (node.Expression is { })
-            {
-                this.returnValues.Add(node.Expression);
-            }
-
-            base.VisitReturnStatement(node);
+            this.returnValues.Add(node.Expression);
+            base.VisitArrowExpressionClause(node);
         }
+    }
 
-        public override void VisitArrowExpressionClause(ArrowExpressionClauseSyntax node)
-        {
-            if (!node.TryFirstAncestor<ConstructorDeclarationSyntax>(out _))
-            {
-                this.returnValues.Add(node.Expression);
-                base.VisitArrowExpressionClause(node);
-            }
-        }
+    internal static ReturnExpressionsWalker Empty() => Borrow(() => new ReturnExpressionsWalker());
 
-        internal static ReturnExpressionsWalker Empty() => Borrow(() => new ReturnExpressionsWalker());
+    internal static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
 
-        internal static ReturnExpressionsWalker Borrow(SyntaxNode node) => BorrowAndVisit(node, () => new ReturnExpressionsWalker());
+    internal static bool TryGetSingle(SyntaxNode node, [NotNullWhen(true)] out ExpressionSyntax? returnValue)
+    {
+        using var walker = Borrow(node);
+        return walker.returnValues.TrySingle(out returnValue!);
+    }
 
-        internal static bool TryGetSingle(SyntaxNode node, [NotNullWhen(true)] out ExpressionSyntax? returnValue)
-        {
-            using var walker = Borrow(node);
-            return walker.returnValues.TrySingle(out returnValue!);
-        }
-
-        protected override void Clear()
-        {
-            this.returnValues.Clear();
-        }
+    protected override void Clear()
+    {
+        this.returnValues.Clear();
     }
 }

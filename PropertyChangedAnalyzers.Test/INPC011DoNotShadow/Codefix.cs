@@ -1,18 +1,18 @@
-namespace PropertyChangedAnalyzers.Test.INPC011DoNotShadow
+namespace PropertyChangedAnalyzers.Test.INPC011DoNotShadow;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly EventAnalyzer Analyzer = new();
+    private static readonly RemoveShadowingFix Fix = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC011DoNotShadow);
 
-    public static class CodeFix
+    [Test]
+    public static void ShadowingEvent()
     {
-        private static readonly EventAnalyzer Analyzer = new();
-        private static readonly RemoveShadowingFix Fix = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC011DoNotShadow);
-
-        [Test]
-        public static void ShadowingEvent()
-        {
-            var viewModelBaseCode = @"
+        var viewModelBaseCode = @"
 namespace N.Core
 {
     using System.ComponentModel;
@@ -29,7 +29,7 @@ namespace N.Core
     }
 }";
 
-            var before = @"
+        var before = @"
 namespace N.Client
 {
     using System.ComponentModel;
@@ -40,7 +40,7 @@ namespace N.Client
     }
 }";
 
-            var after = @"
+        var after = @"
 namespace N.Client
 {
     using System.ComponentModel;
@@ -50,7 +50,6 @@ namespace N.Client
     }
 }";
 
-            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
-        }
+        RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, new[] { viewModelBaseCode, before }, after);
     }
 }

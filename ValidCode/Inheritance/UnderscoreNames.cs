@@ -1,27 +1,26 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Inheritance
+namespace ValidCode.Inheritance;
+
+public sealed class UnderscoreNames : UnderscoreNamesViewModelBase
 {
-    public sealed class UnderscoreNames : UnderscoreNamesViewModelBase
+    private string? _name;
+
+    public string Greeting => $"Hello {_name}";
+
+    public string? Name
     {
-        private string? _name;
+        get => _name;
 
-        public string Greeting => $"Hello {_name}";
-
-        public string? Name
+        set
         {
-            get => _name;
-
-            set
+            if (value == _name)
             {
-                if (value == _name)
-                {
-                    return;
-                }
-
-                _name = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Greeting));
+                return;
             }
+
+            _name = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Greeting));
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿namespace PropertyChangedAnalyzers.Test
+﻿namespace PropertyChangedAnalyzers.Test;
+
+public static class Code
 {
-    public static class Code
-    {
-        /// <summary>
-        /// A class that uses underscore field conventions.
-        /// </summary>
-        public const string UnqualifiedUnderscoreFields = @"
+    /// <summary>
+    /// A class that uses underscore field conventions.
+    /// </summary>
+    public const string UnqualifiedUnderscoreFields = @"
 namespace N
 {
     using System;
@@ -30,10 +30,10 @@ namespace N
     }
 }";
 
-        /// <summary>
-        /// A class that uses both underscore field conventions and qualified field access.
-        /// </summary>
-        public const string QualifiedUnderscoreFields = @"
+    /// <summary>
+    /// A class that uses both underscore field conventions and qualified field access.
+    /// </summary>
+    public const string QualifiedUnderscoreFields = @"
 namespace N
 {
     using System;
@@ -58,10 +58,10 @@ namespace N
     }
 }";
 
-        /// <summary>
-        /// A class that does not use underscore field conventions but which also does not qualify field access.
-        /// </summary>
-        public const string UnqualifiedUnprefixedFields = @"
+    /// <summary>
+    /// A class that does not use underscore field conventions but which also does not qualify field access.
+    /// </summary>
+    public const string UnqualifiedUnprefixedFields = @"
 namespace N
 {
     using System;
@@ -86,10 +86,10 @@ namespace N
     }
 }";
 
-        /// <summary>
-        /// A class that does not use underscore field conventions and which qualifies field access.
-        /// </summary>
-        public const string QualifiedUnprefixedFields = @"
+    /// <summary>
+    /// A class that does not use underscore field conventions and which qualifies field access.
+    /// </summary>
+    public const string QualifiedUnprefixedFields = @"
 namespace N
 {
     using System;
@@ -113,5 +113,4 @@ namespace N
         private int M() => this.f;
     }
 }";
-    }
 }

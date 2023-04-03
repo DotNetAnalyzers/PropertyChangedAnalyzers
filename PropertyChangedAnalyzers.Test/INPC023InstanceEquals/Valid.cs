@@ -1,18 +1,18 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC023InstanceEquals
+﻿namespace PropertyChangedAnalyzers.Test.INPC023InstanceEquals;
+
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
+
+public static class Valid
 {
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC023InstanceEquals;
 
-    public static class Valid
+    [Test]
+    public static void ValueType()
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly DiagnosticDescriptor Descriptor = Descriptors.INPC023InstanceEquals;
-
-        [Test]
-        public static void ValueType()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -46,7 +46,6 @@ namespace N
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, Descriptor, code);
-        }
+        RoslynAssert.Valid(Analyzer, Descriptor, code);
     }
 }

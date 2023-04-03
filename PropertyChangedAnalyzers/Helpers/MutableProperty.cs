@@ -1,29 +1,28 @@
-﻿namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers;
+
+using Gu.Roslyn.AnalyzerExtensions;
+
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+internal readonly struct MutableProperty
 {
-    using Gu.Roslyn.AnalyzerExtensions;
+    internal readonly AccessorDeclarationSyntax Getter;
+    internal readonly AccessorDeclarationSyntax Setter;
 
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-    internal readonly struct MutableProperty
+    private MutableProperty(AccessorDeclarationSyntax getter, AccessorDeclarationSyntax setter)
     {
-        internal readonly AccessorDeclarationSyntax Getter;
-        internal readonly AccessorDeclarationSyntax Setter;
+        this.Getter = getter;
+        this.Setter = setter;
+    }
 
-        private MutableProperty(AccessorDeclarationSyntax getter, AccessorDeclarationSyntax setter)
+    internal static MutableProperty? Match(PropertyDeclarationSyntax candidate)
+    {
+        if (candidate.Getter() is { } getter &&
+            candidate.Setter() is { } setter)
         {
-            this.Getter = getter;
-            this.Setter = setter;
+            return new MutableProperty(getter, setter);
         }
 
-        internal static MutableProperty? Match(PropertyDeclarationSyntax candidate)
-        {
-            if (candidate.Getter() is { } getter &&
-                candidate.Setter() is { } setter)
-            {
-                return new MutableProperty(getter, setter);
-            }
-
-            return null;
-        }
+        return null;
     }
 }

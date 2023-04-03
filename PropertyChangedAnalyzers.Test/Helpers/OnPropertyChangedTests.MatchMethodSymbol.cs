@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
-{
-    using System.Threading;
-    using Gu.Roslyn.AnalyzerExtensions;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
 
-    public partial class OnPropertyChangedTests
+using System.Threading;
+using Gu.Roslyn.AnalyzerExtensions;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public partial class OnPropertyChangedTests
+{
+    public static class MatchMethodSymbol
     {
-        public static class MatchMethodSymbol
+        [Test]
+        public static void Elvis()
         {
-            [Test]
-            public static void Elvis()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.ComponentModel;
@@ -29,17 +29,17 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
-                var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
+            var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
+        }
 
-            [Test]
-            public static void CopyLocalInvoke()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+        [Test]
+        public static void CopyLocalInvoke()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.ComponentModel;
@@ -56,17 +56,17 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
-                var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
+            var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
+        }
 
-            [Test]
-            public static void WhenCreatingPropertyChangedEventArgsSeparately()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+        [Test]
+        public static void WhenCreatingPropertyChangedEventArgsSeparately()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.ComponentModel;
@@ -106,17 +106,17 @@ namespace N
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
-                var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
+            var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
+        }
 
-            [Test]
-            public static void IgnoreWhenRaiseForOtherInstance()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+        [Test]
+        public static void IgnoreWhenRaiseForOtherInstance()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System.ComponentModel;
@@ -159,18 +159,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindMethodDeclaration("RaiseForChild");
-                var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
-                Assert.AreEqual(null, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindMethodDeclaration("RaiseForChild");
+            var method = semanticModel.GetDeclaredSymbol(invocation, CancellationToken.None);
+            Assert.AreEqual(null, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void Stylet()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void Stylet()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public class C : Stylet.PropertyChangedBase
@@ -193,18 +193,18 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, LibrarySettings.Stylet.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
-                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, LibrarySettings.Stylet.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
+            var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
+        }
 
-            [Test]
-            public static void CaliburnMicro()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void CaliburnMicro()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public class C : Caliburn.Micro.PropertyChangedBase
@@ -227,21 +227,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
-                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                MetadataReferences.Transitive(typeof(Caliburn.Micro.PropertyChangedBase).Assembly));
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
+            var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
+        }
 
-            [Test]
-            public static void MvvmLight()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void MvvmLight()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
@@ -264,21 +264,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    LibrarySettings.MvvmLight.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("RaisePropertyChanged");
-                var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                LibrarySettings.MvvmLight.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("RaisePropertyChanged");
+            var method = semanticModel.GetSymbolSafe(invocation, CancellationToken.None);
+            Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
+        }
 
-            [Test]
-            public static void WhenNotInvoker()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void WhenNotInvoker()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public class C
@@ -293,21 +293,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("M();");
-                Assert.AreEqual(null, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("M();");
+            Assert.AreEqual(null, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None));
+        }
 
-            [TestCase("M1()", AnalysisResult.No)]
-            [TestCase("M2()", AnalysisResult.No)]
-            [TestCase("M3()", AnalysisResult.No)]
-            [TestCase("M4()", AnalysisResult.No)]
-            [TestCase("OnPropertyChanged();", AnalysisResult.Yes)]
-            public static void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, AnalysisResult expected)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [TestCase("M1()", AnalysisResult.No)]
+        [TestCase("M2()", AnalysisResult.No)]
+        [TestCase("M3()", AnalysisResult.No)]
+        [TestCase("M4()", AnalysisResult.No)]
+        [TestCase("OnPropertyChanged();", AnalysisResult.Yes)]
+        public static void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, AnalysisResult expected)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public class C : System.ComponentModel.INotifyPropertyChanged
@@ -342,27 +342,27 @@ namespace N
         private bool M4() => true;
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation(call);
-                if (expected == AnalysisResult.No)
-                {
-                    Assert.AreEqual(null, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None));
-                }
-                else
-                {
-                    // ReSharper disable once PossibleInvalidOperationException
-                    Assert.AreEqual(expected, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None)?.AnalysisResult);
-                }
-            }
-
-            [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)")]
-            [TestCase("protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)")]
-            [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
-            public static void WhenTrue(string signature)
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation(call);
+            if (expected == AnalysisResult.No)
             {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+                Assert.AreEqual(null, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None));
+            }
+            else
+            {
+                // ReSharper disable once PossibleInvalidOperationException
+                Assert.AreEqual(expected, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None)?.AnalysisResult);
+            }
+        }
+
+        [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)")]
+        [TestCase("protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)")]
+        [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
+        public static void WhenTrue(string signature)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System;
@@ -390,19 +390,19 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
+            var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+            Assert.AreEqual(AnalysisResult.Yes, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None)?.AnalysisResult);
+        }
 
-            [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)")]
-            [TestCase("protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)")]
-            [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
-            public static void WhenRecursive(string signature)
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+        [TestCase("protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)")]
+        [TestCase("protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)")]
+        [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
+        public static void WhenRecursive(string signature)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System;
@@ -430,17 +430,17 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
-                var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
-                Assert.AreEqual(null, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
+            var method = semanticModel.GetDeclaredSymbol(methodDeclaration);
+            Assert.AreEqual(null, OnPropertyChanged.Match(method, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void ExceptionHandlingRelayCommand()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(@"
+        [Test]
+        public static void ExceptionHandlingRelayCommand()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(@"
 namespace N
 {
     using System;
@@ -474,11 +474,10 @@ namespace N
     }
 }");
 
-                var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var invocation = syntaxTree.FindInvocation("OnPropertyChanged()");
-                Assert.AreEqual(AnalysisResult.Maybe, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None)?.AnalysisResult);
-            }
+            var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var invocation = syntaxTree.FindInvocation("OnPropertyChanged()");
+            Assert.AreEqual(AnalysisResult.Maybe, OnPropertyChanged.Match(invocation, semanticModel, CancellationToken.None)?.AnalysisResult);
         }
     }
 }

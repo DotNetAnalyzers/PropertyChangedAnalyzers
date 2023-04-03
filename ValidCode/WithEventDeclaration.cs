@@ -1,41 +1,40 @@
 ﻿// ReSharper disable All
 #pragma warning disable IDE1006 // Naming Styles
-namespace ValidCode
+namespace ValidCode;
+
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+public sealed class WithEventDeclaration : INotifyPropertyChanged
 {
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+    private string? name;
 
-    public sealed class WithEventDeclaration : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged
     {
-        private string? name;
+        add => this.propertyChanged += value;
+        remove => this.propertyChanged -= value;
+    }
 
-        public event PropertyChangedEventHandler? PropertyChanged
+    private event PropertyChangedEventHandler? propertyChanged;
+
+    public string? Name
+    {
+        get => this.name;
+
+        set
         {
-            add => this.propertyChanged += value;
-            remove => this.propertyChanged -= value;
-        }
-
-        private event PropertyChangedEventHandler? propertyChanged;
-
-        public string? Name
-        {
-            get => this.name;
-
-            set
+            if (value == this.name)
             {
-                if (value == this.name)
-                {
-                    return;
-                }
-
-                this.name = value;
-                this.OnPropertyChanged();
+                return;
             }
-        }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.propertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.name = value;
+            this.OnPropertyChanged();
         }
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        this.propertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

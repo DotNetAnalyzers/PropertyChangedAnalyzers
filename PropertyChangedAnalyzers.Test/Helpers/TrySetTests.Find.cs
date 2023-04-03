@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.Helpers
-{
-    using System.Threading;
-    using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.Helpers;
 
-    public static partial class TrySetTests
+using System.Threading;
+using Gu.Roslyn.Asserts;
+using Microsoft.CodeAnalysis.CSharp;
+using NUnit.Framework;
+
+public static partial class TrySetTests
+{
+    public static class TryFind
     {
-        public static class TryFind
+        [Test]
+        public static void CustomImplementation1()
         {
-            [Test]
-            public static void CustomImplementation1()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.Collections.Generic;
@@ -42,21 +42,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
-                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual("TrySet", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
+            var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+            Assert.AreEqual("TrySet", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
+        }
 
-            [Test]
-            public static void CustomImplementation2()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void CustomImplementation2()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System;
@@ -100,21 +100,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var typeDeclaration = syntaxTree.FindClassDeclaration("ObservableObject");
-                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual("TrySet", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var typeDeclaration = syntaxTree.FindClassDeclaration("ObservableObject");
+            var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+            Assert.AreEqual("TrySet", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
+        }
 
-            [Test]
-            public static void OverridingCaliburnMicroPropertyChangedBase()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void OverridingCaliburnMicroPropertyChangedBase()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
@@ -125,21 +125,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    LibrarySettings.CaliburnMicro.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
-                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual("Set", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                LibrarySettings.CaliburnMicro.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
+            var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+            Assert.AreEqual("Set", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
+        }
 
-            [Test]
-            public static void CallingCaliburnMicroPropertyChangedBase()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void CallingCaliburnMicroPropertyChangedBase()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
@@ -150,21 +150,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    LibrarySettings.CaliburnMicro.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
-                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual("TrySet", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                LibrarySettings.CaliburnMicro.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
+            var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+            Assert.AreEqual("TrySet", TrySet.Find(type, semanticModel, CancellationToken.None)?.Name);
+        }
 
-            [Test]
-            public static void Recursive1()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void Recursive1()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -190,21 +190,21 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
-                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(null, TrySet.Find(type, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
+            var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+            Assert.AreEqual(null, TrySet.Find(type, semanticModel, CancellationToken.None));
+        }
 
-            [Test]
-            public static void Recursive2()
-            {
-                var syntaxTree = CSharpSyntaxTree.ParseText(
-                    @"
+        [Test]
+        public static void Recursive2()
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(
+                @"
 namespace N
 {
     using System.ComponentModel;
@@ -225,15 +225,14 @@ namespace N
         }
     }
 }");
-                var compilation = CSharpCompilation.Create(
-                    "test",
-                    new[] { syntaxTree },
-                    Settings.Default.MetadataReferences);
-                var semanticModel = compilation.GetSemanticModel(syntaxTree);
-                var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
-                var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
-                Assert.AreEqual(null, TrySet.Find(type, semanticModel, CancellationToken.None));
-            }
+            var compilation = CSharpCompilation.Create(
+                "test",
+                new[] { syntaxTree },
+                Settings.Default.MetadataReferences);
+            var semanticModel = compilation.GetSemanticModel(syntaxTree);
+            var typeDeclaration = syntaxTree.FindClassDeclaration("ViewModelBase");
+            var type = semanticModel.GetDeclaredSymbol(typeDeclaration);
+            Assert.AreEqual(null, TrySet.Find(type, semanticModel, CancellationToken.None));
         }
     }
 }

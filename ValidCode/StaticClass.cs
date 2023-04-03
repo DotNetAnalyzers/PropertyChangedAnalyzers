@@ -1,49 +1,48 @@
 ﻿// ReSharper disable All
-namespace ValidCode
+namespace ValidCode;
+
+using System.ComponentModel;
+
+public static class StaticClass
 {
-    using System.ComponentModel;
+    private static string? name;
+    private static int number;
 
-    public static class StaticClass
+    public static event PropertyChangedEventHandler? PropertyChanged;
+
+    public static string? Name
     {
-        private static string? name;
-        private static int number;
-
-        public static event PropertyChangedEventHandler? PropertyChanged;
-
-        public static string? Name
+        get => name;
+        set
         {
-            get => name;
-            set
+            if (name == value)
             {
-                if (name == value)
-                {
-                    return;
-                }
-
-                name = value;
-                PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(Name)));
+                return;
             }
-        }
 
-        public static int Number
+            name = value;
+            PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(Name)));
+        }
+    }
+
+    public static int Number
+    {
+        get => number;
+        set
         {
-            get => number;
-            set
+            if(value == number)
             {
-                if(value == number)
-                {
-                    return;
-                }
-
-                number = value;
-                OnPropertyChanged();
+                return;
             }
-        }
 
-        private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+            number = value;
+            OnPropertyChanged();
         }
+    }
+
+    private static void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
     }
 }
 

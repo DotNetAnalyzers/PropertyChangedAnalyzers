@@ -1,8 +1,7 @@
 ﻿// ReSharper disable All
-namespace ValidCode.Ignores
+namespace ValidCode.Ignores;
+
+public struct Struct
 {
-    public struct Struct
-    {
-        public int P { get; set; }
-    }
+    public int P { get; set; }
 }

@@ -1,13 +1,13 @@
-namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify;
 
-    public static partial class Valid
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class Valid
+{
+    public static class ViewModelBase
     {
-        public static class ViewModelBase
-        {
-            private const string ViewModelBaseCode = @"
+        private const string ViewModelBaseCode = @"
 namespace N.Core
 {
     using System.Collections.Generic;
@@ -37,10 +37,10 @@ namespace N.Core
     }
 }";
 
-            [Test]
-            public static void Set()
-            {
-                var code = @"
+        [Test]
+        public static void Set()
+        {
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -55,13 +55,13 @@ namespace N.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetWithThisGetWithout()
-            {
-                var code = @"
+        [Test]
+        public static void SetWithThisGetWithout()
+        {
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -76,13 +76,13 @@ namespace N.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
+        }
 
-            [Test]
-            public static void SetExpressionBodies()
-            {
-                var code = @"
+        [Test]
+        public static void SetExpressionBodies()
+        {
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -97,17 +97,17 @@ namespace N.Client
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, ViewModelBaseCode, code);
+        }
 
-            [TestCase("null")]
-            [TestCase("string.Empty")]
-            [TestCase(@"""P""")]
-            [TestCase(@"nameof(P)")]
-            [TestCase(@"nameof(this.P)")]
-            public static void RaisePropertyChanged(string propertyName)
-            {
-                var code = @"
+        [TestCase("null")]
+        [TestCase("string.Empty")]
+        [TestCase(@"""P""")]
+        [TestCase(@"nameof(P)")]
+        [TestCase(@"nameof(this.P)")]
+        public static void RaisePropertyChanged(string propertyName)
+        {
+            var code = @"
 namespace N.Client
 {
     public class C : N.Core.ViewModelBase
@@ -127,8 +127,7 @@ namespace N.Client
     }
 }".AssertReplace(@"nameof(P)", propertyName);
 
-                RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
-            }
+            RoslynAssert.Valid(Analyzer, Descriptor, ViewModelBaseCode, code);
         }
     }
 }

@@ -1,17 +1,17 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSame
+﻿namespace PropertyChangedAnalyzers.Test.INPC010GetAndSetSame;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static class Diagnostics
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+    private static readonly SetAccessorAnalyzer Analyzer = new();
+    private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC010GetAndSetSame);
 
-    public static class Diagnostics
+    [Test]
+    public static void Message()
     {
-        private static readonly SetAccessorAnalyzer Analyzer = new();
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.INPC010GetAndSetSame);
-
-        [Test]
-        public static void Message()
-        {
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -50,13 +50,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member"), code);
+    }
 
-        [Test]
-        public static void DifferentFieldsStatementBodies()
-        {
-            var code = @"
+    [Test]
+    public static void DifferentFieldsStatementBodies()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -95,13 +95,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DifferentFieldsExpressionBodies()
-        {
-            var code = @"
+    [Test]
+    public static void DifferentFieldsExpressionBodies()
+    {
+        var code = @"
 #pragma warning disable CS0067
 namespace N
 {
@@ -122,13 +122,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member"), code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic.WithMessage("The property gets and sets a different backing member"), code);
+    }
 
-        [Test]
-        public static void DifferentFieldsTrySetExpressionBodies()
-        {
-            var code = @"
+    [Test]
+    public static void DifferentFieldsTrySetExpressionBodies()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -167,13 +167,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DifferentFieldsTrySetStatementBodies()
-        {
-            var code = @"
+    [Test]
+    public static void DifferentFieldsTrySetStatementBodies()
+    {
+        var code = @"
 namespace N
 {
     using System.Collections.Generic;
@@ -212,13 +212,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DifferentFieldsInternal()
-        {
-            var code = @"
+    [Test]
+    public static void DifferentFieldsInternal()
+    {
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -257,13 +257,13 @@ namespace N
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, code);
+    }
 
-        [Test]
-        public static void DifferentNestedFields()
-        {
-            var c1 = @"
+    [Test]
+    public static void DifferentNestedFields()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -272,7 +272,7 @@ namespace N
         public int F2;
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -304,13 +304,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
+    }
 
-        [Test]
-        public static void DifferentNestedProperties()
-        {
-            var c1 = @"
+    [Test]
+    public static void DifferentNestedProperties()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -319,7 +319,7 @@ namespace N
         public int P2 { get; set; }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -351,13 +351,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
+    }
 
-        [Test]
-        public static void DifferentInstanceFieldsNestedProperties()
-        {
-            var c1 = @"
+    [Test]
+    public static void DifferentInstanceFieldsNestedProperties()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -365,7 +365,7 @@ namespace N
         public int P { get; set; }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -399,13 +399,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
+    }
 
-        [Test]
-        public static void DifferentInstancePropertiesNestedProperties()
-        {
-            var c1 = @"
+    [Test]
+    public static void DifferentInstancePropertiesNestedProperties()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -413,7 +413,7 @@ namespace N
         public int P { get; set; }
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -448,13 +448,13 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
+    }
 
-        [Test]
-        public static void WhenSettingNestedFieldRootLevel()
-        {
-            var c1 = @"
+    [Test]
+    public static void WhenSettingNestedFieldRootLevel()
+    {
+        var c1 = @"
 namespace N
 {
     public class C1
@@ -462,7 +462,7 @@ namespace N
         public int F;
     }
 }";
-            var code = @"
+        var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -496,7 +496,6 @@ namespace N
         }
     }
 }";
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
-        }
+        RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, c1, code);
     }
 }

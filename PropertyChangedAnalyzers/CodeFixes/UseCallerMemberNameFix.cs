@@ -1,85 +1,84 @@
-﻿namespace PropertyChangedAnalyzers
+﻿namespace PropertyChangedAnalyzers;
+
+using System.Collections.Immutable;
+using System.Composition;
+using System.Threading.Tasks;
+
+using Gu.Roslyn.AnalyzerExtensions;
+using Gu.Roslyn.CodeFixExtensions;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCallerMemberNameFix))]
+[Shared]
+internal class UseCallerMemberNameFix : DocumentEditorCodeFixProvider
 {
-    using System.Collections.Immutable;
-    using System.Composition;
-    using System.Threading.Tasks;
+    public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
+        Descriptors.INPC004UseCallerMemberName.Id);
 
-    using Gu.Roslyn.AnalyzerExtensions;
-    using Gu.Roslyn.CodeFixExtensions;
-
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCallerMemberNameFix))]
-    [Shared]
-    internal class UseCallerMemberNameFix : DocumentEditorCodeFixProvider
+    protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
     {
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(
-            Descriptors.INPC004UseCallerMemberName.Id);
+        var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
+                                      .ConfigureAwait(false);
+        var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
+                                         .ConfigureAwait(false);
 
-        protected override async Task RegisterCodeFixesAsync(DocumentEditorCodeFixContext context)
+        foreach (var diagnostic in context.Diagnostics)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken)
-                                          .ConfigureAwait(false);
-            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken)
-                                             .ConfigureAwait(false);
-
-            foreach (var diagnostic in context.Diagnostics)
+            if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ParameterSyntax parameter)
             {
-                if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ParameterSyntax parameter)
+                context.RegisterCodeFix(
+                    "Use [CallerMemberName]",
+                    (editor, x) => editor.ReplaceNode(
+                        parameter,
+                        AsCallerMemberName(parameter, editor.SemanticModel.GetNullableContext(parameter.SpanStart).AnnotationsEnabled())),
+                    nameof(UseCallerMemberNameFix),
+                    diagnostic);
+            }
+            else if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } argument &&
+                     semanticModel is { } &&
+                     semanticModel.TryGetSymbol(invocation, context.CancellationToken, out var method) && method.TryFindParameter(argument, out var parameterSymbol))
+            {
+                if (parameterSymbol.IsCallerMemberName())
                 {
                     context.RegisterCodeFix(
                         "Use [CallerMemberName]",
-                        (editor, x) => editor.ReplaceNode(
-                            parameter,
-                            AsCallerMemberName(parameter, editor.SemanticModel.GetNullableContext(parameter.SpanStart).AnnotationsEnabled())),
+                        (editor, _) => editor.RemoveNode(argument),
                         nameof(UseCallerMemberNameFix),
                         diagnostic);
                 }
-                else if (syntaxRoot?.FindNode(diagnostic.Location.SourceSpan) is ArgumentSyntax { Parent: ArgumentListSyntax { Parent: InvocationExpressionSyntax invocation } } argument &&
-                         semanticModel is { } &&
-                         semanticModel.TryGetSymbol(invocation, context.CancellationToken, out var method) && method.TryFindParameter(argument, out var parameterSymbol))
+                else if (parameterSymbol.TrySingleDeclaration(context.CancellationToken, out parameter!))
                 {
-                    if (parameterSymbol.IsCallerMemberName())
-                    {
-                        context.RegisterCodeFix(
-                            "Use [CallerMemberName]",
-                            (editor, _) => editor.RemoveNode(argument),
-                            nameof(UseCallerMemberNameFix),
-                            diagnostic);
-                    }
-                    else if (parameterSymbol.TrySingleDeclaration(context.CancellationToken, out parameter!))
-                    {
-                        context.RegisterCodeFix(
-                            "Use [CallerMemberName]",
-                            (editor, x) =>
-                            {
-                                editor.ReplaceNode(
-                                    parameter,
-                                    AsCallerMemberName(parameter, editor.SemanticModel.GetNullableContext(parameter.SpanStart).AnnotationsEnabled()));
-                                editor.RemoveNode(argument);
-                            },
-                            nameof(UseCallerMemberNameFix),
-                            diagnostic);
-                    }
+                    context.RegisterCodeFix(
+                        "Use [CallerMemberName]",
+                        (editor, x) =>
+                        {
+                            editor.ReplaceNode(
+                                parameter,
+                                AsCallerMemberName(parameter, editor.SemanticModel.GetNullableContext(parameter.SpanStart).AnnotationsEnabled()));
+                            editor.RemoveNode(argument);
+                        },
+                        nameof(UseCallerMemberNameFix),
+                        diagnostic);
                 }
             }
         }
+    }
 
-        private static ParameterSyntax AsCallerMemberName(ParameterSyntax parameter, bool nullabilityAnnotationsEnabled)
+    private static ParameterSyntax AsCallerMemberName(ParameterSyntax parameter, bool nullabilityAnnotationsEnabled)
+    {
+        parameter = parameter.AddAttributeLists(InpcFactory.CallerMemberNameAttributeList)
+                             .WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)));
+
+        if (nullabilityAnnotationsEnabled &&
+            parameter.Type is { })
         {
-            parameter = parameter.AddAttributeLists(InpcFactory.CallerMemberNameAttributeList)
-                                 .WithDefault(SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)));
-
-            if (nullabilityAnnotationsEnabled &&
-                parameter.Type is { })
-            {
-                parameter = parameter.WithType(InpcFactory.WithNullability(parameter.Type, nullable: true));
-            }
-
-            return parameter;
+            parameter = parameter.WithType(InpcFactory.WithNullability(parameter.Type, nullable: true));
         }
+
+        return parameter;
     }
 }

@@ -1,16 +1,16 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify
-{
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
+﻿namespace PropertyChangedAnalyzers.Test.INPC002MutablePublicPropertyShouldNotify;
 
-    public static partial class Valid
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+
+public static partial class Valid
+{
+    public static class Ignores
     {
-        public static class Ignores
+        [Test]
+        public static void Struct()
         {
-            [Test]
-            public static void Struct()
-            {
-                var code = @"
+            var code = @"
 namespace N
 {
     public struct S
@@ -19,13 +19,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void GetOnly()
-            {
-                var code = @"
+        [Test]
+        public static void GetOnly()
+        {
+            var code = @"
 namespace N
 {
     public class C
@@ -34,13 +34,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void SetOnly()
-            {
-                var code = @"
+        [Test]
+        public static void SetOnly()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -67,13 +67,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, Descriptor, code);
-            }
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
+        }
 
-            [Test]
-            public static void ExpressionBody()
-            {
-                var code = @"
+        [Test]
+        public static void ExpressionBody()
+        {
+            var code = @"
 namespace N
 {
     public class C
@@ -82,13 +82,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void CalculatedBody()
-            {
-                var code = @"
+        [Test]
+        public static void CalculatedBody()
+        {
+            var code = @"
 namespace N
 {
     public class C
@@ -100,13 +100,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void Abstract()
-            {
-                var code = @"
+        [Test]
+        public static void Abstract()
+        {
+            var code = @"
 namespace N
 {
     public abstract class C
@@ -115,14 +115,14 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void Static()
-            {
-                // maybe this should notify?
-                var code = @"
+        [Test]
+        public static void Static()
+        {
+            // maybe this should notify?
+            var code = @"
 namespace N
 {
     public class C
@@ -131,14 +131,14 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void InternalClass()
-            {
-                // maybe this should notify?
-                var code = @"
+        [Test]
+        public static void InternalClass()
+        {
+            // maybe this should notify?
+            var code = @"
 namespace N
 {
     internal class C
@@ -147,14 +147,14 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void InternalProperty()
-            {
-                // maybe this should notify?
-                var code = @"
+        [Test]
+        public static void InternalProperty()
+        {
+            // maybe this should notify?
+            var code = @"
 namespace N
 {
     public class C
@@ -163,13 +163,13 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
+        }
 
-            [Test]
-            public static void DependencyProperty()
-            {
-                var code = @"
+        [Test]
+        public static void DependencyProperty()
+        {
+            var code = @"
 namespace N
 {
     using System.Windows;
@@ -190,13 +190,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.Valid(Analyzer, Descriptor, code);
-            }
+            RoslynAssert.Valid(Analyzer, Descriptor, code);
+        }
 
-            [Test]
-            public static void PrivateSetterOnlyAssignedInCtor()
-            {
-                var code = @"
+        [Test]
+        public static void PrivateSetterOnlyAssignedInCtor()
+        {
+            var code = @"
 namespace N
 {
     using System.ComponentModel;
@@ -222,8 +222,7 @@ namespace N
     }
 }";
 
-                RoslynAssert.Valid(Analyzer, code);
-            }
+            RoslynAssert.Valid(Analyzer, code);
         }
     }
 }

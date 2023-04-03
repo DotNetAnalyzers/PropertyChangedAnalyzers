@@ -1,19 +1,19 @@
-﻿namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression
+﻿namespace PropertyChangedAnalyzers.Test.INPC012DoNotUseExpression;
+
+using Gu.Roslyn.Asserts;
+using NUnit.Framework;
+using PropertyChangedAnalyzers.Test.Helpers;
+
+public static partial class CodeFix
 {
-    using Gu.Roslyn.Asserts;
-    using NUnit.Framework;
-    using PropertyChangedAnalyzers.Test.Helpers;
-
-    public static partial class CodeFix
+    public static class MvvmLight
     {
-        public static class MvvmLight
-        {
-            private static readonly Settings Settings = LibrarySettings.MvvmLight;
+        private static readonly Settings Settings = LibrarySettings.MvvmLight;
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpression()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpression()
+        {
+            var before = @"
 namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
@@ -36,7 +36,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     public class C : GalaSoft.MvvmLight.ViewModelBase
@@ -58,13 +58,13 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
+        }
 
-            [Test]
-            public static void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
-            {
-                var before = @"
+        [Test]
+        public static void SetAffectsCalculatedPropertyExpressionInternalClassInternalProperty()
+        {
+            var before = @"
 namespace N
 {
     internal class C : GalaSoft.MvvmLight.ViewModelBase
@@ -87,7 +87,7 @@ namespace N
     }
 }";
 
-                var after = @"
+            var after = @"
 namespace N
 {
     internal class C : GalaSoft.MvvmLight.ViewModelBase
@@ -109,8 +109,7 @@ namespace N
         }
     }
 }";
-                RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
-            }
+            RoslynAssert.CodeFix(Analyzer, Fix, ExpectedDiagnostic, before, after, settings: Settings);
         }
     }
 }
