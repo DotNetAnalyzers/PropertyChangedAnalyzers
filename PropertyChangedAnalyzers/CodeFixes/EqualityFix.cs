@@ -29,7 +29,7 @@ internal class EqualityFix : DocumentEditorCodeFixProvider
             {
                 switch (node)
                 {
-                    case InvocationExpressionSyntax { Expression: { } oldName, ArgumentList: { Arguments: { Count: 2 } } }
+                    case InvocationExpressionSyntax { Expression: { } oldName, ArgumentList.Arguments.Count: 2 }
                         when EqualsMethodName() is { } name:
                         context.RegisterCodeFix(
                             $"Use {name}",
@@ -39,14 +39,14 @@ internal class EqualityFix : DocumentEditorCodeFixProvider
                             name,
                             diagnostic);
                         break;
-                    case InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 2 } arguments } } referenceEquals
+                    case InvocationExpressionSyntax { ArgumentList.Arguments: { Count: 2 } arguments } referenceEquals
                         when diagnostic.Id == Descriptors.INPC024ReferenceEqualsValueType.Id:
                         context.RegisterCodeFix(
                             "Use correct equality.",
                             (editor, cancellationToken) => editor.ReplaceNode(
                                 referenceEquals switch
                                 {
-                                    { Parent: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } } negated } => negated,
+                                    { Parent: PrefixUnaryExpressionSyntax { OperatorToken.ValueText: "!" } negated } => negated,
                                     _ => (ExpressionSyntax)referenceEquals,
                                 },
                                 x => Negate(x, InpcFactory.Equals(arguments[0].Expression, arguments[1].Expression, editor.SemanticModel, cancellationToken))),
@@ -54,7 +54,7 @@ internal class EqualityFix : DocumentEditorCodeFixProvider
                             diagnostic);
 
                         break;
-                    case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } invocation
+                    case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList.Arguments: { Count: 1 } arguments } invocation
                         when arguments[0] is { Expression: { } right } &&
                              EqualsMethodName() is { } name:
                         context.RegisterCodeFix(
@@ -65,7 +65,7 @@ internal class EqualityFix : DocumentEditorCodeFixProvider
                             name,
                             diagnostic);
                         break;
-                    case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList: { Arguments: { Count: 1 } arguments } } instanceEquals
+                    case InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax { Expression: { } left }, ArgumentList.Arguments: { Count: 1 } arguments } instanceEquals
                         when arguments[0] is { Expression: { } right } &&
                              diagnostic.Id == Descriptors.INPC023InstanceEquals.Id:
 
@@ -74,14 +74,14 @@ internal class EqualityFix : DocumentEditorCodeFixProvider
                             (editor, cancellationToken) => editor.ReplaceNode(
                                 instanceEquals switch
                                 {
-                                    { Parent: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } } negated } => negated,
+                                    { Parent: PrefixUnaryExpressionSyntax { OperatorToken.ValueText: "!" } negated } => negated,
                                     _ => (ExpressionSyntax)instanceEquals,
                                 },
                                 x => Negate(x, InpcFactory.Equals(left, right, editor.SemanticModel, cancellationToken))),
                             Descriptors.INPC023InstanceEquals.Id,
                             diagnostic);
                         break;
-                    case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "==" }, Right: { } } binary
+                    case BinaryExpressionSyntax { Left: { }, OperatorToken.ValueText: "==", Right: { } } binary
                         when EqualsMethodName() is { } name:
                         context.RegisterCodeFix(
                             $"Use {name}",
@@ -91,7 +91,7 @@ internal class EqualityFix : DocumentEditorCodeFixProvider
                             name,
                             diagnostic);
                         break;
-                    case BinaryExpressionSyntax { Left: { }, OperatorToken: { ValueText: "!=" }, Right: { } } binary
+                    case BinaryExpressionSyntax { Left: { }, OperatorToken.ValueText: "!=", Right: { } } binary
                         when EqualsMethodName() is { } name:
                         context.RegisterCodeFix(
                             $"Use !{name}",
@@ -115,11 +115,11 @@ internal class EqualityFix : DocumentEditorCodeFixProvider
             {
                 return original switch
                 {
-                    PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } }
-                    when check is BinaryExpressionSyntax { OperatorToken: { ValueText: "==" } } binary
+                    PrefixUnaryExpressionSyntax { OperatorToken.ValueText: "!" }
+                    when check is BinaryExpressionSyntax { OperatorToken.ValueText: "==" } binary
                     => binary.WithOperatorToken(SyntaxFactory.Token(SyntaxKind.ExclamationEqualsToken))
                              .WithTriviaFrom(original),
-                    PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" } } negated
+                    PrefixUnaryExpressionSyntax { OperatorToken.ValueText: "!" } negated
                     => negated.WithOperand(check.WithTriviaFrom(negated.Operand)),
                     _ => check.WithTriviaFrom(original)!,
                 };

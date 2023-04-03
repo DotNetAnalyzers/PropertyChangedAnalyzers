@@ -30,7 +30,7 @@ internal class RemoveExpressionFix : DocumentEditorCodeFixProvider
                 semanticModel is { } &&
                 syntaxRoot.TryFindNodeOrAncestor(diagnostic, out ArgumentSyntax? argument) &&
                 FindName(argument) is { } nameExpression &&
-                argument.Parent is ArgumentListSyntax { Arguments: { Count: 1 }, Parent: InvocationExpressionSyntax invocation } &&
+                argument.Parent is ArgumentListSyntax { Arguments.Count: 1, Parent: InvocationExpressionSyntax invocation } &&
                 argument.TryFirstAncestor(out ClassDeclarationSyntax? classDeclaration) &&
                 semanticModel.TryGetNamedType(classDeclaration, context.CancellationToken, out var type) &&
                 OnPropertyChanged.Find(type, semanticModel, context.CancellationToken) is { } invoker &&

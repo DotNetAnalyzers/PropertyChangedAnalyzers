@@ -22,7 +22,7 @@ internal static class Setter
     {
         using var walker = AssignmentWalker.Borrow(setter);
         if (walker.Assignments.TrySingle<AssignmentExpressionSyntax>(out var assignment) &&
-            assignment.Right is IdentifierNameSyntax { Identifier: { ValueText: "value" } })
+            assignment.Right is IdentifierNameSyntax { Identifier.ValueText: "value" })
         {
             return assignment;
         }
@@ -70,7 +70,7 @@ internal static class Setter
     {
         return candidate switch
         {
-            InvocationExpressionSyntax { ArgumentList: { Arguments: { } } } invocation
+            InvocationExpressionSyntax { ArgumentList.Arguments: { } } invocation
             when TrySet.Match(invocation, semanticModel, cancellationToken) is { Field: { } field, Value: { } value }
             => MatchMemberAndParameter(field.Expression, value.Expression, semanticModel, cancellationToken),
             _ => null,
@@ -79,7 +79,7 @@ internal static class Setter
 
     internal static BackingMemberAndValue? MatchEquals(ExpressionSyntax candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
     {
-        if (candidate is PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } condition } &&
+        if (candidate is PrefixUnaryExpressionSyntax { OperatorToken.ValueText: "!", Operand: { } condition } &&
             Equality.IsEqualsCheck(condition, semanticModel, cancellationToken, out _, out _))
         {
             return MatchEquals(condition, semanticModel, cancellationToken);
@@ -122,7 +122,7 @@ internal static class Setter
 
         foreach (var assignment in walker.Assignments)
         {
-            if (assignment is { Right: IdentifierNameSyntax { Identifier: { ValueText: "value" } } } &&
+            if (assignment is { Right: IdentifierNameSyntax { Identifier.ValueText: "value" } } &&
                 MemberPath.Equals(backingExpression, assignment.Left) &&
                 SymbolEqualityComparer.Default.Equals(
                     semanticModel.GetSymbolSafe(backingExpression, cancellationToken),
@@ -150,7 +150,7 @@ internal static class Setter
     {
         return expression switch
         {
-            IdentifierNameSyntax { Identifier: { ValueText: "value" } } identifierName
+            IdentifierNameSyntax { Identifier.ValueText: "value" } identifierName
             => identifierName,
             CastExpressionSyntax cast => FindParameter(cast.Expression),
             _ => null,

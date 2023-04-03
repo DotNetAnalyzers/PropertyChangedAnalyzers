@@ -111,7 +111,7 @@ internal static class PropertyChanged
     {
         switch (invocation)
         {
-            case { ArgumentList: { Arguments: { Count: 0 } } }
+            case { ArgumentList.Arguments.Count: 0 }
                 when OnPropertyChanged.Match(invocation, semanticModel, cancellationToken) is { Name: { } parameter } &&
                      parameter.IsCallerMemberName():
                 return invocation.FirstAncestorOrSelf<MemberDeclarationSyntax>() switch
@@ -122,7 +122,7 @@ internal static class PropertyChanged
                     IndexerDeclarationSyntax _ => new PropertyNameArgument(null, "this[]"),
                     _ => null,
                 };
-            case { ArgumentList: { Arguments: { Count: 1 } arguments } }
+            case { ArgumentList.Arguments: { Count: 1 } arguments }
                 when arguments[0] is { } argument &&
                      OnPropertyChanged.Match(invocation, semanticModel, cancellationToken) is { Name: { } parameter }:
                 if (parameter.Type.SpecialType == SpecialType.System_String)
@@ -143,7 +143,7 @@ internal static class PropertyChanged
 
                 break;
 
-            case { ArgumentList: { Arguments: { Count: 2 } } }
+            case { ArgumentList.Arguments.Count: 2 }
                 when Invoke.Match(invocation, semanticModel, cancellationToken) is { EventArgument: { } arg } &&
                      PropertyChangedEventArgs.Match(arg.Expression, semanticModel, cancellationToken) is { } propertyChangedEventArgs:
                 return propertyChangedEventArgs.PropertyName(semanticModel, cancellationToken);
@@ -174,7 +174,7 @@ internal static class PropertyChanged
 
         internal static Invoke? Match(InvocationExpressionSyntax invocation, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            if (invocation is { ArgumentList: { Arguments: { Count: 2 } arguments } } &&
+            if (invocation is { ArgumentList.Arguments: { Count: 2 } arguments } &&
                 arguments[0].Expression.IsEither(SyntaxKind.ThisExpression, SyntaxKind.NullLiteralExpression) &&
                 invocation.IsPotentialReturnVoid())
             {

@@ -25,8 +25,8 @@ internal class InvocationAnalyzer : DiagnosticAnalyzer
     private static void Handle(SyntaxNodeAnalysisContext context)
     {
         if (!context.IsExcludedFromAnalysis() &&
-            context.Node is InvocationExpressionSyntax { ArgumentList: { Arguments: { Count: 0 } } } invocation &&
-            !(invocation.FirstAncestor<AccessorDeclarationSyntax>() is { Keyword: { ValueText: "set" } }) &&
+            context.Node is InvocationExpressionSyntax { ArgumentList.Arguments.Count: 0 } invocation &&
+            !(invocation.FirstAncestor<AccessorDeclarationSyntax>() is { Keyword.ValueText: "set" }) &&
             PropertyChanged.FindPropertyName(invocation, context.SemanticModel, context.CancellationToken) is { })
         {
             context.ReportDiagnostic(Diagnostic.Create(Descriptors.INPC009NotifiesForMissingProperty, invocation.GetLocation()));

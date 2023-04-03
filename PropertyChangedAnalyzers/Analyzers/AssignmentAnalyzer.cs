@@ -48,7 +48,7 @@ internal class AssignmentAnalyzer : DiagnosticAnalyzer
             {
                 case { ExpressionBody: { } }:
                     return FindAssignedField();
-                case { Body: { Statements: { } statements } }:
+                case { Body.Statements: { } statements }:
                     foreach (var statement in statements)
                     {
                         if (IsWhiteListedStatement(statement))

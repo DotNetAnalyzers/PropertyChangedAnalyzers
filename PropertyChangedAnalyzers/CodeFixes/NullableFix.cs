@@ -89,8 +89,8 @@ internal class NullableFix : DocumentEditorCodeFixProvider
                 {
                     return candidate switch
                     {
-                        FieldDeclarationSyntax { Declaration: { Variables: { Count: 1 }, Type: { } t } }
-                        when semanticModel.GetTypeInfo(t) is { Type: { IsReferenceType: true } }
+                        FieldDeclarationSyntax { Declaration: { Variables.Count: 1, Type: { } t } }
+                        when semanticModel.GetTypeInfo(t) is { Type.IsReferenceType: true }
                         => t,
                         ConstructorDeclarationSyntax { Parent: TypeDeclarationSyntax typeDeclaration }
                         when typeDeclaration.TryFindField(fieldName, out var field)
@@ -104,7 +104,7 @@ internal class NullableFix : DocumentEditorCodeFixProvider
                     return candidate switch
                     {
                         EventDeclarationSyntax { Type: { } t } => t,
-                        EventFieldDeclarationSyntax { Declaration: { Type: { } t } } => t,
+                        EventFieldDeclarationSyntax { Declaration.Type: { } t } => t,
                         ConstructorDeclarationSyntax { Parent: TypeDeclarationSyntax typeDeclaration }
                         when typeDeclaration.TryFindEvent(eventName, out member)
                         => FindEventType(member),

@@ -41,7 +41,7 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
         {
             switch (setter)
             {
-                case { ExpressionBody: { Expression: { } expression } }
+                case { ExpressionBody.Expression: { } expression }
                     when Setter.MatchAssign(expression, context.SemanticModel, context.CancellationToken) is { Member: { } member }:
                     if (Property.ShouldNotify(containingProperty, property, context.SemanticModel, context.CancellationToken))
                     {
@@ -58,7 +58,7 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
                     }
 
                     break;
-                case { ExpressionBody: { Expression: { } expression } }
+                case { ExpressionBody.Expression: { } expression }
                     when Setter.MatchTrySet(expression, context.SemanticModel, context.CancellationToken) is { Member: { } member }:
                     if (ReturnsDifferent(member, context))
                     {
@@ -107,8 +107,8 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
             }
 
             if (Attribute.TryFind(containingProperty, KnownSymbol.BindableAttribute, context.SemanticModel, context.CancellationToken, out var bindable) &&
-                bindable is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
-                arguments[0] is { Expression: LiteralExpressionSyntax { Token: { ValueText: "false" } } })
+                bindable is { ArgumentList.Arguments: { Count: 1 } arguments } &&
+                arguments[0] is { Expression: LiteralExpressionSyntax { Token.ValueText: "false" } })
             {
                 return false;
             }
@@ -133,7 +133,7 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
                             Descriptors.INPC010GetAndSetSame,
                             body.FirstAncestor<PropertyDeclarationSyntax>()!.Identifier.GetLocation()));
                 }
-                else if (equalState is { MemberAndValue: { Member: { } checkedMember } } &&
+                else if (equalState is { MemberAndValue.Member: { } checkedMember } &&
                          AreDifferent(checkedMember, mutatedMember, context))
                 {
                     context.ReportDiagnostic(
@@ -188,7 +188,7 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
         {
             switch (condition)
             {
-                case PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: InvocationExpressionSyntax invocation }:
+                case PrefixUnaryExpressionSyntax { OperatorToken.ValueText: "!", Operand: InvocationExpressionSyntax invocation }:
                     HandleInvocation(invocation);
                     break;
                 case InvocationExpressionSyntax invocation:
@@ -250,7 +250,7 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
 
                 if (Equality.IsInstanceEquals(invocation, context.SemanticModel, context.CancellationToken, out _, out _) &&
                     (ContainingProperty().Type.IsReferenceType ||
-                     ContainingProperty().Type is { OriginalDefinition: { SpecialType: SpecialType.System_Nullable_T } }))
+                     ContainingProperty().Type is { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T }))
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
@@ -300,7 +300,7 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
                     mutation = match;
                     equalState = new EqualState(trySet, match, false);
                     return WalkIfStatement(ifStatement);
-                case IfStatementSyntax { Condition: PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: InvocationExpressionSyntax trySet } } ifStatement
+                case IfStatementSyntax { Condition: PrefixUnaryExpressionSyntax { OperatorToken.ValueText: "!", Operand: InvocationExpressionSyntax trySet } } ifStatement
                     when Setter.MatchTrySet(trySet, context.SemanticModel, context.CancellationToken) is { } match:
                     mutation = match;
                     equalState = new EqualState(trySet, match, true);
@@ -309,7 +309,7 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
                     when Setter.MatchAssign(assignment, context.SemanticModel, context.CancellationToken) is { } match:
                     mutation = match;
                     return true;
-                case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: IdentifierNameSyntax { Identifier: { ValueText: "_" } }, Right: { } right } }
+                case ExpressionStatementSyntax { Expression: AssignmentExpressionSyntax { Left: IdentifierNameSyntax { Identifier.ValueText: "_" }, Right: { } right } }
                     when Setter.MatchTrySet(right, context.SemanticModel, context.CancellationToken) is { } match:
                     mutation = match;
                     return true;
@@ -376,9 +376,9 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
         {
             return getter switch
             {
-                { ExpressionBody: { Expression: { } get } }
+                { ExpressionBody.Expression: { } get }
                 => AreDifferent(get, assignedMember, context),
-                { Body: { Statements: { Count: 0 } statements } }
+                { Body.Statements: { Count: 0 } statements }
                 when statements[0] is ReturnStatementSyntax { Expression: { } get }
                 => AreDifferent(get, assignedMember, context),
                 { Body: { } body }
@@ -461,9 +461,9 @@ internal class SetAccessorAnalyzer : DiagnosticAnalyzer
                 return e switch
                 {
                     InvocationExpressionSyntax _ => true,
-                    BinaryExpressionSyntax { OperatorToken: { ValueText: "==" } } => true,
-                    BinaryExpressionSyntax { OperatorToken: { ValueText: "!=" } } => false,
-                    PrefixUnaryExpressionSyntax { OperatorToken: { ValueText: "!" }, Operand: { } operand } => !Equal(operand),
+                    BinaryExpressionSyntax { OperatorToken.ValueText: "==" } => true,
+                    BinaryExpressionSyntax { OperatorToken.ValueText: "!=" } => false,
+                    PrefixUnaryExpressionSyntax { OperatorToken.ValueText: "!", Operand: { } operand } => !Equal(operand),
                     _ => null,
                 };
             }

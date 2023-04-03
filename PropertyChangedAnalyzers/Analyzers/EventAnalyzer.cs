@@ -41,13 +41,13 @@ internal class EventAnalyzer : DiagnosticAnalyzer
 
         bool Shadows()
         {
-            return eventSymbol is { ContainingType: { BaseType: { } baseType }, IsStatic: false, IsOverride: false } &&
+            return eventSymbol is { ContainingType.BaseType: { } baseType, IsStatic: false, IsOverride: false } &&
                    baseType.TryFindEventRecursive(eventSymbol.Name, out _);
         }
 
         bool MissingInvoker()
         {
-            if (eventSymbol is { IsStatic: false, ContainingType: { TypeKind: TypeKind.Class } } &&
+            if (eventSymbol is { IsStatic: false, ContainingType.TypeKind: TypeKind.Class } &&
                 eventSymbol == KnownSymbol.INotifyPropertyChanged.PropertyChanged &&
                 OnPropertyChanged.Find(eventSymbol, context.SemanticModel, context.CancellationToken) is null)
             {

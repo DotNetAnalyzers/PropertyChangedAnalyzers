@@ -8,8 +8,8 @@ public static class Getter
     {
         return getter switch
         {
-            { ExpressionBody: { Expression: { } expression } } => expression,
-            { Body: { Statements: { Count: 1 } statements } }
+            { ExpressionBody.Expression: { } expression } => expression,
+            { Body.Statements: { Count: 1 } statements }
                 when statements[0] is ReturnStatementSyntax returnStatement
                 => returnStatement.Expression,
             { Body: { } body } => ReturnExpressionsWalker.TryGetSingle(body, out var result) ? result : null,

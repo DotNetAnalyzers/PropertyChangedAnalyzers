@@ -146,7 +146,7 @@ internal readonly struct OnPropertyChanged
                         return AnalysisResult.Yes;
                     }
                 }
-                else if (invocation is { ArgumentList: { Arguments: { Count: 1 } arguments } } &&
+                else if (invocation is { ArgumentList.Arguments: { Count: 1 } arguments } &&
                          arguments[0] is { Expression: { } expression } &&
                          invocation.IsPotentialThisOrBase())
                 {
@@ -220,7 +220,7 @@ internal readonly struct OnPropertyChanged
             return true;
         }
 
-        if (method is { ReturnsVoid: true, MethodKind: MethodKind.Ordinary, Parameters: { Length: 1 } } &&
+        if (method is { ReturnsVoid: true, MethodKind: MethodKind.Ordinary, Parameters.Length: 1 } &&
             method.Parameters.TrySingle(out var parameter) &&
             parameter.Type.IsEither(KnownSymbol.String, KnownSymbol.PropertyChangedEventArgs, KnownSymbol.LinqExpressionOfT))
         {

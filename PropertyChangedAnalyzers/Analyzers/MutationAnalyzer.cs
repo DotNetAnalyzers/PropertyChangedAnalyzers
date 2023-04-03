@@ -48,7 +48,7 @@ internal class MutationAnalyzer : DiagnosticAnalyzer
         if (!context.IsExcludedFromAnalysis() &&
             !IsInIgnoredScope(context) &&
             context.Node is PostfixUnaryExpressionSyntax { Operand: { } operand } postfix &&
-            context is { ContainingSymbol: { ContainingType: { } containingType } } &&
+            context is { ContainingSymbol.ContainingType: { } containingType } &&
             AssignedExpression(containingType, operand) is { } backing)
         {
             Handle(postfix, backing, context);
@@ -60,7 +60,7 @@ internal class MutationAnalyzer : DiagnosticAnalyzer
         if (!context.IsExcludedFromAnalysis() &&
             !IsInIgnoredScope(context) &&
             context.Node is PrefixUnaryExpressionSyntax { Operand: { } operand } prefix &&
-            context is { ContainingSymbol: { ContainingType: { } containingType } } &&
+            context is { ContainingSymbol.ContainingType: { } containingType } &&
             AssignedExpression(containingType, operand) is { } backing)
         {
             Handle(prefix, backing, context);
@@ -72,7 +72,7 @@ internal class MutationAnalyzer : DiagnosticAnalyzer
         if (!context.IsExcludedFromAnalysis() &&
             !IsInIgnoredScope(context) &&
             context.Node is AssignmentExpressionSyntax { Left: { } left } assignment &&
-            context is { ContainingSymbol: { ContainingType: { } containingType } } &&
+            context is { ContainingSymbol.ContainingType: { } containingType } &&
             AssignedExpression(containingType, left) is { } backing)
         {
             Handle(assignment, backing, context);
@@ -85,7 +85,7 @@ internal class MutationAnalyzer : DiagnosticAnalyzer
             !IsInIgnoredScope(context) &&
             context.Node is ArgumentSyntax { Expression: { } expression } argument &&
             argument.RefOrOutKeyword.IsKind(SyntaxKind.RefKeyword) &&
-            context is { ContainingSymbol: { ContainingType: { } containingType } } &&
+            context is { ContainingSymbol.ContainingType: { } containingType } &&
             AssignedExpression(containingType, expression) is { } backing)
         {
             Handle(argument.Expression, backing, context);
@@ -94,7 +94,7 @@ internal class MutationAnalyzer : DiagnosticAnalyzer
 
     private static void Handle(ExpressionSyntax mutation, ExpressionSyntax backing, SyntaxNodeAnalysisContext context)
     {
-        if (context is { ContainingSymbol: { ContainingType: { } containingType } } &&
+        if (context is { ContainingSymbol.ContainingType: { } containingType } &&
             containingType.IsAssignableTo(KnownSymbol.INotifyPropertyChanged, context.Compilation) &&
             mutation.TryFirstAncestorOrSelf<TypeDeclarationSyntax>(out var typeDeclaration))
         {
@@ -143,7 +143,7 @@ internal class MutationAnalyzer : DiagnosticAnalyzer
         return context switch
         {
             { ContainingSymbol: IMethodSymbol { Name: "Dispose" } } => true,
-            { Node: { Parent: ObjectCreationExpressionSyntax _ } } => true,
+            { Node.Parent: ObjectCreationExpressionSyntax _ } => true,
             { ContainingSymbol: IMethodSymbol { MethodKind: MethodKind.Constructor } } => !context.Node.TryFirstAncestor<AnonymousFunctionExpressionSyntax>(out _),
             _ => false,
         };
@@ -169,7 +169,7 @@ internal class MutationAnalyzer : DiagnosticAnalyzer
     {
         return property switch
         {
-            { ExpressionBody: { Expression: { } expression } } => expression,
+            { ExpressionBody.Expression: { } expression } => expression,
             { AccessorList: { } } when property.TryGetGetter(out var getter) => (SyntaxNode?)getter.Body ??
                 getter.ExpressionBody,
             _ => null,

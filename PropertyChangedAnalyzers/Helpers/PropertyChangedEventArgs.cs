@@ -63,7 +63,7 @@ internal readonly struct PropertyChangedEventArgs
                          variable.Initializer is { } initializer:
                     return MatchCreation(initializer.Value) ??
                            MatchCached(initializer.Value, semanticModel, cancellationToken);
-                case IMethodSymbol { Name: "GetOrAdd", ContainingType: { TypeArguments: { Length: 2 } typeArguments } } method
+                case IMethodSymbol { Name: "GetOrAdd", ContainingType.TypeArguments: { Length: 2 } typeArguments } method
                     when method.ContainingType == KnownSymbol.ConcurrentDictionaryOfTKeyTValue &&
                          typeArguments[0] == KnownSymbol.String &&
                          typeArguments[1] == KnownSymbol.PropertyChangedEventArgs &&
@@ -78,7 +78,7 @@ internal readonly struct PropertyChangedEventArgs
 
     private static PropertyChangedEventArgs? MatchCreation(ExpressionSyntax expression)
     {
-        return expression is ObjectCreationExpressionSyntax { Type: { } type, ArgumentList: { Arguments: { Count: 1 } arguments } } &&
+        return expression is ObjectCreationExpressionSyntax { Type: { } type, ArgumentList.Arguments: { Count: 1 } arguments } &&
                type == KnownSymbol.PropertyChangedEventArgs &&
                arguments.TrySingle(out var nameArg)
             ? new PropertyChangedEventArgs(nameArg)

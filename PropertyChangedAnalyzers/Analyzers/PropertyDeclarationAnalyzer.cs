@@ -104,8 +104,8 @@ internal class PropertyDeclarationAnalyzer : DiagnosticAnalyzer
 
                 return expression switch
                 {
-                    IdentifierNameSyntax { Identifier: { ValueText: { } name } } => property.Name == name,
-                    MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name: { Identifier: { ValueText: { } name } } } => property.Name == name,
+                    IdentifierNameSyntax { Identifier.ValueText: { } name } => property.Name == name,
+                    MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax _, Name.Identifier.ValueText: { } name } => property.Name == name,
                     _ => false,
                 };
             }
@@ -177,9 +177,9 @@ internal class PropertyDeclarationAnalyzer : DiagnosticAnalyzer
     {
         return accessor switch
         {
-            { Keyword: { ValueText: "get" }, Body: { Statements: { Count: 1 } statements } }
+            { Keyword.ValueText: "get", Body.Statements: { Count: 1 } statements }
             => statements[0].IsKind(SyntaxKind.ReturnStatement),
-            { Keyword: { ValueText: "set" }, Body: { Statements: { Count: 1 } statements } }
+            { Keyword.ValueText: "set", Body.Statements: { Count: 1 } statements }
             => statements[0].IsKind(SyntaxKind.ExpressionStatement),
             _ => false,
         };

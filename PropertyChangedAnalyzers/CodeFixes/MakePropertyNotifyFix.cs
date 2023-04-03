@@ -156,7 +156,7 @@ internal class MakePropertyNotifyFix : DocumentEditorCodeFixProvider
                                         onPropertyChanged));
                                 _ = editor.FormatNode(propertyDeclaration!);
                             }
-                            else if (setter!.Body is { Statements: { Count: 1 } } body &&
+                            else if (setter!.Body is { Statements.Count: 1 } body &&
                                      body.Statements.TrySingle(out var statement))
                             {
                                 editor.InsertBefore(
@@ -183,7 +183,7 @@ internal class MakePropertyNotifyFix : DocumentEditorCodeFixProvider
                                         onPropertyChanged));
                                 _ = editor.FormatNode(propertyDeclaration!);
                             }
-                            else if (setter!.Body is { Statements: { Count: 1 } } body &&
+                            else if (setter!.Body is { Statements.Count: 1 } body &&
                                      body.Statements.TrySingle(out var statement))
                             {
                                 var onPropertyChanged = await editor.OnPropertyChangedInvocationStatementAsync(invoker!, propertyDeclaration!, cancellationToken)
@@ -215,7 +215,7 @@ internal class MakePropertyNotifyFix : DocumentEditorCodeFixProvider
                 return true;
             }
 
-            return localSetter.Body is { Statements: { Count: 1 } };
+            return localSetter.Body is { Statements.Count: 1 };
         }
     }
 }

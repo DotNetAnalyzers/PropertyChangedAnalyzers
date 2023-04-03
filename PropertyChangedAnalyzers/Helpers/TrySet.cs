@@ -20,7 +20,7 @@ internal static class TrySet
                TypeSymbolComparer.Equal(candidate.Parameters[0].Type, typeParameter) &&
                candidate.Parameters[1].RefKind == RefKind.None &&
                TypeSymbolComparer.Equal(candidate.Parameters[1].Type, typeParameter) &&
-               candidate.Parameters.TrySingle(x => x is { Type: { SpecialType: SpecialType.System_String } }, out var nameParameter) &&
+               candidate.Parameters.TrySingle(x => x is { Type.SpecialType: SpecialType.System_String }, out var nameParameter) &&
                RestAreOptional()
             ? nameParameter
             : null;
@@ -78,7 +78,7 @@ internal static class TrySet
 
     internal static AnalysisResult IsMatch(IMethodSymbol candidate, SemanticModel semanticModel, CancellationToken cancellationToken)
     {
-        if (candidate is { ContainingType: { } containingType, MethodKind: MethodKind.Ordinary, ReturnType: { SpecialType: SpecialType.System_Boolean }, IsGenericMethod: true, TypeParameters: { Length: 1 } } &&
+        if (candidate is { ContainingType: { } containingType, MethodKind: MethodKind.Ordinary, ReturnType.SpecialType: SpecialType.System_Boolean, IsGenericMethod: true, TypeParameters.Length: 1 } &&
             candidate.Parameters.Length > 2)
         {
             using var recursion = Recursion.Borrow(containingType, semanticModel, cancellationToken);
@@ -110,9 +110,9 @@ internal static class TrySet
         }
 
         if (candidate is { Parameters: { } parameters } &&
-            parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var field) &&
-            parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var value) &&
-            parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { SpecialType: SpecialType.System_String } } }, out var name))
+            parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition.Type.TypeKind: TypeKind.TypeParameter }, out var field) &&
+            parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition.Type.TypeKind: TypeKind.TypeParameter }, out var value) &&
+            parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition.Type.SpecialType: SpecialType.System_String }, out var name))
         {
             return new TrySetMatch<IParameterSymbol>(result, field, value, name);
         }
@@ -139,10 +139,10 @@ internal static class TrySet
 
     private static AnalysisResult IsMatch(IMethodSymbol candidate, Recursion recursion)
     {
-        if (candidate is { MethodKind: MethodKind.Ordinary, ReturnType: { SpecialType: SpecialType.System_Boolean }, IsGenericMethod: true, TypeParameters: { Length: 1 }, Parameters: { } parameters } &&
-            parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var field) &&
-            parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { TypeKind: TypeKind.TypeParameter } } }, out var value) &&
-            parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition: { Type: { SpecialType: SpecialType.System_String } } }, out _) &&
+        if (candidate is { MethodKind: MethodKind.Ordinary, ReturnType.SpecialType: SpecialType.System_Boolean, IsGenericMethod: true, TypeParameters.Length: 1, Parameters: { } parameters } &&
+            parameters.TrySingle(x => x is { RefKind: RefKind.Ref, OriginalDefinition.Type.TypeKind: TypeKind.TypeParameter }, out var field) &&
+            parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition.Type.TypeKind: TypeKind.TypeParameter }, out var value) &&
+            parameters.TrySingle(x => x is { RefKind: RefKind.None, OriginalDefinition.Type.SpecialType: SpecialType.System_String }, out _) &&
             ShouldCheck())
         {
             if (candidate.TrySingleMethodDeclaration(recursion.CancellationToken, out var methodDeclaration))

@@ -126,11 +126,11 @@ internal class ArgumentAnalyzer : DiagnosticAnalyzer
                      argument.TryGetStringValue(semanticModel, cancellationToken, out var text) &&
                      Target() is { } target
                 => new NameContext(text, literal, target),
-                { Expression: InvocationExpressionSyntax { Expression: IdentifierNameSyntax { Identifier: { ValueText: "nameof" } }, ArgumentList: { Arguments: { Count: 1 } arguments } } }
+                { Expression: InvocationExpressionSyntax { Expression: IdentifierNameSyntax { Identifier.ValueText: "nameof" }, ArgumentList.Arguments: { Count: 1 } arguments } }
                 when argument.TryGetStringValue(semanticModel, cancellationToken, out var text) &&
                      Target() is { } target
                 => new NameContext(text, Expression(arguments[0]), target),
-                { Expression: ObjectCreationExpressionSyntax { ArgumentList: { Arguments: { Count: 1 } arguments } } objectCreation }
+                { Expression: ObjectCreationExpressionSyntax { ArgumentList.Arguments: { Count: 1 } arguments } objectCreation }
                 when objectCreation.Type.IsSameType(KnownSymbol.PropertyChangedEventArgs, semanticModel) &&
                      Create(arguments[0], semanticModel, cancellationToken) is { Name: { } name, Expression: { } expression } &&
                      Target() is { } target

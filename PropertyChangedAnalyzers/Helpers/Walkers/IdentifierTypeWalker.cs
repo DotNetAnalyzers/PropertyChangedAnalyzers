@@ -26,8 +26,8 @@ internal sealed class IdentifierTypeWalker : PooledWalker<IdentifierTypeWalker>
         return candidate switch
         {
             { Parent: MemberAccessExpressionSyntax _ } => false,
-            { Identifier: { ValueText: "value" } }
-            when candidate.FirstAncestor<AccessorDeclarationSyntax>() is { Keyword: { ValueText: "set" } }
+            { Identifier.ValueText: "value" }
+            when candidate.FirstAncestor<AccessorDeclarationSyntax>() is { Keyword.ValueText: "set" }
             => true,
             _ => Walk(),
         };
