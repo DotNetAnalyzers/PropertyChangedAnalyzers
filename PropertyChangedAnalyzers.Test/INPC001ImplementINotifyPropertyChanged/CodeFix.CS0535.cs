@@ -13,269 +13,285 @@ public static partial class CodeFix
         [Test]
         public static void WhenInterfaceAndUsingSealedAddUsings()
         {
-            var before = @"
-namespace N
-{
-    using System.ComponentModel;
+            var before = """
+                namespace N
+                {
+                    using System.ComponentModel;
 
-    public sealed class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+                    public sealed class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var after = """
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public sealed class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public sealed class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
         }
 
         [Test]
         public static void WhenInterfaceAndUsingSealedFullyQualified()
         {
-            var before = @"
-namespace N
-{
-    using System.ComponentModel;
+            var before = """
+                namespace N
+                {
+                    using System.ComponentModel;
 
-    public sealed class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+                    public sealed class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-namespace N
-{
-    using System.ComponentModel;
+            var after = """
+                namespace N
+                {
+                    using System.ComponentModel;
 
-    public sealed class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public sealed class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenInterfaceOnlyWithUsingAddUsing()
         {
-            var before = @"
-namespace N
-{
-    using System.ComponentModel;
+            var before = """
+                namespace N
+                {
+                    using System.ComponentModel;
 
-    public class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+                    public class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var after = """
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
         }
 
         [Test]
         public static void WhenInterfaceOnlyWithUsingFullyQualified()
         {
-            var before = @"
-namespace N
-{
-    using System.ComponentModel;
+            var before = """
+                namespace N
+                {
+                    using System.ComponentModel;
 
-    public class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+                    public class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-namespace N
-{
-    using System.ComponentModel;
+            var after = """
+                namespace N
+                {
+                    using System.ComponentModel;
 
-    public class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenInterfaceOnlyWithUsingUnderscoreAddUsings()
         {
-            var before = @"
-#pragma warning disable 169
-namespace N
-{
-    using System.ComponentModel;
+            var before = """
+                #pragma warning disable 169
+                namespace N
+                {
+                    using System.ComponentModel;
 
-    public class C : ↓INotifyPropertyChanged
-    {
-        private int _p;
-    }
-}";
+                    public class C : ↓INotifyPropertyChanged
+                    {
+                        private int _p;
+                    }
+                }
+                """;
 
-            var after = @"
-#pragma warning disable 169
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var after = """
+                #pragma warning disable 169
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
-    {
-        private int _p;
+                    public class C : INotifyPropertyChanged
+                    {
+                        private int _p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
         }
 
         [Test]
         public static void WhenInterfaceOnlyWithUsingUnderscoreFullyQualified()
         {
-            var before = @"
-#pragma warning disable 169
-namespace N
-{
-    using System.ComponentModel;
+            var before = """
+                #pragma warning disable 169
+                namespace N
+                {
+                    using System.ComponentModel;
 
-    public class C : ↓INotifyPropertyChanged
-    {
-        private int _p;
-    }
-}";
+                    public class C : ↓INotifyPropertyChanged
+                    {
+                        private int _p;
+                    }
+                }
+                """;
 
-            var after = @"
-#pragma warning disable 169
-namespace N
-{
-    using System.ComponentModel;
+            var after = """
+                #pragma warning disable 169
+                namespace N
+                {
+                    using System.ComponentModel;
 
-    public class C : INotifyPropertyChanged
-    {
-        private int _p;
+                    public class C : INotifyPropertyChanged
+                    {
+                        private int _p;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+                        {
+                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, new[] { Code.UnqualifiedUnderscoreFields, before }, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenInterfaceOnlyAndUsingsAddUsing()
         {
-            var before = @"
-#pragma warning disable 8019
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var before = """
+                #pragma warning disable 8019
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+                    public class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-#pragma warning disable 8019
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var after = """
+                #pragma warning disable 8019
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
         }
 
         [Test]
         public static void WhenInterfaceOnlyAndUsingsFullyQualified()
         {
-            var before = @"
-#pragma warning disable 8019
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var before = """
+                #pragma warning disable 8019
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+                    public class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-#pragma warning disable 8019
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var after = """
+                #pragma warning disable 8019
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
     }

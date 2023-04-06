@@ -13,146 +13,156 @@ public static partial class CodeFix
         [Test]
         public static void WhenInterfaceOnlyAddUsingsNullableDisable()
         {
-            var before = @"
-#nullable disable
-namespace N
-{
-    public class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+            var before = """
+                #nullable disable
+                namespace N
+                {
+                    public class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-#nullable disable
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var after = """
+                #nullable disable
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
+                    public class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
         }
 
         [Test]
         public static void WhenInterfaceOnlyAddUsings()
         {
-            var before = @"
-namespace N
-{
-    public class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+            var before = """
+                namespace N
+                {
+                    public class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var after = """
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
         }
 
         [Test]
         public static void WhenInterfaceOnlyFullyQualified()
         {
-            var before = @"
-namespace N
-{
-    public class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+            var before = """
+                namespace N
+                {
+                    public class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-namespace N
-{
-    public class C : System.ComponentModel.INotifyPropertyChanged
-    {
-        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+            var after = """
+                namespace N
+                {
+                    public class C : System.ComponentModel.INotifyPropertyChanged
+                    {
+                        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
 
         [Test]
         public static void WhenInterfaceOnlySealedAddUsings()
         {
-            var before = @"
-namespace N
-{
-    public sealed class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+            var before = """
+                namespace N
+                {
+                    public sealed class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var after = """
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public sealed class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public sealed class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged and add usings.");
         }
 
         [Test]
         public static void WhenInterfaceOnlySealedFullyQualified()
         {
-            var before = @"
-namespace N
-{
-    public sealed class C : ↓INotifyPropertyChanged
-    {
-    }
-}";
+            var before = """
+                namespace N
+                {
+                    public sealed class C : ↓INotifyPropertyChanged
+                    {
+                    }
+                }
+                """;
 
-            var after = @"
-namespace N
-{
-    public sealed class C : System.ComponentModel.INotifyPropertyChanged
-    {
-        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+            var after = """
+                namespace N
+                {
+                    public sealed class C : System.ComponentModel.INotifyPropertyChanged
+                    {
+                        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-}";
+                        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """;
             RoslynAssert.CodeFix(Fix, ExpectedDiagnostic, before, after, fixTitle: "Implement INotifyPropertyChanged fully qualified.");
         }
     }

@@ -12,36 +12,36 @@ public static partial class TrySetTests
         [Test]
         public static void CustomImplementation1()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    using System.Collections.Generic;
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public abstract class ViewModelBase : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public abstract class ViewModelBase : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-            {
-                return false;
-            }
+                        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+                        {
+                            if (EqualityComparer<T>.Default.Equals(field, value))
+                            {
+                                return false;
+                            }
 
-            field = value;
-            this.OnPropertyChanged(propertyName);
-            return true;
-        }
+                            field = value;
+                            this.OnPropertyChanged(propertyName);
+                            return true;
+                        }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}");
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create(
                 "test",
                 new[] { syntaxTree },
@@ -55,51 +55,51 @@ namespace N
         [Test]
         public static void CustomImplementation2()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    using System;
+                    using System.Collections.Generic;
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    /// <summary>
-    /// INotifyPropertyChanged base implementation
-    /// </summary>
-    /// <seealso cref=""System.ComponentModel.INotifyPropertyChanged"" />
-    public abstract class ObservableObject : INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    /// <summary>
+                    /// INotifyPropertyChanged base implementation
+                    /// </summary>
+                    /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
+                    public abstract class ObservableObject : INotifyPropertyChanged
+                    {
+                        /// <summary>
+                        /// Occurs when a property value changes.
+                        /// </summary>
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        /// <summary>
-        /// Called when [property changed].
-        /// </summary>
-        /// <param name=""propertyName"">Name of the property.</param>
-        protected virtual void OnPropertyChanged([CallerMemberName]string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+                        /// <summary>
+                        /// Called when [property changed].
+                        /// </summary>
+                        /// <param name="propertyName">Name of the property.</param>
+                        protected virtual void OnPropertyChanged([CallerMemberName]string? propertyName = null)
+                        {
+                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
 
-        protected virtual bool TrySet<T>(ref T field, T value, Action OnChanging = null, Action OnChanged = null, [CallerMemberName]string? propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-                return false;
+                        protected virtual bool TrySet<T>(ref T field, T value, Action OnChanging = null, Action OnChanged = null, [CallerMemberName]string? propertyName = null)
+                        {
+                            if (EqualityComparer<T>.Default.Equals(field, value))
+                                return false;
 
-            OnChanging?.Invoke();
+                            OnChanging?.Invoke();
 
-            field = value;
-            OnPropertyChanged(propertyName);
+                            field = value;
+                            OnPropertyChanged(propertyName);
 
-            OnChanged?.Invoke();
+                            OnChanged?.Invoke();
 
-            return true;
-        }
-    }
-}");
+                            return true;
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create(
                 "test",
                 new[] { syntaxTree },
@@ -113,18 +113,18 @@ namespace N
         [Test]
         public static void OverridingCaliburnMicroPropertyChangedBase()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
-    {
-        public override bool Set<T>(ref T oldValue, T value, string? propertyName = null)
-        {
-            return base.Set(ref oldValue, value, propertyName);
-        }
-    }
-}");
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
+                    {
+                        public override bool Set<T>(ref T oldValue, T value, string? propertyName = null)
+                        {
+                            return base.Set(ref oldValue, value, propertyName);
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create(
                 "test",
                 new[] { syntaxTree },
@@ -138,18 +138,18 @@ namespace N
         [Test]
         public static void CallingCaliburnMicroPropertyChangedBase()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
-    {
-        public bool TrySet<T>(ref T oldValue, T value, string? propertyName = null)
-        {
-            return base.Set(ref oldValue, value, propertyName);
-        }
-    }
-}");
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    public abstract class ViewModelBase : Caliburn.Micro.PropertyChangedBase
+                    {
+                        public bool TrySet<T>(ref T oldValue, T value, string? propertyName = null)
+                        {
+                            return base.Set(ref oldValue, value, propertyName);
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create(
                 "test",
                 new[] { syntaxTree },
@@ -163,33 +163,33 @@ namespace N
         [Test]
         public static void Recursive1()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public abstract class ViewModelBase : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public abstract class ViewModelBase : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (this.TrySet(ref field, value, propertyName))
-            {
-                this.OnPropertyChanged(propertyName);
-            }
+                        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+                        {
+                            if (this.TrySet(ref field, value, propertyName))
+                            {
+                                this.OnPropertyChanged(propertyName);
+                            }
 
-            return true;
-        }
+                            return true;
+                        }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}");
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create(
                 "test",
                 new[] { syntaxTree },
@@ -203,28 +203,28 @@ namespace N
         [Test]
         public static void Recursive2()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public abstract class ViewModelBase : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public abstract class ViewModelBase : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
-            return this.TrySet(ref field, value, propertyName);
-        }
+                        protected bool TrySet<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+                        {
+                            return this.TrySet(ref field, value, propertyName);
+                        }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}");
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create(
                 "test",
                 new[] { syntaxTree },

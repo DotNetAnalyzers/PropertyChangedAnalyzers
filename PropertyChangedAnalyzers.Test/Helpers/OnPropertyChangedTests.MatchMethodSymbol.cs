@@ -13,22 +13,23 @@ public partial class OnPropertyChangedTests
         [Test]
         public static void Elvis()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}");
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
@@ -39,23 +40,24 @@ namespace N
         [Test]
         public static void CopyLocalInvoke()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
 
-    internal class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    internal class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            var handler = this.PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}");
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            var handler = this.PropertyChanged;
+                            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindMethodDeclaration("OnPropertyChanged");
@@ -66,45 +68,46 @@ namespace N
         [Test]
         public static void WhenCreatingPropertyChangedEventArgsSeparately()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class C : INotifyPropertyChanged
-    {
-        private int p;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public int P
-        {
-            get => this.p;
-
-            set
-            {
-                if (value == this.p)
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
                 {
-                    return;
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
+
+                    public class C : INotifyPropertyChanged
+                    {
+                        private int p;
+
+                        public event PropertyChangedEventHandler? PropertyChanged;
+
+                        public int P
+                        {
+                            get => this.p;
+
+                            set
+                            {
+                                if (value == this.p)
+                                {
+                                    return;
+                                }
+
+                                this.p = value;
+                                this.OnPropertyChanged();
+                            }
+                        }
+
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            var handler = this.PropertyChanged;
+                            if (handler != null)
+                            {
+                                var args = new PropertyChangedEventArgs(propertyName);
+                                handler.Invoke(this, args);
+                            }
+                        }
+                    }
                 }
-
-                this.p = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                var args = new PropertyChangedEventArgs(propertyName);
-                handler.Invoke(this, args);
-            }
-        }
-    }
-}");
+                """);
 
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -116,49 +119,50 @@ namespace N
         [Test]
         public static void IgnoreWhenRaiseForOtherInstance()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace N
-{
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class C : INotifyPropertyChanged
-    {
-        private int p;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public int P
-        {
-            get
-            {
-                return this.p;
-            }
-
-            set
-            {
-                if (value == this.p)
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
                 {
-                    return;
+                    using System.ComponentModel;
+                    using System.Runtime.CompilerServices;
+
+                    public class C : INotifyPropertyChanged
+                    {
+                        private int p;
+
+                        public event PropertyChangedEventHandler? PropertyChanged;
+
+                        public int P
+                        {
+                            get
+                            {
+                                return this.p;
+                            }
+
+                            set
+                            {
+                                if (value == this.p)
+                                {
+                                    return;
+                                }
+
+                                this.p = value;
+                                this.OnPropertyChanged();
+                            }
+                        }
+
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+
+                        public void RaiseForChild(string propertyName)
+                        {
+                            var vm = new ViewModel();
+                            vm.OnPropertyChanged(propertyName);
+                        }
+                    }
                 }
-
-                this.p = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void RaiseForChild(string propertyName)
-        {
-            var vm = new ViewModel();
-            vm.OnPropertyChanged(propertyName);
-        }
-    }
-}");
+                """);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindMethodDeclaration("RaiseForChild");
@@ -169,30 +173,30 @@ namespace N
         [Test]
         public static void Stylet()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    public class C : Stylet.PropertyChangedBase
-    {
-        private int p;
-
-        public int P
-        {
-            get => this.p;
-            set
-            {
-                if (value == this.p)
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
                 {
-                    return;
-                }
+                    public class C : Stylet.PropertyChangedBase
+                    {
+                        private int p;
 
-                this.p = value;
-                this.NotifyOfPropertyChange();
-            }
-        }
-    }
-}");
+                        public int P
+                        {
+                            get => this.p;
+                            set
+                            {
+                                if (value == this.p)
+                                {
+                                    return;
+                                }
+
+                                this.p = value;
+                                this.NotifyOfPropertyChange();
+                            }
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, LibrarySettings.Stylet.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("NotifyOfPropertyChange");
@@ -203,30 +207,30 @@ namespace N
         [Test]
         public static void CaliburnMicro()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    public class C : Caliburn.Micro.PropertyChangedBase
-    {
-        private int p;
-
-        public int P
-        {
-            get => this.p;
-            set
-            {
-                if (value == this.p)
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
                 {
-                    return;
-                }
+                    public class C : Caliburn.Micro.PropertyChangedBase
+                    {
+                        private int p;
 
-                this.p = value;
-                this.NotifyOfPropertyChange();
-            }
-        }
-    }
-}");
+                        public int P
+                        {
+                            get => this.p;
+                            set
+                            {
+                                if (value == this.p)
+                                {
+                                    return;
+                                }
+
+                                this.p = value;
+                                this.NotifyOfPropertyChange();
+                            }
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create(
                 "test",
                 new[] { syntaxTree },
@@ -240,30 +244,30 @@ namespace N
         [Test]
         public static void MvvmLight()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    public class C : GalaSoft.MvvmLight.ViewModelBase
-    {
-        private int p;
-
-        public int P
-        {
-            get => this.p;
-            set
-            {
-                if (value == this.p)
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
                 {
-                    return;
-                }
+                    public class C : GalaSoft.MvvmLight.ViewModelBase
+                    {
+                        private int p;
 
-                this.p = value;
-                this.RaisePropertyChanged();
-            }
-        }
-    }
-}");
+                        public int P
+                        {
+                            get => this.p;
+                            set
+                            {
+                                if (value == this.p)
+                                {
+                                    return;
+                                }
+
+                                this.p = value;
+                                this.RaisePropertyChanged();
+                            }
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create(
                 "test",
                 new[] { syntaxTree },
@@ -277,22 +281,22 @@ namespace N
         [Test]
         public static void WhenNotInvoker()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    public class C
-    {
-        public C()
-        {
-            M();
-        }
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    public class C
+                    {
+                        public C()
+                        {
+                            M();
+                        }
 
-        private void M()
-        {
-        }
-    }
-}");
+                        private void M()
+                        {
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation("M();");
@@ -306,42 +310,42 @@ namespace N
         [TestCase("OnPropertyChanged();", AnalysisResult.Yes)]
         public static void WhenNotInvokerINotifyPropertyChangedFullyQualified(string call, AnalysisResult expected)
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    public class C : System.ComponentModel.INotifyPropertyChanged
-    {
-        public C()
-        {
-            M1();
-            var a = M2();
-            a = M3();
-            if (M4())
-            {
-            }
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    public class C : System.ComponentModel.INotifyPropertyChanged
+                    {
+                        public C()
+                        {
+                            M1();
+                            var a = M2();
+                            a = M3();
+                            if (M4())
+                            {
+                            }
 
-            OnPropertyChanged();
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+                            OnPropertyChanged();
+                        }
+                        
+                        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
+                        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+                        {
+                            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                        }
 
-        private void M1()
-        {
-        }
+                        private void M1()
+                        {
+                        }
 
-        private int M2() => 1;
+                        private int M2() => 1;
 
-        private int M3() => 2;
+                        private int M3() => 2;
 
-        private bool M4() => true;
-    }
-}");
+                        private bool M4() => true;
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var invocation = syntaxTree.FindInvocation(call);
@@ -361,35 +365,35 @@ namespace N
         [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
         public static void WhenTrue(string signature)
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(
-                @"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-    using System.Linq.Expressions;
-    using System.Runtime.CompilerServices;
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    using System;
+                    using System.ComponentModel;
+                    using System.Linq.Expressions;
+                    using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
-        {
-            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
-        }
+                        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+                        {
+                            this.OnPropertyChanged(((MemberExpression)property.Body).Member.Name);
+                        }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
+                        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+                        {
+                            this.PropertyChanged?.Invoke(this, e);
+                        }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-}");
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
@@ -402,34 +406,35 @@ namespace N
         [TestCase("protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)")]
         public static void WhenRecursive(string signature)
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-    using System.Linq.Expressions;
-    using System.Runtime.CompilerServices;
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
+                {
+                    using System;
+                    using System.ComponentModel;
+                    using System.Linq.Expressions;
+                    using System.Runtime.CompilerServices;
 
-    public class C : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
+                    public class C : INotifyPropertyChanged
+                    {
+                        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
-        {
-            this.OnPropertyChanged(property);
-        }
+                        protected virtual void OnPropertyChanged<T>(Expression<Func<T>> property)
+                        {
+                            this.OnPropertyChanged(property);
+                        }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-             this.OnPropertyChanged(e);
-        }
+                        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+                        {
+                             this.OnPropertyChanged(e);
+                        }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.OnPropertyChanged(propertyName);
-        }
-    }
-}");
+                        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+                        {
+                            this.OnPropertyChanged(propertyName);
+                        }
+                    }
+                }
+                """);
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var methodDeclaration = syntaxTree.FindMethodDeclaration(signature);
@@ -440,39 +445,40 @@ namespace N
         [Test]
         public static void ExceptionHandlingRelayCommand()
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace N
-{
-    using System;
-    using Gu.Reactive;
-    using Gu.Wpf.Reactive;
-
-    public class ExceptionHandlingRelayCommand : ConditionRelayCommand
-    {
-        private Exception _exception;
-
-        public ExceptionHandlingRelayCommand(Action action, ICondition condition)
-            : base(action, condition)
-        {
-        }
-
-        public Exception Exception
-        {
-            get => _exception;
-
-            private set
-            {
-                if (Equals(value, _exception))
+            var syntaxTree = CSharpSyntaxTree.ParseText("""
+                namespace N
                 {
-                    return;
-                }
+                    using System;
+                    using Gu.Reactive;
+                    using Gu.Wpf.Reactive;
 
-                _exception = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-}");
+                    public class ExceptionHandlingRelayCommand : ConditionRelayCommand
+                    {
+                        private Exception _exception;
+
+                        public ExceptionHandlingRelayCommand(Action action, ICondition condition)
+                            : base(action, condition)
+                        {
+                        }
+
+                        public Exception Exception
+                        {
+                            get => _exception;
+
+                            private set
+                            {
+                                if (Equals(value, _exception))
+                                {
+                                    return;
+                                }
+
+                                _exception = value;
+                                OnPropertyChanged();
+                            }
+                        }
+                    }
+                }
+                """);
 
             var compilation = CSharpCompilation.Create("test", new[] { syntaxTree }, Settings.Default.MetadataReferences);
             var semanticModel = compilation.GetSemanticModel(syntaxTree);

@@ -14,47 +14,48 @@ public static class MutableAutoPropertyTests
     [TestCase("P6", false)]
     public static void Match(string propertyName, bool expected)
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(@"
-namespace N
-{
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
-    public class C
-    {
-        private readonly int p3;
-        private readonly int p4;
-        private int p5;
-        private int p6;
-
-        public int P1 { get; }
-
-        public int P2 { get; set; }
-
-        public int P3 => this.p3;
-
-        public int P4
-        {
-            get
+        var syntaxTree = CSharpSyntaxTree.ParseText("""
+            namespace N
             {
-                return this.p4;
+                using System;
+                using System.ComponentModel;
+                using System.Runtime.CompilerServices;
+
+                public class C
+                {
+                    private readonly int p3;
+                    private readonly int p4;
+                    private int p5;
+                    private int p6;
+
+                    public int P1 { get; }
+
+                    public int P2 { get; set; }
+
+                    public int P3 => this.p3;
+
+                    public int P4
+                    {
+                        get
+                        {
+                            return this.p4;
+                        }
+                    }
+
+                    public int P5
+                    {
+                        get { return this.p5; }
+                        set { this.p5 = value; }
+                    }
+
+                    public int P6
+                    {
+                        get => this.p6;
+                        private set => this.p6 = value;
+                    }
+                }
             }
-        }
-
-        public int P5
-        {
-            get { return this.p5; }
-            set { this.p5 = value; }
-        }
-
-        public int P6
-        {
-            get => this.p6;
-            private set => this.p6 = value;
-        }
-    }
-}");
+            """);
         var property = syntaxTree.FindPropertyDeclaration(propertyName);
         Assert.AreEqual(expected, MutableAutoProperty.Match(property) is { });
     }
