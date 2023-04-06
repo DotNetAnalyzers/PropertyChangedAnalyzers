@@ -39,12 +39,10 @@ internal class RenameFix : CodeFixProvider
                 expression.TryFirstAncestor(out PropertyDeclarationSyntax? propertyDeclaration) &&
                 semanticModel.TryGetSymbol(propertyDeclaration, context.CancellationToken, out var property))
             {
-                var documentOptions = await context.Document.GetOptionsAsync(context.CancellationToken)
-                                                   .ConfigureAwait(false);
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         "Rename backing field",
-                        c => Renamer.RenameSymbolAsync(context.Document.Project.Solution, field, Name(property, semanticModel), documentOptions, c),
+                        c => Renamer.RenameSymbolAsync(context.Document.Project.Solution, field, default, Name(property, semanticModel), c),
                         "Rename backing field"),
                     diagnostic);
             }

@@ -266,7 +266,7 @@ internal static class DocumentEditorInpcExt
             var expression = await NameExpression().ConfigureAwait(false);
             return (ExpressionSyntax)editor.Generator.ObjectCreationExpression(
                 editor.Generator.TypeExpression(
-                    editor.SemanticModel.Compilation.GetTypeByMetadataName(KnownSymbol.PropertyChangedEventArgs.FullName)),
+                    editor.SemanticModel.Compilation.GetTypeByMetadataName(KnownSymbol.PropertyChangedEventArgs.FullName)!),
                 editor.Generator.Argument(RefKind.None, expression));
         }
 
