@@ -200,3 +200,6 @@ csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
 
 dotnet_diagnostic.IDE0009.severity = none # Analyzer broken with patterns
+
+# CA5403: Do not hard code certificate insanely slow analyzer adding 30 s to build time
+dotnet_diagnostic.CA5403.severity = none
