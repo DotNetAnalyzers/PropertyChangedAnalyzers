@@ -106,9 +106,7 @@ internal class ArgumentAnalyzer : DiagnosticAnalyzer
     {
         internal readonly string? Name;
         internal readonly ExpressionSyntax Expression;
-#pragma warning disable RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
         internal readonly IParameterSymbol Target;
-#pragma warning restore RS1008 // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
 
         private NameContext(string? name, ExpressionSyntax expression, IParameterSymbol target)
         {

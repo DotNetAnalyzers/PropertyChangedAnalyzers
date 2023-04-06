@@ -122,7 +122,9 @@ public static class DocumentationTests
         {
             var start = doc.IndexOf(startToken, StringComparison.Ordinal);
             var end = doc.IndexOf(endToken, StringComparison.Ordinal) + endToken.Length;
+#pragma warning disable IDE0057 // Use range operator
             return doc.Substring(start, end - start);
+#pragma warning restore IDE0057 // Use range operator
         }
     }
 
