@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro" Version="3.2" />
     <PackageReference Include="Gu.Wpf.Reactive" Version="5.0.1" />
-    <PackageReference Include="MvvmCross" Version="9.0.9" />
+    <PackageReference Include="MvvmCross" Version="9.0.10" />
     <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="PropertyChangedAnalyzers" Version="4.0.0" PrivateAssets="all" />
