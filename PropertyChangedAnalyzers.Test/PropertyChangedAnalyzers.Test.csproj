@@ -38,6 +38,6 @@
     <PackageReference Include="Prism.Mvvm" Version="1.1.1" />
     <PackageReference Include="ReflectionAnalyzers" Version="0.3.1" PrivateAssets="all" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507" PrivateAssets="all" />
-    <PackageReference Include="Stylet" Version="1.3.6" />
+    <PackageReference Include="Stylet" Version="1.3.7" />
   </ItemGroup>
 </Project>
